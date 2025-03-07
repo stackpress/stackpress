@@ -4,13 +4,12 @@ import path from 'node:path';
 import type Server from '@stackpress/ingest/dist/Server';
 import ink from '@stackpress/ink/compiler';
 import { plugin as css } from '@stackpress/ink-css';
-//plugins
-import type { InkPlugin } from '@/plugins/template/types';
 
 export default async function build(server: Server<any, any, any>) {
   //get the compiler options
   const cwd = server.config.path('template.config.cwd', process.cwd());
   const brand = server.config.path('template.config.brand', '');
+  const extname = server.config.path('template.extname', '.press');
   const clientPath = server.config.path<string>('template.config.clientPath');
   const serverPath = server.config.path<string>('template.config.serverPath');
   const manifestPath = server.config.path<string>('template.config.manifestPath');
@@ -20,8 +19,6 @@ export default async function build(server: Server<any, any, any>) {
     server: serverPath,
     manifest: manifestPath,
   };
-  //get the template plugin
-  const { router } = server.plugin<InkPlugin>('ink');
   //create ink compiler (to create the client, server and style builds)
   const compiler = ink({ brand, cwd, minify: true });
   //use ink css
@@ -39,14 +36,14 @@ export default async function build(server: Server<any, any, any>) {
   const templates = new Set<string>(
     Array
       //Map<string, Set<EntryTask>>
-      .from(router.templates.values())
+      .from(server.view.templates.values())
       //Set<EntryTask>[]
       .map(set => Array.from(set))
       //EntryTask[][]
       .flat()
       //EntryTask[]
       .map(task => !path.extname(task.entry) 
-        ? `${task.entry}.ink`
+        ? `${task.entry}${extname}`
         : task.entry
       )
       //string[]

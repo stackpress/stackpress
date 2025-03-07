@@ -1,44 +1,38 @@
 //stackpress
 import type { InkCompiler } from '@stackpress/ink/dist/types';
 import type HttpServer from '@stackpress/ink-dev/dist/HttpServer';
-//local
-import type Router from './Router';
+import type WhatwgServer from '@stackpress/ink-dev/dist/WhatwgServer';
+import type { ViewRender } from '@stackpress/ingest/dist/types';
 
-export type Renderer = (
-  filePath: string, 
-  props?: Record<string, unknown>
-) => Promise<string>;
-
-export type InkPlugin = {
-  compiler: InkCompiler,
-  refresh: HttpServer,
-  render: Renderer,
-  router: Router
+export type RefreshServers = {
+  http: HttpServer,
+  whatwg: WhatwgServer
 };
 
 export type TemplatePlugin = {
-  render: Renderer
+  compiler: InkCompiler,
+  servers: RefreshServers,
+  render: ViewRender
 };
 
 export type TemplateDevConfig = {
+  mode: 'http'|'whatwg',
   buildRoute: string,
   socketRoute: string
 };
 
 export type TemplateEngineConfig = {
   brand: string,
+  cwd: string,
+  extname: string,
   minify: boolean,
   clientPath?: string,
   serverPath?: string,
   manifestPath?: string,
-  cwd: string,
   notemplate: string,
   dev: TemplateDevConfig
 };
 
 export type TemplateConfig = { 
-  template: {
-    engine: string,
-    config: TemplateEngineConfig
-  }
+  template: TemplateEngineConfig
 };

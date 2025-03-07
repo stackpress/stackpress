@@ -1,7 +1,7 @@
 //stackpress
 import type { QueryObject } from '@stackpress/inquire/dist/types';
-import type Server from '@stackpress/ingest/dist/Server';
 import type Engine from '@stackpress/inquire/dist/Engine';
+import type Server from '@stackpress/ingest/dist/Server';
 //root
 import type { ClientPlugin } from '@/types';
 //plugins

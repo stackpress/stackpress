@@ -16,11 +16,33 @@
   import { _ } from '@stackpress/incept-i18n';
 
   const { 
-    code = 200, 
-    status = 'OK', 
-    error,
-    errors = {}, 
-    revert,
+    config = {},
+    //SESSION:
+    // id: string, 
+    // name: string,
+    // image?: string,
+    // roles: string[]
+    session = { 
+      id: 0, 
+      token: '', 
+      roles: [ 'GUEST' ], 
+      permissions: [] 
+    },
+    request = {},
+    response = {}
+  } = props('document');
+
+  const redirect = request.data?.redirect_uri || '/';
+  //make a revert uri
+  const [ uri, query ] = redirect.split('?');
+  const params = new URLSearchParams(query);
+  params.set('error', 'denied');
+  if (state) {
+    params.set('state', state);
+  }
+  const revert = `${uri}?${params.toString()}`;
+  //get scopes and endpoints
+  const { 
     //SCOPE:
     // icon?: string, 
     // name: string, 
@@ -37,28 +59,30 @@
     // event: string,
     // priority?: number,
     // data: Record<string, Data>
-    endpoints = [],
-    //PERMISSIONS: [ 'profile-write', 'auth-read' ]
-    permissions = [],
-    //SESSION:
-    // id: string, 
-    // name: string,
-    // image?: string,
-    // roles: string[]
-    session,
-    //APPLICATION:
-    // id: string;
-    // name: string;
-    // logo?: string;
-    // website?: string;
-    // secret: string;
-    // scopes: string[];
-    // active: boolean;
-    // expires: Date;
-    // created: Date;
-    // updated: Date;
-    application: app
-  } = props('document');
+    endpoints = []
+  } = config.api || {};
+
+  //the API scope your client application needs.
+  //It tells the Authorization endpoint what kind 
+  //of permissions to ask for when displaying the 
+  //consent form to the end-user. Use space as 
+  //separator if more than one value. If no scope
+  //is provided, the app just wants the session data.
+  const scope = request.data?.scope;
+  //PERMISSIONS: [ 'profile-write', 'auth-read' ]
+  const permissions = scope ? scope.split(' ') : [];
+  //APPLICATION:
+  // id: string;
+  // name: string;
+  // logo?: string;
+  // website?: string;
+  // secret: string;
+  // scopes: string[];
+  // active: boolean;
+  // expires: Date;
+  // created: Date;
+  // updated: Date;
+  const application = response.results || {};
 
   const items = permissions.map(name => {
     const scope = scopes[name];

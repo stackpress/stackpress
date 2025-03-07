@@ -1,7 +1,5 @@
 //stackpress
 import type Server from '@stackpress/ingest/dist/Server';
-//plugins
-import type { InkPlugin } from '@/plugins/template/types';
 //local
 import type { PermissionList } from './types';
 import Session from './Session';
@@ -54,18 +52,17 @@ export default function plugin(server: Server) {
       () => import('./pages/signout')
     );
 
-    const ink = server.plugin<InkPlugin>('ink');
-    ink.router.all(
+    server.view.all(
       '/auth/signin', 
       '@stackpress/incept-user/dist/templates/signin', 
       -100
     );
-    ink.router.all(
+    server.view.all(
       '/auth/signin/:type', 
       '@stackpress/incept-user/dist/templates/signin', 
       -100
     );
-    ink.router.all(
+    server.view.all(
       '/auth/signup', 
       '@stackpress/incept-user/dist/templates/signup', 
       -100
