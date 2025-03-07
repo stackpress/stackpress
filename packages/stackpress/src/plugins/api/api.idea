@@ -1,0 +1,120 @@
+model Profile { 
+  applications Application[]
+  sessions Session[]   
+}
+
+model Application 
+  @label("App" "Apps") 
+  @template("{{name}}") 
+  @icon("laptop") 
+{
+  id      String   @label("ID") 
+                   @id @default("cuid()")
+
+  name    String   @label("Name") 
+                   @searchable
+                   @field.text({ required true })
+                   @is.required
+                   @list.text @view.text
+
+  logo    String?  @label("Image") 
+                   @field.url
+                   @list.image(20 20) @view.image(100 100)
+
+  website String?  @label("Website") 
+                   @searchable
+                   @field.url
+                   @list.link({ target "blank" }) 
+                   @view.link({ target "blank" })
+
+  secret  String   @label("Secret") 
+                   @default("cuid()")
+                   @list.hide @view.hide
+  
+  scopes  String[] @label("Scopes") 
+                   @default("[]")
+                   @field.taglist
+                   @list.hide @view.taglist
+
+  active  Boolean  @label("Active") 
+                   @default(true) @active
+                   @filter.switch
+                   @list.hide @view.yesno
+  
+  expires Datetime @label("Expires") 
+                   @sortable
+                   @field.datetime
+                   @is.required
+                   @list.date("m d, Y h:iA") 
+                   @view.date("m d, Y h:iA")
+  
+  created Datetime @label("Created") 
+                   @default("now()") @sortable
+                   @list.date("m d, Y h:iA") 
+                   @view.date("m d, Y h:iA")
+  
+  updated Datetime @label("Updated") 
+                   @default("now()") @timestamp @sortable
+                   @list.date("m d, Y h:iA") 
+                   @view.date("m d, Y h:iA")
+
+  session Session[]  
+  profile Profile   @relation({ local "profileId" foreign "id" })
+}
+
+model Session 
+  @label("Session" "Sessions") 
+  @template("{{profile.name}}") 
+  @icon("coffee") 
+{
+  id            String   @label("ID") 
+                         @id @default("cuid()")
+  
+  applicationId String   @label("App") 
+                         @field.relation({ href "/admin/app/search" key "application" foreign "id" template "{{name}}" }) 
+                         @is.required
+                         @filter.relation({ href "/admin/app/search" key "application" foreign "id" template "{{name}}" }) 
+                         @list.template({ key "application" template "{{name}}" }) 
+                         @view.template({ key "application" template "{{name}}" })
+  
+  profileId     String   @label("Profile") 
+                         @field.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
+                         @is.required
+                         @filter.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
+                         @list.template({ key "profile" template "{{name}}" }) 
+                         @view.template({ key "profile" template "{{name}}" })
+
+  secret        String   @label("Secret") 
+                         @default("cuid()")
+                         @list.hide @view.hide
+  
+  scopes        String[] @label("Scopes") 
+                         @default("[]")
+                         @field.taglist
+                         @list.hide @view.taglist
+
+  active        Boolean  @label("Active") 
+                         @default(true) @active
+                         @filter.switch
+                         @list.hide @view.yesno
+  
+  expires     Datetime   @label("Expires") 
+                         @sortable
+                         @field.datetime
+                         @is.required
+                         @list.date("m d, Y h:iA") 
+                         @view.date("m d, Y h:iA")
+  
+  created     Datetime   @label("Created") 
+                         @default("now()") @sortable
+                         @list.date("m d, Y h:iA") 
+                         @view.date("m d, Y h:iA")
+  
+  updated     Datetime   @label("Updated") 
+                         @default("now()") @timestamp @sortable
+                         @list.date("m d, Y h:iA") 
+                         @view.date("m d, Y h:iA")
+  
+  application Application  @relation({ local "applicationId" foreign "id" })
+  profile     Profile      @relation({ local "profileId" foreign "id" })
+}

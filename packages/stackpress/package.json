@@ -1,0 +1,83 @@
+{
+  "name": "stackpress",
+  "version": "0.1.26",
+  "license": "MIT",
+  "description": "Incept is a content management framework.",
+  "author": "Chris <chris@stackpress.io>",
+  "homepage": "https://github.com/stackpress/incept",
+  "bugs": "https://github.com/stackpress/incept/issues",
+  "repository": "stackpress/incept",
+  "keywords": [
+    "ts",
+    "typescript",
+    "event driven",
+    "router",
+    "framework",
+    "backend",
+    "vercel",
+    "netlify",
+    "lambda",
+    "gcp",
+    "functions",
+    "azure",
+    "serverless",
+    "pluggable",
+    "web",
+    "http",
+    "whatwg",
+    "restful",
+    "database",
+    "sql",
+    "mysql",
+    "pg",
+    "postgres",
+    "sqlite",
+    "api",
+    "idea",
+    "stackpress"
+  ],
+  "plugins": [
+    "./dist/plugin"
+  ],
+  "bin": {
+    "incept": "./bin.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "main": "index.js",
+  "files": [
+    "dist",
+    "bin.js",
+    "index.js",
+    "index.d.ts",
+    "LICENSE",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "dependencies": {
+    "@paralleldrive/cuid2": "2.2.2",
+    "@stackpress/idea-transformer": "0.4.1",
+    "@stackpress/ingest": "0.4.1",
+    "@stackpress/ink": "0.4.1",
+    "@stackpress/ink-css": "0.4.1",
+    "@stackpress/ink-dev": "0.4.1",
+    "@stackpress/ink-ui": "0.4.1",
+    "@stackpress/inquire": "0.4.1",
+    "@stackpress/lib": "0.4.1",
+    "fast-glob": "3.3.2",
+    "jsonwebtoken": "9.0.2",
+    "mustache": "4.2.0",
+    "nanoid": "3.3.8",
+    "nodemailer": "6.9.16",
+    "ts-morph": "24.0.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "9.0.9",
+    "@types/mustache": "4.2.5",
+    "@types/nodemailer": "6.4.17",
+    "@types/node": "22.9.3",
+    "ts-node": "10.9.2",
+    "typescript": "5.7.2"
+  }
+}

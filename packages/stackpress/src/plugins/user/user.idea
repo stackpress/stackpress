@@ -1,0 +1,126 @@
+//A profile can be a person, organization, or any other type of entity.
+//Profiles can be authenticated or added from various sources. That's 
+//why we call it profile instead of user and company indicating it's 
+//just a general information of an entity.
+
+model Profile
+  @label("Profile" "Profiles") 
+  @template("{{name}}") 
+  @icon("user") 
+{
+  id          String    @label("ID") 
+                        @id @default("cuid()")
+                        @list.overflow({ length 10 hellip true })
+  
+  name        String    @label("Name") 
+                        @searchable
+                        @field.text({ required true })
+                        @is.required
+                        @list.text @view.text
+
+  image       String?   @label("Image") 
+                        @field.url
+                        @list.image(20 20) @view.image(100 100)
+  
+  type        String    @label("Type") 
+                        @default("person") 
+                        @filter.text
+                        @field.text({ required true })
+                        @list.text({ lower true }) 
+                        @view.text({ lower true })
+  
+  roles       String[]  @label("Roles") 
+                        @field.textlist({ add "Add Role" })
+                        @list.hide @view.taglist
+  
+  tags        String[]  @label("Tags") 
+                        @default("[]")
+                        @field.taglist
+                        @list.hide @view.taglist
+  
+  references  Hash?     @label("References") 
+                        @default("{}")
+                        @field.metadata({ add "Add Reference" })
+                        @list.hide @view.metadata
+  
+  active      Boolean   @label("Active") 
+                        @default(true) @active
+                        @filter.switch
+                        @list.hide @view.yesno
+  
+  created     Datetime  @label("Created") 
+                        @default("now()") @sortable
+                        @span.datetime
+                        @list.date("m d, Y h:iA") 
+                        @view.date("m d, Y h:iA")
+  
+  updated     Datetime  @label("Updated") 
+                        @default("now()") @timestamp @sortable
+                        @span.datetime
+                        @list.date("m d, Y h:iA") 
+                        @view.date("m d, Y h:iA")
+  
+  auth        Auth?
+}
+
+//Auth is used to authenticate a profile and create a session.
+model Auth 
+  @label("Auth" "Auth") 
+  @template("{{token}}") 
+  @icon("lock") 
+{
+  id        String   @label("ID") 
+                     @id @default("cuid()")
+                     @list.overflow({ length 10 hellip true })
+  
+  profileId String   @label("Profile") 
+                     @field.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
+                     @is.required
+                     @filter.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
+                     @list.template({ key "profile" template "{{name}}" }) 
+                     @view.template({ key "profile" template "{{name}}" })
+                     
+  type      String   @label("Type") 
+                     @default("username") 
+                     @field.text({ required true }) @filter.text
+                     @is.required
+                     @list.text @view.text
+  
+  token     String   @label("Token")
+                     @unique @searchable
+                     @field.text({ required true })
+                     @is.required @is.cge(5)
+                     @list.text @view.text
+  
+  secret    String   @label("Secret") 
+                     @field.password({ required true })
+                     @is.required
+                     @list.hide @view.hide
+  
+  verified  Boolean  @label("Verified") 
+                     @default(false) 
+                     @field.switch @filter.switch 
+                     @list.yesno @view.yesno
+  
+  consumed  Datetime @label("Last Used") 
+                     @default("now()") @sortable
+                     @list.date("m d, Y h:iA") 
+                     @view.date("m d, Y h:iA")
+  
+  active    Boolean  @label("Active") 
+                     @default(true) @active
+                     @filter.switch
+                     @list.hide @view.yesno
+  
+  created   Datetime @label("Created") 
+                     @default("now()") @sortable
+                     @list.date("m d, Y h:iA") 
+                     @view.date("m d, Y h:iA")
+  
+  updated   Datetime @label("Updated") 
+                     @default("now()") @timestamp @sortable
+                     @list.date("m d, Y h:iA") 
+                     @view.date("m d, Y h:iA")
+  
+  profile   Profile  @relation({ local "profileId" foreign "id" })
+}
