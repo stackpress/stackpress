@@ -42,19 +42,7 @@
   "bin": {
     "incept": "./bin.js"
   },
-  "scripts": {
-    "build": "tsc"
-  },
   "main": "index.js",
-  "files": [
-    "dist",
-    "bin.js",
-    "index.js",
-    "index.d.ts",
-    "LICENSE",
-    "README.md",
-    "tsconfig.json"
-  ],
   "dependencies": {
     "@paralleldrive/cuid2": "2.2.2",
     "@stackpress/idea-transformer": "0.4.1",
@@ -71,13 +59,5 @@
     "nanoid": "3.3.8",
     "nodemailer": "6.9.16",
     "ts-morph": "24.0.0"
-  },
-  "devDependencies": {
-    "@types/jsonwebtoken": "9.0.9",
-    "@types/mustache": "4.2.5",
-    "@types/nodemailer": "6.4.17",
-    "@types/node": "22.9.3",
-    "ts-node": "10.9.2",
-    "typescript": "5.7.2"
   }
 }

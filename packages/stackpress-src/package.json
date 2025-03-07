@@ -1,0 +1,36 @@
+{
+  "name": "stackpress-src",
+  "version": "0.1.26",
+  "private": true,
+  "scripts": {
+    "build": "yarn build:tsc && yarn build:files && yarn build:package",
+    "build:files": "cp README.md LICENSE bin.js tsconfig.json ../stackpress",
+    "build:package": "cp ./package.live.json ../stackpress/package.json",
+    "build:tsc": "tsc"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "2.2.2",
+    "@stackpress/idea-transformer": "0.4.1",
+    "@stackpress/ingest": "0.4.1",
+    "@stackpress/ink": "0.4.1",
+    "@stackpress/ink-css": "0.4.1",
+    "@stackpress/ink-dev": "0.4.1",
+    "@stackpress/ink-ui": "0.4.1",
+    "@stackpress/inquire": "0.4.1",
+    "@stackpress/lib": "0.4.1",
+    "fast-glob": "3.3.2",
+    "jsonwebtoken": "9.0.2",
+    "mustache": "4.2.0",
+    "nanoid": "3.3.8",
+    "nodemailer": "6.9.16",
+    "ts-morph": "24.0.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "9.0.9",
+    "@types/mustache": "4.2.5",
+    "@types/nodemailer": "6.4.17",
+    "@types/node": "22.9.3",
+    "ts-node": "10.9.2",
+    "typescript": "5.7.2"
+  }
+}

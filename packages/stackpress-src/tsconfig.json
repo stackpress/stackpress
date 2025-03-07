@@ -5,7 +5,7 @@
     "lib": [ "es2021", "es7", "es6", "dom" ],
     "module": "commonjs",
     "noUnusedLocals": true,
-    "outDir": "./dist/",
+    "outDir": "../stackpress/",
     "preserveConstEnums": true,
     "resolveJsonModule": true,
     "removeComments": true,
