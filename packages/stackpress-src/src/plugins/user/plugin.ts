@@ -1,7 +1,7 @@
 //stackpress
 import type Server from '@stackpress/ingest/dist/Server';
 //plugins
-import type { InkPlugin } from '@/plugins/press/types';
+import type { InkPlugin } from '@/plugins/template/types';
 //local
 import type { PermissionList } from './types';
 import Session from './Session';

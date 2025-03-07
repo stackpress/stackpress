@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/dist/Server';
 import ink from '@stackpress/ink/compiler';
 import { plugin as css } from '@stackpress/ink-css';
 //plugins
-import type { InkPlugin } from '@/plugins/press/types';
+import type { InkPlugin } from '@/plugins/template/types';
 
 export default async function build(server: Server<any, any, any>) {
   //get the compiler options

@@ -4,7 +4,7 @@ import type Server from '@stackpress/ingest/dist/Server';
 import incept from './plugins/schema/plugin';
 import types from './plugins/types/plugin';
 import sql from './plugins/sql/plugin';
-import ink from './plugins/press/plugin';
+import template from './plugins/template/plugin';
 import admin from './plugins/admin/plugin';
 import i18n from './plugins/i18n/plugin';
 import user from './plugins/user/plugin';
@@ -15,7 +15,7 @@ export default async function plugin(server: Server) {
   incept(server);
   types(server);
   sql(server);
-  ink(server);
+  template(server);
   admin(server);
   i18n(server);
   user(server);

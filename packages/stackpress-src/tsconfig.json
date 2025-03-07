@@ -15,7 +15,7 @@
     "skipLibCheck": true,
     "paths": {
       "@/plugins/*": [ "./src/plugins/*" ],
-      "@/press/*": [ "./src/press/*" ],
+      "@/template/*": [ "./src/template/*" ],
       "@/schema/*": [ "./src/schema/*" ],
       "@/server/*": [ "./src/server/*" ],
       "@/sql/*": [ "./src/sql/*" ],
