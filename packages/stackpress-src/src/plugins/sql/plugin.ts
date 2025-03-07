@@ -2,8 +2,8 @@
 import type { CLIProps } from '@stackpress/idea-transformer/dist/types';
 import type Transformer from '@stackpress/idea-transformer/dist/Transformer';
 import type Server from '@stackpress/ingest/dist/Server';
-//common
-import type { ClientPlugin } from '../../types';
+//roor
+import type { ClientPlugin } from '@/types';
 //local
 import type { ClientWithDatabasePlugin } from './types';
 

@@ -1,7 +1,7 @@
+//root
+import Exception from '@/Exception';
 //schema
-import type Model from '../../schema/spec/Model';
-//common
-import Exception from '../../Exception';
+import type Model from '@/schema/spec/Model';
 
 /**
  * Wraps any errors or exceptions in a reponse payload. 

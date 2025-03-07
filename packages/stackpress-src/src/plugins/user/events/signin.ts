@@ -1,9 +1,9 @@
 //stackpress
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
-//sql
-import type { DatabasePlugin } from '../../sql/types';
-//common
+//plugins
+import type { DatabasePlugin } from '@/plugins/sql/types';
+//local
 import type { Client, AuthExtended, SessionPlugin } from '../types';
 import { signin } from '../actions';
 

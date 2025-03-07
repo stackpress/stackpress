@@ -4,7 +4,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn --cwd packages/stackpress build"
+    "build": "yarn --cwd packages/stackpress-src build"
   },
   "devDependencies": {
     "npm-run-all": "4.1.5"

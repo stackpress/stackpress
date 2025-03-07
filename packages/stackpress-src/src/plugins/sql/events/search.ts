@@ -2,8 +2,8 @@
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //schema
-import type Model from '../../../schema/spec/Model';
-//sql
+import type Model from '@/schema/spec/Model';
+//local
 import search from '../actions/search';
 import type { DatabasePlugin } from '../types';
 

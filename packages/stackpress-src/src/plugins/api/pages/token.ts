@@ -1,7 +1,8 @@
 //stackpress
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
-import { toResponse } from '../../sql/helpers';
+//plugins
+import { toResponse } from '@/plugins/sql/helpers';
 //local
 import type { SessionExtended } from '../types';
 import { authorize, unauthorized } from '../helpers';

@@ -12,7 +12,17 @@
     "sourceMap": false,
     "strict": true,
     "target": "es6",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@/plugins/*": [ "./src/plugins/*" ],
+      "@/press/*": [ "./src/press/*" ],
+      "@/schema/*": [ "./src/schema/*" ],
+      "@/server/*": [ "./src/server/*" ],
+      "@/sql/*": [ "./src/sql/*" ],
+      "@/terminal/*": [ "./src/terminal/*" ],
+      "@/types": [ "./src/types" ],
+      "@/Exception": [ "./src/Exception" ]
+    }
   },
   "include": [ "src/**/*.ts" ],
   "exclude": [ "dist", "docs", "node_modules", "test"]

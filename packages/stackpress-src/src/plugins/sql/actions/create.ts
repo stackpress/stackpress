@@ -5,11 +5,11 @@ import type {
   StatusResponse
 } from '@stackpress/lib/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
+//root
+import Exception from '@/Exception';
 //schema
-import type Model from '../../../schema/spec/Model';
-//common
-import Exception from '../../../Exception';
-//sql
+import type Model from '@/schema/spec/Model';
+//local
 import { toResponse, toErrorResponse } from '../helpers';
 
 /**

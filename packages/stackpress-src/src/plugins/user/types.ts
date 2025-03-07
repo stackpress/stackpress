@@ -1,6 +1,7 @@
-//stackpress
-import type { ClientPlugin } from '../../types';
-import type { ClientWithDatabasePlugin } from '../sql/types';
+//root
+import type { ClientPlugin } from '@/types';
+//plugins
+import type { ClientWithDatabasePlugin } from '@/plugins/sql/types';
 //local
 import type SessionType from './Session';
 

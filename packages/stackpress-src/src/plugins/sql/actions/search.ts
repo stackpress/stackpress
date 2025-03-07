@@ -3,9 +3,9 @@ import type { UnknownNest, StatusResponse } from '@stackpress/lib/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 import Nest from '@stackpress/lib/dist/data/Nest';
 //schema
-import type Column from '../../../schema/spec/Column';
-import type Model from '../../../schema/spec/Model';
-//sql
+import type Column from '@/schema/spec/Column';
+import type Model from '@/schema/spec/Model';
+//local
 import type { SearchParams } from '../types';
 import { 
   toSqlString,

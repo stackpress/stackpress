@@ -1,3 +1,4 @@
+//stackpress
 import type Server from '@stackpress/ingest/dist/Server';
 
 export type AdminConfig = {

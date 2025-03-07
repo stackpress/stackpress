@@ -1,6 +1,7 @@
+//node
+import path from 'node:path';
 //modules
 import type { Directory } from 'ts-morph';
-import path from 'node:path';
 import mustache from 'mustache';
 //stackpress
 import type { FileSystem } from '@stackpress/lib/dist/types';

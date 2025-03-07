@@ -1,5 +1,6 @@
-//modules
+//node
 import path from 'node:path';
+//modules
 import glob from 'fast-glob';
 //stackpress
 import type { SchemaConfig } from '@stackpress/idea-parser/dist/types';

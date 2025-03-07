@@ -1,7 +1,7 @@
 //stackpress
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
-//common
+//local
 import type { SessionPlugin } from '../types';
 
 export default async function SignupPage(req: ServerRequest, res: Response) {

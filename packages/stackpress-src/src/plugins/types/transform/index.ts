@@ -1,6 +1,7 @@
-//stackpress
-import type { PluginWithProject } from '@stackpress/incept/dist/types';
-import Registry from '@stackpress/incept/dist/schema/Registry';
+//root
+import type { PluginWithProject } from '@/types';
+//schema
+import Registry from '@/schema/Registry';
 //local
 import enumGenerator from './enums';
 import typeGenerator from './types';

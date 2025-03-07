@@ -5,11 +5,11 @@ import type { SchemaConfig } from '@stackpress/idea-parser';
 import type { PluginProps } from '@stackpress/idea-transformer';
 import type { CookieOptions } from '@stackpress/ingest/dist/types';
 //schema
-import type Model from './schema/Model';
-import type Fieldset from './schema/Fieldset';
-import type Registry from './schema/Registry';
+import type Model from '@/schema/spec/Model';
+import type Fieldset from '@/schema/spec/Fieldset';
+import type Registry from '@/schema/Registry';
 //local
-import type InceptTerminal from './Terminal';
+import type InceptTerminal from '@/terminal/Terminal';
 
 export type ProjectProps = {
   cli: InceptTerminal,

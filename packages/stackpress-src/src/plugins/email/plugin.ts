@@ -1,6 +1,6 @@
 //stackpress
 import type Server from '@stackpress/ingest/dist/Server';
-//local;
+//local
 import emitter from './events';
 
 /**

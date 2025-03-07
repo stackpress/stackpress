@@ -1,8 +1,8 @@
 //schema
 import Registry from '../../../schema/Registry';
-//common
-import type { PluginWithProject } from '../../../types';
-//sql
+//root
+import type { PluginWithProject } from '@/types';
+//local
 import generateSchema from './schema';
 import generateActions from './actions';
 import generateEvents from './events';

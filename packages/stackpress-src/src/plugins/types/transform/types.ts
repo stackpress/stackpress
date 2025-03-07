@@ -1,10 +1,10 @@
 //modules
 import type { Directory, SourceFile } from 'ts-morph';
-//stackpress
-import type Registry from '@stackpress/incept/dist/schema/Registry';
-import type Model from '@stackpress/incept/dist/schema/Model';
-import type Fieldset from '@stackpress/incept/dist/schema/Fieldset';
-import { formatCode } from '@stackpress/incept/dist/schema/helpers';
+//schema
+import type Model from '@/schema/spec/Model';
+import type Fieldset from '@/schema/spec/Fieldset';
+import type Registry from '@/schema/Registry';
+import { formatCode } from '@/schema/helpers';
 
 export const typemap: Record<string, string> = {
   String: 'string',

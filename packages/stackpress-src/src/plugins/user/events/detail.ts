@@ -2,7 +2,7 @@
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import { isHash } from '@stackpress/ingest/dist/helpers';
-//common
+//local
 import type { AuthExtended, SessionPlugin } from '../types';
 import { decrypt } from '../helpers';
 

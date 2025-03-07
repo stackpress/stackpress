@@ -5,8 +5,8 @@ import type {
 } from '@stackpress/lib/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 //schema
-import { email } from '../../schema/assert';
-//common
+import { email } from '@/schema/assert';
+//local
 import type { 
   Auth,
   Client,

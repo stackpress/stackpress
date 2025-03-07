@@ -1,11 +1,11 @@
 //stackpress
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
+//root
+import Exception from '@/Exception';
 //schema
-import type Model from '../../../schema/spec/Model';
-//common
-import Exception from '../../../Exception';
-//sql
+import type Model from '@/schema/spec/Model';
+//local
 import type { DatabasePlugin } from '../types';
 
 /**

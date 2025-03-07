@@ -2,9 +2,9 @@
 import type { CLIProps } from '@stackpress/idea-transformer/dist/types';
 import type Transformer from '@stackpress/idea-transformer/dist/Transformer';
 import type Server from '@stackpress/ingest/dist/Server';
-//incept
-import type { ClientPlugin } from '../../types';
-//admin
+//root
+import type { ClientPlugin } from '@/types';
+//local
 import type { ClientWithRoutesPlugin } from './types';
 
 type Client = ClientPlugin<ClientWithRoutesPlugin>;

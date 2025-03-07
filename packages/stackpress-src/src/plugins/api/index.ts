@@ -1,7 +1,7 @@
 import oauth from './pages/oauth';
 import token from './pages/token';
-import { authorize, unauthorized } from './helpers';
 import plugin from './plugin';
+import { authorize, unauthorized } from './helpers';
 
 const pages = { oauth, token };
 

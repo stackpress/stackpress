@@ -1,9 +1,9 @@
 //stackpress
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
-//incept
-import { toResponse } from '../../sql/helpers';
-//common
+//plugins
+import { toResponse } from '@/plugins/sql/helpers';
+//local
 import type { SessionPlugin } from '../types';
 
 export default async function Session(req: ServerRequest, res: Response) {

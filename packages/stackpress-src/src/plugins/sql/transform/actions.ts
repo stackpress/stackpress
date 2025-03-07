@@ -1,8 +1,8 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress
-import type Model from '../../../schema/spec/Model';
-import Registry from '../../../schema/Registry';
+//schema
+import type Model from '@/schema/spec/Model';
+import Registry from '@/schema/Registry';
 
 //map from column types to sql types and helpers
 export const typemap: Record<string, string> = {

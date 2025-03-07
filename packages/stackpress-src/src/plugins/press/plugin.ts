@@ -1,4 +1,4 @@
-//modules
+//node
 import path from 'node:path';
 //stackpress
 import type { ServerDocumentClass, InkCompiler } from '@stackpress/ink/dist/types';

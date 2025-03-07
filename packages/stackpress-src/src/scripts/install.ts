@@ -1,15 +1,14 @@
 //stackpress
 import type { QueryObject } from '@stackpress/inquire/dist/types';
-import type { 
-  ClientPlugin, 
-  ServerConfig 
-} from '@stackpress/incept/dist/types';
 import type Server from '@stackpress/ingest/dist/Server';
 import type Engine from '@stackpress/inquire/dist/Engine';
-import Revisions from '@stackpress/incept/dist/Revisions';
-//common
-import type { ClientWithDatabasePlugin } from '../types';
-import { sequence } from '../helpers';
+//root
+import type { ClientPlugin, ServerConfig } from '@/types';
+//schema
+import Revisions from '@/schema/Revisions';
+//plugins
+import type { ClientWithDatabasePlugin } from '@/plugins/sql/types';
+import { sequence } from '@/plugins/sql/helpers';
 
 type Client = ClientPlugin<ClientWithDatabasePlugin>;
 

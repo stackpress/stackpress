@@ -1,11 +1,12 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import Registry from '../../../../schema/Registry';
-//sql
+import Registry from '@/schema/Registry';
+//local
 import { sequence } from '../../helpers';
 import generateActions from './actions';
 import generateEvents from './events';
+
 /**
  * Client File Structure
  * - profile/

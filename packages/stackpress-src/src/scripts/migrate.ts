@@ -1,14 +1,15 @@
-//modules
+//node
 import path from 'node:path';
 //stackpress
 import type { QueryObject } from '@stackpress/inquire/dist/types';
 import type Server from '@stackpress/ingest/dist/Server';
 import type Engine from '@stackpress/inquire/dist/Engine';
-import Revisions from '@stackpress/incept/dist/Revisions';
-//common
-import type { DatabaseConfig } from '../types'; 
-import create from '../schema';
-import { sequence } from '../helpers';
+//schema
+import Revisions from '@/schema/Revisions';
+//plugins
+import type { DatabaseConfig } from '@/plugins/sql/types'; 
+import create from '@/plugins/sql/schema';
+import { sequence } from '@/plugins/sql/helpers';
 
 export default async function migrate(server: Server<any, any, any>, database: Engine) {
   //get config

@@ -1,4 +1,4 @@
-//modules
+//node
 import crypto from 'node:crypto';
 
 /**

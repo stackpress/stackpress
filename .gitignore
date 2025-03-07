@@ -129,6 +129,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+packages/stackpress
+
 .DS_Store
 example/.build
 example/public/client

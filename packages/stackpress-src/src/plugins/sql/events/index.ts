@@ -1,8 +1,8 @@
 //stackpress
 import ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
 //schema
-import type Model from '../../../schema/spec/Model';
-//sql
+import type Model from '@/schema/spec/Model';
+//local
 import batch from './batch';
 import create from './create';
 import detail from './detail';

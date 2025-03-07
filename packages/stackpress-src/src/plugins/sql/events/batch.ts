@@ -3,8 +3,8 @@ import type { UnknownNest } from '@stackpress/ingest/dist/types';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //schema
-import type Model from '../../../schema/spec/Model';
-//sql
+import type Model from '@/schema/spec/Model';
+//local
 import batch from '../actions/batch';
 import type { DatabasePlugin } from '../types';
 

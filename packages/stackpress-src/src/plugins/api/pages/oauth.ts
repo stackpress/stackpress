@@ -2,8 +2,8 @@
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 //plugins
-import type { TemplatePlugin } from '../../press/types';
-import type { SessionData } from '../../user/types';
+import type { TemplatePlugin } from '@/plugins/press/types';
+import type { SessionData } from '@/plugins/user/types';
 //local
 import type { APIConfig, Session } from '../types';
 import { unauthorized } from '../helpers';

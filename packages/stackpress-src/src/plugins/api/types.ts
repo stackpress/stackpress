@@ -1,6 +1,8 @@
+//stackpress
 import type { Method } from '@stackpress/lib/dist/types';
 import type { Data } from '@stackpress/idea-parser/dist/types';
-import type { Profile } from '../user/types';
+//plugins
+import type { Profile } from '@/plugins/user/types';
 
 //--------------------------------------------------------------------//
 // Server Types

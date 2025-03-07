@@ -1,12 +1,13 @@
 //stackpress
-import type { ServerConfig } from '@stackpress/incept/dist/types';
 import type { QueryObject } from '@stackpress/inquire/dist/types';
 import type Server from '@stackpress/ingest/dist/Server';
 import type Engine from '@stackpress/inquire/dist/Engine';
-import Revisions from '@stackpress/incept/dist/Revisions';
-//common
-import create from '../schema';
-import { sequence } from '../helpers';
+//root
+import type { ServerConfig } from '@/types';
+import Revisions from '@/schema/Revisions';
+//plugins
+import create from '@/plugins/sql/schema';
+import { sequence } from '@/plugins/sql/helpers';
 
 export default async function push(server: Server<any, any, any>, database: Engine) {
   //get config

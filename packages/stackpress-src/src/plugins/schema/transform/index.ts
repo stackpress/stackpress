@@ -1,9 +1,9 @@
 //modules
 import { VariableDeclarationKind } from 'ts-morph';
+//root
+import type { PluginWithProject } from '@/types';
 //schema
-import Registry from '../spec/Registry';
-//common
-import type { PluginWithProject } from '../../../types';
+import Registry from '@/schema/Registry';
 //local
 import generateConfig from './config';
 import generateRegistry from './registry';

@@ -1,7 +1,7 @@
-//common
-import type { PluginWithProject } from '../../../types';
+//root
+import type { PluginWithProject } from '@/types';
 //schema
-import Registry from '../../../schema/Registry';
+import Registry from '@/schema/Registry';
 //local
 import generatePages from './pages';
 import generateTemplates from './templates';

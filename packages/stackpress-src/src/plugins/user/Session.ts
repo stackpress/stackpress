@@ -4,7 +4,8 @@ import jwt from 'jsonwebtoken';
 //stackpress
 import type Request from '@stackpress/ingest/dist/Request';
 import type Response from '@stackpress/ingest/dist/Response';
-import Exception from '../../Exception';
+//root
+import Exception from '@/Exception';
 //local
 import type { Route, Permission, PermissionList, SessionData } from './types';
 

@@ -4,8 +4,8 @@ import path from 'node:path';
 import type Server from '@stackpress/ingest/dist/Server';
 import ink from '@stackpress/ink/compiler';
 import { plugin as css } from '@stackpress/ink-css';
-//ink
-import type { InkPlugin } from '../plugins/press/types';
+//plugins
+import type { InkPlugin } from '@/plugins/press/types';
 
 export default async function build(server: Server<any, any, any>) {
   //get the compiler options

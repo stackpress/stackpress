@@ -2,8 +2,8 @@
 import type { UnknownNest, NestedObject } from '@stackpress/lib/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 //schema
-import type Model from '../../../schema/spec/Model';
-//sql
+import type Model from '@/schema/spec/Model';
+//local
 import create from './create';
 import detail from './detail';
 import update from './update';

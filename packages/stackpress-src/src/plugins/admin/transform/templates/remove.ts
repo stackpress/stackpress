@@ -1,11 +1,12 @@
+//node
+import path from 'node:path';
 //modules
 import type { Directory } from 'ts-morph';
-import path from 'node:path';
 //stackress
 import type { FileSystem } from '@stackpress/lib/dist/types';
 //schema
-import type Registry from '../../../../schema/Registry';
-import { render } from '../../../../schema/helpers';
+import type Registry from '@/schema/Registry';
+import { render } from '@/schema/helpers';
 
 const template = `
 <link rel="import" type="template" href="@stackpress/incept-admin/dist/components/head.ink" name="html-head" />

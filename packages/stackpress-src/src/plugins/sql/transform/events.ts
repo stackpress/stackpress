@@ -1,8 +1,8 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress
-import type Model from '../../../schema/spec/Model';
-import Registry from '../../../schema/Registry';
+//schema
+import type Model from '@/schema/spec/Model';
+import Registry from '@/schema/Registry';
 
 export default function generate(directory: Directory, registry: Registry) {
   //loop through models

@@ -1,11 +1,12 @@
-//modules
+//node
 import path from 'node:path';
+//modules
 import type { Directory } from 'ts-morph';
 //stackpress
 import type { SchemaConfig } from '@stackpress/idea-parser';
 import type Server from '@stackpress/ingest/dist/Server';
-//common
-import Revisions from '../Revisions';
+//schema
+import Revisions from '@/schema/Revisions';
 
 /**
  * This is the The params comes form the cli
