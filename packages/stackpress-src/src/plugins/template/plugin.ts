@@ -10,12 +10,15 @@ import type Server from '@stackpress/ingest/dist/Server';
 import HttpServer from '@stackpress/ink-dev/dist/HttpServer';
 import WhatwgServer from '@stackpress/ink-dev/dist/WhatwgServer';
 import FileLoader from '@stackpress/lib/dist/system/FileLoader';
-import ink, { cache } from '@stackpress/ink/compiler';
+import ink, { cache, serialize } from '@stackpress/ink/compiler';
 import { getStatus } from '@stackpress/lib/dist/Status';
 import { plugin as css } from '@stackpress/ink-css';
-import { serialize } from '@stackpress/ink/compiler';
 //local
 import type { TemplatePlugin, TemplateServers } from '../../types';
+
+const shims: [ string|RegExp, string ][] = [
+  [ 'stackpress/template/client', 'stackpress/template/server' ]
+];
 
 /**
  * This interface is intended for the Incept library.
@@ -35,7 +38,7 @@ export default function plugin(server: Server) {
     const serverPath = server.config.path('template.serverPath');
     const manifestPath = server.config.path('template.manifestPath');
     //create ink compiler
-    const compiler = ink({ brand, cwd, minify });
+    const compiler = ink({ brand, cwd, minify, shims });
     //make a dev servers
     const servers = {
       http: new HttpServer({ cwd }),
@@ -65,8 +68,8 @@ export default function plugin(server: Server) {
     if (!development) return;
      //get more server config
     const buildRoute = server.config.path(
-      'template.config.dev.buildRoute',
-      '/build/client'
+      'template.dev.buildRoute',
+      '/client'
     );
     const socketRoute = server.config.path(
       'template.config.dev.socketRoute',

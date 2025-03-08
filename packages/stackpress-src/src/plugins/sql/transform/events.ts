@@ -33,25 +33,24 @@ export default function generate(directory: Directory, registry: Registry) {
       '', 
       { overwrite: true }
     );
-    //import { ServerRouter } from '@stackpress/ingest/dist/Router';
+    //import ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
     source.addImportDeclaration({
       moduleSpecifier: '@stackpress/ingest/dist/Router',
-      namedImports: [ 'ServerRouter' ]
+      defaultImport: 'ServerRouter'
     });
     //const router = new ServerRouter();
     source.addStatements(`
       const router = new ServerRouter();
-      const imports = router.withImports;
-      imports.on('${model.dash}-batch', () => import('./batch'));
-      imports.on('${model.dash}-create', () => import('./create'));
-      imports.on('${model.dash}-detail', () => import('./detail'));
-      imports.on('${model.dash}-get', () => import('./get'));
-      imports.on('${model.dash}-purge', () => import('./purge'));
-      imports.on('${model.dash}-remove', () => import('./remove'));
-      imports.on('${model.dash}-restore', () => import('./restore'));
-      imports.on('${model.dash}-search', () => import('./search'));
-      imports.on('${model.dash}-update', () => import('./update'));
-      imports.on('${model.dash}-upsert', () => import('./upsert'));
+      router.imports.on('${model.dash}-batch', () => import('./batch'));
+      router.imports.on('${model.dash}-create', () => import('./create'));
+      router.imports.on('${model.dash}-detail', () => import('./detail'));
+      router.imports.on('${model.dash}-get', () => import('./get'));
+      router.imports.on('${model.dash}-purge', () => import('./purge'));
+      router.imports.on('${model.dash}-remove', () => import('./remove'));
+      router.imports.on('${model.dash}-restore', () => import('./restore'));
+      router.imports.on('${model.dash}-search', () => import('./search'));
+      router.imports.on('${model.dash}-update', () => import('./update'));
+      router.imports.on('${model.dash}-upsert', () => import('./upsert'));
 
       export default router;
     `);

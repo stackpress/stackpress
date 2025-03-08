@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "yarn build:tsc && yarn build:files && yarn build:package && yarn build:ink",
-    "build:files": "cp README.md LICENSE bin.js stackpress.idea tsconfig.json ../stackpress",
+    "build:files": "cp README.md LICENSE bin.js stackpress.idea ../stackpress",
     "build:package": "cp ./package.live.json ../stackpress/package.json",
     "build:ink": "yarn build:field && yarn build:form && yarn build:layout && yarn build:pages",
     "build:field": "cp -rf ./src/template/field ../stackpress/template",
@@ -15,19 +15,21 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "2.2.2",
-    "@stackpress/idea-transformer": "0.4.2",
-    "@stackpress/ingest": "0.4.2",
-    "@stackpress/ink": "0.4.2",
-    "@stackpress/ink-css": "0.4.2",
-    "@stackpress/ink-dev": "0.4.2",
-    "@stackpress/ink-ui": "0.4.2",
-    "@stackpress/inquire": "0.4.2",
-    "@stackpress/lib": "0.4.2",
+    "@stackpress/idea-transformer": "0.4.4",
+    "@stackpress/ingest": "0.4.4",
+    "@stackpress/ink": "0.4.4",
+    "@stackpress/ink-css": "0.4.4",
+    "@stackpress/ink-dev": "0.4.4",
+    "@stackpress/ink-ui": "0.4.4",
+    "@stackpress/inquire": "0.4.4",
+    "@stackpress/lib": "0.4.4",
     "fast-glob": "3.3.2",
+    "js-cookie": "3.0.5",
     "jsonwebtoken": "9.0.2",
     "mustache": "4.2.0",
     "nanoid": "3.3.8",
     "nodemailer": "6.9.16",
+    "papaparse": "5.5.1",
     "ts-morph": "24.0.0"
   },
   "devDependencies": {
@@ -35,6 +37,7 @@
     "@types/mustache": "4.2.5",
     "@types/nodemailer": "6.4.17",
     "@types/node": "22.9.3",
+    "@types/papaparse": "5.3.15",
     "ts-node": "10.9.2",
     "typescript": "5.7.2"
   }

@@ -8,11 +8,8 @@
   @ink utilities;
 </style>
 <script>
-  import type { MouseEvent } from '@stackpress/ink/dist/types';
-  import type { State } from '@stackpress/ink-ui/utilities/select';
-  import InkRegistry from '@stackpress/ink/dist/client/InkRegistry';
-  import { env, props } from '@stackpress/ink';
-  import { _ } from '@stackpress/incept-i18n';
+  import { env, props } from 'stackpress/template/client';
+  import { _ } from 'stackpress/i18n';
 
   const { url, session } = props('document');
   const title = _('Home Page');

@@ -1,11 +1,11 @@
-<link rel="import" type="template" href="../layout/head.ink" name="html-head" />
-<link rel="import" type="component" href="@stackpress/ink-ui/element/icon.ink" name="element-icon" />
-<link rel="import" type="component" href="@stackpress/ink-ui/element/tab.ink" name="element-tab" />
-<link rel="import" type="component" href="@stackpress/ink-ui/form/control.ink" name="form-control" />
-<link rel="import" type="component" href="@stackpress/ink-ui/form/button.ink" name="form-button" />
-<link rel="import" type="component" href="@stackpress/ink-ui/field/input.ink" name="field-input" />
-<link rel="import" type="component" href="@stackpress/ink-ui/field/password.ink" name="field-password" />
-<link rel="import" type="component" href="../layout/blank.ink" name="blank-app" />
+<link rel="import" type="template" href="../layout/head" name="html-head" />
+<link rel="import" type="component" href="@stackpress/ink-ui/element/icon" name="element-icon" />
+<link rel="import" type="component" href="@stackpress/ink-ui/element/tab" name="element-tab" />
+<link rel="import" type="component" href="@stackpress/ink-ui/form/control" name="form-control" />
+<link rel="import" type="component" href="@stackpress/ink-ui/form/button" name="form-button" />
+<link rel="import" type="component" href="@stackpress/ink-ui/field/input" name="field-input" />
+<link rel="import" type="component" href="@stackpress/ink-ui/field/password" name="field-password" />
+<link rel="import" type="component" href="../layout/blank" name="blank-app" />
 <style>
   @ink theme;
   @ink reset;
@@ -13,8 +13,8 @@
   @ink utilities;
 </style>
 <script>
-  import { env, props } from '../client';
-  import { _ } from '../../i18n';
+  import { env, props } from 'stackpress/template/client';
+  import { _ } from 'stackpress/i18n';
 
   const { 
     config = {},

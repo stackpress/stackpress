@@ -1,4 +1,5 @@
 <script>
+  import type { MouseEvent } from 'stackpress/template/client';
   const toggleUserMenu = (e: MouseEvent) => {
     const userMenu = document.getElementById('user-menu');
     if (!userMenu) return;

@@ -5,6 +5,10 @@ import type Server from '@stackpress/ingest/dist/Server';
 import ink from '@stackpress/ink/compiler';
 import { plugin as css } from '@stackpress/ink-css';
 
+const shims: [ string|RegExp, string ][] = [
+  [ 'stackpress/template/client', 'stackpress/template/server' ]
+];
+
 export default async function build(server: Server<any, any, any>) {
   //get the compiler options
   const cwd = server.config.path('template.config.cwd', process.cwd());
@@ -20,7 +24,7 @@ export default async function build(server: Server<any, any, any>) {
     manifest: manifestPath,
   };
   //create ink compiler (to create the client, server and style builds)
-  const compiler = ink({ brand, cwd, minify: true });
+  const compiler = ink({ brand, cwd, shims, minify: true });
   //use ink css
   compiler.use(css());
   //get the file system (to save the build files)

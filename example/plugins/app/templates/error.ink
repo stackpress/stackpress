@@ -11,8 +11,8 @@
   @ink utilities;
 </style>
 <script>
-  import { env, props } from '@stackpress/ink';
-  import { _ } from '@stackpress/incept-i18n';
+  import { env, props } from 'stackpress/template/client';
+  import { _ } from 'stackpress/i18n';
 
   const {
     config = {},

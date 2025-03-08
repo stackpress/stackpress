@@ -1,5 +1,5 @@
-<link rel="import" type="component" href="@stackpress/ink-ui/element/icon.ink" name="element-icon" />
-<link rel="import" type="component" href="@stackpress/ink-ui/element/notify.ink" name="element-notify" />
+<link rel="import" type="component" href="@stackpress/ink-ui/element/icon" name="element-icon" />
+<link rel="import" type="component" href="@stackpress/ink-ui/element/notify" name="element-notify" />
 <script>
   import Cookies from 'js-cookie';
 
