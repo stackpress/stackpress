@@ -4,9 +4,9 @@
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
-  "homepage": "https://github.com/stackpress/incept",
-  "bugs": "https://github.com/stackpress/incept/issues",
-  "repository": "stackpress/incept",
+  "homepage": "https://github.com/stackpress/stackpress",
+  "bugs": "https://github.com/stackpress/stackpress/issues",
+  "repository": "stackpress/stackpress",
   "keywords": [
     "ts",
     "typescript",
@@ -40,7 +40,7 @@
     "./plugin"
   ],
   "bin": {
-    "incept": "./bin.js"
+    "stackpress": "./bin.js"
   },
   "main": "index.js",
   "dependencies": {
