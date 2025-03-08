@@ -6,7 +6,7 @@ import type IngestServer from '@stackpress/ingest/dist/Server';
 import type IngestRouter from '@stackpress/ingest/dist/Router';
 import type IngestRoute from '@stackpress/ingest/dist/Route';
 
-export type * from '@/types';
+export type * from '@stackpress/ingest/dist/types';
 
 export type Response = IngestResponse<SR>;
 export type Request<

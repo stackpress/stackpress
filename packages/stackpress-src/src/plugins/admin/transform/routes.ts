@@ -9,12 +9,6 @@ export default function generate(directory: Directory, registry: Registry) {
     const ids = model.ids.map(column => `:${column.name}`).join('/')
     const file = `${model.name}/admin/routes.ts`;
     const source = directory.createSourceFile(file, '', { overwrite: true });
-    // import type { InkPlugin } from '@stackpress/incept-ink/dist/types';
-    source.addImportDeclaration({
-      isTypeOnly: true,
-      moduleSpecifier: '@stackpress/incept-ink/dist/types',
-      namedImports: [ 'InkPlugin' ]
-    });
     //import type Server from '@stackpress/ingest/dist/Server';
     source.addImportDeclaration({
       isTypeOnly: true,
