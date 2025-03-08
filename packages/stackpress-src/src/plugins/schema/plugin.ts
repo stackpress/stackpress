@@ -12,8 +12,7 @@ export default function plugin(server: Server) {
     const server = req.context;
     const module = server.config.path('client.module', '.client');
     try {
-      const client = server.loader.require(module);
-      server.register('client', client);
+      server.register('client', require(module));
     } catch(e) {}
   }, 10);
   //generate some code in the client folder
