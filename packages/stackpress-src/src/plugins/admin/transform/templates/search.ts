@@ -26,8 +26,7 @@ const template = `
 </style>
 <script>
   import Papa from 'papaparse/papaparse.min';
-  import { env, props, MouseEvent } from 'stackpress/template/client';
-  import { _ } from 'stackpress/i18n';
+  import { _, env, props } from 'stackpress/template/client';
   import { addQueryParam } from 'stackpress/template/helpers';
   const { 
     config = {},

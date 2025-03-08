@@ -20,8 +20,7 @@ const template = `
   @ink utilities;
 </style>
 <script>
-  import { env, props } from 'stackpress/template/client';
-  import { _ } from 'stackpress/i18n';
+  import { _, env, props } from 'stackpress/template/client';
 
   const { 
     config = {},

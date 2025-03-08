@@ -22,8 +22,7 @@ const template = `
 </style>
 <script>
   import mustache from 'mustache';
-  import { env, props } from 'stackpress/template/client';
-  import { _ } from 'stackpress/i18n';
+  import { _, env, props } from 'stackpress/template/client';
 
   const { 
     config = {},

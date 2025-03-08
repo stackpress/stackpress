@@ -1,5 +1,5 @@
 <script>
-  import { _ } from './index';
+  import { _ } from '../../i18n';
 
   const { trim = false, p = false, li = false, div = false } = this.props;
   const childlist = this.originalChildren;
