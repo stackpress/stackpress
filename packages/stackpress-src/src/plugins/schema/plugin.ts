@@ -26,6 +26,6 @@ export default function plugin(server: Server) {
     }
     //add this plugin generator to the schema
     //so it can be part of the transformation
-    transformer.schema.plugin['@stackpress/incept/dist/transform'] = {};
+    transformer.schema.plugin['stackpress/plugins/schema/transform'] = {};
   });
 };
