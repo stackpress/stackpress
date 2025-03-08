@@ -61,7 +61,7 @@ export default function plugin(server: Server) {
   server.on('route', req => {
     const server = req.context;
     //get server config
-    const mode = server.config.path('template.mode', 'http');
+    const mode = server.config.path('template.dev.mode', 'http');
     const environment = server.config.path('server.mode', 'production');
     const development = environment !== 'production';
     //dont add dev routes if not in development mode
