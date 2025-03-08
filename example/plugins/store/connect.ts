@@ -1,7 +1,10 @@
+//node
 import fs from 'node:fs';
 import path from 'node:path';
+//modules
 import { PGlite } from '@electric-sql/pglite';
-import pglite from '@stackpress/inquire-pglite';
+//stackpress
+import { connect as pglite } from 'stackpress/sql/pglite';
 
 const url = process.env.DATABASE_URL || './.build/database';
 
@@ -18,4 +21,4 @@ export default async function connect() {
     }
     return new PGlite(file);
   }); 
-}
+};

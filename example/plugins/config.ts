@@ -1,6 +1,7 @@
+//node
+import path from 'node:path';
+//stackpress
 import type { Config as StackpressConfig } from 'stackpress';
-
-import path from 'path';
 
 const cwd = process.cwd();
 const seed = process.env.SESSION_SEED || 'abc123';

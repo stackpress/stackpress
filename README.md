@@ -1,10 +1,10 @@
-# Incept
+# Stackpress
 
-Incept is a content management framework.
+Stackpress is a content management framework.
 
 ## Usage
 
-See [Example](https://github.com/stackpress/incept/tree/main/example) 
+See [Example](https://github.com/stackpress/stackpress/tree/main/example) 
 for use case.
 
 ## Model Spec

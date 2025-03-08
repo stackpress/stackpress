@@ -1,12 +1,11 @@
 //stackpress
-import type Server from '@stackpress/ingest/dist/Server';
-import { server as http } from '@stackpress/ingest/http';
+import { server as http } from 'stackpress/server/http';
 //local
 import { config } from './config';
 
 export default async function bootstrap(mode = config.server.mode) {
   //make a server
-  const server = http() as Server;
+  const server = http();
   //load the plugins
   await server.bootstrap();
   //initialize the plugins
