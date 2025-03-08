@@ -18,7 +18,7 @@ async function build() {
   );
   const build = server.config.path(
     'server.build', 
-    path.join(cwd, 'build')
+    path.join(cwd, '.build')
   );
   //make server, client and styles
   Terminal.warning('Building server, client and styles...');

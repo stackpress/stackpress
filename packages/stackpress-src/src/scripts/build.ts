@@ -11,12 +11,12 @@ const shims: [ string|RegExp, string ][] = [
 
 export default async function build(server: Server<any, any, any>) {
   //get the compiler options
-  const cwd = server.config.path('template.config.cwd', process.cwd());
-  const brand = server.config.path('template.config.brand', '');
+  const cwd = server.config.path('template.cwd', process.cwd());
+  const brand = server.config.path('template.brand', '');
   const extname = server.config.path('template.extname', '.press');
-  const clientPath = server.config.path<string>('template.config.clientPath');
-  const serverPath = server.config.path<string>('template.config.serverPath');
-  const manifestPath = server.config.path<string>('template.config.manifestPath');
+  const clientPath = server.config.path<string>('template.clientPath');
+  const serverPath = server.config.path<string>('template.serverPath');
+  const manifestPath = server.config.path<string>('template.manifestPath');
   //get paths
   const paths = {
     client: clientPath,
@@ -65,7 +65,7 @@ export default async function build(server: Server<any, any, any>) {
       //save the server build
       fs.writeFileSync(
         path.join(paths.server, `${builder.document.id}.js`),
-        (await builder.server()) + ';module.exports = InkAPI;'
+        await builder.server()
       );
     }
     //if there's a client path

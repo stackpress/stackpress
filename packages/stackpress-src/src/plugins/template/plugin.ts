@@ -72,7 +72,7 @@ export default function plugin(server: Server) {
       '/client'
     );
     const socketRoute = server.config.path(
-      'template.config.dev.socketRoute',
+      'template.dev.socketRoute',
       '/__stackpress__'
     );
     //get the template plugin
@@ -216,7 +216,7 @@ export function useEngine(server: Server) {
     res.setStatus(status.code, status.status);
     //get the noteplate flag
     const notemplate = req.context.config.path(
-      'template.config.notemplate', 
+      'template.notemplate', 
       'json'
     );
     //const render, if redirecting
