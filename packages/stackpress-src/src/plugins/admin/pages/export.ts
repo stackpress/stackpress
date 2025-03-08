@@ -3,7 +3,7 @@ import type { UnknownNest } from '@stackpress/lib/dist/types';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //schema
-import type Model from '@/schema/spec/Model';
+import type Model from '../../../schema/spec/Model';
 
 export default function AdminExportPageFactory(model: Model) {
   return async function AdminSearchPage(req: ServerRequest, res: Response) {

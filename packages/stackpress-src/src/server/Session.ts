@@ -5,14 +5,14 @@ import jwt from 'jsonwebtoken';
 import type Request from '@stackpress/ingest/dist/Request';
 import type Response from '@stackpress/ingest/dist/Response';
 //root
-import Exception from '@/Exception';
+import Exception from '../Exception';
 //local
 import type { 
   SessionData,
   SessionRoute, 
   SessionPermission, 
   SessionPermissionList
-} from '@/types';
+} from '../types';
 
 const isRegExp = /^\/.+\/[igmsuy]*$/
 

@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/dist/Server';
 import EventTerminal from '@stackpress/lib/dist/event/EventTerminal';
 import Transformer from '@stackpress/idea-transformer/dist/Transformer';
 //local
-import type { IdeaProjectProps } from '@/types';
+import type { IdeaProjectProps } from '../types';
 
 export default class InceptTerminal extends EventTerminal {
   // brand to prefix in all logs

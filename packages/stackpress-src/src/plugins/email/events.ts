@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 //stackpress
 import ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
 //root
-import type { EmailConfig } from '@/types';
+import type { EmailConfig } from '../../types';
 
 const emitter = new ServerRouter();
 

@@ -20,13 +20,13 @@ import type Create from '@stackpress/inquire/dist/builder/Create';
 import type HttpServer from '@stackpress/ink-dev/dist/HttpServer';
 import type WhatwgServer from '@stackpress/ink-dev/dist/WhatwgServer';
 //schema
-import type Model from '@/schema/spec/Model';
-import type Column from '@/schema/spec/Column';
-import type Fieldset from '@/schema/spec/Fieldset';
-import type Registry from '@/schema/Registry';
+import type Model from './schema/spec/Model';
+import type Column from './schema/spec/Column';
+import type Fieldset from './schema/spec/Fieldset';
+import type Registry from './schema/Registry';
 //local
-import type InceptTerminal from '@/terminal/Terminal';
-import type SessionClass from '@/server/Session';
+import type InceptTerminal from './terminal/Terminal';
+import type SessionClass from './server/Session';
 
 import type { Actions } from './sql/actions';
 

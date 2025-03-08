@@ -6,7 +6,7 @@ import type { Directory } from 'ts-morph';
 import type { SchemaConfig } from '@stackpress/idea-parser';
 import type Server from '@stackpress/ingest/dist/Server';
 //schema
-import Revisions from '@/schema/Revisions';
+import Revisions from '../../../schema/Revisions';
 
 /**
  * This is the The params comes form the cli

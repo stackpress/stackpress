@@ -1,8 +1,8 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Column from '@/schema/spec/Column';
-import type Registry from '@/schema/Registry';
+import type Column from '../../../schema/spec/Column';
+import type Registry from '../../../schema/Registry';
 //local
 import { clen, numdata } from '../schema';
 

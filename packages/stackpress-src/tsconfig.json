@@ -12,19 +12,7 @@
     "sourceMap": false,
     "strict": true,
     "target": "es6",
-    "skipLibCheck": true,
-    "paths": {
-      "@/i18n": [ "./src/i18n/index" ],
-      "@/i18n/*": [ "./src/i18n/*" ],
-      "@/plugins/*": [ "./src/plugins/*" ],
-      "@/template/*": [ "./src/template/*" ],
-      "@/schema/*": [ "./src/schema/*" ],
-      "@/server/*": [ "./src/server/*" ],
-      "@/sql/*": [ "./src/sql/*" ],
-      "@/terminal/*": [ "./src/terminal/*" ],
-      "@/types": [ "./src/types" ],
-      "@/Exception": [ "./src/Exception" ]
-    }
+    "skipLibCheck": true
   },
   "include": [ "src/**/*.ts" ],
   "exclude": [ "dist", "docs", "node_modules", "test"]

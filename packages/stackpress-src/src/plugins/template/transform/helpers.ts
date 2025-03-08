@@ -1,5 +1,5 @@
 //stackpress
-import type Column from '@/schema/spec/Column';
+import type Column from '../../../schema/spec/Column';
 //local
 import type { 
   Link, 

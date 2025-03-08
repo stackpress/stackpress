@@ -1,7 +1,7 @@
 //root
-import type { IdeaPluginWithProject } from '@/types';
+import type { IdeaPluginWithProject } from '../../../types';
 //schema
-import Registry from '@/schema/Registry';
+import Registry from '../../../schema/Registry';
 //local
 import generatePages from './pages';
 import generateTemplates from './templates';

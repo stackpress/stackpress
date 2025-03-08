@@ -6,7 +6,7 @@ import type {
   ApiEndpoint, 
   Application, 
   Session 
-} from '@/types';
+} from '../../types';
 import { authorize, unauthorized } from './helpers';
 
 /**

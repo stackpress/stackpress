@@ -1,5 +1,5 @@
 //root
-import type { Scalar } from '@/types';
+import type { Scalar } from '../types';
 //local
 import I18N from './I18N';
 

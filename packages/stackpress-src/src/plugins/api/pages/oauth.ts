@@ -2,7 +2,7 @@
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 //root
-import type { SessionData, ApiConfig, Session } from '@/types';
+import type { SessionData, ApiConfig, Session } from '../../../types';
 //local
 import { unauthorized } from '../helpers';
 

@@ -3,9 +3,9 @@ import type { UnknownNest } from '@stackpress/lib/dist/types';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //root
-import type { AdminConfig } from '@/types';
+import type { AdminConfig } from '../../../types';
 //schema
-import type Model from '@/schema/spec/Model';
+import type Model from '../../../schema/spec/Model';
 
 export default function AdminCreatePageFactory(model: Model) {
   return async function AdminCreatePage(req: ServerRequest, res: Response) {

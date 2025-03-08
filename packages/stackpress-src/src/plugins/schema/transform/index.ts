@@ -1,9 +1,9 @@
 //modules
 import { VariableDeclarationKind } from 'ts-morph';
 //root
-import type { IdeaPluginWithProject } from '@/types';
+import type { IdeaPluginWithProject } from '../../../types';
 //schema
-import Registry from '@/schema/Registry';
+import Registry from '../../../schema/Registry';
 //local
 import generateConfig from './config';
 import generateRegistry from './registry';

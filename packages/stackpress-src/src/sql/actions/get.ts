@@ -2,7 +2,7 @@
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 //schema
-import type Model from '@/schema/spec/Model';
+import type Model from '../../schema/spec/Model';
 //local
 import search from './search';
 

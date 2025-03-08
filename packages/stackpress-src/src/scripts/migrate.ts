@@ -5,13 +5,13 @@ import type { QueryObject } from '@stackpress/inquire/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 import type Server from '@stackpress/ingest/dist/Server';
 //schema
-import Revisions from '@/schema/Revisions';
+import Revisions from '../schema/Revisions';
 //root
-import type { DatabaseConfig } from '@/types'; 
+import type { DatabaseConfig } from '../types'; 
 //sql
-import { sequence } from '@/sql/helpers';
+import { sequence } from '../sql/helpers';
 //plugins
-import create from '@/plugins/sql/schema';
+import create from '../plugins/sql/schema';
 
 export default async function migrate(server: Server<any, any, any>, database: Engine) {
   //get config

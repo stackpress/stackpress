@@ -6,7 +6,7 @@ import mustache from 'mustache';
 //stackpress
 import type { FileSystem } from '@stackpress/lib/dist/types';
 //schema
-import type Registry from '@/schema/Registry';
+import type Registry from '../../../schema/Registry';
 //local
 import { getTableData } from './helpers';
 

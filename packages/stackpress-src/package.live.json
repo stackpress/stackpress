@@ -37,7 +37,7 @@
     "stackpress"
   ],
   "plugins": [
-    "./dist/plugin"
+    "./plugin"
   ],
   "bin": {
     "incept": "./bin.js"

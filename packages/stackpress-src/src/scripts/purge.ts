@@ -3,9 +3,9 @@ import type { QueryObject } from '@stackpress/inquire/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 import type Server from '@stackpress/ingest/dist/Server';
 //root
-import type { ClientPlugin } from '@/types';
+import type { ClientPlugin } from '../types';
 //sql
-import { sequence } from '@/sql/helpers';
+import { sequence } from '../sql/helpers';
 
 export default async function purge(server: Server<any, any, any>, database: Engine) {
   //get client

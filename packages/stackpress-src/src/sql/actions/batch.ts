@@ -2,9 +2,9 @@
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 //root
-import Exception from '@/Exception';
+import Exception from '../../Exception';
 //schema
-import type Model from '@/schema/spec/Model';
+import type Model from '../../schema/spec/Model';
 //local
 import { toResponse } from '../helpers';
 import create from './create';

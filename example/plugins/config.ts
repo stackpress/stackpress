@@ -44,9 +44,9 @@ export const config: Config = {
   },
   client: { 
     lang: 'js',
-    module: '.incept',
+    module: '.client',
     revisions: revisions,
-    build: path.join(modules, '.incept'),
+    build: path.join(modules, '.client'),
     tsconfig: tsconfig
   },
   database: {

@@ -2,9 +2,9 @@
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 //root
-import type { SessionExtended } from '@/types';
+import type { SessionExtended } from '../../../types';
 //sql
-import { toResponse } from '@/sql/helpers';
+import { toResponse } from '../../../sql/helpers';
 //local
 import { authorize, unauthorized } from '../helpers';
 

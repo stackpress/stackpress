@@ -1,9 +1,9 @@
 //stackpress
 import type Server from '@stackpress/ingest/dist/Server';
 //root
-import type { SessionPermissionList } from '@/types';
+import type { SessionPermissionList } from '../../types';
 //server
-import Session from '@/server/Session';
+import Session from '../../server/Session';
 
 /**
  * This interface is intended for the Incept library.

@@ -2,7 +2,7 @@
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 //root
-import type { ClientPlugin, DatabasePlugin } from '@/types';
+import type { ClientPlugin, DatabasePlugin } from '../../../types';
 //local
 import { signup } from '../actions';
 

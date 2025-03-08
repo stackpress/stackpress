@@ -7,7 +7,7 @@ import type {
   AuthExtended, 
   SessionPlugin,
   DatabasePlugin 
-} from '@/types';
+} from '../../../types';
 //local
 import { signin } from '../actions';
 

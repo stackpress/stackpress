@@ -2,8 +2,9 @@
 import Mustache from 'mustache';
 //stackpress
 import type { NestedObject } from '@stackpress/lib';
+//root
+import type { SchemaColumnInfo, SchemaSerialOptions } from '../../types';
 //local
-import type { SchemaColumnInfo, SchemaSerialOptions } from '@/types';
 import type Registry from '../Registry';
 import Attributes from './Attributes';
 import Column from './Column';

@@ -5,8 +5,8 @@ import type { Directory } from 'ts-morph';
 //stackress
 import type { FileSystem } from '@stackpress/lib/dist/types';
 //schema
-import type Registry from '@/schema/Registry';
-import { render } from '@/schema/helpers';
+import type Registry from '../../../../schema/Registry';
+import { render } from '../../../../schema/helpers';
 
 const template = `
 <link rel="import" type="template" href="stackpress/template/layout/head.ink" name="html-head" />

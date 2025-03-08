@@ -1,6 +1,6 @@
 //stackpress
 import type { Engine } from 'stackpress/sql';
-import scripts from 'stackpress/scripts';
+import * as scripts from 'stackpress/scripts';
 //plugins
 import bootstrap from '../plugins/bootstrap';
 

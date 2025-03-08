@@ -1,9 +1,9 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import Registry from '@/schema/Registry';
+import Registry from '../../../../schema/Registry';
 //sql
-import { sequence } from '@/sql/helpers';
+import { sequence } from '../../../../sql/helpers';
 //local
 import generateActions from './actions';
 import generateEvents from './events';

@@ -3,10 +3,10 @@ import { createId as cuid, init } from '@paralleldrive/cuid2';
 import { nanoid } from 'nanoid';
 //stackpress
 import type { EnumConfig } from '@stackpress/idea-parser/dist/types';
-//common
-import assert from '../assert';
+//root
+import type { SchemaColumnInfo, SchemaSerialOptions } from '../../types';
 //local
-import type { SchemaColumnInfo, SchemaSerialOptions } from '@/types';
+import assert from '../assert';
 import type Fieldset from './Fieldset';
 import Attributes from './Attributes';
 import { snakerize } from '../helpers';

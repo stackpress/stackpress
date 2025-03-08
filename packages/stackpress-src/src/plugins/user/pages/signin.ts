@@ -2,7 +2,7 @@
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 //root
-import type { SigninType, AuthExtended, SessionPlugin } from '@/types';
+import type { SigninType, AuthExtended, SessionPlugin } from '../../../types';
 
 export default async function SignInPage(req: ServerRequest, res: Response) {
   //if there is a response body or there is an error code

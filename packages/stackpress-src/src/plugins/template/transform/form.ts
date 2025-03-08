@@ -6,7 +6,7 @@ import mustache from 'mustache';
 //stackpress
 import type { FileSystem } from '@stackpress/lib/dist/types';
 //registry
-import type Registry from '@/schema/Registry';
+import type Registry from '../../../schema/Registry';
 //local
 import type { FormData } from './types';
 import { getFormFields } from './helpers';

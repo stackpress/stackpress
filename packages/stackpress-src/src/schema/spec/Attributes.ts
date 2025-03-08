@@ -5,7 +5,7 @@ import type {
   SchemaAssertion, 
   SchemaComponent, 
   SchemaRelation 
-} from '@/types';
+} from '../../types';
 
 export default class Attributes extends Map<string, unknown> {
   /**

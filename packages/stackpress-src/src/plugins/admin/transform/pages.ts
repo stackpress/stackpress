@@ -1,7 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '@/schema/Registry';
+import type Registry from '../../../schema/Registry';
 
 export default function generate(directory: Directory, registry: Registry) {
   page('create', directory, registry);

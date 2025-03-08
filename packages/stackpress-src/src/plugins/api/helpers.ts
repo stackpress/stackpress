@@ -2,7 +2,7 @@
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //root
-import Exception from '@/Exception';
+import Exception from '../../Exception';
 
 export function authorize(req: ServerRequest, res: Response) {
   const authorization = req.headers.get('authorization') as string;
