@@ -1,10 +1,11 @@
 //stackpress
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
-//plugins
-import { toResponse } from '@/plugins/sql/helpers';
+//root
+import type { SessionExtended } from '@/types';
+//sql
+import { toResponse } from '@/sql/helpers';
 //local
-import type { SessionExtended } from '../types';
 import { authorize, unauthorized } from '../helpers';
 
 export default async function APIToken(req: ServerRequest, res: Response) {

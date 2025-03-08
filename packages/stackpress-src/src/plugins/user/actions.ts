@@ -9,14 +9,14 @@ import { email } from '@/schema/assert';
 //local
 import type { 
   Auth,
-  Client,
+  ClientPlugin,
   Profile, 
   ProfileAuth, 
   AuthExtended,
   SignupInput, 
   SigninType, 
   SigninInput
-} from './types';
+} from '@/types';
 import { encrypt, hash } from './helpers';
 
 /**
@@ -26,7 +26,7 @@ export async function signup(
   input: Partial<SignupInput>,
   seed: string,
   engine: Engine,
-  client: Client
+  client: ClientPlugin
 ): Promise<Partial<StatusResponse<ProfileAuth>>> {
   //validate input
   const errors = assert(input);
@@ -112,7 +112,7 @@ export async function signin(
   input: Partial<SigninInput>,
   seed: string,
   engine: Engine,
-  client: Client
+  client: ClientPlugin
 ): Promise<Partial<StatusResponse<AuthExtended>>> {
   const actions = client.model.auth.actions(engine);
   const token = encrypt(String(input[type]), seed);

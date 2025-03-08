@@ -1,10 +1,9 @@
 //stackpress
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
-//plugins
-import type { SessionData } from '@/plugins/user/types';
+//root
+import type { SessionData, ApiConfig, Session } from '@/types';
 //local
-import type { APIConfig, Session } from '../types';
 import { unauthorized } from '../helpers';
 
 export default async function OAuth(req: ServerRequest, res: Response) {
@@ -48,7 +47,7 @@ export default async function OAuth(req: ServerRequest, res: Response) {
     //get expires length
     const { 
       expires = 1000 * 60 * 60 * 24 
-    } = server.config<APIConfig['api']>('api') || {};
+    } = server.config<ApiConfig>('api') || {};
     const response = await server.call<Session>('session-create', {
       ...req.data(),
       applicationId: id,

@@ -3,7 +3,7 @@ import Mustache from 'mustache';
 //stackpress
 import type { NestedObject } from '@stackpress/lib';
 //local
-import type { ColumnInfo, SerialOptions } from '../types';
+import type { SchemaColumnInfo, SchemaSerialOptions } from '@/types';
 import type Registry from '../Registry';
 import Attributes from './Attributes';
 import Column from './Column';
@@ -173,7 +173,7 @@ export default class Fieldset {
     registry: Registry,
     name: string, 
     attributes: Record<string, unknown>, 
-    columns: ColumnInfo[]
+    columns: SchemaColumnInfo[]
   ) {
     this.registry = registry;
     this.name = name;
@@ -271,7 +271,10 @@ export default class Fieldset {
   /**
    * Serializes values to be inserted into the database
    */
-  public serialize(values: Record<string, any>, options: SerialOptions = {}) {
+  public serialize(
+    values: Record<string, any>, 
+    options: SchemaSerialOptions = {}
+  ) {
     const serialized: Record<string, string|number|boolean|Date|null|undefined> = {};
     for (const [ name, value ] of Object.entries(values)) {
       const column = this.columns.get(name);
@@ -286,7 +289,10 @@ export default class Fieldset {
   /**
    * Unserializes a value coming from the database
    */
-  public unserialize(values: Record<string, any>, options: SerialOptions = {}) {
+  public unserialize(
+    values: Record<string, any>, 
+    options: SchemaSerialOptions = {}
+  ) {
     const unserialized: Record<string, any> = {};
     for (const [ name, value ] of Object.entries(values)) {
       const column = this.fromSnake(name);

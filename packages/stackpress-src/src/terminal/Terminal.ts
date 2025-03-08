@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/dist/Server';
 import EventTerminal from '@stackpress/lib/dist/event/EventTerminal';
 import Transformer from '@stackpress/idea-transformer/dist/Transformer';
 //local
-import type { ProjectProps } from '../types';
+import type { IdeaProjectProps } from '@/types';
 
 export default class InceptTerminal extends EventTerminal {
   // brand to prefix in all logs
@@ -18,7 +18,7 @@ export default class InceptTerminal extends EventTerminal {
   //the server
   public readonly server: Server<any, any, any>;
   //transformer
-  public readonly transformer: Transformer<ProjectProps>;
+  public readonly transformer: Transformer<IdeaProjectProps>;
 
   /**
    * Preloads the input and output settings
@@ -32,7 +32,7 @@ export default class InceptTerminal extends EventTerminal {
     //get idea file from commandline
     const input = this.expect([ 'input', 'i' ], idea);
     //make a new transformer
-    this.transformer = new Transformer<ProjectProps>(input, { 
+    this.transformer = new Transformer<IdeaProjectProps>(input, { 
       cwd: server.loader.cwd, 
       fs: server.loader.fs 
     });

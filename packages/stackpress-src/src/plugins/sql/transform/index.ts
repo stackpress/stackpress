@@ -1,7 +1,7 @@
 //schema
 import Registry from '../../../schema/Registry';
 //root
-import type { PluginWithProject } from '@/types';
+import type { IdeaPluginWithProject } from '@/types';
 //local
 import generateSchema from './schema';
 import generateActions from './actions';
@@ -45,7 +45,7 @@ import generateTests from './tests';
 /**
  * This is the The params comes form the cli
  */
-export default async function generate(props: PluginWithProject) {
+export default async function generate(props: IdeaPluginWithProject) {
   //-----------------------------//
   // 1. Config
   //extract props

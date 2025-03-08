@@ -1,5 +1,5 @@
 //root
-import type { PluginWithProject } from '@/types';
+import type { IdeaPluginWithProject } from '@/types';
 //schema
 import Registry from '@/schema/Registry';
 //local
@@ -32,7 +32,7 @@ import generateRoutes from './routes';
 /**
  * This is the The params comes form the cli
  */
-export default function generate(props: PluginWithProject) {
+export default function generate(props: IdeaPluginWithProject) {
   //-----------------------------//
   // 1. Config
   //extract props

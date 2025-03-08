@@ -4,8 +4,8 @@ import type { Directory } from 'ts-morph';
 import type Column from '@/schema/spec/Column';
 import type Model from '@/schema/spec/Model';
 import Registry from '@/schema/Registry';
-//local
-import { sequence } from '../../helpers';
+//sql
+import { sequence } from '@/sql/helpers';
 
 const samples = [
   {

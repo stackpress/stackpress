@@ -4,15 +4,12 @@ import type Engine from '@stackpress/inquire/dist/Engine';
 import type Server from '@stackpress/ingest/dist/Server';
 //root
 import type { ClientPlugin } from '@/types';
-//plugins
-import type { ClientWithDatabasePlugin } from '@/plugins/sql/types';
-import { sequence } from '@/plugins/sql/helpers';
-
-type Client = ClientPlugin<ClientWithDatabasePlugin>;
+//sql
+import { sequence } from '@/sql/helpers';
 
 export default async function purge(server: Server<any, any, any>, database: Engine) {
   //get client
-  const client = server.plugin<Client>('client') || {};
+  const client = server.plugin<ClientPlugin>('client') || {};
   //get models
   const models = Object.values(client.model);
   //repo of all the queries for the transaction

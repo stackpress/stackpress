@@ -2,10 +2,10 @@
 import type { UnknownNest } from '@stackpress/lib/dist/types';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
+//root
+import type { AdminConfig } from '@/types';
 //schema
 import type Model from '@/schema/spec/Model';
-//local
-import type { AdminConfig } from '../types';
 
 export default function AdminCreatePageFactory(model: Model) {
   return async function AdminCreatePage(req: ServerRequest, res: Response) {
@@ -17,7 +17,7 @@ export default function AdminCreatePageFactory(model: Model) {
     //get the server
     const server = req.context;
     //get the admin config
-    const admin = server.config<AdminConfig['admin']>('admin') || {};
+    const admin = server.config<AdminConfig>('admin') || {};
     const root = admin.root || '/admin';
     //if form submitted
     if (req.method === 'POST') {

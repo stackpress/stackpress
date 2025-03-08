@@ -4,10 +4,6 @@ import type Transformer from '@stackpress/idea-transformer/dist/Transformer';
 import type Server from '@stackpress/ingest/dist/Server';
 //root
 import type { ClientPlugin } from '@/types';
-//local
-import type { ClientWithRoutesPlugin } from './types';
-
-type Client = ClientPlugin<ClientWithRoutesPlugin>;
 
 /**
  * This interface is intended for the Incept library.
@@ -19,7 +15,7 @@ export default function plugin(server: Server) {
     try {
       //it's possible that the client isnt generated yet...
       //config, registry, model, fieldset
-      const client = server.plugin<Client>('client');
+      const client = server.plugin<ClientPlugin>('client');
       //loop through all the models
       for (const model of Object.values(client.model)) {
         //register all the admin routes

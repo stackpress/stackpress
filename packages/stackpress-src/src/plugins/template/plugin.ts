@@ -15,7 +15,7 @@ import { getStatus } from '@stackpress/lib/dist/Status';
 import { plugin as css } from '@stackpress/ink-css';
 import { serialize } from '@stackpress/ink/compiler';
 //local
-import type { TemplatePlugin, RefreshServers } from './types';
+import type { TemplatePlugin, TemplateServers } from '@/types';
 
 /**
  * This interface is intended for the Incept library.
@@ -162,7 +162,7 @@ export function id(filePath: string, loader: FileLoader) {
 export function useRender(
   server: Server,
   compiler: InkCompiler, 
-  refresh: RefreshServers
+  refresh: TemplateServers
 ) {
   //get config
   const mode = server.config.path('template.mode', 'http');

@@ -1,7 +1,8 @@
 //stackpress
 import type Server from '@stackpress/ingest/dist/Server';
+//root
+import type { Languages } from '@/types';
 //local
-import type { Languages } from './types';
 import I18N from './I18N';
 
 export type Config = { languages: Languages };

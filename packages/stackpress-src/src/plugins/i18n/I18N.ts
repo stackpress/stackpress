@@ -1,5 +1,5 @@
-//local
-import type { Scalar, Languages } from './types';
+//root
+import type { Scalar, Languages } from '@/types';
 
 export default class I18N {
   //the active language

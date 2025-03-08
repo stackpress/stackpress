@@ -1,10 +1,10 @@
 //stackpress
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
+//root
+import type { AdminConfig } from '@/types';
 //schema
 import type Model from '@/schema/spec/Model';
-//local
-import type { AdminConfig } from '../types';
 
 export default function AdminRemovePageFactory(model: Model) {
   return async function AdminRemovePage(req: ServerRequest, res: Response) {
@@ -16,7 +16,7 @@ export default function AdminRemovePageFactory(model: Model) {
     //get the server
     const server = req.context;
     //get the admin config
-    const admin = server.config<AdminConfig['admin']>('admin') || {};
+    const admin = server.config<AdminConfig>('admin') || {};
     const root = admin.root || '/admin';
     //get id from url params
     const ids = model.ids.map(column => req.data(column.name)).filter(Boolean);

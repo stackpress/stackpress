@@ -1,7 +1,12 @@
 //stackpress
 import type Server from '@stackpress/ingest/dist/Server';
 //local
-import type { APIConfig, Endpoint, Application, Session } from './types';
+import type { 
+  ApiConfig, 
+  ApiEndpoint, 
+  Application, 
+  Session 
+} from '@/types';
 import { authorize, unauthorized } from './helpers';
 
 /**
@@ -13,12 +18,8 @@ export default function plugin(server: Server) {
     const server = req.context;
     server.imports.all('/auth/oauth/token', () => import('./pages/token'));
     server.imports.all('/auth/oauth', () => import('./pages/oauth'));
-    server.view.all(
-      '/auth/oauth', 
-      '@stackpress/incept-api/dist/templates/oauth', 
-      -100
-    );
-    const { endpoints = [] } = server.config<APIConfig['api']>('api') || {};
+    server.view.all('/auth/oauth', 'stackpress/template/pages/oauth', -100);
+    const { endpoints = [] } = server.config<ApiConfig>('api') || {};
     for (const endpoint of endpoints) {
       if (endpoint.type === 'session') {
         session(endpoint, server);
@@ -31,7 +32,7 @@ export default function plugin(server: Server) {
   });
 };
 
-export function session(endpoint: Endpoint, server: Server) {
+export function session(endpoint: ApiEndpoint, server: Server) {
   server.route(endpoint.method, endpoint.route, async function SessionAPI(req, res) {
     const server = req.context;
     //authorization check
@@ -63,7 +64,7 @@ export function session(endpoint: Endpoint, server: Server) {
   }, endpoint.priority || 0);
 };
 
-export function app(endpoint: Endpoint, server: Server) {
+export function app(endpoint: ApiEndpoint, server: Server) {
   server.route(endpoint.method, endpoint.route, async function AppAPI(req, res) {
     const server = req.context;
     //authorization check
@@ -94,7 +95,7 @@ export function app(endpoint: Endpoint, server: Server) {
   }, endpoint.priority || 0);
 };
 
-export function open(endpoint: Endpoint, server: Server) {
+export function open(endpoint: ApiEndpoint, server: Server) {
   server.route(endpoint.method, endpoint.route, async function PublicAPI(req, res) {
     const server = req.context;
     req.data.set(endpoint.data || {});

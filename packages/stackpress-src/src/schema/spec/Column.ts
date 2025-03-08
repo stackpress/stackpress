@@ -6,7 +6,7 @@ import type { EnumConfig } from '@stackpress/idea-parser/dist/types';
 //common
 import assert from '../assert';
 //local
-import type { ColumnInfo, SerialOptions } from '../types';
+import type { SchemaColumnInfo, SchemaSerialOptions } from '@/types';
 import type Fieldset from './Fieldset';
 import Attributes from './Attributes';
 import { snakerize } from '../helpers';
@@ -471,7 +471,7 @@ export default class Column {
   /**
    * Sets the fieldset and column information
    */
-  public constructor(fieldset: Fieldset, info: ColumnInfo) {
+  public constructor(fieldset: Fieldset, info: SchemaColumnInfo) {
     this._fieldset = fieldset;
     this.type = info.type;
     this.name = info.name;
@@ -523,7 +523,7 @@ export default class Column {
    */
   public serialize(
     value: any, 
-    options: SerialOptions = {}
+    options: SchemaSerialOptions = {}
   ): string|number|boolean|Date|null|undefined {
     const { bool = true, date = true, object = false } = options;
     //if value is null or undefined and not required
@@ -620,7 +620,7 @@ export default class Column {
   /**
    * Unserializes a value coming from the database
    */
-  public unserialize(value: any, options: SerialOptions = {}) {
+  public unserialize(value: any, options: SchemaSerialOptions = {}) {
     const { bool = true, date = true } = options;
     //if value is null or undefined
     if (value === null || typeof value === 'undefined') {

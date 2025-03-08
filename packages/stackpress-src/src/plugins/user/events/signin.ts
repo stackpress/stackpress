@@ -1,10 +1,14 @@
 //stackpress
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
-//plugins
-import type { DatabasePlugin } from '@/plugins/sql/types';
+//root
+import type { 
+  ClientPlugin, 
+  AuthExtended, 
+  SessionPlugin,
+  DatabasePlugin 
+} from '@/types';
 //local
-import type { Client, AuthExtended, SessionPlugin } from '../types';
 import { signin } from '../actions';
 
 export default async function AuthSignin(req: ServerRequest, res: Response) {
@@ -15,7 +19,7 @@ export default async function AuthSignin(req: ServerRequest, res: Response) {
   //get the database engine 
   const engine = server.plugin<DatabasePlugin>('database');
   //get the client
-  const client = server.plugin<Client>('client');
+  const client = server.plugin<ClientPlugin>('client');
   //get the session seed
   const seed = server.config.path('session.seed', 'abc123');
   //get the user from the database

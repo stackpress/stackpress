@@ -3,8 +3,8 @@ import type { SendMailOptions, SentMessageInfo } from 'nodemailer';
 import nodemailer from 'nodemailer';
 //stackpress
 import ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
-//local
-import type { EmailConfig } from './types';
+//root
+import type { EmailConfig } from '@/types';
 
 const emitter = new ServerRouter();
 
@@ -15,7 +15,7 @@ emitter.on('email-send', async function EmailSend(req, res) {
     return;
   }
   const server = req.context;
-  const config = server.config<EmailConfig['email']>('email');
+  const config = server.config<EmailConfig>('email');
   if (!config) return;
   const options = req.data<SendMailOptions>();
   const transporter = nodemailer.createTransport(config);

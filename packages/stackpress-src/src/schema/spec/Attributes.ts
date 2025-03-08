@@ -1,7 +1,11 @@
 //stackpress
 import type { Data } from '@stackpress/idea-parser';
 //local
-import type { Assertion, Component, Relation } from '../types';
+import type { 
+  SchemaAssertion, 
+  SchemaComponent, 
+  SchemaRelation 
+} from '@/types';
 
 export default class Attributes extends Map<string, unknown> {
   /**
@@ -37,7 +41,7 @@ export default class Attributes extends Map<string, unknown> {
    * Returns the column assertions
    */
   public get assertions() {
-    const assertions: Assertion[] = [];
+    const assertions: SchemaAssertion[] = [];
 
     //explicit validators
     for (const name in this.keys()) {
@@ -101,7 +105,7 @@ export default class Attributes extends Map<string, unknown> {
    * Returns the column field (defaults to none)
    * example: @field.text({type "text"})
    */
-  public get field(): Component {
+  public get field(): SchemaComponent {
     for (const name of this.keys()) {
       if (!name.startsWith('field.')) {
         continue;
@@ -127,7 +131,7 @@ export default class Attributes extends Map<string, unknown> {
    * Returns the column filter field (defaults to none)
    * example: @filter.text({type "text"})
    */
-  public get filter(): Component {
+  public get filter(): SchemaComponent {
     for (const name of this.keys()) {
       if (!name.startsWith('filter.')) {
         continue;
@@ -206,7 +210,7 @@ export default class Attributes extends Map<string, unknown> {
    * Returns the column list format (defaults to none)
    * example: @list.char({length 1})
    */
-  public get list(): Component {
+  public get list(): SchemaComponent {
     for (const name of this.keys()) {
       if (!name.startsWith('list.')) {
         continue;
@@ -286,7 +290,7 @@ export default class Attributes extends Map<string, unknown> {
    */
   public get relation() {
     //ie. owner User @relation({ name "connections" local "userId" foreign "id" })
-    const attribute = this.get('relation') as [ Relation ] | undefined;
+    const attribute = this.get('relation') as [ SchemaRelation ] | undefined;
     //if no relation or invalid relation
     if (!attribute || typeof attribute[0] !== 'object') {
       return null;
@@ -313,7 +317,7 @@ export default class Attributes extends Map<string, unknown> {
    * Returns the column span field (defaults to none)
    * example: @span.text({type "text"})
    */
-  public get span(): Component {
+  public get span(): SchemaComponent {
     for (const name of this.keys()) {
       if (!name.startsWith('span.')) {
         continue;
@@ -390,7 +394,7 @@ export default class Attributes extends Map<string, unknown> {
    * Returns the column @view format (defaults to none)
    * example: @view.char({length 1})
    */
-  public get view(): Component {
+  public get view(): SchemaComponent {
     for (const name of this.keys()) {
       if (!name.startsWith('view.')) {
         continue;

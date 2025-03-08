@@ -1,8 +1,9 @@
 //stackpress
 import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
+//root
+import type { AuthExtended, SessionPlugin } from '@/types';
 //local
-import type { AuthExtended, SessionPlugin } from '../types';
 import { decrypt } from '../helpers';
 
 export default async function AuthSearch(req: ServerRequest, res: Response) {

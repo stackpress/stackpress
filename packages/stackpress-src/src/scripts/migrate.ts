@@ -6,15 +6,17 @@ import type Engine from '@stackpress/inquire/dist/Engine';
 import type Server from '@stackpress/ingest/dist/Server';
 //schema
 import Revisions from '@/schema/Revisions';
+//root
+import type { DatabaseConfig } from '@/types'; 
+//sql
+import { sequence } from '@/sql/helpers';
 //plugins
-import type { DatabaseConfig } from '@/plugins/sql/types'; 
 import create from '@/plugins/sql/schema';
-import { sequence } from '@/plugins/sql/helpers';
 
 export default async function migrate(server: Server<any, any, any>, database: Engine) {
   //get config
   const root = server.config.path<string>('client.revisions');
-  const { migrations } = server.config<DatabaseConfig['database']>('database') || {}; 
+  const { migrations } = server.config<DatabaseConfig>('database') || {}; 
   //if there is not a migrations or revisions folder
   if (!migrations || !root) {
     return;

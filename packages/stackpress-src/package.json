@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "yarn build:tsc && yarn build:files && yarn build:package",
-    "build:files": "cp README.md LICENSE bin.js tsconfig.json ../stackpress",
+    "build:files": "cp README.md LICENSE bin.js stackpress.idea tsconfig.json ../stackpress",
     "build:package": "cp ./package.live.json ../stackpress/package.json",
     "build:tsc": "tsc"
   },
