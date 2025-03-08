@@ -33,9 +33,9 @@ export function page(action: string, directory: Directory, registry: Registry) {
       moduleSpecifier: '@stackpress/ingest/dist/Response',
       defaultImport: 'Response'
     });
-    //import create from '@stackpress/incept-admin/dist/pages/create';
+    //import create from 'stackpress/plugins/admin/pages/create';
     source.addImportDeclaration({
-      moduleSpecifier: `@stackpress/incept-admin/dist/pages/${lower}`,
+      moduleSpecifier: `stackpress/plugins/admin/pages/${lower}`,
       //consider import/export keywords
       defaultImport: `${lower}Page`
     });

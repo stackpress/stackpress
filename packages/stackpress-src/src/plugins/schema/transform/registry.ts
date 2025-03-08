@@ -12,10 +12,10 @@ export default function generate(directory: Directory, registry: Registry) {
   for (const model of registry.model.values()) {
     const filepath = `${model.name}/config.ts`;
     const source = directory.createSourceFile(filepath, '', { overwrite: true });
-    //import type Model from '@stackpress/incept/dist/schema/Model';
+    //import type Model from 'stackpress/schema/spec/Model';
     source.addImportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: '@stackpress/incept/dist/schema/Model',
+      moduleSpecifier: 'stackpress/schema/spec/Model',
       defaultImport: 'Model'
     });
     //import registry from '../registry';
@@ -34,10 +34,10 @@ export default function generate(directory: Directory, registry: Registry) {
   for (const fieldset of registry.fieldset.values()) {
     const filepath = `${fieldset.name}/config.ts`;
     const source = directory.createSourceFile(filepath, '', { overwrite: true });
-    //import type Fieldset from '@stackpress/incept/dist/schema/Fieldset';
+    //import type Fieldset from 'stackpress/schema/spec/Fieldset';
     source.addImportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: '@stackpress/incept/dist/schema/Fieldset',
+      moduleSpecifier: 'stackpress/schema/spec/Fieldset',
       defaultImport: 'Fieldset'
     });
     //import registry from '../registry';
@@ -59,9 +59,9 @@ export default function generate(directory: Directory, registry: Registry) {
     moduleSpecifier: '@stackpress/idea-parser',
     namedImports: [ 'SchemaConfig' ]
   });
-  //import Registry from '@stackpress/incept/dist/schema/Registry';
+  //import Registry from 'stackpress/schema/Registry';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept/dist/schema/Registry',
+    moduleSpecifier: 'stackpress/schema/Registry',
     defaultImport: 'Registry'
   });
   //import config from './config.json';

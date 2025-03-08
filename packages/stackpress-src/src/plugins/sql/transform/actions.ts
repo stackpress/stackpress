@@ -61,9 +61,9 @@ export default function generate(directory: Directory, registry: Registry) {
       moduleSpecifier: '@stackpress/inquire/dist/Engine',
       defaultImport: 'Engine'
     });
-    //import { Actions } from '@stackpress/incept-inquire/dist/actions';
+    //import { Actions } from 'stackpress/sql/actions';
     source.addImportDeclaration({
-      moduleSpecifier: '@stackpress/incept-inquire/dist/actions',
+      moduleSpecifier: 'stackpress/sql/actions',
       defaultImport: 'Actions'
     });
     //import config from '../config';
@@ -158,9 +158,9 @@ export function batch(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ model.title ]
   });
-  //import batch from '@stackpress/incept-inquire/dist/actions/batch';
+  //import batch from 'stackpress/sql/actions/batch';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/batch',
+    moduleSpecifier: 'stackpress/sql/actions/batch',
     defaultImport: 'batch'
   });
   //import config from '../config';
@@ -206,9 +206,9 @@ export function create(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ model.title ]
   });
-  //import create from '@stackpress/incept-inquire/dist/actions/create';
+  //import create from 'stackpress/sql/actions/create';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/create',
+    moduleSpecifier: 'stackpress/sql/actions/create',
     defaultImport: 'create'
   });
   //import config from '../config';
@@ -248,9 +248,9 @@ export function detail(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import detail from '@stackpress/incept-inquire/dist/actions/detail';
+  //import detail from 'stackpress/sql/actions/detail';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/detail',
+    moduleSpecifier: 'stackpress/sql/actions/detail',
     defaultImport: 'detail'
   });
   //import config from '../config';
@@ -290,9 +290,9 @@ export function get(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import get from '@stackpress/incept-inquire/dist/actions/get';
+  //import get from 'stackpress/sql/actions/get';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/get',
+    moduleSpecifier: 'stackpress/sql/actions/get',
     defaultImport: 'get'
   });
   //import config from '../config';
@@ -334,9 +334,9 @@ export function remove(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import remove from '@stackpress/incept-inquire/dist/actions/remove';
+  //import remove from 'stackpress/sql/actions/remove';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/remove',
+    moduleSpecifier: 'stackpress/sql/actions/remove',
     defaultImport: 'remove'
   });
   //import config from '../config';
@@ -376,9 +376,9 @@ export function restore(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import restore from '@stackpress/incept-inquire/dist/actions/restore';
+  //import restore from 'stackpress/sql/actions/restore';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/restore',
+    moduleSpecifier: 'stackpress/sql/actions/restore',
     defaultImport: 'restore'
   });
   //import config from '../config';
@@ -406,10 +406,10 @@ export function search(model: Model, directory: Directory) {
     '', 
     { overwrite: true }
   );
-  //import type { SearchParams } from '@stackpress/incept-inquire/dist/types';
+  //import type { SearchParams } from 'stackpress/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '@stackpress/incept-inquire/dist/types',
+    moduleSpecifier: 'stackpress/types',
     namedImports: [ 'SearchParams' ]
   });
   //import type Engine from '@stackpress/inquire/dist/Engine';
@@ -424,9 +424,9 @@ export function search(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import search from '@stackpress/incept-inquire/dist/actions/search';
+  //import search from 'stackpress/sql/actions/search';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/search',
+    moduleSpecifier: 'stackpress/sql/actions/search',
     defaultImport: 'search'
   });
   //import config from '../config';
@@ -472,9 +472,9 @@ export function update(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import update from '@stackpress/incept-inquire/dist/actions/update';
+  //import update from 'stackpress/sql/actions/update';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/update',
+    moduleSpecifier: 'stackpress/sql/actions/update',
     defaultImport: 'update'
   });
   //import config from '../config';
@@ -522,9 +522,9 @@ export function upsert(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import upsert from '@stackpress/incept-inquire/dist/actions/upsert';
+  //import upsert from 'stackpress/sql/actions/upsert';
   source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/incept-inquire/dist/actions/upsert',
+    moduleSpecifier: 'stackpress/sql/actions/upsert',
     defaultImport: 'upsert'
   });
   //import config from '../config';

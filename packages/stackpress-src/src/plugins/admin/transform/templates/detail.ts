@@ -9,12 +9,12 @@ import type Registry from '@/schema/Registry';
 import { render } from '@/schema/helpers';
 
 const template = `
-<link rel="import" type="template" href="@stackpress/incept-admin/dist/components/head.ink" name="html-head" />
+<link rel="import" type="template" href="stackpress/template/layout/head.ink" name="html-head" />
 <link rel="import" type="component" href="@stackpress/ink-ui/element/icon.ink" name="element-icon" />
 <link rel="import" type="component" href="@stackpress/ink-ui/element/crumbs.ink" name="element-crumbs" />
 <link rel="import" type="component" href="@stackpress/ink-ui/form/button.ink" name="form-button" />
 <link rel="import" type="component" href="../../components/view.ink" name="{{lower}}-view" />
-<link rel="import" type="component" href="@stackpress/incept-admin/dist/components/app.ink" name="admin-app" />
+<link rel="import" type="component" href="stackpress/template/layout/app.ink" name="admin-app" />
 <style>
   @ink theme;
   @ink reset;
@@ -23,8 +23,8 @@ const template = `
 </style>
 <script>
   import mustache from 'mustache';
-  import { env, props } from '@stackpress/ink';
-  import { _ } from '@stackpress/incept-i18n';
+  import { env, props } from 'stackpress/template/client';
+  import { _ } from 'stackpress/i18n';
 
   const { 
     config = {},

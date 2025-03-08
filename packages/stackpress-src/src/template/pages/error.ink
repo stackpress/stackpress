@@ -1,9 +1,9 @@
-<link rel="import" type="template" href="../layout/head" name="html-head" />
-<link rel="import" type="component" href="@stackpress/press-ui/layout/table" name="table-layout" />
-<link rel="import" type="component" href="@stackpress/press-ui/layout/table/head" name="table-head" />
-<link rel="import" type="component" href="@stackpress/press-ui/layout/table/row" name="table-row" />
-<link rel="import" type="component" href="@stackpress/press-ui/layout/table/col" name="table-col" />
-<link rel="import" type="component" href="../layout/app" name="admin-app" />
+<link rel="import" type="template" href="../layout/head.ink" name="html-head" />
+<link rel="import" type="component" href="@stackpress/ink-ui/layout/table.ink" name="table-layout" />
+<link rel="import" type="component" href="@stackpress/ink-ui/layout/table/head.ink" name="table-head" />
+<link rel="import" type="component" href="@stackpress/ink-ui/layout/table/row.ink" name="table-row" />
+<link rel="import" type="component" href="@stackpress/ink-ui/layout/table/col.ink" name="table-col" />
+<link rel="import" type="component" href="../layout/app.ink" name="admin-app" />
 <style>
   @ink theme;
   @ink reset;
@@ -11,8 +11,8 @@
   @ink utilities;
 </style>
 <script>
-  import { env, props } from '@stackpress/ink';
-  import { _ } from '@stackpress/incept-i18n';
+  import { env, props } from '../client';
+  import { _ } from '../../i18n';
 
   const { 
     code = 200, 

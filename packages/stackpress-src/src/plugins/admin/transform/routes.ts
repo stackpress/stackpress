@@ -30,67 +30,66 @@ export default function generate(directory: Directory, registry: Registry) {
       ],
       statements: `
         const root = server.config.path('admin.root', '/admin');
-        server.withImports.all(
+        server.imports.all(
           \`\${root}/${model.dash}/create\`, 
           () => import('./pages/create')
         );
-        server.withImports.all(
+        server.imports.all(
           \`\${root}/${model.dash}/detail/${ids}\`, 
           () => import('./pages/detail')
         );
-        server.withImports.all(
+        server.imports.all(
           \`\${root}/${model.dash}/export\`, 
           () => import('./pages/export')
         );
-        server.withImports.all(
+        server.imports.all(
           \`\${root}/${model.dash}/import\`, 
           () => import('./pages/import')
         );
-        server.withImports.all(
+        server.imports.all(
           \`\${root}/${model.dash}/remove/${ids}\`, 
           () => import('./pages/remove')
         );
-        server.withImports.all(
+        server.imports.all(
           \`\${root}/${model.dash}/restore/${ids}\`, 
           () => import('./pages/restore')
         );
-        server.withImports.all(
+        server.imports.all(
           \`\${root}/${model.dash}/search\`, 
           () => import('./pages/search')
         );
-        server.withImports.all(
+        server.imports.all(
           \`\${root}/${model.dash}/update/${ids}\`, 
           () => import('./pages/update')
         );
 
-        const ink = server.plugin<InkPlugin>('ink');
-        const module = server.config.path('client.module', '@stackpress/.incept');
-        ink.router.all(
+        const module = server.config.path('client.module', '.client');
+        server.view.all(
           \`\${root}/${model.dash}/create\`, 
           \`\${module}/${model.name}/admin/templates/create\`,
           -100
         );
-        ink.router.all(
+        server.view.all(
           \`\${root}/${model.dash}/detail/${ids}\`, 
           \`\${module}/${model.name}/admin/templates/detail\`,
           -100
         );
-        ink.router.all(
+        server.view.all(
           \`\${root}/${model.dash}/remove/${ids}\`, 
           \`\${module}/${model.name}/admin/templates/remove\`,
           -100
         );
-        ink.router.all(
+        server.view.all(
           \`\${root}/${model.dash}/restore/${ids}\`, 
           \`\${module}/${model.name}/admin/templates/restore\`,
           -100
         );
-        ink.router.all(
+        server.view.all(
           \`\${root}/${model.dash}/search\`, 
           \`\${module}/${model.name}/admin/templates/search\`,
           -100
         );
-        ink.router.all(
+        server.view.all(
           \`\${root}/${model.dash}/update/${ids}\`, 
           \`\${module}/${model.name}/admin/templates/update\`,
           -100

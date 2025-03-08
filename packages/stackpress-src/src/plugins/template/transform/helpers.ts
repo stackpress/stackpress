@@ -156,7 +156,7 @@ export function getFormFields(columns: Column[], links: Link[], fieldsets = true
       continue;
     }
     links.push(method === 'relation' ? { 
-      href: `@stackpress/incept-admin/dist/components/field/${method}`, 
+      href: `stackpress/template/field/${method}`, 
       type: 'component', 
       name: `field-${method}` 
     }: { 
@@ -199,7 +199,7 @@ export function getFilterFields(columns: Column[], links: Link[]) {
     }
     if (column.filter.method !== 'none') {
       links.push(method === 'relation' ? { 
-        href: `@stackpress/incept-admin/dist/components/field/${method}`, 
+        href: `stackpress/template/field/${method}`, 
         type: 'component', 
         name: `field-${method}` 
       }: { 
@@ -220,7 +220,7 @@ export function getFilterFields(columns: Column[], links: Link[]) {
       });
     } else if (column.span.method !== 'none') {
       links.push(method === 'relation' ? { 
-        href: `@stackpress/incept-admin/dist/components/field/${method}`, 
+        href: `stackpress/template/field/${method}`, 
         type: 'component', 
         name: `field-${method}` 
       } : { 

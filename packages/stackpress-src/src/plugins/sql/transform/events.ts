@@ -81,9 +81,9 @@ export function event(action: string, model: Model, directory: Directory) {
     '', 
     { overwrite: true }
   );
-  //import create from '@stackpress/incept-inquire/dist/events/create';
+  //import create from 'stackpress/sql/events/create';
   source.addImportDeclaration({
-    moduleSpecifier: `@stackpress/incept-inquire/dist/events/${lower}`,
+    moduleSpecifier: `stackpress/sql/events/${lower}`,
     defaultImport: lower
   });
   //import config from '../config';

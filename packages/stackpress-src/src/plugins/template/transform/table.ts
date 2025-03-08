@@ -51,7 +51,7 @@ const template = `
 {{/links}}
 <script>
   import mustache from 'mustache';
-  import { filter, sort, order } from '@stackpress/incept-ink/dist/helpers';
+  import { filter, sort, order } from 'stackpress/template/helpers';
   const { detail, update, rows = [], none = 'No results found.' } = this.props;
 </script>
 <if true={rows.length > 0}>

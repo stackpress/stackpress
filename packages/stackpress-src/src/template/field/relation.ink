@@ -80,9 +80,9 @@
   }
 </style>
 <script observe="name,value">
-  import { getHandlers, makeOptions } from '../../utilities/relation';
+  import { getHandlers, makeOptions } from '../utilities/relation';
   //extract props
-  const { placeholder, name } = this.props;
+  const { placeholder = 'Choose Option', name } = this.props;
   //format initial options from the original children
   const options = makeOptions(this.getChildren(false));
   //get handlers
