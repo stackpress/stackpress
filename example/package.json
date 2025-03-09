@@ -24,7 +24,7 @@
   "dependencies": {
     "@electric-sql/pglite": "0.2.17",
     "@stackpress/inquire-pglite": "0.4.5",
-    "stackpress": "0.1.9"
+    "stackpress": "0.1.10"
   },
   "devDependencies": {
     "@types/chai": "4.3.20",
