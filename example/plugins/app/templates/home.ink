@@ -1,5 +1,5 @@
-<link rel="import" type="template" href="@/plugins/app/components/head.ink" name="html-head" />
-<link rel="import" type="template" href="@/plugins/app/components/header.ink" name="app-head" />
+<link rel="import" type="template" href="@/plugins/app/layouts/head.ink" name="html-head" />
+<link rel="import" type="template" href="@/plugins/app/layouts/header.ink" name="app-head" />
 <link rel="import" type="component" href="@stackpress/ink-ui/element/icon.ink" name="element-icon" />
 <style>
   @ink theme;

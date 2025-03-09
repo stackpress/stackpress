@@ -2,7 +2,6 @@
 import type { Server } from 'stackpress/server';
 //local
 import { config } from '../config';
-import dmz from './pages/public';
 
 export default function plugin(server: Server) {
   server.config.set(config);
@@ -14,7 +13,8 @@ export default function plugin(server: Server) {
     //static assets
     server.on('request', async (req, res) => {  
       if (!res.body && (!res.code || res.code === 404)) {
-        await dmz(req, res);
+        const page = await import('./pages/public');
+        await page.default(req, res);
       }
     });
     //on response, check for errors

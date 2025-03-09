@@ -1,4 +1,4 @@
-<link rel="import" type="template" href="@/plugins/app/components/head.ink" name="html-head" />
+<link rel="import" type="template" href="@/plugins/app/layouts/head.ink" name="html-head" />
 <link rel="import" type="component" href="@stackpress/ink-ui/layout/panel.ink" name="panel-layout" />
 <link rel="import" type="component" href="@stackpress/ink-ui/layout/table.ink" name="table-layout" />
 <link rel="import" type="component" href="@stackpress/ink-ui/layout/table/head.ink" name="table-head" />
