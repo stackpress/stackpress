@@ -13,7 +13,6 @@ export default async function ErrorPage(req: ServerRequest, res: Response) {
   res.data.set('server', { 
     mode: server.config.path('server.mode', 'production'),
   });
-  
   //general settings
   const response = res.toStatusResponse();
   const { stack = [] } = response;
