@@ -7,12 +7,36 @@ import type {
   Application, 
   Session 
 } from '../../types';
-import { authorize, unauthorized } from './helpers';
+import { authorize, unauthorized, validData } from './helpers';
 
 /**
  * This interface is intended for the Incept library.
  */
 export default function plugin(server: Server) {
+  //on listen, add webhooks
+  server.on('listen', req => {
+    const server = req.context;
+    const { webhooks = [] } = server.config<ApiConfig>('api') || {};
+    for (const webhook of webhooks) {
+      server.on(webhook.event, async (req, res) => {
+        //if there was an error, return
+        if (res.code !== 200) return;
+        //get the data from the webhook
+        const data = webhook.data || {};
+        //get the params from the request
+        const params = req.data();
+        //get the results from the response
+        const results = res.toStatusResponse().results as Record<string, any>;
+        //if the data is not valid, return
+        if (!validData(webhook.validity, results)) return;
+        //send the webhook
+        await fetch(webhook.uri, {
+          method: webhook.method,
+          body: JSON.stringify({ data, params, results }),
+        });
+      }, -200);
+    }
+  })
   //on route, add user routes
   server.on('route', req => {
     const server = req.context;

@@ -1,6 +1,7 @@
 //stackpress
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
+import { isHash } from '@stackpress/ingest/dist/helpers';
 //root
 import Exception from '../../Exception';
 
@@ -29,7 +30,7 @@ export function authorize(req: ServerRequest, res: Response) {
     id: id.trim(), 
     secret: secret?.trim() || ''
   };
-}
+};
 
 export function unauthorized(res: Response) {
   res.setError(Exception
@@ -37,4 +38,20 @@ export function unauthorized(res: Response) {
     .withCode(401)
     .toResponse()
   );
-}
+};
+
+export function validData(assert: Record<string, any>, data: Record<string, any>) {
+  for (const [ key, value ] of Object.entries(assert)) {
+    if (typeof data[key] === 'undefined') return false;
+    if (Array.isArray(value)) {
+      if (!Array.isArray(data[key])) return false;
+      if (!value.every(item => data[key].includes(item))) return false;
+    } else if (isHash(value)) {
+      if (!isHash(data[key])) return false;
+      if (!validData(value, data[key])) return false;
+    } else if (data[key] !== value) {
+      return false;
+    }
+  }
+  return true;
+};

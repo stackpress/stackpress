@@ -194,6 +194,15 @@ export const config: Config = {
   },
   api: {
     expires: 1000 * 60 * 60 * 24 * 365,
+    webhooks: [
+      {
+        event: 'auth-signout',
+        uri: 'http://localhost:3000/api/webhook',
+        method: 'POST',
+        validity: {},
+        data: {}
+      }
+    ],
     scopes: {
       'user': { 
         name: 'User API Service',

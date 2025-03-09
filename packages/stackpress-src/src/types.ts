@@ -149,6 +149,16 @@ export type ApiScope = {
   description: string
 };
 
+export type ApiWebhook = {
+  //ie. auth-signin
+  event: string, 
+  //ie. http://localhost:3000/api/webhook
+  uri: string,
+  method: Method,
+  validity: UnknownNest,
+  data: UnknownNest
+};
+
 //--------------------------------------------------------------------//
 // Template Types
 
@@ -239,7 +249,8 @@ export type AdminConfig = {
 export type ApiConfig = {
   expires: number,
   scopes: Record<string, ApiScope>,
-  endpoints: ApiEndpoint[]
+  endpoints: ApiEndpoint[],
+  webhooks: ApiWebhook[]
 };
 
 export type EmailConfig = TransportOptions
