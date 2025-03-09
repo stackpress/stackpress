@@ -9,7 +9,7 @@ import type {
   DatabasePlugin 
 } from '../../../types';
 //local
-import { signin } from '../actions';
+import { signin } from '../../../session/actions';
 
 export default async function AuthSignin(req: ServerRequest, res: Response) {
   //get the type of signin username, email, phone
@@ -38,11 +38,11 @@ export default async function AuthSignin(req: ServerRequest, res: Response) {
     return;
   }
   //get the session
-  const session = req.context.plugin<SessionPlugin>('session');
+  const registry = req.context.plugin<SessionPlugin>('session');
   //get the results from the response object
   const results = response.results as AuthExtended;
   //set the cookie session in the response
-  res.session.set(session.name, session.create({
+  res.session.set(registry.name, registry.create({
     id: results.profile.id, 
     name: results.profile.name,
     image: results.profile.image,

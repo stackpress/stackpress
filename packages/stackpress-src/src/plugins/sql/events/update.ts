@@ -2,11 +2,11 @@
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //root
-import type { DatabasePlugin } from '../../types';
+import type { DatabasePlugin } from '../../../types';
 //schema
-import type Model from '../../schema/spec/Model';
-//local
-import update from '../actions/update';
+import type Model from '../../../schema/spec/Model';
+//sql
+import update from '../../../sql/actions/update';
 
 /**
  * This is a factory function that creates an event 

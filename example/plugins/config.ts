@@ -100,7 +100,7 @@ export const config: Config = {
     }
   },
   session: {
-    name: 'session',
+    key: 'session',
     seed: seed,
     access: {
       ADMIN: [
@@ -255,16 +255,22 @@ export const config: Config = {
     ]
   },
   language: {
-    en_US: {
-      label: 'EN',
-      translations: {
-        'Sign In': 'Signin'
-      }
-    },
-    th_TH: {
-      label: 'TH',
-      translations: {
-        'Sign In': 'Signin'
+    key: 'locale',
+    locale: 'en_US',
+    languages: {
+      en_US: {
+        label: 'EN',
+        translations: {
+          'Sign In': 'Signin',
+          'Home Page': 'Home Page'
+        }
+      },
+      th_TH: {
+        label: 'TH',
+        translations: {
+          'Sign In': 'Signin',
+          'Home Page': 'Home Pagesss'
+        }
       }
     }
   }

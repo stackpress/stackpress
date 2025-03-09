@@ -3,8 +3,8 @@ import type Response from '@stackpress/ingest/dist/Response';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 //root
 import type { ClientPlugin, DatabasePlugin } from '../../../types';
-//local
-import { signup } from '../actions';
+//session
+import { signup } from '../../../session/actions';
 
 export default async function AuthSignup(req: ServerRequest, res: Response) {
   //get the roles from the config

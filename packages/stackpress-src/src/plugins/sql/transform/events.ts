@@ -80,9 +80,9 @@ export function event(action: string, model: Model, directory: Directory) {
     '', 
     { overwrite: true }
   );
-  //import create from 'stackpress/sql/events/create';
+  //import create from 'stackpress/plugins/sql/events/create';
   source.addImportDeclaration({
-    moduleSpecifier: `stackpress/sql/events/${lower}`,
+    moduleSpecifier: `stackpress/plugins/sql/events/${lower}`,
     defaultImport: lower
   });
   //import config from '../config';

@@ -5,8 +5,8 @@ import type {
 } from '@stackpress/lib/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 //schema
-import { email } from '../../schema/assert';
-//local
+import { email } from '../schema/assert';
+//root
 import type { 
   Auth,
   ClientPlugin,
@@ -16,7 +16,8 @@ import type {
   SignupInput, 
   SigninType, 
   SigninInput
-} from '../../types';
+} from '../types';
+//local
 import { encrypt, hash } from './helpers';
 
 /**

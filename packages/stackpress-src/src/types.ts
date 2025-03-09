@@ -13,8 +13,10 @@ import type { Data, SchemaConfig } from '@stackpress/idea-parser/dist/types';
 import type { PluginProps } from '@stackpress/idea-transformer/dist/types';
 import type { CookieOptions, ViewRender } from '@stackpress/ingest/dist/types';
 import type { InkCompiler } from '@stackpress/ink/dist/types';
-import type ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
 import type Server from '@stackpress/ingest/dist/Server';
+import type Request from '@stackpress/ingest/dist/Request';
+import type Response from '@stackpress/ingest/dist/Response';
+import type ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
 import type Engine from '@stackpress/inquire/dist/Engine';
 import type Create from '@stackpress/inquire/dist/builder/Create';
 import type HttpServer from '@stackpress/ink-dev/dist/HttpServer';
@@ -26,7 +28,8 @@ import type Fieldset from './schema/spec/Fieldset';
 import type Registry from './schema/Registry';
 //local
 import type InceptTerminal from './terminal/Terminal';
-import type SessionClass from './server/Session';
+import type SessionRegistry from './session/Session';
+import type SessionLanguage from './session/Language';
 
 import type { Actions } from './sql/actions';
 
@@ -97,6 +100,18 @@ export type Language = {
   translations: Record<string, string>
 };
 
+export type LanguageMap = Record<string, Language>;
+
+export type LanguageConstructor = {
+  get key(): string;
+  get locales(): string[];
+  set languages(languages: LanguageMap);
+  configure(key: string, languages: LanguageMap): LanguageConstructor;
+  language(name: string): Language | null;
+  load(req: Request, defaults?: string): SessionLanguage;
+  new (): SessionLanguage; 
+}
+
 //--------------------------------------------------------------------//
 // SQL Types
 
@@ -156,6 +171,19 @@ export type SessionData = Record<string, any> & {
 };
 export type SessionTokenData = SessionData & {
   token: string
+};
+
+export type SessionConstructor = { 
+  get access(): SessionPermissionList;
+  get seed(): string;
+  get key(): string;
+  set expires(value: number);
+  configure(key: string, seed: string, access: SessionPermissionList): void;
+  authorize(req: Request, res: Response, permits?: SessionPermission[]): boolean;
+  create(data: SessionData): string;
+  token(req: Request): string | null;
+  load(token: string | Request): SessionRegistry;
+  new (): SessionRegistry 
 };
 
 export type SignupInput = {
@@ -223,7 +251,11 @@ export type EmailConfig = TransportOptions
   | StreamOptions
   | string ;
 
-export type LanguageConfig = Record<string, Language>;
+export type LanguageConfig = {
+  key: string,
+  locale: string,
+  languages: LanguageMap
+};
 
 export type DatabaseConfig = {
   migrations: string,
@@ -270,7 +302,7 @@ export type AuthConfig = {
 };
 
 export type SessionConfig = {
-  name: string,
+  key: string,
   seed: string,
   access: SessionPermissionList
 };
@@ -308,9 +340,9 @@ export type ClientPlugin<
   }>
 };
 
+export type LanguagePlugin = LanguageConstructor;
 export type DatabasePlugin = Engine;
-
-export type SessionPlugin = SessionClass;
+export type SessionPlugin = SessionConstructor;
 
 export type TemplatePlugin = {
   compiler: InkCompiler,

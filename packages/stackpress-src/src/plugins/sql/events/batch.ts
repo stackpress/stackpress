@@ -3,11 +3,11 @@ import type { UnknownNest } from '@stackpress/ingest/dist/types';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //root
-import type { DatabasePlugin } from '../../types';
+import type { DatabasePlugin } from '../../../types';
 //schema
-import type Model from '../../schema/spec/Model';
-//local
-import batch from '../actions/batch';
+import type Model from '../../../schema/spec/Model';
+//sql
+import batch from '../../../sql/actions/batch';
 
 /**
  * This is a factory function that creates an event 

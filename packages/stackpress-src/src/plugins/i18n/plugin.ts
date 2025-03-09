@@ -1,22 +1,63 @@
 //stackpress
 import type Server from '@stackpress/ingest/dist/Server';
 //root
-import type { LanguageConfig } from '../../types';
+import type { LanguageMap, LanguagePlugin } from '../../types';
 //i18n
-import I18N from '../../i18n/I18N';
+import Language from '../../session/Language';
 
 /**
  * This interface is intended for the Incept library.
  */
 export default function plugin(server: Server) {
-  //on config, register the i18n plugin
+  //on config, configure and register the language plugin
   server.on('config', req => {
     const server = req.context;
-    //make a new i18n
-    const i18n = new I18N();
-    //load the languages from the project config
-    i18n.languages = server.config.path<LanguageConfig>('language', {});
-    //add i18n as a project plugin
-    server.register('i18n', i18n);
+    //configure and register the language plugin
+    server.register('language', Language.configure(
+      server.config.path('language.key', 'locale'), 
+      server.config.path<LanguageMap>('language.languages', {})
+    ));
+  });
+  //on listen, look for locale flag
+  server.on('listen', req => {
+    const server = req.context;
+    const language = server.plugin<LanguagePlugin>('language');
+    server.on('request', async (req, res) => {
+      const server = req.context;
+      const key = server.config.path('language.key', 'locale');
+      //get the locale from the request
+      let locale = req.data(key);
+      //if valid locale, set the language
+      if (language.locales.includes(locale)) {
+        language.load(req).update(locale, res);
+      }
+      //make a path array
+      const pathArray = req.url.pathname.split('/');
+      //get the locale from the request url
+      //ie. /en_US/page
+      locale = pathArray[1];
+      //if valid locale, set the language
+      if (!language.locales.includes(locale)) {
+        //set the language
+        language.load(req).update(locale, res);
+        //splice the locale from the pathArray
+        pathArray.splice(1, 1);
+        //make a new request
+        const request = server.request({
+          resource: req.resource,
+          body: req.body || undefined,
+          context: server,
+          headers: Object.fromEntries(req.headers.entries()),
+          mimetype: req.mimetype,
+          data: req.data(),
+          method: req.method,
+          query: Object.fromEntries(req.query.entries()),
+          post: Object.fromEntries(req.post.entries()),
+          session: req.session.data as Record<string, string>,
+          url: new URL(req.url.origin + pathArray.join('/'))
+        });
+        await server.routeTo(req.method, pathArray.join('/'), request, res);
+      }
+    });
   });
 };

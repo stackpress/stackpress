@@ -3,7 +3,7 @@ import type Server from '@stackpress/ingest/dist/Server';
 //root
 import type { SessionPermissionList } from '../../types';
 //server
-import Session from '../../server/Session';
+import Session from '../../session/Session';
 
 /**
  * This interface is intended for the Incept library.
@@ -14,13 +14,11 @@ export default function plugin(server: Server) {
     const server = req.context;
     //if no session config, return
     if (!server.config.get('session')) return;
-    const name = server.config.path('session.name', 'session');
+    const key = server.config.path('session.key', 'session');
     const seed = server.config.path('session.seed', 'abc123');
     const access = server.config.path<SessionPermissionList>('session.access', {});
-    //make a new session
-    const session = new Session(name, seed, access);
-    //add session as a project plugin
-    server.register('session', session);
+    //configure and add session as a project plugin
+    server.register('session', Session.configure(key, seed, access));
   });
   //on listen, add user events
   server.on('listen', req => {

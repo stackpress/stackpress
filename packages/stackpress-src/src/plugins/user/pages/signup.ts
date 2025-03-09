@@ -15,9 +15,7 @@ export default async function SignupPage(req: ServerRequest, res: Response) {
   const redirect = req.data<string>('redirect') || '/auth/signin';
   //get the session
   const session = server.plugin<SessionPlugin>('session');
-  //get authorization
-  const token = session.token(req);
-  const me = session.get(token || '');
+  const { guest } = session.load(req);
   //form submission
   if (req.method === 'POST') {
     await server.call('auth-signup', req, res);
@@ -26,7 +24,7 @@ export default async function SignupPage(req: ServerRequest, res: Response) {
       res.redirect(redirect);
     }
   //if i am already signed in
-  } else if (me) {
+  } else if (!guest) {
     res.redirect(redirect);
   }
 };
