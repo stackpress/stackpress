@@ -30,6 +30,9 @@ export default function AdminDetailPageFactory(model: Model) {
     if (ids.length === model.ids.length) {
       //emit detail event
       await server.call<UnknownNest>(`${model.dash}-detail`, req, res);
+      if (!res.body) {
+        await server.call('error', req, res);
+      }
     }
   };
 };

@@ -15,5 +15,6 @@ export default async function Authorize(req: ServerRequest, res: Response) {
   //if not authorized
   if (authorized.code !== 200) {
     res.fromStatusResponse(authorized);
+    await server.call('error', req, res);
   }
 }

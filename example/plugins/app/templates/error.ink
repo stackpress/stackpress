@@ -14,7 +14,7 @@
   import { _, env, props } from 'stackpress/template/client';
 
   const {
-    config = {},
+    data = {},
     session = { 
       id: 0, 
       token: '', 
@@ -32,7 +32,7 @@
     stack = []
   } = response;
 
-  const mode = config.server?.mode || 'production';
+  const mode = data.server?.mode || 'production';
   const development = mode !== 'production';
   const notfound = code === 404;
 

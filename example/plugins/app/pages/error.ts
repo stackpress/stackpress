@@ -7,8 +7,16 @@ import type { Response, ServerRequest } from 'stackpress/server';
 export default async function ErrorPage(req: ServerRequest, res: Response) {
   //if there is already a body
   if (res.body) return;
+  //extract project and model from client
+  const server = req.context;
+  //set data for template layer
+  res.data.set('server', { 
+    mode: server.config.path('server.mode', 'production'),
+  });
+  
   //general settings
-  const { stack = [] } = res.toStatusResponse();
+  const response = res.toStatusResponse();
+  const { stack = [] } = response;
   //add snippets to stack
   stack.forEach((trace, i) => {
     //skip the first trace
@@ -33,17 +41,19 @@ export default async function ErrorPage(req: ServerRequest, res: Response) {
     stack[i] = { ...trace, snippet };
   });
   if (req.url.pathname.endsWith('.js')) {
+    delete response.stack;
     res.setBody(
       'application/javascript', 
-      `console.log(${JSON.stringify(res.toStatusResponse())});`, 
+      `console.log(${JSON.stringify(response)});`, 
       res.code, 
       res.status
     );
     return;
   } else if (req.url.pathname.endsWith('.css')) {
+    delete response.stack;
     res.setBody(
       'text/css', 
-      `/* ${JSON.stringify(res.toStatusResponse())} */`, 
+      `/* ${JSON.stringify(response)} */`, 
       res.code, 
       res.status
     );
