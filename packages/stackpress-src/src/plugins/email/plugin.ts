@@ -10,6 +10,8 @@ export default function plugin(server: Server) {
   //on listen, add user routes
   server.on('listen', req => {
     const server = req.context;
+    //if no email config exists, return
+    if (!server.config.get('email')) return;
     server.use(emitter);
   });
 };

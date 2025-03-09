@@ -16,10 +16,12 @@ export default function plugin(server: Server) {
   //on route, add user routes
   server.on('route', req => {
     const server = req.context;
+    const { endpoints = [] } = server.config<ApiConfig>('api') || {};
+    //if no endpoints, return
+    if (!Array.isArray(endpoints) || endpoints.length === 0) return;
     server.imports.all('/auth/oauth/token', () => import('./pages/token'));
     server.imports.all('/auth/oauth', () => import('./pages/oauth'));
     server.view.all('/auth/oauth', 'stackpress/template/pages/oauth', -100);
-    const { endpoints = [] } = server.config<ApiConfig>('api') || {};
     for (const endpoint of endpoints) {
       if (endpoint.type === 'session') {
         session(endpoint, server);

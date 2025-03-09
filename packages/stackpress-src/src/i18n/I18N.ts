@@ -1,11 +1,11 @@
 //root
-import type { Scalar, Languages } from '../types';
+import type { Scalar, LanguageConfig } from '../types';
 
 export default class I18N {
   //the active language
   protected _locale: string = 'en_US';
   //all the languages
-  protected _languages: Languages = {};
+  protected _languages: LanguageConfig = {};
 
   /**
    * Returns the active language label
@@ -38,7 +38,7 @@ export default class I18N {
   /**
    * Sets all the languages
    */
-  public set languages(languages: Languages) {
+  public set languages(languages: LanguageConfig) {
     this._languages = languages;
   }
 

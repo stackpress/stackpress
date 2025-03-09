@@ -97,8 +97,6 @@ export type Language = {
   translations: Record<string, string>
 };
 
-export type Languages = Record<string, Language>;
-
 //--------------------------------------------------------------------//
 // SQL Types
 
@@ -225,10 +223,7 @@ export type EmailConfig = TransportOptions
   | StreamOptions
   | string ;
 
-export type LanguageConfig = Record<string, {
-  label: string,
-  translations: Record<string, string>
-}>;
+export type LanguageConfig = Record<string, Language>;
 
 export type DatabaseConfig = {
   migrations: string,
@@ -282,16 +277,16 @@ export type SessionConfig = {
 
 export type Config = UnknownNest & {
   server: ServerConfig,
-  client: ClientConfig,
-  cookie: CookieOptions,
-  admin: AdminConfig,
-  api: ApiConfig,
-  email: EmailConfig,
-  language: LanguageConfig,
-  database: DatabaseConfig,
-  template: TemplateConfig,
-  auth: AuthConfig,
-  session: SessionConfig
+  client?: ClientConfig,
+  cookie?: CookieOptions,
+  admin?: AdminConfig,
+  api?: ApiConfig,
+  email?: EmailConfig,
+  language?: LanguageConfig,
+  database?: DatabaseConfig,
+  template?: TemplateConfig,
+  auth?: AuthConfig,
+  session?: SessionConfig
 };
 
 //--------------------------------------------------------------------//

@@ -16,6 +16,8 @@ export default function plugin(server: Server) {
       //it's possible that the client isnt generated yet...
       //config, registry, model, fieldset
       const client = server.plugin<ClientPlugin>('client');
+      //if no client or modules, return
+      if (!client?.model) return;
       //loop through all the models
       for (const model of Object.values(client.model)) {
         //register all the model events

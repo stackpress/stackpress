@@ -27,6 +27,8 @@ export default function plugin(server: Server) {
   //on config, register template plugin
   server.on('config', req => {
     const server = req.context;
+    //if no template config, return
+    if (!server.config.get('template')) return;
     //get server environment
     const environment = server.config.path('server.mode', 'production');
     const development = environment !== 'production';
@@ -60,6 +62,8 @@ export default function plugin(server: Server) {
   //on route, add dev routes
   server.on('route', req => {
     const server = req.context;
+    //if no template config, return
+    if (!server.config.get('template')) return;
     //get server config
     const mode = server.config.path('template.dev.mode', 'http');
     const environment = server.config.path('server.mode', 'production');

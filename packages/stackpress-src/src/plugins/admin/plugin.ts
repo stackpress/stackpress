@@ -12,6 +12,8 @@ export default function plugin(server: Server) {
   //on route, add admin routes
   server.on('route', req => {
     const server = req.context;
+    //if no admin config exists, return
+    if (!server.config.get('admin')) return;
     try {
       //it's possible that the client isnt generated yet...
       //config, registry, model, fieldset
