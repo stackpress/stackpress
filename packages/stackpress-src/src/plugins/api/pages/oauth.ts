@@ -7,6 +7,11 @@ import type { SessionData, ApiConfig, Session } from '../../../types';
 import { unauthorized } from '../helpers';
 
 export default async function OAuth(req: ServerRequest, res: Response) {
+  //get the server
+  const server = req.context;
+  //set data for template layer
+  const { scopes = {}, endpoints = [] } = server.config.path('api');
+  res.data.set('api', { scopes, endpoints });
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
@@ -24,8 +29,6 @@ export default async function OAuth(req: ServerRequest, res: Response) {
     return unauthorized(res);
   }
 
-  //get the server
-  const server = req.context;
   //get session
   const session = await server.call('me', req);
   if (!session.results) {
@@ -65,5 +68,6 @@ export default async function OAuth(req: ServerRequest, res: Response) {
     }
     //redirect
     res.redirect(`${uri}?${params.toString()}`);
+    return;
   }
 }

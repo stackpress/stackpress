@@ -6,7 +6,7 @@ import types from './plugins/types/plugin';
 import sql from './plugins/sql/plugin';
 import template from './plugins/template/plugin';
 import admin from './plugins/admin/plugin';
-import i18n from './plugins/i18n/plugin';
+import language from './plugins/language/plugin';
 import user from './plugins/user/plugin';
 import api from './plugins/api/plugin';
 
@@ -17,7 +17,7 @@ export default async function plugin(server: Server) {
   sql(server);
   template(server);
   admin(server);
-  i18n(server);
+  language(server);
   user(server);
   api(server);
 };

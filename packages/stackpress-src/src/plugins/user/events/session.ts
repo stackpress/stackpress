@@ -9,8 +9,8 @@ import { toResponse } from '../../../sql/helpers';
 export default async function Session(req: ServerRequest, res: Response) {
   const server = req.context;
   const session = server.plugin<SessionPlugin>('session');
-  const { guest, authorization } = session.load(req);
-  if (guest) {
+  const me = session.load(req);
+  if (me.guest) {
     res.setError({
       code: 404,
       status: 'Not Found',
@@ -18,5 +18,5 @@ export default async function Session(req: ServerRequest, res: Response) {
     });
     return;
   }
-  res.fromStatusResponse(toResponse(authorization));
+  res.fromStatusResponse(toResponse(me.authorization));
 }

@@ -42,7 +42,7 @@ export default async function AuthSignin(req: ServerRequest, res: Response) {
   //get the results from the response object
   const results = response.results as AuthExtended;
   //set the cookie session in the response
-  res.session.set(registry.name, registry.create({
+  res.session.set(registry.key, registry.create({
     id: results.profile.id, 
     name: results.profile.name,
     image: results.profile.image,

@@ -25,11 +25,12 @@ export default function plugin(server: Server) {
     server.on('request', async (req, res) => {
       const server = req.context;
       const key = server.config.path('language.key', 'locale');
+      const defaultLocale = server.config.path('language.locale', 'en_US');
       //get the locale from the request
       let locale = req.data(key);
       //if valid locale, set the language
       if (language.locales.includes(locale)) {
-        language.load(req).update(locale, res);
+        language.load(req, defaultLocale).update(locale, res);
       }
       //make a path array
       const pathArray = req.url.pathname.split('/');
@@ -37,9 +38,9 @@ export default function plugin(server: Server) {
       //ie. /en_US/page
       locale = pathArray[1];
       //if valid locale, set the language
-      if (!language.locales.includes(locale)) {
+      if (language.locales.includes(locale)) {
         //set the language
-        language.load(req).update(locale, res);
+        language.load(req, defaultLocale).update(locale, res);
         //splice the locale from the pathArray
         pathArray.splice(1, 1);
         //make a new request

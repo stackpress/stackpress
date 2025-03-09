@@ -29,7 +29,7 @@ const template = `
   import { _, env, props } from 'stackpress/template/client';
   import { addQueryParam } from 'stackpress/template/helpers';
   const { 
-    config = {},
+    data = {},
     session = { 
       id: 0, 
       token: '', 
@@ -57,7 +57,7 @@ const template = `
     total = 0
   } = response;
 
-  const settings = config.admin || { 
+  const settings = data.admin || { 
     root: '/admin',
     name: 'Admin', 
     logo: '/images/logo-square.png',

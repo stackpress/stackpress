@@ -50,7 +50,7 @@ export default class Language {
    * Returns a new language using the locale from cookies
    */
   public static load(req: Request, defaults = 'en_US') {
-    const locale = req.session.get(this.key) as string;
+    const locale = req.session(this.key) as string;
     const language = new Language();
     language.locale = locale || defaults;
     return language;

@@ -10,7 +10,18 @@
 <script>
   import { _, env, props } from 'stackpress/template/client';
 
-  const { url, session } = props('document');
+  const {
+    config = {},
+    session = { 
+      id: 0, 
+      token: '', 
+      roles: [ 'GUEST' ], 
+      permissions: [] 
+    },
+    request = {},
+    response = {}
+  } = props('document');
+
   const title = _('Home Page');
 </script>
 <html>

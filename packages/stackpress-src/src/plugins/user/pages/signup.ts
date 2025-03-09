@@ -5,13 +5,16 @@ import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type { SessionPlugin } from '../../../types';
 
 export default async function SignupPage(req: ServerRequest, res: Response) {
+  //extract project and model from client
+  const server = req.context;
+  //set data for template layer
+  const { name, logo } = server.config.path('auth');
+  res.data.set('auth', { name, logo });
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
     return;
   }
-  //extract project and model from client
-  const server = req.context;
   const redirect = req.data<string>('redirect') || '/auth/signin';
   //get the session
   const session = server.plugin<SessionPlugin>('session');

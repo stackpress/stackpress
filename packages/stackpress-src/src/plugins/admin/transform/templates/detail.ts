@@ -26,7 +26,7 @@ const template = `
   import { _, env, props } from 'stackpress/template/client';
 
   const { 
-    config = {},
+    data = {},
     session = { 
       id: 0, 
       token: '', 
@@ -43,7 +43,7 @@ const template = `
     results = {}
   } = response;
 
-  const settings = config.admin || { 
+  const settings = data.admin || { 
     root: '/admin',
     name: 'Admin', 
     logo: '/images/logo-square.png',

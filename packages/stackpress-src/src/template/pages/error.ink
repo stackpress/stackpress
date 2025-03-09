@@ -14,11 +14,19 @@
   import { _, env, props } from 'stackpress/template/client';
 
   const { 
+    data = {},
+    request = {},
+    response = {}
+  } = props('document');
+
+  const { menu: [] } = data.admin;
+
+  const { 
     code = 200, 
     status = 'OK', 
     stack = [],
-    settings = { menu: [] }
-  } = props('document');
+    
+  } = response;
 
   const url = '/';
   const title = _('Oops! Something went wrong.');

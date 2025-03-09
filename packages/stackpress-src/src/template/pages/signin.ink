@@ -16,7 +16,7 @@
   import { _, env, props } from 'stackpress/template/client';
 
   const { 
-    config = {},
+    data = {},
     request = {},
     response = {}
   } = props('document');
@@ -26,7 +26,7 @@
   const errors = response.errors || {};
   const input = request.data || {};
   const type = input.type || 'username';
-  const settings = config.auth || {};
+  const settings = data.auth || {};
   const label = type === 'phone' 
     ? _('Phone') 
     : type === 'email' 

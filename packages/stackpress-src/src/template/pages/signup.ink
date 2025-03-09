@@ -15,7 +15,7 @@
   import { _, env, props } from 'stackpress/template/client';
 
   const { 
-    config = {},
+    data = {},
     request = {},
     response = {}
   } = props('document');
@@ -24,7 +24,7 @@
   const error = response.error;
   const errors = response.errors || {};
   const input = request.data || {};
-  const settings = config.auth || {};
+  const settings = data.auth || {};
 
   const url = '/auth/signup';
   const title = _('Sign Up');

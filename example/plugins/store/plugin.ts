@@ -1,5 +1,5 @@
 //stackpress
-import type Server from '@stackpress/ingest/dist/Server';
+import type { Server } from 'stackpress/server';
 //util
 import connect from './connect';
 

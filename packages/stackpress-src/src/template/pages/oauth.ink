@@ -15,7 +15,7 @@
   import { _, env, props } from 'stackpress/template/client';
 
   const { 
-    config = {},
+    data = {},
     //SESSION:
     // id: string, 
     // name: string,
@@ -59,7 +59,7 @@
     // priority?: number,
     // data: Record<string, Data>
     endpoints = []
-  } = config.api || {};
+  } = data.api || {};
 
   //the API scope your client application needs.
   //It tells the Authorization endpoint what kind 
