@@ -1,5 +1,5 @@
 //stackpress
-import { Terminal } from 'stackpress';
+import { Terminal } from 'stackpress/terminal';
 //plugins
 import bootstrap from '../plugins/bootstrap';
 

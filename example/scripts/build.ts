@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 //stackpress
-import { Terminal } from 'stackpress';
+import { Terminal } from 'stackpress/terminal';
 import * as scripts from 'stackpress/scripts';
 //plugins
 import bootstrap from '../plugins/bootstrap';
