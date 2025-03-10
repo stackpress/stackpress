@@ -30,7 +30,10 @@ import {
   gateway,
   handler,
   server,
-  router
+  router,
+  reqToURL,
+  reqQueryToObject,
+  readableToReadableStream
 } from '@stackpress/ingest/dist/whatwg';
 
 export {
@@ -38,5 +41,8 @@ export {
   gateway,
   handler,
   server,
-  router
+  router,
+  reqToURL,
+  reqQueryToObject,
+  readableToReadableStream
 };

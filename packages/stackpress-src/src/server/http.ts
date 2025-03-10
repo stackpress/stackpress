@@ -22,18 +22,4 @@ export type Route<
   C extends UnknownNest = UnknownNest
 > = IngestRoute<C, IM, SR>;
 
-import {
-  Adapter,
-  gateway,
-  handler,
-  server,
-  router
-} from '@stackpress/ingest/dist/http';
-
-export {
-  Adapter,
-  gateway,
-  handler,
-  server,
-  router
-};
+export * from '@stackpress/ingest/dist/http';
