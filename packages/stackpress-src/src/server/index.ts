@@ -14,6 +14,9 @@ export {
   readableToReadableStream
 } from '@stackpress/ingest/dist/whatwg/helpers';
 
+export * as http from './http';
+export * as whatwg from './whatwg';
+
 export {
   Request,
   Response,
