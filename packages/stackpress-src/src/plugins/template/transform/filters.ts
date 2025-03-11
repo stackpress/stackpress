@@ -52,7 +52,7 @@ const template = `
 <form>
   {{#fields}}
     {{#filter}}
-      <form-control class="pt-20 relative z-{{index}}" label="{{label}}" error={errors.{{name}}}>
+      <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
         <field-{{method}} 
           class="block" 
           name="filter[{{name}}]" 
@@ -62,7 +62,7 @@ const template = `
       </form-control>
     {{/filter}}
     {{#span}}
-      <form-control class="pt-20 relative z-{{index}}" label="{{label}}" error={errors.{{name}}}>
+      <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
         <field-{{method}} 
           class="block relative z-{{index2}}" 
           name="span[{{name}}][0]" 

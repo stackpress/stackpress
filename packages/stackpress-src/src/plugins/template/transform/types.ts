@@ -14,7 +14,7 @@ export type FormTab = {
 };
 
 export type FormField = { 
-  index: number,
+  zindex: string|null,
   multiple: boolean,
   method: string, 
   label: string, 
@@ -23,7 +23,7 @@ export type FormField = {
 };
 
 export type FormFieldset = {
-  index: number,
+  zindex: string|null,
   border: boolean, 
   legend: string, 
   name: string, 
@@ -33,7 +33,8 @@ export type FormFieldset = {
 
 export type FormFields = { 
   field?: FormField, 
-  fieldset?: FormFieldset
+  fieldset?: FormFieldset,
+  textarea?: FormField,
 }[];
 
 export type FormSection = FormFieldset & {
@@ -51,9 +52,9 @@ export type FormData = {
 // Filter Types
 
 export type FilterField = {
-  index: number, 
-  index2: number, 
-  index3: number, 
+  zindex: string|null, 
+  zindex2: string|null, 
+  zindex3: string|null, 
   method: string, 
   label: string, 
   name: string, 

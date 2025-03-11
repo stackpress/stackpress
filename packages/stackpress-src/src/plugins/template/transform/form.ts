@@ -49,7 +49,7 @@ export default function generate(
         active: false 
       });
       data.sections.push({
-        index: 1,
+        zindex: null,
         selector: name,
         border: multiple,
         multiple: multiple,
@@ -83,7 +83,7 @@ const fieldset = `
 >
   {{#fields}}
     {{#field}}
-      <form-control control="{{name}}" class="pt-20 relative z-{{index}}" label="{{label}}">
+      <form-control control="{{name}}" class="pt-20 relative{{zindex}}" label="{{label}}">
         <field-{{method}} field="{{name}}" class="block" {{{attributes}}} />
       </form-control>
     {{/field}}
@@ -125,7 +125,7 @@ const template = `
   <div id="info" class="bg-t-1 p-10">
     {{#fields}}
       {{#field}}
-        <form-control class="pt-20 relative z-{{index}}" label="{{label}}" error={errors.{{name}}}>
+        <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
           <field-{{method}} 
             class="block" 
             name="{{name}}{{#multiple}}[]{{/multiple}}" 
@@ -134,6 +134,15 @@ const template = `
           />
         </form-control>
       {{/field}}
+      {{#textarea}}
+        <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
+          <field-{{method}} 
+            class="block" 
+            name="{{name}}{{#multiple}}[]{{/multiple}}" 
+            {{{attributes}}} 
+          >{input.{{name}}}</field-{{method}}>
+        </form-control>
+      {{/textarea}}
     {{/fields}}
   </div>
   {{#sections}}
