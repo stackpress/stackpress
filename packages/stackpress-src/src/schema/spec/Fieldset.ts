@@ -50,6 +50,15 @@ export default class Fieldset {
   }
 
   /**
+   * Returns all the encrypted columns
+   */
+  public get encrypted() {
+    return Array.from(this.columns.values()).filter(
+      column => column.encrypted
+    );
+  }
+
+  /**
    * Returns the default values
    */
   public get defaults() {
