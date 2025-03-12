@@ -202,6 +202,13 @@ export default class Column {
   }
 
   /**
+   * Returns true if column is a @hash
+   */
+  public get hash() {
+    return this.attributes.hash;
+  }
+
+  /**
    * Returns true if column is an @id
    */
   public get id() {

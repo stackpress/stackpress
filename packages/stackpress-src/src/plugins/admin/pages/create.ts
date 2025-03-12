@@ -5,7 +5,7 @@ import type Response from '@stackpress/ingest/dist/Response';
 //root
 import type { AdminConfig } from '../../../types';
 //session
-import { encrypt } from '../../../session/helpers';
+import { hash, encrypt } from '../../../session/helpers';
 //schema
 import type Model from '../../../schema/spec/Model';
 
@@ -41,12 +41,17 @@ export default function AdminCreatePageFactory(model: Model) {
         if (!column) continue;
         //determine if the field is encryptable
         const canEncrypt = typeof data[key] !== 'undefined' && data[key] !== null;
-        //if the field needs to be encrypted and is actually empty
-        if (column.encrypted && canEncrypt) {
+        //if column is encryptable
+        if (canEncrypt) {
           const string = String(data[key]);
           if (string.length > 0) {
-            //encrypt the key
-            data[key] = encrypt(String(data[key]), seed);
+            if (column.encrypted) {
+              //encrypt the key
+              data[key] = encrypt(string, seed);
+            } else if (column.hash) {
+              //hash the key
+              data[key] = hash(string);
+            }
           }
         }
       }

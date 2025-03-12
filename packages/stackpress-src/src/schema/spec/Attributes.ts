@@ -168,6 +168,13 @@ export default class Attributes extends Map<string, unknown> {
   }
 
   /**
+   * Returns true if column is a @hash column
+   */
+  public get hash() {
+    return this.get('hash') === true;
+  }
+
+  /**
    * Returns true if column is an @id
    */
   public get id() {

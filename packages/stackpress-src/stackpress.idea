@@ -110,7 +110,7 @@ model Auth
                      @list.text @view.text
   
   secret    String   @label("Secret") 
-                     @encrypted
+                     @hash
                      @field.password
                      @is.required("Required")
                      @is.notempty("Cannot be empty")

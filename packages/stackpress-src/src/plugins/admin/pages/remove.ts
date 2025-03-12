@@ -44,6 +44,17 @@ export default function AdminRemovePageFactory(model: Model) {
       }
       //not confirmed, fetch the data using the id
       await server.call(`${model.dash}-detail`, req, res);
+      //if error
+      if (res.code !== 200) {
+        //pass straight to error
+        await server.call('error', req, res);
+        return;
+      }
+    } else {
+      //id mismatch
+      res.setStatus(404);
+      //pass straight to error
+      await server.call('error', req, res);
     }
   };
 };
