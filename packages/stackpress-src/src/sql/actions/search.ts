@@ -3,9 +3,8 @@ import type { UnknownNest, StatusResponse } from '@stackpress/lib/dist/types';
 import type Engine from '@stackpress/inquire/dist/Engine';
 import Nest from '@stackpress/lib/dist/data/Nest';
 //root
-import type { SearchParams } from '../../types';
+import type { SearchParams, SearchJoinMap } from '../../types';
 //schema
-import type Column from '../../schema/spec/Column';
 import type Model from '../../schema/spec/Model';
 import { 
   toSqlString,
@@ -14,201 +13,15 @@ import {
   toSqlBoolean,
   toSqlDate,
   toResponse,
-  toErrorResponse
+  toErrorResponse,
+  getColumns,
+  getColumnInfo,
+  stringable,
+  floatable,
+  dateable,
+  boolable,
+  intable
 } from '../helpers';
-
-const stringable = [ 'String', 'Text', 'Json', 'Object', 'Hash' ];
-const floatable = [ 'Number', 'Float' ];
-const dateable = [ 'Date', 'Time', 'Datetime' ];
-const boolable = [ 'Boolean' ];
-const intable = [ 'Integer' ];
-
-export type Join = {
-  table: string,
-  from: string,
-  to: string,
-  alias: string
-}
-
-export type Path = {
-  model: Model,
-  column: Column
-};
-
-export function getColumns(
-  column: string, 
-  model: Model,
-  prefixes: string[] = []
-) {
-  if (column === '*') {
-    const columns: string[] = [];
-    model.columns.forEach(column => {
-      //if columns are relations
-      if (column.model) {
-        return;
-      }
-      const prefix = prefixes.length > 0 ? prefixes.join('.') + '.': '';
-      //add columns as camelCase
-      columns.push(`${prefix}${column.name}`);
-    });
-    return columns;
-  }
-  const path = column.split('.');
-  if (path.length > 1) {
-    const column = model.columns.get(path[0]);
-    if (column && column.model) {
-      return getColumns(
-        path.slice(1).join('.'), 
-        column.model, 
-        [ ...prefixes, path[0] ]
-      );
-    }
-  }
-  if (prefixes.length > 0) {
-    return [ `${prefixes.join('.')}.${column}` ];
-  }
-  return [ column ];
-}
-
-//Case Study:
-// A product has a group of users that can buy it
-// A group has a list of owners and members both using the user table
-// A user has an address
-// product -> group.owner -> user
-// product -> group.member -> user 
-
-export function getColumnInfo(selector: string, model: Model) {
-  //ex. group.owner.address.streetName
-  // - name: group.owner.address.streetName
-  // - table: group__owner__address
-  // - column: street_name
-  // - alias: group__owner__address__street_name
-  // "group__owner__address"."street_name" AS "group__owner__address__street_name"
-  // - from: product
-  // - joins: 
-  //   - group as group ON (product.group_id = group.id)
-  //   - user as group__owner ON (group.owner_id = group__owner.id)
-  //   - address as group__owner__address ON (group__owner.address_id = group__owner__address.id)
-  
-  //group.owner.address.streetName
-  const name = selector;
-  //group__owner__address
-  const table = getAlias(
-    selector.substring(0, selector.lastIndexOf('.'))
-  );
-  //street_name
-  const column = getAlias(
-    selector.substring(selector.lastIndexOf('.') + 1)
-  );
-  //group__owner__address__street_name
-  const alias = getAlias(selector);
-  const path = getColumnPath(selector, model);
-  const last = path[path.length - 1];
-  //group as group ON (product.group_id = group.id)
-  //user as group__owner ON (group.owner_id = group__owner.id)
-  //address as group__owner__address ON (group__owner.address_id = group__owner__address.id)
-  const joins = getColumnJoins(selector, model);
-  
-  return { name, table, column, alias, path, last, joins };
-}
-
-export function getColumnPath(
-  selector: string, 
-  model: Model, 
-  path: Path[] = []
-) {
-  //ex. user.address.streetName
-  const selectors = selector.split('.');
-  //ex. user or address or streetName
-  const column = model.columns.get(selectors[0]);
-  //if no column (this would happen if the column is not in the model)
-  if (!column) {
-    //return an empty array signifying that the selector is invalid
-    return [];
-  //if there is only one selector
-  //ex. streetName
-  } else if (selectors.length === 1) {
-    return path.concat([{ model, column }]);
-  }
-  //there are at least 2 selectors
-  //ex. user.address.streetName
-  //ex. address.streetName
-  //if the column is not a model
-  if (!column.model) {
-    //return an empty array signifying that the selector is invalid
-    return [];
-  }
-  return getColumnPath(
-    selectors.slice(1).join('.'), 
-    column.model, 
-    path.concat([{ model, column }])
-  );
-}
-
-export function getColumnJoins(
-  selector: string, 
-  model: Model, 
-  index: number = 0,
-  joins: Record<string, Join> = {}
-) {
-  //ex. group.owner.address.streetName
-  //group as group ON (product.group_id = group.id)
-  //user as group__owner ON (group.owner_id = group__owner.id)
-  //address as group__owner__address ON (group__owner.address_id = group__owner__address.id)
-  
-  //[ group, owner, address, streetName ]
-  const selectors = selector.split('.');
-  //if we are at the end of the selectors
-  if (selectors.length === (index + 1)) {
-    return joins;
-  }
-  //group, group__owner, group__owner__address
-  const alias = {
-    parent: getAlias(selectors.slice(0, index).join('.')),
-    child: getAlias(selectors.slice(0, index + 1).join('.'))
-  };
-  if (alias.parent.length > 0) {
-    alias.parent += '.';
-  }
-  //model: product -> group
-  const column = model.columns.get(selectors[index]);
-  //if the column is not in the model or it's not a relation
-  if (!column || !column.relation) {
-    return {};
-  }
-  //get the relation
-  const relation = column.relation;
-  //get the table (should be the parent table)
-  //group
-  const table = relation.parent.model.snake;
-  //get the from (should be the child column)
-  const from = `${alias.parent}${relation.child.key.snake}`;
-  //get the to (should be the parent column)
-  const to = `${alias.child}.${relation.parent.key.snake}`;
-  //make a record key
-  const key = `INNER JOIN ${table} AS ${alias.child} ON (${from} = ${to})`;
-  //add the join to the joins
-  joins[key] = { table, from, to, alias: alias.child };
-  //return the join info
-  return getColumnJoins(
-    selector,
-    relation.child.model as Model, 
-    index + 1,
-    joins
-  );
-}
-
-export function getAlias(selector: string) {
-  return selector.split('.').map(part => part.trim()
-    //replace "someString" to "some_string"
-    .replace(/([a-z])([A-Z0-9])/g, '$1_$2')
-    //replace multiple lines with a single lines
-    .replace(/-{2,}/g, '_')
-    //trim lines from the beginning and end of the string
-    .replace(/^_+|_+$/g, '')
-    .toLowerCase()
-  ).join('__');
-}
 
 /**
  * Searches the database table
@@ -270,7 +83,7 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     .select<{ total: number }>('COUNT(*) as total')
     .from(model.snake);
   //make a joins map
-  const joins: Record<string, Join> = {};
+  const joins: SearchJoinMap = {};
   info.forEach(selector => Object.assign(joins, selector.joins));
   Object.values(joins).forEach(({ table, from, to, alias }) => {
     const q = engine.dialect.q;
