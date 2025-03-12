@@ -29,8 +29,29 @@ export default function AdminRemovePageFactory(model: Model) {
     if (ids.length === model.ids.length) {
       //if form submitted
       if (req.method === 'POST') {
-        //emit remove update
-        await server.call(`${model.dash}-update`, req);
+        //fix the data
+        const data = req.data();
+        //loop through the data
+        for (const key in data) {
+          //get the column meta
+          const column = model.column(key);
+          //if it's not a column, leave as is
+          if (!column) continue;
+          //determine if the column needs to be filled out
+          //(submitted fields will be empty strings)
+          const notempty = column.required || !!column.assertions.find(
+            assertion => assertion.method === 'notempty'
+          );
+          //determine if the field is actually empty
+          const isempty = data[key] === '' || data[key] === null;
+          //if the field needs to be filled out and is actually empty
+          if (notempty && isempty) {
+            //delete the key
+            delete data[key];
+          }
+        }
+        //emit update with the fixed fields
+        await server.call(`${model.dash}-update`, data, res);
         //if they want json (success or fail)
         if (req.data.has('json')) return;
         //if successfully updated

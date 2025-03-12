@@ -83,10 +83,33 @@ const fieldset = `
 >
   {{#fields}}
     {{#field}}
-      <form-control control="{{name}}" class="pt-20 relative{{zindex}}" label="{{label}}">
-        <field-{{method}} field="{{name}}" class="block" {{{attributes}}} />
+      <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
+        <field-{{method}} 
+          class="block" 
+          name="{{name}}{{#multiple}}[]{{/multiple}}" 
+          value={input.{{name}}} 
+          {{{attributes}}} 
+        />
       </form-control>
     {{/field}}
+    {{#password}}
+      <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
+        <field-{{method}} 
+          class="block" 
+          name="{{name}}{{#multiple}}[]{{/multiple}}" 
+          {{{attributes}}} 
+        />
+      </form-control>
+    {{/password}}
+    {{#textarea}}
+      <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
+        <field-{{method}} 
+          class="block" 
+          name="{{name}}{{#multiple}}[]{{/multiple}}" 
+          {{{attributes}}} 
+        >{input.{{name}}}</field-{{method}}>
+      </form-control>
+    {{/textarea}}
     {{#fieldset}}
       <form-control 
         class="pt-20" 
@@ -134,6 +157,15 @@ const template = `
           />
         </form-control>
       {{/field}}
+      {{#password}}
+        <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
+          <field-{{method}} 
+            class="block" 
+            name="{{name}}{{#multiple}}[]{{/multiple}}" 
+            {{{attributes}}} 
+          />
+        </form-control>
+      {{/password}}
       {{#textarea}}
         <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
           <field-{{method}} 

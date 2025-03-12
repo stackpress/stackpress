@@ -164,21 +164,18 @@ export function getFormFields(columns: Column[], links: Link[], fieldsets = true
       type: 'component', 
       name: `field-${method}` 
     });
-    if (['textarea', 'editor', 'wysiwyg', 'markdown'].includes(method)) {
-      fields.push({
-        textarea: {
-          label, 
-          name, 
-          method, 
-          multiple: false,
-          zindex: zindex ? ` z-${zindex}` : '',
-          attributes: objectToAttributeString(attributes)
-        }
-      });
-      continue;
-    }
+    const key = [
+      'textarea', 
+      'editor', 
+      'wysiwyg', 
+      'markdown'
+    ].includes(method)
+      ? 'textarea'
+      : method === 'password'
+      ? 'password'
+      : 'field';
     fields.push({
-      field: {
+      [key]: {
         label, 
         name, 
         method, 

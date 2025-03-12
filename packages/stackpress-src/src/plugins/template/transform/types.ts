@@ -35,6 +35,7 @@ export type FormFields = {
   field?: FormField, 
   fieldset?: FormFieldset,
   textarea?: FormField,
+  password?: FormField
 }[];
 
 export type FormSection = FormFieldset & {
