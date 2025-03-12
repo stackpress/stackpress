@@ -79,9 +79,19 @@ model Auth
                      @list.overflow({ length 10 hellip true })
   
   profileId String   @label("Profile") 
-                     @field.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
+                     @field.relation({ 
+                      href "/admin/profile/search" 
+                      key "profile" 
+                      foreign "id" 
+                      template "{{name}}" 
+                    }) 
                      @is.required("Required")
-                     @filter.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
+                     @filter.relation({ 
+                      href "/admin/profile/search" 
+                      key "profile" 
+                      foreign "id" 
+                      template "{{name}}" 
+                    }) 
                      @list.template({ key "profile" template "{{name}}" }) 
                      @view.template({ key "profile" template "{{name}}" })
                      
@@ -103,7 +113,7 @@ model Auth
                      @encrypted
                      @field.password
                      @is.required("Required")
-                      @is.notempty("Cannot be empty")
+                     @is.notempty("Cannot be empty")
                      @list.hide @view.hide
   
   verified  Boolean  @label("Verified") 
@@ -202,10 +212,20 @@ model Session
                          @id @default("cuid()")
   
   applicationId String   @label("App") 
-                         @field.relation({ href "/admin/app/search" key "application" foreign "id" template "{{name}}" }) 
+                         @field.relation({ 
+                           href "/admin/app/search" 
+                           key "application" 
+                           foreign "id" 
+                           template "{{name}}" 
+                         }) 
                          @is.required("Required")
                          @is.notempty("Cannot be empty")
-                         @filter.relation({ href "/admin/app/search" key "application" foreign "id" template "{{name}}" }) 
+                         @filter.relation({ 
+                           href "/admin/app/search" 
+                           key "application" 
+                           foreign "id" 
+                           template "{{name}}" 
+                         }) 
                          @list.template({ key "application" template "{{name}}" }) 
                          @view.template({ key "application" template "{{name}}" })
   

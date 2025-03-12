@@ -4,6 +4,8 @@ import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //root
 import type { AdminConfig } from '../../../types';
+//session
+import { encrypt } from '../../../session/helpers';
 //schema
 import type Model from '../../../schema/spec/Model';
 
@@ -27,18 +29,40 @@ export default function AdminCreatePageFactory(model: Model) {
     }
     //if form submitted
     if (req.method === 'POST') {
+      //get the session seed (for encrypting)
+      const seed = server.config.path('session.seed', 'abc123');
+      //fix the data
+      const data = req.data();
+      //loop through the data
+      for (const key in data) {
+        //get the column meta
+        const column = model.column(key);
+        //if it's not a column, leave as is
+        if (!column) continue;
+        //determine if the field is encryptable
+        const canEncrypt = typeof data[key] !== 'undefined' && data[key] !== null;
+        //if the field needs to be encrypted and is actually empty
+        if (column.encrypted && canEncrypt) {
+          const string = String(data[key]);
+          if (string.length > 0) {
+            //encrypt the key
+            data[key] = encrypt(String(data[key]), seed);
+          }
+        }
+      }
       //emit the create event
       const response = await server.call<UnknownNest>(`${model.dash}-create`, req, res);
-      //if they want json (success or fail)
-      if (req.data.has('json')) return;
-      //if successfully created
-      if (res.code === 200) {
-        //redirect
-        const root = admin.root || '/admin';
-        res.redirect(
-          `${root}/${model.dash}/detail/${response.results?.id}`
-        );
+      //if error
+      if (res.code !== 200) {
+        //pass straight to error
+        await server.call('error', req, res);
+        return;
       }
+      //redirect
+      const root = admin.root || '/admin';
+      res.redirect(
+        `${root}/${model.dash}/detail/${response.results?.id}`
+      );
     }
   };
 };

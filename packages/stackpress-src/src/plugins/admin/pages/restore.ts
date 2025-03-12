@@ -31,14 +31,15 @@ export default function AdminRestorePageFactory(model: Model) {
       if (req.data('confirmed')) {
         //emit restore event
         await server.call(`${model.dash}-restore`, req, res);
-        //if they want json (success or fail)
-        if (req.data.has('json')) return;
-        //if successfully restored
-        if (res.code === 200) {
-          //redirect
-          const root = admin.root || '/admin';
-          res.redirect(`${root}/${model.dash}/detail/${ids.join('/')}`);
+        //if error
+        if (res.code !== 200) {
+          //pass straight to error
+          await server.call('error', req, res);
+          return;
         }
+        //redirect
+        const root = admin.root || '/admin';
+        res.redirect(`${root}/${model.dash}/detail/${ids.join('/')}`);
         return;
       }
       //not confirmed, fetch the data using the id

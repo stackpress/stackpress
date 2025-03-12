@@ -31,14 +31,15 @@ export default function AdminRemovePageFactory(model: Model) {
       if (req.data('confirmed')) {
         //emit remove event
         await server.call(`${model.dash}-remove`, req, res);
-        //if they want json (success or fail)
-        if (req.data.has('json')) return;
-        //if successfully removed
-        if (res.code === 200) {
-          //redirect
-          const root = admin.root || '/admin';
-          res.redirect(`${root}/${model.dash}/search`);
+        //if error
+        if (res.code !== 200) {
+          //pass straight to error
+          await server.call('error', req, res);
+          return;
         }
+        //redirect
+        const root = admin.root || '/admin';
+        res.redirect(`${root}/${model.dash}/search`);
         return;
       }
       //not confirmed, fetch the data using the id

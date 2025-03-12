@@ -168,7 +168,7 @@ export default class Column {
    * Returns true if column is @encrypted
    */
   public get encrypted() {
-    return this.attributes.id;
+    return this.attributes.encrypted;
   }
 
   /**
