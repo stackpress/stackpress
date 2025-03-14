@@ -78,7 +78,7 @@ model Auth
                      @id @default("cuid()")
                      @list.overflow({ length 10 hellip true })
   
-  profileId String   @label("Profile") 
+  profileId String   @label("Profile")
                      @field.relation({ 
                       href "/admin/profile/search" 
                       key "profile" 
@@ -92,8 +92,8 @@ model Auth
                       foreign "id" 
                       template "{{name}}" 
                     }) 
-                     @list.template({ key "profile" template "{{name}}" }) 
-                     @view.template({ key "profile" template "{{name}}" })
+                     @list.text
+                     @view.text
                      
   type      String   @label("Type") 
                      @default("username") 
