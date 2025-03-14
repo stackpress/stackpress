@@ -149,6 +149,7 @@ const template = `
     {{#fields}}
       {{#field}}
         <form-control class="pt-20 relative{{zindex}}" label="{{label}}" error={errors.{{name}}}>
+          <input type="hidden" name="{{name}}" value="false" />
           <field-{{method}} 
             class="block" 
             name="{{name}}{{#multiple}}[]{{/multiple}}" 
