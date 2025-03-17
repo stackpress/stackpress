@@ -46,6 +46,7 @@ export default function generate(
 };
 
 const template = `
+
 {{#links}}
   <link rel="import" type="{{type}}" href="{{{href}}}.ink" name="{{name}}" />
 {{/links}}
@@ -53,7 +54,34 @@ const template = `
   import mustache from 'mustache';
   import { filter, sort, order } from 'stackpress/template/helpers';
   const { detail, update, rows = [], none = 'No results found.' } = this.props;
+
+
+  const updateHeaderVisibility = () => {
+    const isMobile = window.innerWidth <= 768;
+    const actionsHeader = this.querySelector('table-head.mobile-hidden-header');
+    if (actionsHeader) {
+      const textSpan = actionsHeader.querySelector('span');
+      const icon = actionsHeader.querySelector('element-icon');
+      if (isMobile) {
+        if (textSpan) textSpan.style.display = 'none'; // Hide text
+        if (!icon) {
+          actionsHeader.innerHTML = '<element-icon name="cog" />'; 
+        }
+      } else {
+        if (textSpan) textSpan.style.display = ''; // Show text
+        if (icon && !textSpan) {
+          actionsHeader.innerHTML = '<span>Actions</span>'; 
+        }
+      }
+    }
+  };
+
+ 
+  window.addEventListener('load', updateHeaderVisibility);
+  window.addEventListener('resize', updateHeaderVisibility);
 </script>
+
+
 <if true={rows.length > 0}>
   <table-layout
     head="py-16 px-12 bg-t-1 b-solid b-black bt-1 bb-0 bx-0 tx-bold" 
@@ -61,6 +89,7 @@ const template = `
     odd="bg-t-0"
     even="bg-t-1"
     top
+    right
   >
     {{#headers}}
       {{#head}}
@@ -74,7 +103,7 @@ const template = `
         </table-head>
       {{/sort}}
     {{/headers}}
-    <table-head class="tx-left">Actions</table-head>
+    <table-head class="mobile-hidden-header tx-left"><span>Actions</span></table-head>
     <each key=i value=data from={rows}>
       <table-row>
         {{#columns}}
@@ -101,13 +130,13 @@ const template = `
         {{/columns}}
         <table-col class="tx-left" nowrap>
           <form-button primary href={mustache.render(detail || '', data)}>
-            <element-icon name="caret-right" />
+            <element-icon xl3 name="caret-right" />
           </form-button>
         </table-col>
       </table-row>
     </each>
   </table-layout>
-<else />
+<else /> 
   <element-alert info>
     <element-icon name="info-circle" />
     {none}
