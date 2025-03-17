@@ -22,7 +22,6 @@
   } = props('document');
 
   const title = _('Home Page');
-  console.log('Translated title:', title);
 </script>
 <html>
   <html-head />
