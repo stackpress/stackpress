@@ -180,28 +180,25 @@ const template = `
         />
       </header>
       <main class="flex-grow scroll-auto h-calc-full-38 flex flex-col">
-        <div class="flex flex-y-center p-10">
-          <form-button muted padding={10}>
-            <element-icon name="filter" click=toggle />
-          </form-button>
-          <form class="flex-grow flex flex-y-center">
-            <field-input border-white class="flex-grow" name="q" value=q />
-            <form-button info padding={10}>
-              <element-icon name="search" />
-            </form-button>
-          </form>
-          <span mount=init>
-            <form-button warning padding={10} class="ml-10">
-              <element-icon name="upload" />
-              <input type="file" style="display:none" />
-            </form-button>
-          </span>
-          <form-button info padding={10} class="ml-10" href={links.export}>
-            <element-icon name="download" />
-          </form-button>
-          <form-button success padding={10} class="ml-10" href={links.create}>
-            <element-icon name="plus" />
-          </form-button>
+        <div class="flex flex-y-center p-10 justify-between">
+          <div class="flex flex-y-center flex-grow">
+            {{filterBar}}
+            {{searchBar}}
+          </div>
+          <div class="flex flex-y-center">
+            <span mount=init>
+              <form-button warning padding={10} class="ml-10">
+                <element-icon name="upload" />
+                <input type="file" style="display:none" />
+              </form-button>
+            </span>
+              <form-button info padding={10} class="ml-10" href={links.export}>
+                <element-icon name="download" />
+              </form-button>
+              <form-button success padding={10} class="ml-10" href={links.create}>
+                <element-icon name="plus" />
+              </form-button>
+          </div>
         </div>
         <div class="flex-grow p-10">
           <{{lower}}-table 
@@ -251,6 +248,9 @@ export default function generate(
   registry: Registry,
   fs: FileSystem
 ) {
+  const searchableTables = ['profile', 'auth', 'application'];
+  const filterableTables = ['profile', 'auth', 'application', 'connection', 'file', 'address', 'session'];
+
   for (const model of registry.model.values()) {
     const file = path.join(
       directory.getPath(), 
@@ -259,12 +259,35 @@ export default function generate(
     if (!fs.existsSync(path.dirname(file))) {
       fs.mkdirSync(path.dirname(file), { recursive: true });
     }
+
+    const searchBar = searchableTables.includes(model.lower.toLowerCase()) ? `
+    <if true={results.length > 0}>
+      <form class="flex-grow flex flex-y-center">
+        <field-input border-white class="flex-grow" name="q" value=q />
+        <form-button info padding={10}>
+          <element-icon name="search" />
+        </form-button>
+      </form>
+    </if>
+  ` : '';
+  
+  const filterBar = filterableTables.includes(model.lower.toLowerCase()) ? `
+    <if true={results.length > 0}>
+      <form-button muted padding={10}>
+        <element-icon name="filter" click=toggle />
+      </form-button>
+    </if>
+  ` : '';  
+  
     const source = render(template, { 
       icon: model.icon || '',
       ids: model.ids.map(column => `{{${column.name}}}`).join('/'),
       lower: model.lower, 
-      plural: model.plural 
+      plural: model.plural,
+      searchBar, // show the search bar
+      filterBar //show the filter bar
     });
+
     fs.writeFileSync(file, source);
   }
 };
