@@ -134,7 +134,7 @@ export function getFormFields(columns: Column[], links: Link[], fieldsets = true
   const fields: FormFields = [];
   for (let index = 0; index < columns.length; index++) {
     const column = columns[index];
-    const { name, label } = column;
+    const { name, label, zindex = 0 } = column;
     const { method, attributes } = getMethod(
       column.field.method, 
       column.field.attributes,
@@ -147,7 +147,7 @@ export function getFormFields(columns: Column[], links: Link[], fieldsets = true
           legend: column.multiple ? `${label} %s` : label, 
           name: name, 
           multiple: Boolean(attributes.multiple), 
-          index: columns.length - index,
+          zindex: zindex ? ` z-${zindex}` : '',
           fields: getFormFields(column.fieldset.fields, links, true)
         }
       });
@@ -164,8 +164,18 @@ export function getFormFields(columns: Column[], links: Link[], fieldsets = true
       type: 'component', 
       name: `field-${method}` 
     });
+    const key = [
+      'textarea', 
+      'editor', 
+      'wysiwyg', 
+      'markdown'
+    ].includes(method)
+      ? 'textarea'
+      : method === 'password'
+      ? 'password'
+      : 'field';
     fields.push({
-      field: {
+      [key]: {
         label, 
         name, 
         method, 
@@ -173,7 +183,7 @@ export function getFormFields(columns: Column[], links: Link[], fieldsets = true
           'filelist', 'imagelist', 
           'taglist', 'textlist'
         ].includes(method),
-        index: columns.length - index,
+        zindex: zindex ? ` z-${zindex}` : '',
         attributes: objectToAttributeString(attributes)
       }
     });
@@ -188,7 +198,7 @@ export function getFilterFields(columns: Column[], links: Link[]) {
   const fields: FilterFields = [];
   for (let index = 0; index < columns.length; index++) {
     const column = columns[index];
-    const { name, label } = column;
+    const { name, label, zindex = 0 } = column;
     const { method, attributes } = getMethod(
       column.filter.method, 
       column.filter.attributes,
@@ -212,9 +222,9 @@ export function getFilterFields(columns: Column[], links: Link[]) {
           label, 
           name, 
           method, 
-          index: columns.length - index,
-          index2: columns.length + 1 - index,
-          index3: columns.length + 2 - index,
+          zindex: zindex ? ` z-${zindex}` : '',
+          zindex2: zindex ? ` z-${zindex + 1}` : '',
+          zindex3: zindex ? ` z-${zindex + 2}` : '',
           attributes: objectToAttributeString(attributes)
         }
       });
@@ -234,9 +244,9 @@ export function getFilterFields(columns: Column[], links: Link[]) {
           label, 
           name, 
           method, 
-          index: columns.length - index,
-          index2: columns.length + 1 - index,
-          index3: columns.length + 2 - index,
+          zindex: zindex ? ` z-${zindex}` : '',
+          zindex2: zindex ? ` z-${zindex + 1}` : '',
+          zindex3: zindex ? ` z-${zindex + 2}` : '',
           attributes: objectToAttributeString(attributes)
         }
       });

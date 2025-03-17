@@ -1,8 +1,11 @@
 //stackpress
+import type { UnknownNest } from '@stackpress/lib/dist/types';
 import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //root
 import type { AdminConfig } from '../../../types';
+//session
+import { decrypt } from '../../../session/helpers';
 //schema
 import type Model from '../../../schema/spec/Model';
 
@@ -42,10 +45,39 @@ export default function AdminSearchPageFactory(model: Model) {
       take = Number(take);
     }
     //search using the filters
-    await server.call(
+    const response = await server.call(
       `${model.dash}-search`,
       { q, filter, span, sort, skip, take },
       res
     );
+    //if error
+    if (res.code !== 200) {
+      //pass straight to error
+      await server.call('error', req, res);
+      return;
+    }
+    //remember the total
+    const total = response.total;
+    //get the session seed (for decrypting)
+    const seed = server.config.path('session.seed', 'abc123');
+    const rows = (response.results as UnknownNest[]).map(row => {
+      //decrypt the data
+      for (const key in row) {
+        const column = model.column(key);
+        if (column && column.encrypted) {
+          const string = String(row[key]);
+          if (string.length > 0) {
+            try {
+              row[key] = decrypt(String(row[key]), seed);
+            } catch(e) {
+              //this can fail if the data was not encrypted 
+              //using the same seed or not encrypted at all 
+            }
+          }
+        }
+      }
+      return row;
+    });
+    res.setRows(rows, total || rows.length);
   };
 };

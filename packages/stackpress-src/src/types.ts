@@ -127,6 +127,20 @@ export type SearchParams = {
   total?: boolean
 };
 
+export type SearchJoin = {
+  table: string,
+  from: string,
+  to: string,
+  alias: string
+}
+
+export type SearchJoinMap = Record<string, SearchJoin>;
+
+export type SearchPath = {
+  model: Model,
+  column: Column
+};
+
 //--------------------------------------------------------------------//
 // API Types
 

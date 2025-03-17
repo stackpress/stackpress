@@ -165,6 +165,13 @@ export default class Column {
   }
 
   /**
+   * Returns true if column is @encrypted
+   */
+  public get encrypted() {
+    return this.attributes.encrypted;
+  }
+
+  /**
    * Returns the column field (defaults to none)
    * example: @field.text({type "text"})
    */
@@ -192,6 +199,13 @@ export default class Column {
    */
   public get generated() {
     return this.attributes.generated;
+  }
+
+  /**
+   * Returns true if column is a @hash
+   */
+  public get hash() {
+    return this.attributes.hash;
   }
 
   /**
@@ -466,6 +480,14 @@ export default class Column {
       return { method: 'hide', args: [], attributes: {} };
     }
     return this.attributes.view;
+  }
+
+  /**
+   * Returns the column @zindex format
+   * example: @zindex(100)
+   */
+  public get zindex() {
+    return this.attributes.zindex;
   }
 
   /**

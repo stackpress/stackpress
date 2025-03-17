@@ -4,6 +4,8 @@ import type { ServerRequest } from '@stackpress/ingest/dist/types';
 import type Response from '@stackpress/ingest/dist/Response';
 //root
 import type { AdminConfig } from '../../../types';
+//session
+import { decrypt } from '../../../session/helpers';
 //schema
 import type Model from '../../../schema/spec/Model';
 
@@ -29,10 +31,32 @@ export default function AdminDetailPageFactory(model: Model) {
     const ids = model.ids.map(column => req.data(column.name)).filter(Boolean);
     if (ids.length === model.ids.length) {
       //emit detail event
-      await server.call<UnknownNest>(`${model.dash}-detail`, req, res);
+      const response = await server.call<UnknownNest>(`${model.dash}-detail`, req, res);
       if (!res.body) {
+        //pass straight to error
         await server.call('error', req, res);
+        return;
       }
+      //get the session seed (for decrypting)
+      const seed = server.config.path('session.seed', 'abc123');
+      const results = response.results as UnknownNest;
+      //decrypt the data
+      for (const key in results) {
+        const column = model.column(key);
+        if (column && column.encrypted) {
+          const string = String(results[key]);
+          if (string.length > 0) {
+            try {
+              results[key] = decrypt(String(results[key]), seed);
+            } catch(e) {
+              //this can fail if the data was not encrypted 
+              //using the same seed or not encrypted at all 
+            }
+            
+          }
+        }
+      }
+      res.setResults(results);
     }
   };
 };

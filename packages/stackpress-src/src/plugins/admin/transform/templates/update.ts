@@ -35,7 +35,9 @@ const template = `
     response = {}
   } = props('document');
 
-  const input = request.data || {};
+  const input = request.method === 'GET' 
+    ? (response.results || {})
+    : (request.data || {});
 
   const {
     error,

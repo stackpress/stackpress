@@ -15,7 +15,8 @@ model Profile
   name        String    @label("Name") 
                         @searchable
                         @field.text({ required true })
-                        @is.required
+                        @is.required("Required")
+                        @is.notempty("Cannot be empty")
                         @list.text @view.text
 
   image       String?   @label("Image") 
@@ -26,6 +27,7 @@ model Profile
                         @default("person") 
                         @filter.text
                         @field.text({ required true })
+                        @is.notempty("Cannot be empty")
                         @list.text({ lower true }) 
                         @view.text({ lower true })
   
@@ -77,27 +79,41 @@ model Auth
                      @list.overflow({ length 10 hellip true })
   
   profileId String   @label("Profile") 
-                     @field.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
-                     @is.required
-                     @filter.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
+                     @field.relation({ 
+                      href "/admin/profile/search" 
+                      key "profile" 
+                      foreign "id" 
+                      template "{{name}}" 
+                    }) 
+                     @is.required("Required")
+                     @filter.relation({ 
+                      href "/admin/profile/search" 
+                      key "profile" 
+                      foreign "id" 
+                      template "{{name}}" 
+                    }) 
                      @list.template({ key "profile" template "{{name}}" }) 
                      @view.template({ key "profile" template "{{name}}" })
                      
   type      String   @label("Type") 
                      @default("username") 
                      @field.text({ required true }) @filter.text
-                     @is.required
+                     @is.required("Required")
+                     @is.notempty("Cannot be empty")
                      @list.text @view.text
   
   token     String   @label("Token")
-                     @unique @searchable
+                     @unique @encrypted
                      @field.text({ required true })
-                     @is.required @is.cge(5)
+                     @is.required("Required") 
+                     @is.cge(5 "Must be at least 5 characters")
                      @list.text @view.text
   
   secret    String   @label("Secret") 
-                     @field.password({ required true })
-                     @is.required
+                     @hash
+                     @field.password
+                     @is.required("Required")
+                     @is.notempty("Cannot be empty")
                      @list.hide @view.hide
   
   verified  Boolean  @label("Verified") 
@@ -139,7 +155,7 @@ model Application
   name    String   @label("Name") 
                    @searchable
                    @field.text({ required true })
-                   @is.required
+                   @is.required("Required")
                    @list.text @view.text
 
   logo    String?  @label("Image") 
@@ -169,7 +185,7 @@ model Application
   expires Datetime @label("Expires") 
                    @sortable
                    @field.datetime
-                   @is.required
+                   @is.required("Required")
                    @list.date("m d, Y h:iA") 
                    @view.date("m d, Y h:iA")
   
@@ -196,21 +212,34 @@ model Session
                          @id @default("cuid()")
   
   applicationId String   @label("App") 
-                         @field.relation({ href "/admin/app/search" key "application" foreign "id" template "{{name}}" }) 
-                         @is.required
-                         @filter.relation({ href "/admin/app/search" key "application" foreign "id" template "{{name}}" }) 
+                         @field.relation({ 
+                           href "/admin/app/search" 
+                           key "application" 
+                           foreign "id" 
+                           template "{{name}}" 
+                         }) 
+                         @is.required("Required")
+                         @is.notempty("Cannot be empty")
+                         @filter.relation({ 
+                           href "/admin/app/search" 
+                           key "application" 
+                           foreign "id" 
+                           template "{{name}}" 
+                         }) 
                          @list.template({ key "application" template "{{name}}" }) 
                          @view.template({ key "application" template "{{name}}" })
   
   profileId     String   @label("Profile") 
                          @field.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
-                         @is.required
+                         @is.required("Required")
+                         @is.notempty("Cannot be empty")
                          @filter.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
                          @list.template({ key "profile" template "{{name}}" }) 
                          @view.template({ key "profile" template "{{name}}" })
 
   secret        String   @label("Secret") 
                          @default("cuid()")
+                         @is.notempty("Cannot be empty")
                          @list.hide @view.hide
   
   scopes        String[] @label("Scopes") 
@@ -223,19 +252,20 @@ model Session
                          @filter.switch
                          @list.hide @view.yesno
   
-  expires     Datetime   @label("Expires") 
+  expires       Datetime @label("Expires") 
                          @sortable
                          @field.datetime
-                         @is.required
+                         @is.required("Required")
+                         @is.notempty("Cannot be empty")
                          @list.date("m d, Y h:iA") 
                          @view.date("m d, Y h:iA")
   
-  created     Datetime   @label("Created") 
+  created       Datetime @label("Created") 
                          @default("now()") @sortable
                          @list.date("m d, Y h:iA") 
                          @view.date("m d, Y h:iA")
   
-  updated     Datetime   @label("Updated") 
+  updated       Datetime @label("Updated") 
                          @default("now()") @timestamp @sortable
                          @list.date("m d, Y h:iA") 
                          @view.date("m d, Y h:iA")

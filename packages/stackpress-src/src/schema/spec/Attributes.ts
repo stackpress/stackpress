@@ -102,6 +102,13 @@ export default class Attributes extends Map<string, unknown> {
   }
 
   /**
+   * Returns true if column is an @encrypted column
+   */
+  public get encrypted() {
+    return this.get('encrypted') === true;
+  }
+
+  /**
    * Returns the column field (defaults to none)
    * example: @field.text({type "text"})
    */
@@ -158,6 +165,13 @@ export default class Attributes extends Map<string, unknown> {
    */
   public get generated() {
     return this.get('generated') === true;
+  }
+
+  /**
+   * Returns true if column is a @hash column
+   */
+  public get hash() {
+    return this.get('hash') === true;
   }
 
   /**
@@ -413,5 +427,17 @@ export default class Attributes extends Map<string, unknown> {
       return { method, args, attributes };
     }
     return { method: 'none', args: [], attributes: {} };
+  }
+
+  /**
+   * Returns the column @zindex format
+   * example: @zindex(100)
+   */
+  public get zindex() {
+    const zindex = this.get('zindex');
+    if (Array.isArray(zindex)) {
+      return zindex[0];
+    }
+    return undefined;
   }
 }
