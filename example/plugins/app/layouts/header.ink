@@ -5,6 +5,10 @@
     if (!userMenu) return;
     userMenu.classList.toggle('none');
   };
+
+  const changeLanguage = async (locale: string) => {
+    window.location.href = `/?locale=${locale}`;
+  };
 </script>
 <header class="flex flex-center-y p-10 relative bg-t-0">
   <div class="flex-grow">
@@ -20,8 +24,8 @@
         <span>{session?.name}</span>
       </div>
       <nav class="p-10 bg-t-3">
-        <a class="tx-info tx-sm inline-block p-5 bg-t-0" href="#">EN</a>
-        <a class="tx-info tx-sm inline-block p-5 bg-t-0" href="#">TG</a>
+        <a class="tx-info tx-sm inline-block p-5 bg-t-0" click={() => changeLanguage('en_US')}>EN</a>
+        <a class="tx-info tx-sm inline-block p-5 bg-t-0" click={() => changeLanguage('th_TH')}>TH</a>
       </nav>
     </header>
     <main class="flex-grow bg-t-0">

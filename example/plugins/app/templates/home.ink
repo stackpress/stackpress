@@ -9,9 +9,8 @@
 </style>
 <script>
   import { _, env, props } from 'stackpress/template/client';
-
   const {
-    config = {},
+    data = {},
     session = { 
       id: 0, 
       token: '', 
@@ -23,6 +22,7 @@
   } = props('document');
 
   const title = _('Home Page');
+  console.log('Translated title:', title);
 </script>
 <html>
   <html-head />
