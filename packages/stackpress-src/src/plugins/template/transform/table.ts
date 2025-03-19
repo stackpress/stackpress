@@ -53,17 +53,15 @@ const template = `
   import mustache from 'mustache';
   import { filter, sort, order } from 'stackpress/template/helpers';
   const { detail, update, rows = [], none = 'No results found.' } = this.props;
-
-const updateHeaderVisibility = () => {
-  const isMobile = window.innerWidth <= 768;
-  const actionsHeader = this.querySelector('table-head.mobile-hidden-header');
-  if (actionsHeader) {
-    const textSpan = actionsHeader.querySelector('span');
-    if (textSpan) textSpan.style.display = isMobile ? 'none' : '';
-  }
-};
-
- 
+  const updateHeaderVisibility = () => {
+    const isMobile = window.innerWidth <= 768;
+    const actionsHeader = this.querySelector('table-head.mobile-hidden-header');
+    if (actionsHeader) {
+      const textSpan = actionsHeader.querySelector('span');
+      if (textSpan) textSpan.style.display = isMobile ? 'none' : ''; 
+    }
+  };
+  
   window.addEventListener('load', updateHeaderVisibility);
   window.addEventListener('resize', updateHeaderVisibility);
 
