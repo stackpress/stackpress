@@ -300,6 +300,19 @@ export default class Attributes extends Map<string, unknown> {
   }
 
   /**
+   * Returns the table @query
+   * example: @query([ "*" ])
+   * example: @query([ "id", "name" ])
+   */
+  public get query() {
+    const query = this.get('query');
+    if (Array.isArray(query)) {
+      return query[0] as string[];
+    }
+    return [ '*' ];
+  }
+
+  /**
    * Returns relation information
    */
   public get relation() {

@@ -72,7 +72,8 @@ model Profile
 model Auth 
   @label("Auth" "Auth") 
   @template("{{token}}") 
-  @icon("lock") 
+  @icon("lock")
+  @query([ "*" "profile.*" ])
 {
   id        String   @label("ID") 
                      @id @default("cuid()")
@@ -207,6 +208,7 @@ model Session
   @label("Session" "Sessions") 
   @template("{{profile.name}}") 
   @icon("coffee") 
+  @query([ "*" "profile.*" "application.*"])
 {
   id            String   @label("ID") 
                          @id @default("cuid()")

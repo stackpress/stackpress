@@ -22,6 +22,8 @@ export default function AdminDetailPageFactory(model: Model) {
       logo: admin.logo || '/images/logo-square.png',
       menu: admin.menu || []
     });
+    req.data.set('columns', model.query);
+
     //if there is a response body or there is an error code
     if (res.body || (res.code && res.code !== 200)) {
       //let the response pass through
