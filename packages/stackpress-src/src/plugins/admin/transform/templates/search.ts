@@ -249,6 +249,7 @@ export default function generate(
   fs: FileSystem
 ) {
   for (const model of registry.model.values()) {
+    
     //check if the model has at least one searchable field
     const isSearchable = model.fields.some(field => field.attribute('searchable'));
     //check if the model has at least one filterable field
@@ -266,6 +267,8 @@ export default function generate(
       fs.mkdirSync(path.dirname(file), { recursive: true });
     }
 
+    const hasFilters = Object.values(model.filters).length > 0;
+
     const searchBar = isSearchable ? `
       <if true={results.length > 0}>
         <form class="flex-grow flex flex-y-center">
@@ -278,7 +281,7 @@ export default function generate(
     ` : '';
 
     const filterBar = isFilterable ? `
-      <if true={results.length > 0}>
+      <if true={results.length > 0 || ${hasFilters}}>
         <form-button muted padding={10}>
           <element-icon name="filter" click=toggle />
         </form-button>
