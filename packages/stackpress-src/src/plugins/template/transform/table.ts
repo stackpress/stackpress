@@ -73,7 +73,6 @@ const template = `
     odd="bg-t-0"
     even="bg-t-1"
     top
-    right
   >
     {{#headers}}
       {{#head}}
@@ -87,7 +86,7 @@ const template = `
         </table-head>
       {{/sort}}
     {{/headers}}
-    <table-head class="mobile-hidden-header tx-left"><span>Actions</span></table-head>
+    <table-head right class="mobile-hidden-header tx-left"><span>Actions</span></table-head>
     <each key=i value=data from={rows}>
       <table-row>
         {{#columns}}
@@ -112,7 +111,7 @@ const template = `
             {{/filter}}
           </table-col>
         {{/columns}}
-        <table-col class="tx-left" nowrap>
+        <table-col right class="tx-left" nowrap>
           <form-button primary href={mustache.render(detail || '', data)}>
             <element-icon xl3 name="caret-right" />
           </form-button>
