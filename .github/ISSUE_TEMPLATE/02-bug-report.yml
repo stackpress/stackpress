@@ -7,7 +7,7 @@ body:
       value: Thanks for taking the time to file a bug report! Please fill out this form as completely as possible.
   - type: input
     attributes:
-      label: What version of Ingest are you using?
+      label: What version of Stackpress are you using?
       description: 'For example: 0.1.1'
     validations:
       required: true

@@ -69,7 +69,7 @@ export default function AdminSearchPageFactory(model: Model) {
     const total = response.total;
     //get the session seed (for decrypting)
     const seed = server.config.path('session.seed', 'abc123');
-    const rows = (response.results as UnknownNest[]).map((row) => {
+    const rows = (response.results as UnknownNest[]).map(row => {
       //decrypt the data
       for (const key in row) {
         const column = model.column(key);
@@ -79,7 +79,7 @@ export default function AdminSearchPageFactory(model: Model) {
           if (string.length > 0) {
             try {
               row[key] = decrypt(String(row[key]), seed);
-            } catch (e) {
+            } catch(e) {
               //this can fail if the data was not encrypted
               //using the same seed or not encrypted at all
             }
