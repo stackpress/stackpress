@@ -35,7 +35,7 @@ export default function AdminSearchPageFactory(model: Model) {
       sort,
       skip,
       take,
-      columns = ['*'],
+      columns = ['*', 'profile.*'],
     } = req.data<{
       q?: string;
       filter?: Record<string, string | number | boolean>;

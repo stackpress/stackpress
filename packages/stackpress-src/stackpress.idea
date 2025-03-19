@@ -92,8 +92,8 @@ model Auth
                       foreign "id" 
                       template "{{name}}" 
                     }) 
-                     @list.text
-                     @view.text
+                     @list.template({ key "profile" template "{{name}}" })
+                     @view.template({ key "profile" template "{{name}}" })
                      
   type      String   @label("Type") 
                      @default("username") 
