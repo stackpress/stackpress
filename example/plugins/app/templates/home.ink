@@ -9,9 +9,8 @@
 </style>
 <script>
   import { _, env, props } from 'stackpress/template/client';
-
   const {
-    config = {},
+    data = {},
     session = { 
       id: 0, 
       token: '', 
