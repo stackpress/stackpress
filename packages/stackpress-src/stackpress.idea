@@ -72,13 +72,14 @@ model Profile
 model Auth 
   @label("Auth" "Auth") 
   @template("{{token}}") 
-  @icon("lock") 
+  @icon("lock")
+  @query([ "*" "profile.*" ])
 {
   id        String   @label("ID") 
                      @id @default("cuid()")
                      @list.overflow({ length 10 hellip true })
   
-  profileId String   @label("Profile") 
+  profileId String   @label("Profile")
                      @field.relation({ 
                       href "/admin/profile/search" 
                       key "profile" 
@@ -92,7 +93,7 @@ model Auth
                       foreign "id" 
                       template "{{name}}" 
                     }) 
-                     @list.template({ key "profile" template "{{name}}" }) 
+                     @list.template({ key "profile" template "{{name}}" })
                      @view.template({ key "profile" template "{{name}}" })
                      
   type      String   @label("Type") 
@@ -207,6 +208,7 @@ model Session
   @label("Session" "Sessions") 
   @template("{{profile.name}}") 
   @icon("coffee") 
+  @query([ "*" "profile.*" "application.*"])
 {
   id            String   @label("ID") 
                          @id @default("cuid()")

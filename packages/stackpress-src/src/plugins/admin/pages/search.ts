@@ -16,25 +16,35 @@ export default function AdminSearchPageFactory(model: Model) {
     //get the admin config
     const admin = server.config<AdminConfig>('admin') || {};
     //set data for template layer
-    res.data.set('admin', { 
+    res.data.set('admin', {
       root: admin.root || '/admin',
-      name: admin.name || 'Admin', 
+      name: admin.name || 'Admin',
       logo: admin.logo || '/images/logo-square.png',
-      menu: admin.menu || []
+      menu: admin.menu || [],
     });
+    req.data.set('columns', model.query);
     //if there is a response body or there is an error code
     if (res.body || (res.code && res.code !== 200)) {
       //let the response pass through
       return;
     }
     //extract filters from url query
-    let { q, filter, span, sort, skip, take } = req.data<{
-      q?: string,
-      filter?: Record<string, string|number|boolean>,
-      span?: Record<string, (string|number|null|undefined)[]>,
-      sort?: Record<string, any>,
-      skip?: number,
-      take?: number
+    let {
+      q,
+      filter,
+      span,
+      sort,
+      skip,
+      take,
+      columns = [ '*' ],
+    } = req.data<{
+      q?: string;
+      filter?: Record<string, string | number | boolean>;
+      span?: Record<string, (string | number | null | undefined)[]>;
+      sort?: Record<string, any>;
+      skip?: number;
+      take?: number;
+      columns?: string[];
     }>();
 
     if (skip && !isNaN(Number(skip))) {
@@ -47,7 +57,7 @@ export default function AdminSearchPageFactory(model: Model) {
     //search using the filters
     const response = await server.call(
       `${model.dash}-search`,
-      { q, filter, span, sort, skip, take },
+      { q, filter, span, sort, skip, take, columns },
       res
     );
     //if error
@@ -64,14 +74,15 @@ export default function AdminSearchPageFactory(model: Model) {
       //decrypt the data
       for (const key in row) {
         const column = model.column(key);
+
         if (column && column.encrypted) {
           const string = String(row[key]);
           if (string.length > 0) {
             try {
               row[key] = decrypt(String(row[key]), seed);
             } catch(e) {
-              //this can fail if the data was not encrypted 
-              //using the same seed or not encrypted at all 
+              //this can fail if the data was not encrypted
+              //using the same seed or not encrypted at all
             }
           }
         }
@@ -80,4 +91,4 @@ export default function AdminSearchPageFactory(model: Model) {
     });
     res.setRows(rows, total || rows.length);
   };
-};
+}

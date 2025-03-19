@@ -49,6 +49,15 @@ export default class Model extends Fieldset {
   }
 
   /**
+   * Returns the table @query
+   * example: @query([ "*" ])
+   * example: @query([ "id", "name" ])
+   */
+  public get query() {
+    return this.attributes.query;
+  }
+
+  /**
    * Returns all the models with columns related to this model
    */
   public get related(): Column[] {
