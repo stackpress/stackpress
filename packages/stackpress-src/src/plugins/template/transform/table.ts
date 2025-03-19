@@ -53,6 +53,20 @@ const template = `
   import mustache from 'mustache';
   import { filter, sort, order } from 'stackpress/template/helpers';
   const { detail, update, rows = [], none = 'No results found.' } = this.props;
+
+const updateHeaderVisibility = () => {
+  const isMobile = window.innerWidth <= 768;
+  const actionsHeader = this.querySelector('table-head.mobile-hidden-header');
+  if (actionsHeader) {
+    const textSpan = actionsHeader.querySelector('span');
+    if (textSpan) textSpan.style.display = isMobile ? 'none' : '';
+  }
+};
+
+ 
+  window.addEventListener('load', updateHeaderVisibility);
+  window.addEventListener('resize', updateHeaderVisibility);
+
 </script>
 <if true={rows.length > 0}>
   <table-layout
@@ -61,6 +75,7 @@ const template = `
     odd="bg-t-0"
     even="bg-t-1"
     top
+    right
   >
     {{#headers}}
       {{#head}}
@@ -74,7 +89,7 @@ const template = `
         </table-head>
       {{/sort}}
     {{/headers}}
-    <table-head class="tx-left">Actions</table-head>
+    <table-head class="mobile-hidden-header tx-left"><span>Actions</span></table-head>
     <each key=i value=data from={rows}>
       <table-row>
         {{#columns}}
@@ -101,7 +116,7 @@ const template = `
         {{/columns}}
         <table-col class="tx-left" nowrap>
           <form-button primary href={mustache.render(detail || '', data)}>
-            <element-icon name="caret-right" />
+            <element-icon xl3 name="caret-right" />
           </form-button>
         </table-col>
       </table-row>
