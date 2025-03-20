@@ -1,17 +1,17 @@
 //node
-import path from "node:path";
+import path from 'node:path';
 //modules
-import type { Directory } from "ts-morph";
-import mustache from "mustache";
+import type { Directory } from 'ts-morph';
+import mustache from 'mustache';
 //stackpress
-import type { FileSystem } from "@stackpress/lib/dist/types";
+import type { FileSystem } from '@stackpress/lib/dist/types';
 //schema
-import type Registry from "../../../schema/Registry";
+import type Registry from '../../../schema/Registry';
 //local
-import { getTableData } from "./helpers";
+import { getTableData } from './helpers';
 
 export default function generate(
-  directory: Directory,
+  directory: Directory, 
   registry: Registry,
   fs: FileSystem
 ) {
@@ -20,50 +20,22 @@ export default function generate(
     //make new data
     const data = getTableData(model.lists, {
       links: [
-        {
-          href: "@stackpress/ink-ui/layout/table",
-          type: "component",
-          name: "table-layout",
-        },
-        {
-          href: "@stackpress/ink-ui/layout/table/head",
-          type: "component",
-          name: "table-head",
-        },
-        {
-          href: "@stackpress/ink-ui/layout/table/row",
-          type: "component",
-          name: "table-row",
-        },
-        {
-          href: "@stackpress/ink-ui/layout/table/col",
-          type: "component",
-          name: "table-col",
-        },
-        {
-          href: "@stackpress/ink-ui/element/alert",
-          type: "component",
-          name: "element-alert",
-        },
-        {
-          href: "@stackpress/ink-ui/element/icon",
-          type: "component",
-          name: "element-icon",
-        },
-        {
-          href: "@stackpress/ink-ui/form/button",
-          type: "component",
-          name: "form-button",
-        },
+        { href: '@stackpress/ink-ui/layout/table', type: 'component', name: 'table-layout' },
+        { href: '@stackpress/ink-ui/layout/table/head', type: 'component', name: 'table-head' },
+        { href: '@stackpress/ink-ui/layout/table/row', type: 'component', name: 'table-row' },
+        { href: '@stackpress/ink-ui/layout/table/col', type: 'component', name: 'table-col' },
+        { href: '@stackpress/ink-ui/element/alert', type: 'component', name: 'element-alert' },
+        { href: '@stackpress/ink-ui/element/icon', type: 'component', name: 'element-icon' },
+        { href: '@stackpress/ink-ui/form/button', type: 'component', name: 'form-button' }
       ],
       headers: [],
-      columns: [],
+      columns: []
     });
     data.links = data.links.filter((link, index, self) => {
-      return self.findIndex((l) => l.name === link.name) === index;
+      return self.findIndex(l => l.name === link.name) === index
     });
     const file = path.join(
-      directory.getPath(),
+      directory.getPath(), 
       `${model.name}/components/table.ink`
     );
     if (!fs.existsSync(path.dirname(file))) {
@@ -71,7 +43,7 @@ export default function generate(
     }
     fs.writeFileSync(file, mustache.render(template, data));
   }
-}
+};
 
 const template = `
 {{#links}}
