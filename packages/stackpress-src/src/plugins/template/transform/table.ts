@@ -64,7 +64,7 @@ const template = `
   >
     {{#headers}}
       {{#head}}
-        <table-head class="tx-{{direction}}">{{label}}</table-head>
+        <table-head class="tx-{{direction}}" nowrap>{{label}}</table-head>
       {{/head}}
       {{#sort}}
         <table-head class="tx-{{direction}}">
