@@ -1,18 +1,18 @@
-export type * from '@stackpress/ingest/dist/types';
+export type * from '@stackpress/ingest/types';
 
-import Request from '@stackpress/ingest/dist/Request';
-import Response from '@stackpress/ingest/dist/Response';
-import Server from '@stackpress/ingest/dist/Server';
-import Router from '@stackpress/ingest/dist/Router';
-import Route from '@stackpress/ingest/dist/Route';
+import Request from '@stackpress/ingest/Request';
+import Response from '@stackpress/ingest/Response';
+import Server from '@stackpress/ingest/Server';
+import Router from '@stackpress/ingest/Router';
+import Route from '@stackpress/ingest/Route';
 
-export * from '@stackpress/ingest/dist/helpers';
-export * from '@stackpress/ingest/dist/http/helpers';
+export * from '@stackpress/ingest/helpers';
+export * from '@stackpress/ingest/http/helpers';
 export {
   reqToURL,
   reqQueryToObject,
   readableToReadableStream
-} from '@stackpress/ingest/dist/whatwg/helpers';
+} from '@stackpress/ingest/whatwg/helpers';
 
 export * as http from './http';
 export * as whatwg from './whatwg';

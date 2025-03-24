@@ -1,7 +1,7 @@
 //stackpress
-import type { UnknownNest, StatusResponse } from '@stackpress/lib/dist/types';
-import type Engine from '@stackpress/inquire/dist/Engine';
-import Nest from '@stackpress/lib/dist/data/Nest';
+import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
+import type Engine from '@stackpress/inquire/Engine';
+import Nest from '@stackpress/lib/Nest';
 //root
 import type { SearchParams, SearchJoinMap } from '../../types';
 //schema

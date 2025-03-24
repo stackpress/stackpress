@@ -3,8 +3,8 @@ import type {
   UnknownNest,
   NestedObject, 
   StatusResponse
-} from '@stackpress/lib/dist/types';
-import type Engine from '@stackpress/inquire/dist/Engine';
+} from '@stackpress/lib/types';
+import type Engine from '@stackpress/inquire/Engine';
 //root
 import Exception from '../../Exception';
 //schema

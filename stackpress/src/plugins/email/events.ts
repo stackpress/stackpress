@@ -2,20 +2,19 @@
 import type { SendMailOptions, SentMessageInfo } from 'nodemailer';
 import nodemailer from 'nodemailer';
 //stackpress
-import ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
+import { server } from '@stackpress/ingest/Server';
 //root
 import type { EmailConfig } from '../../types';
 
-const emitter = new ServerRouter();
+const emitter = server();
 
-emitter.on('email-send', async function EmailSend(req, res) {
+emitter.on('email-send', async function EmailSend(req, res, ctx) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
     return;
   }
-  const server = req.context;
-  const config = server.config<EmailConfig>('email');
+  const config = ctx.config<EmailConfig>('email');
   if (!config) return;
   const options = req.data<SendMailOptions>();
   const transporter = nodemailer.createTransport(config);

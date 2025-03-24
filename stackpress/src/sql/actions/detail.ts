@@ -1,6 +1,6 @@
 //stackpress
-import type { UnknownNest, StatusResponse } from '@stackpress/lib/dist/types';
-import type Engine from '@stackpress/inquire/dist/Engine';
+import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
+import type Engine from '@stackpress/inquire/Engine';
 //root
 import Exception from '../../Exception';
 //schema
@@ -32,7 +32,7 @@ export default async function detail<M extends UnknownNest = UnknownNest>(
   if (response.code !== 200) {
     return response as unknown as StatusResponse<M>;
   //if no results
-  } else if (!response.results[0]) {
+  } else if (!response.results?.[0]) {
     return toErrorResponse(
       Exception.for('Not Found').withCode(404)
     ) as StatusResponse<M>;

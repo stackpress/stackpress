@@ -8,19 +8,15 @@ import type { Options as PoolOptions } from 'nodemailer/lib/smtp-pool';
 import type { Options as SMTPOptions } from 'nodemailer/lib/smtp-transport';
 import type { Options as StreamOptions } from 'nodemailer/lib/stream-transport';
 //stackpress
-import type { Method, UnknownNest } from '@stackpress/lib/dist/types';
-import type { Data, SchemaConfig } from '@stackpress/idea-parser/dist/types';
-import type { PluginProps } from '@stackpress/idea-transformer/dist/types';
-import type { CookieOptions, ViewRender } from '@stackpress/ingest/dist/types';
-import type { InkCompiler } from '@stackpress/ink/dist/types';
-import type Server from '@stackpress/ingest/dist/Server';
-import type Request from '@stackpress/ingest/dist/Request';
-import type Response from '@stackpress/ingest/dist/Response';
-import type ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
-import type Engine from '@stackpress/inquire/dist/Engine';
-import type Create from '@stackpress/inquire/dist/builder/Create';
-import type HttpServer from '@stackpress/ink-dev/dist/HttpServer';
-import type WhatwgServer from '@stackpress/ink-dev/dist/WhatwgServer';
+import type { Method, UnknownNest } from '@stackpress/lib/types';
+import type { Data, SchemaConfig } from '@stackpress/idea-parser/types';
+import type { PluginProps } from '@stackpress/idea-transformer/types';
+import type { CookieOptions } from '@stackpress/ingest/types';
+import type Server from '@stackpress/ingest/Server';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
+import type Engine from '@stackpress/inquire/Engine';
+import type Create from '@stackpress/inquire/Create';
 //schema
 import type Model from './schema/spec/Model';
 import type Column from './schema/spec/Column';
@@ -171,14 +167,6 @@ export type ApiWebhook = {
   method: Method,
   validity: UnknownNest,
   data: UnknownNest
-};
-
-//--------------------------------------------------------------------//
-// Template Types
-
-export type TemplateServers = {
-  http: HttpServer,
-  whatwg: WhatwgServer
 };
 
 //--------------------------------------------------------------------//
@@ -358,7 +346,7 @@ export type ClientPlugin<
   fieldset: Record<string, F & { config: Fieldset }>,
   model: Record<string, M & { 
     config: Model,
-    events: ServerRouter,
+    events: Server,
     schema: Create,
     actions: (engine: Engine) => Actions<M>,
     admin(server: Server<any, any, any>): void
@@ -369,11 +357,7 @@ export type LanguagePlugin = LanguageConstructor;
 export type DatabasePlugin = Engine;
 export type SessionPlugin = SessionConstructor;
 
-export type TemplatePlugin = {
-  compiler: InkCompiler,
-  servers: TemplateServers,
-  render: ViewRender
-};
+export type TemplatePlugin = {};
 
 //--------------------------------------------------------------------//
 // Model Types

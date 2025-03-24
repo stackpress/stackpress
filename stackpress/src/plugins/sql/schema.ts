@@ -1,5 +1,5 @@
 //stackpress
-import Create from '@stackpress/inquire/dist/builder/Create';
+import Create from '@stackpress/inquire/Create';
 //schema
 import type Column from '../../schema/spec/Column';
 import type Model from '../../schema/spec/Model';

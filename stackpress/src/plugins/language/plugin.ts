@@ -1,5 +1,5 @@
 //stackpress
-import type Server from '@stackpress/ingest/dist/Server';
+import type Server from '@stackpress/ingest/Server';
 //root
 import type { LanguageMap, LanguagePlugin } from '../../types';
 //i18n
@@ -10,8 +10,7 @@ import Language from '../../session/Language';
  */
 export default function plugin(server: Server) {
   //on config, configure and register the language plugin
-  server.on('config', req => {
-    const server = req.context;
+  server.on('config', async (_req, _res, server) => {
     //configure and register the language plugin
     server.register('language', Language.configure(
       server.config.path('language.key', 'locale'), 
@@ -19,11 +18,9 @@ export default function plugin(server: Server) {
     ));
   });
   //on listen, look for locale flag
-  server.on('listen', req => {
-    const server = req.context;
+  server.on('listen', async (_req, _res, server) => {
     const language = server.plugin<LanguagePlugin>('language');
-    server.on('request', async (req, res) => {
-      const server = req.context;
+    server.on('request', async (req, res, server) => {
       const key = server.config.path('language.key', 'locale');
       const defaultLocale = server.config.path('language.locale', 'en_US');
       //get the locale from the request
@@ -47,7 +44,6 @@ export default function plugin(server: Server) {
         const request = server.request({
           resource: req.resource,
           body: req.body || undefined,
-          context: server,
           headers: Object.fromEntries(req.headers.entries()),
           mimetype: req.mimetype,
           data: req.data(),
@@ -57,7 +53,7 @@ export default function plugin(server: Server) {
           session: req.session.data as Record<string, string>,
           url: new URL(req.url.origin + pathArray.join('/'))
         });
-        await server.routeTo(req.method, pathArray.join('/'), request, res);
+        await server.resolve(req.method, pathArray.join('/'), request, res);
       }
     });
   });

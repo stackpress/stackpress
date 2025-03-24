@@ -1,8 +1,8 @@
 //modules
 import jwt from 'jsonwebtoken';
 //stackpress
-import type Request from '@stackpress/ingest/dist/Request';
-import type Response from '@stackpress/ingest/dist/Response';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
 //root
 import type { 
   SessionData, 

@@ -1,6 +1,7 @@
 //stackpress
-import type { ServerRequest } from '@stackpress/ingest/dist/types';
-import type Response from '@stackpress/ingest/dist/Response';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
+import type Server from '@stackpress/ingest/Server';
 //root
 import type { DatabasePlugin } from '../../../types';
 import Exception from '../../../Exception';
@@ -15,14 +16,18 @@ import type Model from '../../../schema/spec/Model';
  * emitter.on('profile-purge', purgeEventFactory(profile));
  */
 export default function purgeEventFactory(model: Model) {
-  return async function purgeEventAction(req: ServerRequest, res: Response) {
+  return async function purgeEventAction(
+    _req: Request, 
+    res: Response,
+    ctx: Server
+  ) {
     //if there is a response body or there is an error code
     if (res.body || (res.code && res.code !== 200)) {
       //let the response pass through
       return;
     }
     //get the database engine
-    const engine = req.context.plugin<DatabasePlugin>('database');
+    const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
     try {
       await engine.truncate(model.snake);

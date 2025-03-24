@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import Server from '@stackpress/ingest/dist/Server';
+import Server from '@stackpress/ingest/Server';
 import Terminal from './Terminal';
 
 async function main() {

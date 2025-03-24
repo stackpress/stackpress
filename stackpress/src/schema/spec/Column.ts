@@ -2,7 +2,7 @@
 import { createId as cuid, init } from '@paralleldrive/cuid2';
 import { nanoid } from 'nanoid';
 //stackpress
-import type { EnumConfig } from '@stackpress/idea-parser/dist/types';
+import type { EnumConfig } from '@stackpress/idea-parser/types';
 //root
 import type { SchemaColumnInfo, SchemaSerialOptions } from '../../types';
 //local

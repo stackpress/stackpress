@@ -1,16 +1,19 @@
 //stackpress
-import type Response from '@stackpress/ingest/dist/Response';
-import type { ServerRequest } from '@stackpress/ingest/dist/types';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
+import type Server from '@stackpress/ingest/Server';
 //root
 import type { SessionData, ApiConfig, Session } from '../../../types';
 //local
 import { unauthorized } from '../helpers';
 
-export default async function OAuth(req: ServerRequest, res: Response) {
-  //get the server
-  const server = req.context;
+export default async function OAuth(
+  req: Request, 
+  res: Response, 
+  ctx: Server
+) {
   //set data for template layer
-  const { scopes = {}, endpoints = [] } = server.config.path('api');
+  const { scopes = {}, endpoints = [] } = ctx.config.path('api');
   res.data.set('api', { scopes, endpoints });
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
@@ -30,7 +33,7 @@ export default async function OAuth(req: ServerRequest, res: Response) {
   }
 
   //get session
-  const session = await server.call('me', req);
+  const session = await ctx.resolve('me', req);
   if (!session.results) {
     const redirect = encodeURIComponent(
       req.url.pathname + req.url.search
@@ -40,7 +43,7 @@ export default async function OAuth(req: ServerRequest, res: Response) {
     );
     return;
   }
-  await server.call('application-detail', { id }, res);
+  await ctx.resolve('application-detail', { id }, res);
   //if no applcation found
   if (res.code !== 200) {
     return unauthorized(res);
@@ -50,8 +53,8 @@ export default async function OAuth(req: ServerRequest, res: Response) {
     //get expires length
     const { 
       expires = 1000 * 60 * 60 * 24 
-    } = server.config<ApiConfig>('api') || {};
-    const response = await server.call<Session>('session-create', {
+    } = ctx.config<ApiConfig>('api') || {};
+    const response = await ctx.resolve<Session>('session-create', {
       ...req.data(),
       applicationId: id,
       profileId: (session.results as SessionData).id,

@@ -1,7 +1,7 @@
 //stackpress
-import type { CLIProps } from '@stackpress/idea-transformer/dist/types';
-import type Transformer from '@stackpress/idea-transformer/dist/Transformer';
-import type Server from '@stackpress/ingest/dist/Server';
+import type { CLIProps } from '@stackpress/idea-transformer/types';
+import type Transformer from '@stackpress/idea-transformer/Transformer';
+import type Server from '@stackpress/ingest/Server';
 //root
 import type { ClientPlugin } from '../../types';
 
@@ -10,8 +10,7 @@ import type { ClientPlugin } from '../../types';
  */
 export default function plugin(server: Server) {
   //on listen, add database events
-  server.on('listen', req => {
-    const server = req.context;
+  server.on('listen', (_req, _res, server) => {
     try {
       //it's possible that the client isnt generated yet...
       //config, registry, model, fieldset
@@ -26,15 +25,16 @@ export default function plugin(server: Server) {
     } catch(e) {}
   });
   //generate some code in the client folder
-  server.on('idea', req => {
-    //get the transformer from the request
-    const transformer = req.data<Transformer<CLIProps>>('transformer');
-    //if no plugin object exists, create one
-    if (!transformer.schema.plugin) {
-      transformer.schema.plugin = {};
-    }
-    //add this plugin generator to the schema
-    //so it can be part of the transformation
-    transformer.schema.plugin['stackpress/plugins/sql/transform'] = {};
+  server.on('idea', async req => {
+      //get the transformer from the request
+      const transformer = req.data<Transformer<CLIProps>>('transformer');
+      const schema = await transformer.schema();
+      //if no plugin object exists, create one
+      if (!schema.plugin) {
+        schema.plugin = {};
+      }
+      //add this plugin generator to the schema
+      //so it can be part of the transformation
+      schema.plugin['stackpress/plugins/sql/transform'] = {};
   });
 };

@@ -1,5 +1,5 @@
 //stackpress
-import ServerRouter from '@stackpress/ingest/dist/router/ServerRouter';
+import { server } from '@stackpress/ingest/Server';
 //schema
 import type Model from '../../../schema/spec/Model';
 //local
@@ -43,7 +43,7 @@ export function handlers(model: Model) {
 }
 
 export default function listen(model: Model) {
-  const emitter = new ServerRouter();
+  const emitter = server();
   emitter.on(`${model.dash}-batch`, batch(model));
   emitter.on(`${model.dash}-create`, create(model));
   emitter.on(`${model.dash}-detail`, detail(model));

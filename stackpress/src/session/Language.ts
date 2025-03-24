@@ -1,8 +1,8 @@
 //root
 import type { Scalar, LanguageMap } from '../types';
 //stackpress
-import type Request from '@stackpress/ingest/dist/Request';
-import type Response from '@stackpress/ingest/dist/Response';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
 
 export default class Language {
   //the session key to put in the cookie

@@ -1,6 +1,6 @@
 //stackpress
-import type { UnknownNest, StatusResponse } from '@stackpress/lib/dist/types';
-import type Engine from '@stackpress/inquire/dist/Engine';
+import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
+import type Engine from '@stackpress/inquire/Engine';
 //root
 import Exception from '../../Exception';
 //schema

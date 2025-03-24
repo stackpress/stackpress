@@ -1,11 +1,11 @@
 //stackpress
-import type { ServerRequest } from '@stackpress/ingest/dist/types';
-import type Response from '@stackpress/ingest/dist/Response';
-import { isHash } from '@stackpress/ingest/dist/helpers';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
+import { isObject } from '@stackpress/ingest/helpers';
 //root
 import Exception from '../../Exception';
 
-export function authorize(req: ServerRequest, res: Response) {
+export function authorize(req: Request, res: Response) {
   const authorization = req.headers.get('authorization') as string;
   if (!authorization) {
     unauthorized(res);
@@ -46,8 +46,8 @@ export function validData(assert: Record<string, any>, data: Record<string, any>
     if (Array.isArray(value)) {
       if (!Array.isArray(data[key])) return false;
       if (!value.every(item => data[key].includes(item))) return false;
-    } else if (isHash(value)) {
-      if (!isHash(data[key])) return false;
+    } else if (isObject(value)) {
+      if (!isObject(data[key])) return false;
       if (!validData(value, data[key])) return false;
     } else if (data[key] !== value) {
       return false;

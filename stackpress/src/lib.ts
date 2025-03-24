@@ -1,9 +1,8 @@
 export * from '@stackpress/lib';
-export * from '@stackpress/ingest/dist/helpers';
-export * from '@stackpress/ingest/dist/http/helpers';
-export * from '@stackpress/ingest/dist/whatwg/helpers';
+export * from '@stackpress/ingest/http/helpers';
+export * from '@stackpress/ingest/whatwg/helpers';
 
-export { jsonCompare } from '@stackpress/inquire/dist/helpers';
+export { jsonCompare } from '@stackpress/inquire/helpers';
 
 export {
   camelize,

@@ -3,8 +3,8 @@ import path from 'node:path';
 //modules
 import glob from 'fast-glob';
 //stackpress
-import type { SchemaConfig } from '@stackpress/idea-parser/dist/types';
-import FileLoader from '@stackpress/lib/dist/system/FileLoader';
+import type { SchemaConfig } from '@stackpress/idea-parser/types';
+import FileLoader from '@stackpress/lib/FileLoader';
 //schema
 import Registry from './Registry';
 
@@ -35,15 +35,6 @@ export default class Revisions {
   constructor(root: string, loader: FileLoader) {
     this.root = root;
     this.loader = loader;
-    //if the root folder exists, read the epochs
-    if (this.loader.fs.existsSync(this.root)) {
-      //ex. [ '1734693964343.json' ]
-      const results = glob.sync('*.json', { cwd: this.root });
-      //ex. [ 1734693964343 ]
-      this._epochs = results.map(
-        filename => Number(filename.split('.')[0])
-      ).sort();
-    }
   }
   
   /**
@@ -70,9 +61,9 @@ export default class Revisions {
    * Adds a new schema to the revisions folder 
    * if it's different from the last schema.
    */
-  public insert(schema: SchemaConfig) {
+  public async insert(schema: SchemaConfig) {
     //get the last epoch
-    const last = this.last();
+    const last = await this.last();
     //serialize the last schema
     const from = last ? JSON.stringify(last.schema, null, 2): '';
     //serialize the new schema
@@ -83,14 +74,14 @@ export default class Revisions {
       return this;
     }
     //if the root folder doesn't exist
-    if (!this.loader.fs.existsSync(this.root)) {
+    if (!await this.loader.fs.exists(this.root)) {
       //create it
-      this.loader.fs.mkdirSync(this.root, { recursive: true });
+      await this.loader.fs.mkdir(this.root, { recursive: true });
     }
     //add revision file
     const epoch = Date.now();
     this._epochs.push(epoch);
-    this.loader.fs.writeFileSync(
+    await this.loader.fs.writeFile(
       path.join(this.root, `${epoch}.json`),
       to
     );
@@ -100,8 +91,17 @@ export default class Revisions {
   /**
    * Returns the last epoch found in the revisions folder.
    */
-  public last(minus = 0) {
+  public async last(minus = 0) {
     if (!this._epochs.length) {
+      //if the root folder exists, read the epochs
+      if (await this.loader.fs.exists(this.root)) {
+        //ex. [ '1734693964343.json' ]
+        const results = glob.sync('*.json', { cwd: this.root });
+        //ex. [ 1734693964343 ]
+        this._epochs = results.map(
+          filename => Number(filename.split('.')[0])
+        ).sort();
+      }
       return null;
     }
     return this.index(this._epochs.length - 1 - Math.abs(minus));
@@ -110,13 +110,13 @@ export default class Revisions {
   /**
    * Returns the meta data for the given epoch.
    */
-  public read(epoch: number) {
+  public async read(epoch: number) {
     if (!this._epochs.includes(epoch)) {
       return null;
     }
     const filename = `${epoch}.json`;
     const filepath = path.join(this.root, filename);
-    const schema = this.loader.require(filepath);
+    const schema = await this.loader.import(filepath);
     return {
       date: new Date(epoch),
       file: filename,

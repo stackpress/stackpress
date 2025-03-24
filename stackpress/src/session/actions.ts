@@ -2,8 +2,8 @@
 import type { 
   StatusResponse,
   ErrorResponse
-} from '@stackpress/lib/dist/types';
-import type Engine from '@stackpress/inquire/dist/Engine';
+} from '@stackpress/lib/types';
+import type Engine from '@stackpress/inquire/Engine';
 //schema
 import { email } from '../schema/assert';
 //root

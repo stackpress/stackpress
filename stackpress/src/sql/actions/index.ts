@@ -1,6 +1,6 @@
 //stackpress
-import type { UnknownNest, NestedObject } from '@stackpress/lib/dist/types';
-import type Engine from '@stackpress/inquire/dist/Engine';
+import type { UnknownNest, NestedObject } from '@stackpress/lib/types';
+import type Engine from '@stackpress/inquire/Engine';
 //root
 import type { SearchParams } from '../../types';
 //schema

@@ -2,8 +2,8 @@
 import type { 
   EnumConfig, 
   SchemaConfig 
-} from '@stackpress/idea-parser/dist/types';
-import { isHash } from '@stackpress/ingest/dist/helpers';
+} from '@stackpress/idea-parser/types';
+import { isObject } from '@stackpress/ingest/helpers';
 //local
 import Fieldset from './spec/Fieldset';
 import Model from './spec/Model';
@@ -13,18 +13,18 @@ export default class Registry {
    * Loads the schema from the configuration file
    */
   public constructor(schema: SchemaConfig) {
-    if (schema.enum && isHash(schema.enum)) {
+    if (schema.enum && isObject(schema.enum)) {
       for (const key in schema.enum) {
         this.enum.set(key, schema.enum[key]);
       }
     }
-    if (schema.type && isHash(schema.type)) {
+    if (schema.type && isObject(schema.type)) {
       for (const name in schema.type) {
         const { attributes, columns } = schema.type[name];
         this.fieldset.set(name, new Fieldset(this, name, attributes, columns));
       }
     }
-    if (schema.model && isHash(schema.model)) {
+    if (schema.model && isObject(schema.model)) {
       for (const name in schema.model) {
         const { attributes, columns } = schema.model[name];
         this.model.set(name, new Model(this, name, attributes, columns));

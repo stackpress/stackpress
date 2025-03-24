@@ -1,13 +1,14 @@
 //modules
 import { Project, IndentationText } from 'ts-morph';
 //stackpress
-import type Server from '@stackpress/ingest/dist/Server';
-import EventTerminal from '@stackpress/lib/dist/event/EventTerminal';
-import Transformer from '@stackpress/idea-transformer/dist/Transformer';
+import type Server from '@stackpress/ingest/Server';
+import Terminal from '@stackpress/lib/Terminal';
+import FileLoader from '@stackpress/lib/FileLoader';
+import Transformer from '@stackpress/idea-transformer/Transformer';
 //local
 import type { IdeaProjectProps } from '../types';
 
-export default class InceptTerminal extends EventTerminal {
+export default class InceptTerminal extends Terminal {
   // brand to prefix in all logs
   public static brand: string = '[INCEPT]';
   // you can use a custom extension
@@ -24,21 +25,16 @@ export default class InceptTerminal extends EventTerminal {
    * Preloads the input and output settings
    */
   public constructor(args: string[], server: Server<any, any, any>) {
-    super(args, server.loader.cwd);
-    //make static methods available to this instance
-    this.terminal = this.constructor as typeof InceptTerminal;
+    super(args);
     //form the idea file path
-    const idea = `${this.cwd}/schema.${this.terminal.extension}`;
+    const idea = `${server.loader.cwd}/schema.idea`;
     //get idea file from commandline
     const input = this.expect([ 'input', 'i' ], idea);
     //make a new transformer
-    this.transformer = new Transformer<IdeaProjectProps>(input, { 
-      cwd: server.loader.cwd, 
-      fs: server.loader.fs 
-    });
+    const loader = new FileLoader(server.loader.fs, server.loader.cwd);
+    this.transformer = new Transformer<IdeaProjectProps>(input, loader);
     this.server = server;
-    this.server.on('transform', async (req, res) => {
-      const server = req.context;
+    this.server.on('transform', async (req, res, server) => {
       const build = server.config.path<string>('client.build');
       const tsconfig = server.config.path<string>('client.tsconfig');
       //make a new project
@@ -68,9 +64,9 @@ export default class InceptTerminal extends EventTerminal {
    */
   public async bootstrap() {
     await this.server.bootstrap();
-    await this.server.call('config');
-    await this.server.call('listen');
-    await this.server.call('route');
+    await this.server.resolve('config');
+    await this.server.resolve('listen');
+    await this.server.resolve('route');
     return this;
   }
 
@@ -104,7 +100,7 @@ export default class InceptTerminal extends EventTerminal {
       const response = this.server.response();
       await this.server.emit('idea', request, response);
     }
-    const request = this.server.request({ data: this.params });
+    const request = this.server.request({ data: this.data });
     const response = this.server.response();
     return await this.server.emit(this.command, request, response);
   }

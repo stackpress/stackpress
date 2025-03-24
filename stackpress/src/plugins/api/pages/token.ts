@@ -1,6 +1,7 @@
 //stackpress
-import type Response from '@stackpress/ingest/dist/Response';
-import type { ServerRequest } from '@stackpress/ingest/dist/types';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
+import type Server from '@stackpress/ingest/Server';
 //root
 import type { SessionExtended } from '../../../types';
 //sql
@@ -8,7 +9,11 @@ import { toResponse } from '../../../sql/helpers';
 //local
 import { authorize, unauthorized } from '../helpers';
 
-export default async function APIToken(req: ServerRequest, res: Response) {
+export default async function APIToken(
+  req: Request, 
+  res: Response,
+  ctx: Server
+) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
@@ -27,10 +32,8 @@ export default async function APIToken(req: ServerRequest, res: Response) {
   if (!code || !secret) {
     return unauthorized(res);
   }
-  //get the server
-  const server = req.context;
   //get session
-  const session = await server.call('session-detail', { id: code });
+  const session = await ctx.resolve('session-detail', { id: code });
   const data = session.results as SessionExtended;
   //application id does not match
   if (!data || data.applicationId !== id) {
