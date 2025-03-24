@@ -1,5 +1,5 @@
 //stackpress
-import type Server from '@stackpress/ingest/dist/Server';
+import type Server from '@stackpress/ingest/Server';
 
 export default function serve(server: Server<any, any, any>, port = 3000) {
   //start the server

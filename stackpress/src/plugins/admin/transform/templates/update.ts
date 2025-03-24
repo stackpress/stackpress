@@ -3,7 +3,7 @@ import path from 'node:path';
 //modules
 import type { Directory } from 'ts-morph';
 //stackress
-import type { FileSystem } from '@stackpress/lib/dist/types';
+import type { FileSystem } from '@stackpress/lib/types';
 //schema
 import type Registry from '../../../../schema/Registry';
 import { render } from '../../../../schema/helpers';
@@ -93,7 +93,7 @@ const template = `
 </html>
 `.trim();
 
-export default function generate(
+export default async function generate(
   directory: Directory, 
   registry: Registry,
   fs: FileSystem
@@ -103,8 +103,8 @@ export default function generate(
       directory.getPath(), 
       `${model.name}/admin/templates/update.ink`
     );
-    if (!fs.existsSync(path.dirname(file))) {
-      fs.mkdirSync(path.dirname(file), { recursive: true });
+    if (!await fs.exists(path.dirname(file))) {
+      await fs.mkdir(path.dirname(file), { recursive: true });
     }
     const source = render(template, { 
       icon: model.icon || '',
@@ -114,6 +114,6 @@ export default function generate(
       singular: model.singular,
       plural: model.plural 
     });
-    fs.writeFileSync(file, source);
+    await fs.writeFile(file, source);
   }
 };

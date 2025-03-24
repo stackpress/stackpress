@@ -19,7 +19,7 @@ export type {
   StatusResponse,
   Item,
   TaskResult,
-  Task,
+  TaskAction,
   TaskItem,
   EventMap,
   EventName,
@@ -29,7 +29,6 @@ export type {
   Method,
   Route,
   RouterMap,
-  RouterActionResults,
   RouterAction,
   FileStat,
   FileStream,
@@ -47,7 +46,7 @@ export * as terminal from './terminal';
 export * from './schema';
 
 export { encrypt, decrypt, hash } from './session/helpers';
-export  { jsonCompare } from '@stackpress/inquire/dist/helpers';
+export  { jsonCompare } from '@stackpress/inquire/helpers';
 export {
   camelize,
   capitalize,
@@ -73,22 +72,23 @@ export {
   ItemQueue,
   TaskQueue,
   EventEmitter,
-  EventRouter,
-  EventTerminal,
+  ExpressEmitter,
+  RouteEmitter,
+  Terminal,
   Reflection,
   Status,
+  codes,
   map,
   set,
   nest,
-  getStatus,
   makeArray,
   makeObject,
   shouldBeAnArray
 } from '@stackpress/lib';
 
-export * from '@stackpress/ingest/dist/helpers';
-export * from '@stackpress/ingest/dist/http/helpers';
-export * from '@stackpress/ingest/dist/whatwg/helpers';
+export * from '@stackpress/ingest/helpers';
+export * from '@stackpress/ingest/http/helpers';
+export * from '@stackpress/ingest/whatwg/helpers';
 
 export { 
   Session, 

@@ -1,7 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress
-import type { FileSystem } from '@stackpress/lib/dist/types';
+import type { FileSystem } from '@stackpress/lib/types';
 //schema
 import type Registry from '../../../../schema/Registry';
 

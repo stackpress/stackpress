@@ -4,14 +4,14 @@ import path from 'node:path';
 import type { Directory } from 'ts-morph';
 //stackpress
 import type { SchemaConfig } from '@stackpress/idea-parser';
-import type Server from '@stackpress/ingest/dist/Server';
+import type Server from '@stackpress/ingest/Server';
 //schema
 import Revisions from '../../../schema/Revisions';
 
 /**
  * This is the The params comes form the cli
  */
-export default function generate(
+export default async function generate(
   directory: Directory, 
   schema: SchemaConfig, 
   server: Server
@@ -27,10 +27,10 @@ export default function generate(
   const fs = server.loader.fs;
 
   const pwd = directory.getPath();
-  if (!fs.existsSync(pwd)) {
-    fs.mkdirSync(pwd, { recursive: true });
+  if (!await fs.exists(pwd)) {
+    await fs.mkdir(pwd, { recursive: true });
   }
-  fs.writeFileSync(
+  await fs.writeFile(
     path.join(pwd, 'config.json'), 
     JSON.stringify(schema, null, 2)
   );

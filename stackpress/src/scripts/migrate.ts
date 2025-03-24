@@ -1,9 +1,9 @@
 //node
 import path from 'node:path';
 //stackpress
-import type { QueryObject } from '@stackpress/inquire/dist/types';
-import type Engine from '@stackpress/inquire/dist/Engine';
-import type Server from '@stackpress/ingest/dist/Server';
+import type { QueryObject } from '@stackpress/inquire/types';
+import type Engine from '@stackpress/inquire/Engine';
+import type Server from '@stackpress/ingest/Server';
 //schema
 import Revisions from '../schema/Revisions';
 //root
@@ -28,7 +28,7 @@ export default async function migrate(server: Server<any, any, any>, database: E
     return;
   }
   const fs = server.loader.fs;
-  const first = revisions.first();
+  const first = await revisions.first();
   if (first) {
     //this is where we are going to store all the queries
     const queries: QueryObject[] = [];
@@ -50,11 +50,11 @@ export default async function migrate(server: Server<any, any, any>, database: E
       }
     }
     if (queries.length) {
-      if (!fs.existsSync(migrations)) {
-        fs.mkdirSync(migrations, { recursive: true });
+      if (!await fs.exists(migrations)) {
+        await fs.mkdir(migrations, { recursive: true });
       }
       //add migration file
-      fs.writeFileSync(
+      await fs.writeFile(
         path.join(migrations, `${first.date.getTime()}.sql`),
         queries.map(query => query.query).join(';\n')
       );
@@ -62,8 +62,8 @@ export default async function migrate(server: Server<any, any, any>, database: E
   }
 
   for (let i = 1; i < revisions.size(); i++) {
-    const from = revisions.index(i - 1);
-    const to = revisions.index(i);
+    const from = await revisions.index(i - 1);
+    const to = await revisions.index(i);
     if (!from || !to) break;
     //create a registry from the history
     const previous = Array.from(from.registry.model.values()).map(
@@ -107,11 +107,11 @@ export default async function migrate(server: Server<any, any, any>, database: E
     }
     //if there are queries to be made...
     if (queries.length) {
-      if (!fs.existsSync(migrations)) {
-        fs.mkdirSync(migrations, { recursive: true });
+      if (!await fs.exists(migrations)) {
+        await fs.mkdir(migrations, { recursive: true });
       }
       //add migration file
-      fs.writeFileSync(
+      await fs.writeFile(
         path.join(migrations, `${to.date.getTime()}.sql`),
         queries.map(query => query.query).join(';\n')
       );

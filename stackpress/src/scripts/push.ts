@@ -1,7 +1,7 @@
 //stackpress
-import type { QueryObject } from '@stackpress/inquire/dist/types';
-import type Engine from '@stackpress/inquire/dist/Engine';
-import type Server from '@stackpress/ingest/dist/Server';
+import type { QueryObject } from '@stackpress/inquire/types';
+import type Engine from '@stackpress/inquire/Engine';
+import type Server from '@stackpress/ingest/Server';
 //root
 import type { ClientConfig } from '../types';
 //schema
@@ -22,9 +22,9 @@ export default async function push(server: Server<any, any, any>, database: Engi
   const queries: QueryObject[] = [];
   const revisions = new Revisions(config.revisions, server.loader);
   //get the last last revision
-  const from = revisions.last(-1);
+  const from = await revisions.last(-1);
   //get the last revision
-  const to = revisions.last();
+  const to = await revisions.last();
   //if no previous revision
   if (!from && to) {
     //get models
