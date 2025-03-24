@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 //stackpress
-import type { Response, ServerRequest } from 'stackpress/server';
+import { action } from 'stackpress/server';
 
 const mime: Record<string, string> = {
   '.html': 'text/html',
@@ -17,12 +17,11 @@ const mime: Record<string, string> = {
   '.ico': 'image/x-icon'
 };
 
-export default async function StaticFile(req: ServerRequest, res: Response) {
+export default action(async function StaticFile(req, res, ctx) {
   const resource = req.url.pathname.substring(1).replace(/\/\//, '/'); 
   if (resource.length === 0) return;
-  const server = req.context;
-  const assets = server.config.get<string>('assets');
-  const environment = server.config.get<string>('server', 'environment');
+  const assets = ctx.config.get<string>('assets');
+  const environment = ctx.config.get<string>('server', 'environment');
   const development = environment === 'development';
   const file = development 
     ? path.resolve(assets, resource)
@@ -32,4 +31,4 @@ export default async function StaticFile(req: ServerRequest, res: Response) {
     const type = mime[ext] || 'application/octet-stream';
     res.setBody(type, fs.createReadStream(file));
   }
-};
+});

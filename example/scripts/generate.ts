@@ -8,12 +8,12 @@ async function generate() {
   const command = [ ...args, 'transform' ];
   const server = await bootstrap();
   const terminal = new Terminal(command, server);
-  await terminal.server.call('idea', { 
+  await terminal.server.resolve('idea', { 
     transformer: terminal.transformer 
   });
-  const response = await terminal.server.call(
+  const response = await terminal.server.resolve(
     terminal.command, 
-    terminal.params || {}
+    terminal.data || {}
   );
   console.log(JSON.stringify(response, null, 2));
 }

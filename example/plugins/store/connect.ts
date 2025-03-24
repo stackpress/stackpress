@@ -4,7 +4,7 @@ import path from 'node:path';
 //modules
 import { PGlite } from '@electric-sql/pglite';
 //stackpress
-import { connect as pglite } from 'stackpress/sql/pglite';
+import { connect as pglite } from 'stackpress/pglite';
 
 const url = process.env.DATABASE_URL || './.build/database';
 

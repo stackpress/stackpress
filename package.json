@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "build": "yarn --cwd stackpress build",
-    "build:example": "yarn --cwd example build",
+    "build:example": "yarn --cwd example build:ts",
     "develop": "yarn --cwd example develop",
     "emit": "yarn --cwd example emit",
     "generate": "yarn --cwd example generate",

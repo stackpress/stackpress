@@ -1,19 +1,13 @@
 {
+  "extends": "stackpress/tsconfig/client",
   "compilerOptions": {
-    "declaration": true,
-    "esModuleInterop": true,
-    "lib": [ "es2021", "es7", "es6", "dom" ],
-    "module": "commonjs",
-    "noUnusedLocals": true,
-    "outDir": "./.build",
-    "preserveConstEnums": true,
-    "resolveJsonModule": true,
-    "removeComments": true,
-    "sourceMap": false,
-    "strict": true,
-    "target": "es6",
-    "skipLibCheck": true
+    "moduleResolution": "bundler",
+    "outDir": ".build",
   },
-  "include": [ "plugins/**/*.ts", "scripts/**/*.ts" ],
-  "exclude": [ "dist", "docs", "node_modules", "test", "incept" ]
+  "include": [ 
+    "scripts/**/*.ts", 
+    "components/**/*.tsx" , 
+    "pages/**/*.tsx" 
+  ],
+  "exclude": [ "dist", "node_modules", "tests" ]
 }

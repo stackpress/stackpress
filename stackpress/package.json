@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "stackpress",
   "version": "0.1.14",
   "license": "MIT",

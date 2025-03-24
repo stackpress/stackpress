@@ -7,7 +7,7 @@ const secret = process.env.ADMIN_PASS || '123';
 
 async function populate() {
   const server = await bootstrap();
-  const admin = await server.call<ProfileAuth>('auth-signup', {
+  const admin = await server.resolve<ProfileAuth>('auth-signup', {
     type: 'person',
     name: 'Admin',
     username: 'admin',
@@ -15,7 +15,7 @@ async function populate() {
     secret: secret,
     roles: [ 'ADMIN' ]
   });
-  const app = await server.call('application-create', {
+  const app = await server.resolve('application-create', {
     profileId: admin.results?.id,
     name: 'Example App',
     scopes: [ 'profile-write', 'auth-read' ],

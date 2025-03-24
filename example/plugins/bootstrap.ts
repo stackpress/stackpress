@@ -1,5 +1,5 @@
 //stackpress
-import { server as http } from 'stackpress/server/http';
+import { server as http } from 'stackpress/http';
 //local
 import { config } from './config';
 
@@ -9,13 +9,13 @@ export default async function bootstrap(mode = config.server.mode) {
   //load the plugins
   await server.bootstrap();
   //initialize the plugins
-  await server.call('config');
+  await server.resolve('config');
   //set the server mode to testing
   server.config.set('server', 'mode', mode);
   //add events
-  await server.call('listen');
+  await server.resolve('listen');
   //add routes
-  await server.call('route');
+  await server.resolve('route');
   //return the server
   return server;
 };

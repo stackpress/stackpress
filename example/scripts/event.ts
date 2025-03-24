@@ -8,13 +8,13 @@ async function event() {
   const args = process.argv.slice(2);
   const terminal = new Terminal(args, server);
   if (terminal.command === 'transform') {
-    await terminal.server.call('idea', { 
+    await terminal.server.resolve('idea', { 
       transformer: terminal.transformer 
     });
   }
-  const response = await terminal.server.call(
+  const response = await terminal.server.resolve(
     terminal.command, 
-    terminal.params || {}
+    terminal.data || {}
   );
   console.log(JSON.stringify(response, null, 2));
 }

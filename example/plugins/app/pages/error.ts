@@ -2,16 +2,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 //stackpress
-import type { Response, ServerRequest } from 'stackpress/server';
+import { action } from 'stackpress/server';
 
-export default async function ErrorPage(req: ServerRequest, res: Response) {
+export default action(async function ErrorPage(req, res, ctx) {
   //if there is already a body
   if (res.body) return;
-  //extract project and model from client
-  const server = req.context;
   //set data for template layer
   res.data.set('server', { 
-    mode: server.config.path('server.mode', 'production'),
+    mode: ctx.config.path('server.mode', 'production'),
   });
   //general settings
   const response = res.toStatusResponse();
@@ -58,4 +56,4 @@ export default async function ErrorPage(req: ServerRequest, res: Response) {
     );
     return;
   }
-};
+});

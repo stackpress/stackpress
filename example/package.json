@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "stackpressxample",
   "version": "1.0.0",
   "private": true,
@@ -10,16 +11,16 @@
   "scripts": {
     "build": "yarn build:ts && yarn migrate && yarn build:app",
     "build:ts": "tsc",
-    "build:app": "dotenv -e .env -- ts-node scripts/build.ts",
-    "develop": "dotenv -e .env -- ts-node scripts/serve.ts",
-    "emit": "dotenv -e .env -- ts-node scripts/event.ts",
-    "generate": "dotenv -e .env -- ts-node scripts/generate.ts",
-    "migrate": "dotenv -e .env -- ts-node scripts/migrate.ts",
-    "populate": "dotenv -e .env -- ts-node scripts/populate.ts",
-    "purge": "dotenv -e .env -- ts-node scripts/purge.ts",
-    "push": "dotenv -e .env -- ts-node scripts/push.ts",
-    "query": "dotenv -e .env -- ts-node scripts/query.ts",
-    "test": "dotenv -e .env -- nyc ts-mocha tests/*.test.ts"
+    "build:app": "dotenv -e .env -- tsx scripts/build.ts",
+    "develop": "dotenv -e .env -- tsx scripts/serve.ts",
+    "emit": "dotenv -e .env -- tsx scripts/event.ts",
+    "generate": "dotenv -e .env -- tsx scripts/generate.ts",
+    "migrate": "dotenv -e .env -- tsx scripts/migrate.ts",
+    "populate": "dotenv -e .env -- tsx scripts/populate.ts",
+    "purge": "dotenv -e .env -- tsx scripts/purge.ts",
+    "push": "dotenv -e .env -- tsx scripts/push.ts",
+    "query": "dotenv -e .env -- tsx scripts/query.ts",
+    "test": "nyc ts-mocha -r tsx tests/*.test.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "0.2.17",
@@ -36,6 +37,7 @@
     "nyc": "17.1.0",
     "ts-mocha": "10.0.0",
     "ts-node": "10.9.2",
+    "tsx": "4.19.3",
     "typescript": "5.7.2"
   }
 }
