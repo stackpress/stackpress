@@ -21,20 +21,19 @@ export default function plugin(ctx: Server) {
   });
   //on listen, add user events
   ctx.on('listen', (_req, _res, ctx) => {
-    const router = ctx.import;
     //if no auth config, return
     if (!ctx.config.get('auth')) return;
-    router.on('auth-search', () => import('./events/search'), -100);
-    router.on('auth-detail', () => import('./events/detail'), -100);
-    router.on('auth-get', () => import('./events/detail'), -100);
-    router.on('auth-signup', () => import('./events/signup'));
-    router.on('auth-signin', () => import('./events/signin'));
-    router.on('auth-signout', () => import('./events/signout'));
-    router.on('authorize', () => import('./events/authorize'));
-    router.on('request', () => import('./pages/authorize'));
+    ctx.import.on('auth-search', () => import('./events/search'), -100);
+    ctx.import.on('auth-detail', () => import('./events/detail'), -100);
+    ctx.import.on('auth-get', () => import('./events/detail'), -100);
+    ctx.import.on('auth-signup', () => import('./events/signup'));
+    ctx.import.on('auth-signin', () => import('./events/signin'));
+    ctx.import.on('auth-signout', () => import('./events/signout'));
+    ctx.import.on('authorize', () => import('./events/authorize'));
+    ctx.import.on('request', () => import('./pages/authorize'));
     //if no session config, return
     if (!ctx.config.get('session')) return;
-    router.on('me', () => import('./events/session'));
+    ctx.import.on('me', () => import('./events/session'));
   });
   //on route, add user routes
   ctx.on('route', (_req, _res, ctx) => {
@@ -44,5 +43,9 @@ export default function plugin(ctx: Server) {
     ctx.import.all('/auth/signin/:type', () => import('./pages/signin'));
     ctx.import.all('/auth/signup', () => import('./pages/signup'));
     ctx.import.all('/auth/signout', () => import('./pages/signout'));
+
+    ctx.view.all('/auth/signin', 'stackpress/template/pages/signin', -100);
+    ctx.view.all('/auth/signin/:type', 'stackpress/template/pages/signin', -100);
+    ctx.view.all('/auth/signup', 'stackpress/template/pages/signin', -100);
   });
 };
