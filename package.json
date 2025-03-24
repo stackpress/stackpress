@@ -2,10 +2,10 @@
   "private": true,
   "workspaces": [
     "example",
-    "packages/*"
+    "stackpress"
   ],
   "scripts": {
-    "build": "yarn --cwd packages/stackpress-src build",
+    "build": "yarn --cwd stackpress build",
     "build:example": "yarn --cwd example build",
     "develop": "yarn --cwd example develop",
     "emit": "yarn --cwd example emit",

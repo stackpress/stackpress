@@ -2,11 +2,11 @@
 import path from 'node:path';
 //modules
 import type { Directory } from 'ts-morph';
-import mustache from 'mustache';
 //stackpress
 import type { FileSystem } from '@stackpress/lib/dist/types';
 //schema
 import type Registry from '../../../schema/Registry';
+import { render } from '../../../schema/helpers';
 //local
 import { getViewData } from './helpers';
 
@@ -36,7 +36,7 @@ export default function generate(
     if (!fs.existsSync(path.dirname(file))) {
       fs.mkdirSync(path.dirname(file), { recursive: true });
     }
-    fs.writeFileSync(file, mustache.render(template, data));
+    fs.writeFileSync(file, render(template, data));
   }
 };
 

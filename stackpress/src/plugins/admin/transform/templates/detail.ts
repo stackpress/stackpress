@@ -5,11 +5,13 @@ import type { Directory } from 'ts-morph';
 //stackress
 import type { FileSystem } from '@stackpress/lib/dist/types';
 //schema
+import type Model from '../../../../schema/spec/Model';
 import type Registry from '../../../../schema/Registry';
 import { render } from '../../../../schema/helpers';
 
 const template = `
 <link rel="import" type="template" href="stackpress/template/layout/head.ink" name="html-head" />
+<link rel="import" type="component" href="@stackpress/ink-ui/element/tab.ink" name="element-tab" />
 <link rel="import" type="component" href="@stackpress/ink-ui/element/icon.ink" name="element-icon" />
 <link rel="import" type="component" href="@stackpress/ink-ui/element/crumbs.ink" name="element-crumbs" />
 <link rel="import" type="component" href="@stackpress/ink-ui/form/button.ink" name="form-button" />
@@ -106,7 +108,25 @@ const template = `
             {_('Restore')}
           </form-button>
         </div>
-        <div class="pb-50">
+        <div class="flex flex-center-y scroll-x-auto">
+          {{#tabs}}
+            {{#active}}
+              <div class="relative mr-4 px-15 py-10 ct-sm b-solid b-t-1 bx-1 bt-1 bb-0 bg-t-2">
+                {{{label}}}
+              </div>
+            {{/active}}
+            {{#tab}}
+              <a
+                class="relative mr-4 px-15 py-10 ct-sm b-solid b-t-1 bx-1 bt-1 bb-0 bg-t-1 tx-muted"
+                href="{{href}}"
+                title="{{{label}}}"
+              >
+                {{{label}}}
+              </a>
+            {{/tab}}
+          {{/tabs}}
+        </div>
+        <div class="py-20 px-10 mb-50 bg-t-2">
           <{{lower}}-view data={results} />
         </div>
       </main>
@@ -121,6 +141,29 @@ export default function generate(
   fs: FileSystem
 ) {
   for (const model of registry.model.values()) {
+    //now loop through the fieldset fields
+    const tabs = [
+      { 
+        active: {
+          label: `{_('Info')}`
+        }
+      },
+      ...model.related.filter(
+        column => !column.related?.child.column.multiple
+      ).map(column => {
+        //NOTE: this would never happen...
+        if (!column.related) return;
+        const model = column.related.child.model as Model;
+        return { 
+          tab: {
+            label: model.plural, 
+            href: `/admin/${model.dash}/detail/${model.ids.map(
+              column => `\${results.${column.name}}`
+            ).join('/')}`
+          }
+        };
+      })
+    ];
     const file = path.join(
       directory.getPath(), 
       `${model.name}/admin/templates/detail.ink`
@@ -129,6 +172,7 @@ export default function generate(
       fs.mkdirSync(path.dirname(file), { recursive: true });
     }
     const source = render(template, { 
+      tabs,
       icon: model.icon || '',
       ids: model.ids.map(column => `\${results.${column.name}}`).join('/'),
       template: model.template,

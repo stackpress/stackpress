@@ -1,3 +1,5 @@
+//modules
+import mustache from 'mustache';
 //stackpress
 import type { Data } from '@stackpress/idea-parser';
 import NodeFS from '@stackpress/lib/dist/system/NodeFS';
@@ -85,9 +87,7 @@ export function snakerize(string: string) {
 }
 
 export function render(template: string, data: Record<string, any> = {}) {
-  return template.replace(/\{\{([a-zA-Z0-9_\-]+)\}\}/g, (match, key) => {
-    return data[key] || '';
-  });
+  return mustache.render(template, data);
 }
 
 /**
