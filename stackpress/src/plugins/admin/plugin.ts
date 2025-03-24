@@ -9,18 +9,18 @@ import type { ClientPlugin } from '../../types';
  * This interface is intended for the Incept library.
  */
 export default function plugin(ctx: Server) {
-  //on listen, add database events
-  ctx.on('listen', (_req, _res, ctx) => {
+  //on route, add admin routes
+  ctx.on('route', (_req, _res, ctx) => {
+    //if no admin config exists, return
+    if (!ctx.config.get('admin')) return;
     try {
       //it's possible that the client isnt generated yet...
       //config, registry, model, fieldset
       const client = ctx.plugin<ClientPlugin>('client');
-      //if no client or modules, return
-      if (!client?.model) return;
       //loop through all the models
       for (const model of Object.values(client.model)) {
-        //register all the model events
-        ctx.use(model.events);
+        //register all the admin routes
+        model.admin(ctx);
       }
     } catch(e) {}
   });
@@ -35,6 +35,6 @@ export default function plugin(ctx: Server) {
       }
       //add this plugin generator to the schema
       //so it can be part of the transformation
-      schema.plugin['stackpress/plugins/sql/transform'] = {};
+      schema.plugin['stackpress/plugins/admin/transform'] = {};
   });
 };

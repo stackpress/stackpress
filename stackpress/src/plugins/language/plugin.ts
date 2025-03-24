@@ -8,21 +8,21 @@ import Language from '../../session/Language';
 /**
  * This interface is intended for the Incept library.
  */
-export default function plugin(server: Server) {
+export default function plugin(ctx: Server) {
   //on config, configure and register the language plugin
-  server.on('config', async (_req, _res, server) => {
+  ctx.on('config', async (_req, _res, ctx) => {
     //configure and register the language plugin
-    server.register('language', Language.configure(
-      server.config.path('language.key', 'locale'), 
-      server.config.path<LanguageMap>('language.languages', {})
+    ctx.register('language', Language.configure(
+      ctx.config.path('language.key', 'locale'), 
+      ctx.config.path<LanguageMap>('language.languages', {})
     ));
   });
   //on listen, look for locale flag
-  server.on('listen', async (_req, _res, server) => {
-    const language = server.plugin<LanguagePlugin>('language');
-    server.on('request', async (req, res, server) => {
-      const key = server.config.path('language.key', 'locale');
-      const defaultLocale = server.config.path('language.locale', 'en_US');
+  ctx.on('listen', async (_req, _res, ctx) => {
+    const language = ctx.plugin<LanguagePlugin>('language');
+    ctx.on('request', async (req, res, ctx) => {
+      const key = ctx.config.path('language.key', 'locale');
+      const defaultLocale = ctx.config.path('language.locale', 'en_US');
       //get the locale from the request
       let locale = req.data(key);
       //if valid locale, set the language
@@ -41,7 +41,7 @@ export default function plugin(server: Server) {
         //splice the locale from the pathArray
         pathArray.splice(1, 1);
         //make a new request
-        const request = server.request({
+        const request = ctx.request({
           resource: req.resource,
           body: req.body || undefined,
           headers: Object.fromEntries(req.headers.entries()),
@@ -53,7 +53,7 @@ export default function plugin(server: Server) {
           session: req.session.data as Record<string, string>,
           url: new URL(req.url.origin + pathArray.join('/'))
         });
-        await server.resolve(req.method, pathArray.join('/'), request, res);
+        await ctx.resolve(req.method, pathArray.join('/'), request, res);
       }
     });
   });

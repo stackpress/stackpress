@@ -6,19 +6,19 @@ import type Server from '@stackpress/ingest/Server';
 /**
  * This interface is intended for the Incept library.
  */
-export default function plugin(server: Server) {
+export default function plugin(ctx: Server) {
   //on config, register the client as a plugin
-  server.on('config', async (_req, _res, server) => {
+  ctx.on('config', async (_req, _res, ctx) => {
     //if the no client config, return
-    if (!server.config.get('client')) return;
-    const module = server.config.path('client.module', '.client');
+    if (!ctx.config.get('client')) return;
+    const module = ctx.config.path('client.module', '.client');
     try {
-      const client = await server.loader.import(module);
-      server.register('client', client);
+      const client = await ctx.loader.import(module);
+      ctx.register('client', client);
     } catch(e) {}
   }, 10);
   //generate some code in the client folder
-  server.on('idea', async req => {
+  ctx.on('idea', async req => {
       //get the transformer from the request
       const transformer = req.data<Transformer<CLIProps>>('transformer');
       const schema = await transformer.schema();

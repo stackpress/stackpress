@@ -12,12 +12,12 @@ import { authorize, unauthorized, validData } from './helpers';
 /**
  * This interface is intended for the Incept library.
  */
-export default function plugin(server: Server) {
+export default function plugin(ctx: Server) {
   //on listen, add webhooks
-  server.on('listen', (_req, _res, server) => {
-    const { webhooks = [] } = server.config<ApiConfig>('api') || {};
+  ctx.on('listen', (_req, _res, ctx) => {
+    const { webhooks = [] } = ctx.config<ApiConfig>('api') || {};
     for (const webhook of webhooks) {
-      server.on(webhook.event, async (req, res) => {
+      ctx.on(webhook.event, async (req, res) => {
         //if there was an error, return
         if (res.code !== 200) return;
         //get the data from the webhook
@@ -37,37 +37,37 @@ export default function plugin(server: Server) {
     }
   })
   //on route, add user routes
-  server.on('route', (_req, _res, server) => {
-    const { endpoints = [] } = server.config<ApiConfig>('api') || {};
+  ctx.on('route', (_req, _res, ctx) => {
+    const { endpoints = [] } = ctx.config<ApiConfig>('api') || {};
     //if no endpoints, return
     if (!Array.isArray(endpoints) || endpoints.length === 0) return;
-    server.import.all('/auth/oauth/token', () => import('./pages/token'));
-    server.import.all('/auth/oauth', () => import('./pages/oauth'));
-    server.view.all('/auth/oauth', 'stackpress/template/pages/oauth', -100);
+    ctx.import.all('/auth/oauth/token', () => import('./pages/token'));
+    ctx.import.all('/auth/oauth', () => import('./pages/oauth'));
+    ctx.view.all('/auth/oauth', 'stackpress/template/pages/oauth', -100);
     for (const endpoint of endpoints) {
       if (endpoint.type === 'session') {
-        session(endpoint, server);
+        session(endpoint, ctx);
       } else if (endpoint.type === 'app') {
-        app(endpoint, server);
+        app(endpoint, ctx);
       } else if (endpoint.type === 'public') {
-        open(endpoint, server);
+        open(endpoint, ctx);
       }
     }
   });
 };
 
-export function session(endpoint: ApiEndpoint, server: Server) {
-  server.route(
+export function session(endpoint: ApiEndpoint, ctx: Server) {
+  ctx.route(
     endpoint.method, 
     endpoint.route, 
-    async function SessionAPI(req, res, server) {
+    async function SessionAPI(req, res, ctx) {
       //authorization check
       const authorization = authorize(req, res);
       if (!authorization) {
         return;
       }
       const { id, secret } = authorization;
-      const response = await server.resolve('session-detail', { id });
+      const response = await ctx.resolve('session-detail', { id });
       if (!response || !response.results) {
         return unauthorized(res);
       }
@@ -86,24 +86,24 @@ export function session(endpoint: ApiEndpoint, server: Server) {
       //we are good to call
       req.data.set(endpoint.data || {});
       req.data.set('profileId', session.profileId);
-      await server.emit(endpoint.event, req, res);
+      await ctx.emit(endpoint.event, req, res);
     }, 
     endpoint.priority || 0
   );
 };
 
-export function app(endpoint: ApiEndpoint, server: Server) {
-  server.route(
+export function app(endpoint: ApiEndpoint, ctx: Server) {
+  ctx.route(
     endpoint.method, 
     endpoint.route, 
-    async function AppAPI(req, res, server) {
+    async function AppAPI(req, res, ctx) {
       //authorization check
       const authorization = authorize(req, res);
       if (!authorization) {
         return;
       }
       const { id, secret } = authorization;
-      const response = await server.resolve('application-detail', { id });
+      const response = await ctx.resolve('application-detail', { id });
       if (!response || !response.results) {
         return unauthorized(res);
       }
@@ -121,19 +121,19 @@ export function app(endpoint: ApiEndpoint, server: Server) {
       }
       //we are good to call
       req.data.set(endpoint.data || {});
-      await server.emit(endpoint.event, req, res);
+      await ctx.emit(endpoint.event, req, res);
     }, 
     endpoint.priority || 0
   );
 };
 
-export function open(endpoint: ApiEndpoint, server: Server) {
-  server.route(
+export function open(endpoint: ApiEndpoint, ctx: Server) {
+  ctx.route(
     endpoint.method, 
     endpoint.route, 
-    async function PublicAPI(req, res, server) {
+    async function PublicAPI(req, res, ctx) {
       req.data.set(endpoint.data || {});
-      await server.emit(endpoint.event, req, res);
+      await ctx.emit(endpoint.event, req, res);
     }, 
     endpoint.priority || 0
   );
