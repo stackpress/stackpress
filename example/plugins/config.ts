@@ -1,5 +1,7 @@
 //node
 import path from 'node:path';
+//modules
+import { CLIENT_TEMPLATE, DOCUMENT_TEMPLATE, PAGE_TEMPLATE } from 'reactus';
 //stackpress
 import type { Config as StackpressConfig } from 'stackpress';
 
@@ -12,8 +14,6 @@ const development = environment === 'development';
 const assets = development 
   ? path.join(cwd, 'public') 
   : path.resolve(cwd, '..', 'public');
-// - [project]/public/client
-const client = path.join(assets, 'client');
 // - [project]/build
 // - [project]/build/client?
 // - [project]/build/plugins
@@ -23,10 +23,6 @@ const build = development ? path.join(cwd, '.build') : cwd;
 const migrations = path.join(build, 'migrations');
 // - [project]/build/revisions
 const revisions = path.join(build, 'revisions');
-// - [project]/build/templates
-const templates = path.join(build, 'templates');
-// - [project]/build/templates/manifest.json
-const manifest = path.join(templates, 'manifest.json');
 // - [project]/tsconfig.json
 const tsconfig = path.join(cwd, 'tsconfig.json');
 // - [project]/node_modules
@@ -57,20 +53,50 @@ export const config: Config = {
       onUpdate: 'RESTRICT'
     }
   },
-  template: {
-    cwd: cwd,
-    brand: '',
-    extname: '.ink',
-    minify: environment !== 'development',
-    serverPath: templates,
-    clientPath: client,
-    manifestPath: manifest,
-    notemplate: 'json',
-    dev: { 
-      mode: 'http',
-      buildRoute: '/client',
-      socketRoute: '/__ink_dev__'
-    }
+  view: {
+    //path where to save assets (css, images, etc)
+    // - used in build step
+    assetPath: path.join(cwd, '.build/assets'),
+    //base path (used in vite)
+    // - used in dev mode
+    basePath: '/',
+    //path where to save the client scripts (js)
+    // - used in build step
+    clientPath: path.join(cwd, '.build/client'),
+    //client script route prefix used in the document markup
+    //ie. /client/[id][extname]
+    //<script type="module" src="/client/[id][extname]"></script>
+    //<script type="module" src="/client/abc123.tsx"></script>
+    // - used in dev mode and live server
+    clientRoute: '/client',
+    //template wrapper for the client script (tsx)
+    // - used in dev mode and build step
+    clientTemplate: CLIENT_TEMPLATE,
+    //filepath to a global css file
+    // - used in dev mode and build step
+    cssFile: undefined,
+    //style route prefix used in the document markup
+    //ie. /assets/[id][extname]
+    //<link rel="stylesheet" type="text/css" href="/client/[id][extname]" />
+    //<link rel="stylesheet" type="text/css" href="/assets/abc123.css" />
+    // - used in live server
+    cssRoute: '/assets',
+    //template wrapper for the document markup (html)
+    // - used in dev mode and live server
+    documentTemplate: DOCUMENT_TEMPLATE,
+    //path where to save and load (live) the server script (js)
+    // - used in build step and live server
+    pagePath: path.join(cwd, '.build/pages'),
+    //template wrapper for the page script (tsx)
+    // - used in build step
+    pageTemplate: PAGE_TEMPLATE,
+    //vite plugins
+    plugins: [],
+    //original vite options (overrides other settings related to vite)
+    vite: undefined,
+    //ignore files in watch mode
+    // - used in dev mode
+    watchIgnore: []
   },
   email: {
     host: 'smtp.example.com',

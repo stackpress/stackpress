@@ -7,11 +7,30 @@ import type { Options as SESOptions } from 'nodemailer/lib/ses-transport';
 import type { Options as PoolOptions } from 'nodemailer/lib/smtp-pool';
 import type { Options as SMTPOptions } from 'nodemailer/lib/smtp-transport';
 import type { Options as StreamOptions } from 'nodemailer/lib/stream-transport';
+import type { RollupOutput, OutputChunk, OutputAsset } from 'rollup';
+import type { 
+  PluginOption, 
+  InlineConfig, 
+  ViteDevServer, 
+  Connect as ViteConnect 
+} from 'vite';
+import type { 
+  DocumentImport, 
+  DocumentIterator,
+  ServerManifest,
+  BuildResults,
+  Builder as ReactusBuilder, 
+  ServerConfig as ReactusConfig 
+} from 'reactus';
 //stackpress
-import type { Method, UnknownNest } from '@stackpress/lib/types';
+import type { 
+  Method, 
+  UnknownNest, 
+  StatusResponse
+} from '@stackpress/lib/types';
 import type { Data, SchemaConfig } from '@stackpress/idea-parser/types';
 import type { PluginProps } from '@stackpress/idea-transformer/types';
-import type { CookieOptions } from '@stackpress/ingest/types';
+import type { IM, SR, CookieOptions } from '@stackpress/ingest/types';
 import type Server from '@stackpress/ingest/Server';
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
@@ -218,6 +237,16 @@ export type SigninInput = {
 export type SigninType = 'username' | 'email' | 'phone';
 
 //--------------------------------------------------------------------//
+// View Types
+
+export type RollupResults = [ OutputChunk, ...(OutputAsset | OutputChunk)[]];
+export type FileMeta = {
+  filepath: string,
+  basepath: string,
+  extname: string
+};
+
+//--------------------------------------------------------------------//
 // Server Configuration Types
 
 export type ServerConfig = {
@@ -278,22 +307,7 @@ export type DatabaseConfig = {
   }
 };
 
-export type TemplateDevConfig = {
-  mode: 'http'|'whatwg',
-  buildRoute: string,
-  socketRoute: string
-};
-export type TemplateConfig = {
-  brand: string,
-  cwd: string,
-  extname: string,
-  minify: boolean,
-  clientPath?: string,
-  serverPath?: string,
-  manifestPath?: string,
-  notemplate: string,
-  dev: TemplateDevConfig
-};
+export type ViewConfig = Partial<ReactusConfig>;
 
 export type AuthConfig = {
   name: string,
@@ -329,7 +343,7 @@ export type Config = UnknownNest & {
   email?: EmailConfig,
   language?: LanguageConfig,
   database?: DatabaseConfig,
-  template?: TemplateConfig,
+  view?: ViewConfig,
   auth?: AuthConfig,
   session?: SessionConfig
 };
@@ -357,7 +371,58 @@ export type LanguagePlugin = LanguageConstructor;
 export type DatabasePlugin = Engine;
 export type SessionPlugin = SessionConstructor;
 
-export type TemplatePlugin = {};
+export type ViewPlugin = {
+  config: ReactusConfig,
+  paths: {
+    asset: string,
+    client: string,
+    css?: string,
+    head?: string,
+    page: string
+  };
+  production: boolean,
+  routes: { client: string, css: string },
+  templates: {
+    client: string,
+    document: string,
+    page: string
+  };
+  viteConfig: InlineConfig|null,
+  size: number,
+  builder: ReactusBuilder,
+  build: (config: InlineConfig) => Promise<RollupOutput|RollupOutput[]>,
+  dev: () => Promise<ViteDevServer>,
+  http: (req: IM, res: SR) => Promise<unknown>,
+  middlewares: () => Promise<ViteConnect.Server>,
+  plugins: () => Promise<PluginOption[]>,
+  fetch: <T = any>(url: string) => Promise<T>,
+  import: <T = any>(pathname: string, extnames?: string[]) => Promise<T>,
+  resolve: (pathname: string, extnames?: string[]) => Promise<FileMeta>,
+  buildAllAssets: () => Promise<StatusResponse<BuildResults>[]>,
+  buildAllClients: () => Promise<StatusResponse<BuildResults>[]>,
+  buildAllPages: () => Promise<StatusResponse<BuildResults>[]>,
+  entries: () => [ Document, number ][],
+  find: (id: string) => Document | null,
+  forEach: (callback: DocumentIterator<unknown>) => void,
+  get: (entry: string) => Promise<Document | null>,
+  has: (entry: string) => Promise<boolean>,
+  load: (hash: Record<string, string>) => ServerManifest,
+  open: (file: string) => Promise<ServerManifest>,
+  map: <T = unknown>(callback: DocumentIterator<T>) => T[],
+  save: (file: string) => Promise<ServerManifest>,
+  set: (entry: string) => Promise<Document>,
+  toJSON: () => { [k: string]: string },
+  values: () => Document[],
+  absolute: (entry: string) => Promise<string>,
+  id: (entry: string) => Promise<string>,
+  importPage: (entry: string) => Promise<DocumentImport>,
+  relative: (entry: string, fromFile: string) => Promise<string>,
+  buildAssets: (entry: string) => Promise<RollupResults>,
+  buildClient: (entry: string) => Promise<RollupResults>,
+  buildPage: (entry: string, assets?: BuildResults) => Promise<RollupResults>,
+  renderHMR: (entry: string) => Promise<string>,
+  render: (entry: string, props?: UnknownNest) => Promise<string>
+};
 
 //--------------------------------------------------------------------//
 // Model Types
