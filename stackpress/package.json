@@ -38,7 +38,7 @@
     "stackpress"
   ],
   "plugins": [
-    "./plugin"
+    "./dist/plugin.js"
   ],
   "bin": {
     "stackpress": "./dist/terminal/bin.js"
@@ -158,10 +158,10 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "2.2.2",
-    "@stackpress/idea-transformer": "0.5.4",
-    "@stackpress/ingest": "0.5.4",
-    "@stackpress/inquire": "0.5.4",
-    "@stackpress/lib": "0.5.4",
+    "@stackpress/idea-transformer": "0.5.5",
+    "@stackpress/ingest": "0.5.5",
+    "@stackpress/inquire": "0.5.5",
+    "@stackpress/lib": "0.5.5",
     "fast-glob": "3.3.2",
     "frui": "0.1.3",
     "js-cookie": "3.0.5",
@@ -170,7 +170,7 @@
     "nanoid": "3.3.8",
     "nodemailer": "6.9.16",
     "papaparse": "5.5.1",
-    "reactus": "0.1.1",
+    "reactus": "0.1.12",
     "ts-morph": "24.0.0"
   },
   "devDependencies": {
