@@ -17,12 +17,11 @@ export default action(async function ErrorPage(req, res, ctx) {
   //add snippets to stack
   stack.forEach((trace, i) => {
     //skip the first trace
-    if (i === 0) return;
-    const { file } = trace;
-    if (!file.startsWith(path.sep) || !fs.existsSync(file)) {
-      return trace;
-    }
-    const { line, char } = trace;
+    if (i === 0 
+      || !trace.file.startsWith(path.sep) 
+      || !fs.existsSync(trace.file)
+    ) return;
+    const { file, line, char } = trace;
     const source = fs.readFileSync(file, 'utf8')
     const lines = source.split('\n');
     const snippet: Record<string, string|undefined> = {

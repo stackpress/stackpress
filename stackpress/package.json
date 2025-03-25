@@ -56,9 +56,11 @@
     "./session": "./dist/session/index.js",
     "./sql": "./dist/sql/index.js",
     "./terminal": "./dist/terminal/index.js",
+    "./view": "./dist/view/index.js",
     "./lib": "./dist/lib.js",
     "./plugin": "./dist/plugin.js",
     "./types": "./dist/types.js",
+    "./unocss": "./dist/unocss.js",
     "./Exception": "./dist/Exception.js",
     "./Attribute": "./dist/schema/spec/Attribute.js",
     "./Column": "./dist/schema/spec/Column.js",
@@ -109,6 +111,7 @@
       "lib": [ "./dist/lib.d.ts" ],
       "plugin": [ "./dist/plugin.d.ts" ],
       "types": [ "./dist/types.d.ts" ],
+      "unocss": [ "./dist/unocss.d.ts" ],
       "Exception": [ "./dist/Exception.d.ts" ],
       "Attribute": [ "./dist/schema/spec/Attribute.d.ts" ],
       "Column": [ "./dist/schema/spec/Column.d.ts" ],
@@ -162,6 +165,7 @@
     "@stackpress/ingest": "0.5.5",
     "@stackpress/inquire": "0.5.5",
     "@stackpress/lib": "0.5.5",
+    "cookies-next": "5.1.0",
     "fast-glob": "3.3.2",
     "frui": "0.1.3",
     "js-cookie": "3.0.5",
@@ -170,8 +174,11 @@
     "nanoid": "3.3.8",
     "nodemailer": "6.9.16",
     "papaparse": "5.5.1",
+    "r22n": "1.0.7",
+    "react-toastify": "11.0.5",
     "reactus": "0.1.12",
-    "ts-morph": "24.0.0"
+    "ts-morph": "24.0.0",
+    "unocss": "66.0.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "9.0.9",
@@ -184,7 +191,6 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "ts-node": "10.9.2",
-    "typescript": "5.7.2",
-    "unocss": "66.0.0"
+    "typescript": "5.7.2"
   }
 }

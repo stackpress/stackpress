@@ -8,14 +8,7 @@ export default function plugin(server: Server) {
   server.on('listen', async _ => {
     //on error, show error page
     server.on('error', () => import('./pages/error'));
-    server.on('error', '@/plugins/app/templates/error', -100);
-    //static assets
-    server.on('request', async (req, res) => {  
-      if (!res.body && (!res.code || res.code === 404)) {
-        const page = await import('./pages/public');
-        await page.default(req, res, server);
-      }
-    });
+    server.on('error', '@/plugins/app/views/error', -100);
     //on response, check for errors
     server.on('response', async (req, res, ctx) => {  
       if (res.error) {
@@ -24,6 +17,6 @@ export default function plugin(server: Server) {
     });
   });
   server.on('route', async _ => {
-    server.all('/', '@/plugins/app/templates/home', -100);
+    server.all('/', '@/plugins/app/views/home', -100);
   });
 };

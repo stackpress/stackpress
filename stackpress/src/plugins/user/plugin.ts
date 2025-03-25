@@ -44,8 +44,8 @@ export default function plugin(ctx: Server) {
     ctx.import.all('/auth/signup', () => import('./pages/signup'));
     ctx.import.all('/auth/signout', () => import('./pages/signout'));
 
-    ctx.view.all('/auth/signin', 'stackpress/template/pages/signin', -100);
-    ctx.view.all('/auth/signin/:type', 'stackpress/template/pages/signin', -100);
-    ctx.view.all('/auth/signup', 'stackpress/template/pages/signin', -100);
+    // ctx.view.all('/auth/signin', 'stackpress/template/pages/signin', -100);
+    // ctx.view.all('/auth/signin/:type', 'stackpress/template/pages/signin', -100);
+    // ctx.view.all('/auth/signup', 'stackpress/template/pages/signin', -100);
   });
 };

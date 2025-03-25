@@ -6,8 +6,8 @@
   },
   "include": [ 
     "scripts/**/*.ts", 
-    "components/**/*.tsx" , 
-    "pages/**/*.tsx" 
+    "plugins/**/*.ts", 
+    "plugins/**/*.tsx"
   ],
   "exclude": [ "dist", "node_modules", "tests" ]
 }

@@ -246,6 +246,47 @@ export type FileMeta = {
   extname: string
 };
 
+export type PageProps<
+  C extends UnknownNest = UnknownNest,
+  I extends UnknownNest = UnknownNest,
+  O extends UnknownNest = UnknownNest
+> = {
+  data: C,
+  session: {
+    token: string;
+    permits: SessionPermission[];
+    id: string | number;
+    name?: string | undefined;
+    image?: string;
+    roles: string[];
+  },
+  request: {
+    url: {
+      hash: string,
+      host: string,
+      hostname: string,
+      href: string,
+      origin: string,
+      pathname: string,
+      port: string,
+      protocol: string,
+      search: string
+    },
+    headers: UnknownNest,
+    session: UnknownNest,
+    method: string,
+    mime: string,
+    data: I
+  },
+  response: StatusResponse<O>
+}
+
+export type HeadProps<
+  C extends UnknownNest = UnknownNest,
+  I extends UnknownNest = UnknownNest,
+  O extends UnknownNest = UnknownNest
+> = PageProps<C, I, O> & { styles?: string[] }; 
+
 //--------------------------------------------------------------------//
 // Server Configuration Types
 

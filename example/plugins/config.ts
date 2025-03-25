@@ -1,7 +1,10 @@
 //node
 import path from 'node:path';
-//modules
-import { CLIENT_TEMPLATE, DOCUMENT_TEMPLATE, PAGE_TEMPLATE } from 'reactus';
+import { 
+  CLIENT_TEMPLATE, 
+  DOCUMENT_TEMPLATE, 
+  PAGE_TEMPLATE 
+} from 'reactus';
 //stackpress
 import type { Config as StackpressConfig } from 'stackpress';
 
@@ -72,9 +75,6 @@ export const config: Config = {
     //template wrapper for the client script (tsx)
     // - used in dev mode and build step
     clientTemplate: CLIENT_TEMPLATE,
-    //filepath to a global css file
-    // - used in dev mode and build step
-    cssFile: undefined,
     //style route prefix used in the document markup
     //ie. /assets/[id][extname]
     //<link rel="stylesheet" type="text/css" href="/client/[id][extname]" />

@@ -1,11 +1,18 @@
-//stackpress
-import type { ResponseStatus } from '@stackpress/lib/types';
-import type Server from '@stackpress/ingest/Server';
-import Status from '@stackpress/lib/Status';
+//node
+import { IncomingMessage, ServerResponse } from 'node:http';
+//modules
 import reactus, { 
   type ServerConfig,
   Server as ReactusServer
 } from 'reactus';
+import unocss from 'unocss/vite';
+//stackpress
+import type { ResponseStatus } from '@stackpress/lib/types';
+import type { IM, SR } from '@stackpress/ingest/types';
+import type Server from '@stackpress/ingest/Server';
+import Status from '@stackpress/lib/Status';
+//common
+import { ViewPlugin } from '../../types';
 
 /**
  * This interface is intended for the Incept library.
@@ -21,6 +28,12 @@ export default function plugin(ctx: Server) {
     const production = mode === 'production';
     //get all the options
     const options = ctx.config.get<Partial<ServerConfig>>('view');
+    //if no plugins, add an empty array
+    if (!options.plugins) options.plugins = [];
+    //add the unocss plugin
+    options.plugins.push(unocss());
+    //set the css file
+    options.cssFile = options.cssFile || 'virtual:uno.css';
     //create reactus engine
     const engine = reactus(ReactusServer.configure({ 
       ...options, 
@@ -78,4 +91,25 @@ export default function plugin(ctx: Server) {
       }
     };
   });
+  //on route, 
+  ctx.on('route', async (_req, _res, ctx) => {
+    ctx.on('request', async (req, res, ctx) => {
+      //get server mode
+      const mode = ctx.config.path('server.mode', 'production');
+      //if not production, and node http request
+      if (mode === 'production'
+        || !(req.resource instanceof IncomingMessage)
+        || !(res.resource instanceof ServerResponse)
+      ) return;
+      const reactus = ctx.plugin<ViewPlugin>('reactus');
+      const im = req.resource as IM;
+      const sr = res.resource as SR;
+      //handles public, assets and hmr
+      await reactus.http(im, sr);
+      //if middleware was triggered
+      //stop the response
+      if (sr.headersSent) res.stop();
+    });
+  });
+  
 };
