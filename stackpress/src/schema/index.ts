@@ -6,6 +6,15 @@ import assert from './assert';
 import Registry from './Registry';
 import Revisions from './Revisions';
 
+export type { 
+  EnumConfig, 
+  ModelConfig,
+  TypeConfig,
+  PropConfig,
+  PluginConfig,
+  SchemaConfig 
+} from '@stackpress/idea-parser/types';
+
 export * from './helpers';
 
 export { 

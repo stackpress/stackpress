@@ -97,7 +97,15 @@
     "./pgsql": "./dist/sql/pgsql.js",
     "./sqlite": "./dist/sql/sqlite.js",
     "./bin": "./dist/terminal/bin.js",
-    "./Terminal": "./dist/terminal/Terminal.js"
+    "./Terminal": "./dist/terminal/Terminal.js",
+    "./admin/pages/create": "./dist/plugins/admin/pages/create.js",
+    "./admin/pages/detail": "./dist/plugins/admin/pages/detail.js",
+    "./admin/pages/export": "./dist/plugins/admin/pages/export.js",
+    "./admin/pages/import": "./dist/plugins/admin/pages/import.js",
+    "./admin/pages/remove": "./dist/plugins/admin/pages/remove.js",
+    "./admin/pages/restore": "./dist/plugins/admin/pages/restore.js",
+    "./admin/pages/search": "./dist/plugins/admin/pages/search.js",
+    "./admin/pages/update": "./dist/plugins/admin/pages/update.js"
   },
   "typesVersions": {
     "*": {
@@ -161,10 +169,10 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "2.2.2",
-    "@stackpress/idea-transformer": "0.5.5",
-    "@stackpress/ingest": "0.5.5",
-    "@stackpress/inquire": "0.5.5",
-    "@stackpress/lib": "0.5.5",
+    "@stackpress/idea-transformer": "0.5.7",
+    "@stackpress/ingest": "0.5.7",
+    "@stackpress/inquire": "0.5.7",
+    "@stackpress/lib": "0.5.7",
     "cookies-next": "5.1.0",
     "fast-glob": "3.3.2",
     "frui": "0.1.3",
@@ -176,9 +184,8 @@
     "papaparse": "5.5.1",
     "r22n": "1.0.7",
     "react-toastify": "11.0.5",
-    "reactus": "0.1.12",
-    "ts-morph": "24.0.0",
-    "unocss": "66.0.0"
+    "reactus": "0.1.14",
+    "ts-morph": "24.0.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "9.0.9",
@@ -191,6 +198,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "ts-node": "10.9.2",
-    "typescript": "5.7.2"
+    "typescript": "5.7.2",
+    "unocss": "66.0.0"
   }
 }

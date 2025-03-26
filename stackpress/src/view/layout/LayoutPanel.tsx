@@ -13,7 +13,7 @@ import LayoutProvider from './LayoutProvider';
 import { useToggle } from './hooks';
 
 export type PanelAppProps = { 
-  href?: string,
+  base?: string,
   logo?: string,
   brand?: string,
   language?: string,
@@ -24,7 +24,7 @@ export type PanelAppProps = {
 };
 
 export function PanelApp(props: PanelAppProps) {
-  const { href, logo, brand, children } = props;
+  const { base, logo, brand, children } = props;
   const [ left, toggleLeft ] = useToggle();
   const [ right, toggleRight ] = useToggle();
   const { theme, toggle: toggleTheme } = useTheme();
@@ -39,7 +39,7 @@ export function PanelApp(props: PanelAppProps) {
       />
       <LayoutLeft
         brand={brand}
-        href={href}
+        base={base}
         logo={logo}
         open={left}
         toggle={toggleLeft}
@@ -53,7 +53,7 @@ export function PanelApp(props: PanelAppProps) {
 }
 
 export type LayoutPanelProps = { 
-  href?: string,
+  base?: string,
   logo?: string,
   brand?: string,
   theme?: string,
@@ -66,7 +66,7 @@ export type LayoutPanelProps = {
 
 export default function LayoutPanel(props: LayoutPanelProps) {
   const { 
-    href, 
+    base, 
     logo, 
     brand, 
     left, 
@@ -80,7 +80,7 @@ export default function LayoutPanel(props: LayoutPanelProps) {
   useEffect(unload, []);
   return (
     <LayoutProvider theme={theme} language={language} translations={translations}>
-      <PanelApp href={href} logo={logo} brand={brand} left={left} right={right}>
+      <PanelApp base={base} logo={logo} brand={brand} left={left} right={right}>
         {children}
       </PanelApp>
       <ToastContainer />

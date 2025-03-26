@@ -246,7 +246,7 @@ export type FileMeta = {
   extname: string
 };
 
-export type PageProps<
+export type BodyProps<
   C extends UnknownNest = UnknownNest,
   I extends UnknownNest = UnknownNest,
   O extends UnknownNest = UnknownNest
@@ -285,7 +285,7 @@ export type HeadProps<
   C extends UnknownNest = UnknownNest,
   I extends UnknownNest = UnknownNest,
   O extends UnknownNest = UnknownNest
-> = PageProps<C, I, O> & { styles?: string[] }; 
+> = BodyProps<C, I, O> & { styles?: string[] }; 
 
 //--------------------------------------------------------------------//
 // Server Configuration Types
@@ -348,7 +348,15 @@ export type DatabaseConfig = {
   }
 };
 
-export type ViewConfig = Partial<ReactusConfig>;
+export type ViewConfig = {
+  props: Record<string, unknown> & {
+    icon?: string,
+    logo?: string,
+    brand?: string,
+    base?: string
+  },
+  engine?: Partial<ReactusConfig>
+};
 
 export type AuthConfig = {
   name: string,

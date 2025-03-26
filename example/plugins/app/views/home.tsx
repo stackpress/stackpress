@@ -1,6 +1,6 @@
 import '../styles/page.css';
 import { useState } from 'react';
-import { LayoutBlank, HeadProps, PageProps } from 'stackpress/view';
+import { LayoutBlank, HeadProps, BodyProps } from 'stackpress/view';
 
 export function Head(props: HeadProps) {
   const { styles = [] } = props;
@@ -17,7 +17,7 @@ export function Head(props: HeadProps) {
   )
 }
 
-export default function HomePage(props: PageProps) {
+export default function HomePage(props: BodyProps) {
   const theme = props.request.session.theme as string | undefined;
   const [count, setCount] = useState(0)
 
@@ -25,7 +25,7 @@ export default function HomePage(props: PageProps) {
     <LayoutBlank
       theme={theme} 
       brand="Stackpress" 
-      href="/"
+      base="/"
       logo="https://www.stackpress.io/images/stackpress-logo-icon.png"
     >
       <div className="px-p-10">

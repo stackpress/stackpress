@@ -5,10 +5,11 @@ import reactus, {
   type ServerConfig,
   Server as ReactusServer
 } from 'reactus';
-import unocss from 'unocss/vite';
 //stackpress
+import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type { ResponseStatus } from '@stackpress/lib/types';
 import type { IM, SR } from '@stackpress/ingest/types';
+import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
 import Status from '@stackpress/lib/Status';
 //common
@@ -27,13 +28,7 @@ export default function plugin(ctx: Server) {
     //determine if this is production
     const production = mode === 'production';
     //get all the options
-    const options = ctx.config.get<Partial<ServerConfig>>('view');
-    //if no plugins, add an empty array
-    if (!options.plugins) options.plugins = [];
-    //add the unocss plugin
-    options.plugins.push(unocss());
-    //set the css file
-    options.cssFile = options.cssFile || 'virtual:uno.css';
+    const options = ctx.config.path<Partial<ServerConfig>>('view.engine', {});
     //create reactus engine
     const engine = reactus(ReactusServer.configure({ 
       ...options, 
@@ -58,11 +53,13 @@ export default function plugin(ctx: Server) {
         //or body is a string already
         || typeof res.body === 'string'
       ) return;
+      //get props from config
+      const props = ctx.config.path('view.props', {});
       //get the session
       const session = await ctx.resolve('me', req);
       //render the html
       const html = await ctx.view.render(action, {
-        data: res.data(),
+        data: {...props, ...res.data<Record<string, unknown>>() },
         session: session.results,
         request: {
           url: {
@@ -111,5 +108,17 @@ export default function plugin(ctx: Server) {
       if (sr.headersSent) res.stop();
     });
   });
-  
+  //generate some code in the client folder
+  ctx.on('idea', async req => {
+    //get the transformer from the request
+    const transformer = req.data<Transformer<CLIProps>>('transformer');
+    const schema = await transformer.schema();
+    //if no plugin object exists, create one
+    if (!schema.plugin) {
+      schema.plugin = {};
+    }
+    //add this plugin generator to the schema
+    //so it can be part of the transformation
+    schema.plugin[`${import.meta.dirname}/transform`] = {};
+  });
 };

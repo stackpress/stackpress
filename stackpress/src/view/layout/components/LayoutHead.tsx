@@ -1,7 +1,7 @@
 export type LayoutHeadProps = {
   open?: boolean,
   theme: string,
-  href?: string,
+  base?: string,
   logo?: string,
   brand?: string,
   toggleLeft?: () => void,
@@ -13,7 +13,7 @@ export default function LayoutHead(props: LayoutHeadProps) {
   const { 
     open, 
     theme, 
-    href,
+    base,
     logo,
     brand,
     toggleLeft, 
@@ -33,8 +33,8 @@ export default function LayoutHead(props: LayoutHeadProps) {
           </button>
         )}
         <div className="flex-grow">
-          {href ? (
-            <a className="theme-tx1 flex items-center no-underline" href={href}>
+          {base ? (
+            <a className="theme-tx1 flex items-center no-underline" href={base}>
               {logo && <img src={logo} alt={brand} className="px-w-30 px-h-30 px-mr-10" />}
               {brand && <span className="uppercase px-fs-16">{brand}</span>}
             </a>

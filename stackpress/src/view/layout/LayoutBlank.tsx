@@ -10,7 +10,7 @@ import LayoutMain from './components/LayoutMain';
 import LayoutProvider from './LayoutProvider';
 
 export type BlankAppProps = { 
-  href?: string,
+  base?: string,
   logo?: string,
   brand?: string,
   language?: string,
@@ -19,13 +19,13 @@ export type BlankAppProps = {
 };
 
 export function BlankApp(props: BlankAppProps) {
-  const { href, logo, brand, children } = props;
+  const { base, logo, brand, children } = props;
   const { theme, toggle: toggleTheme } = useTheme();
   return (
     <div className={`${theme} relative px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
       <LayoutHead 
         theme={theme}
-        href={href}
+        base={base}
         logo={logo}
         brand={brand}
         toggleTheme={toggleTheme} 
@@ -36,7 +36,7 @@ export function BlankApp(props: BlankAppProps) {
 }
 
 export type LayoutBlankProps = { 
-  href?: string,
+  base?: string,
   logo?: string,
   brand?: string,
   theme?: string,
@@ -46,12 +46,12 @@ export type LayoutBlankProps = {
 };
 
 export default function LayoutBlank(props: LayoutBlankProps) {
-  const { theme, href, logo, brand, language, translations, children } = props;
+  const { theme, base, logo, brand, language, translations, children } = props;
   //unload flash message
   useEffect(unload, []);
   return (
     <LayoutProvider theme={theme} language={language} translations={translations}>
-      <BlankApp href={href} logo={logo} brand={brand}>
+      <BlankApp base={base} logo={logo} brand={brand}>
         {children}
       </BlankApp>
       <ToastContainer />

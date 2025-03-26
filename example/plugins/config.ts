@@ -1,5 +1,7 @@
 //node
 import path from 'node:path';
+//modules
+import unocss from 'unocss/vite';
 import { 
   CLIENT_TEMPLATE, 
   DOCUMENT_TEMPLATE, 
@@ -57,46 +59,57 @@ export const config: Config = {
     }
   },
   view: {
-    //path where to save assets (css, images, etc)
-    // - used in build step
-    assetPath: path.join(cwd, '.build/assets'),
-    //base path (used in vite)
-    // - used in dev mode
-    basePath: '/',
-    //path where to save the client scripts (js)
-    // - used in build step
-    clientPath: path.join(cwd, '.build/client'),
-    //client script route prefix used in the document markup
-    //ie. /client/[id][extname]
-    //<script type="module" src="/client/[id][extname]"></script>
-    //<script type="module" src="/client/abc123.tsx"></script>
-    // - used in dev mode and live server
-    clientRoute: '/client',
-    //template wrapper for the client script (tsx)
-    // - used in dev mode and build step
-    clientTemplate: CLIENT_TEMPLATE,
-    //style route prefix used in the document markup
-    //ie. /assets/[id][extname]
-    //<link rel="stylesheet" type="text/css" href="/client/[id][extname]" />
-    //<link rel="stylesheet" type="text/css" href="/assets/abc123.css" />
-    // - used in live server
-    cssRoute: '/assets',
-    //template wrapper for the document markup (html)
-    // - used in dev mode and live server
-    documentTemplate: DOCUMENT_TEMPLATE,
-    //path where to save and load (live) the server script (js)
-    // - used in build step and live server
-    pagePath: path.join(cwd, '.build/pages'),
-    //template wrapper for the page script (tsx)
-    // - used in build step
-    pageTemplate: PAGE_TEMPLATE,
-    //vite plugins
-    plugins: [],
-    //original vite options (overrides other settings related to vite)
-    vite: undefined,
-    //ignore files in watch mode
-    // - used in dev mode
-    watchIgnore: []
+    props: {
+      icon: '/react.svg',
+      logo: 'https://www.stackpress.io/images/stackpress-logo-icon.png',
+      brand: 'Stackpress',
+      base: '/'
+    },
+    engine: {
+      //path where to save assets (css, images, etc)
+      // - used in build step
+      assetPath: path.join(cwd, '.build/assets'),
+      //base path (used in vite)
+      // - used in dev mode
+      basePath: '/',
+      //path where to save the client scripts (js)
+      // - used in build step
+      clientPath: path.join(cwd, '.build/client'),
+      //client script route prefix used in the document markup
+      //ie. /client/[id][extname]
+      //<script type="module" src="/client/[id][extname]"></script>
+      //<script type="module" src="/client/abc123.tsx"></script>
+      // - used in dev mode and live server
+      clientRoute: '/client',
+      //template wrapper for the client script (tsx)
+      // - used in dev mode and build step
+      clientTemplate: CLIENT_TEMPLATE,
+      //filepath to a global css file
+      // - used in dev mode and build step
+      cssFile: 'virtual:uno.css',
+      //style route prefix used in the document markup
+      //ie. /assets/[id][extname]
+      //<link rel="stylesheet" type="text/css" href="/client/[id][extname]" />
+      //<link rel="stylesheet" type="text/css" href="/assets/abc123.css" />
+      // - used in live server
+      cssRoute: '/assets',
+      //template wrapper for the document markup (html)
+      // - used in dev mode and live server
+      documentTemplate: DOCUMENT_TEMPLATE,
+      //path where to save and load (live) the server script (js)
+      // - used in build step and live server
+      pagePath: path.join(cwd, '.build/pages'),
+      //template wrapper for the page script (tsx)
+      // - used in build step
+      pageTemplate: PAGE_TEMPLATE,
+      //vite plugins
+      plugins: [ unocss() ],
+      //original vite options (overrides other settings related to vite)
+      vite: undefined,
+      //ignore files in watch mode
+      // - used in dev mode
+      watchIgnore: []
+    }
   },
   email: {
     host: 'smtp.example.com',

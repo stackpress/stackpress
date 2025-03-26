@@ -18,6 +18,6 @@ export default function plugin(ctx: Server) {
     }
     //add this plugin generator to the schema
     //so it can be part of the transformation
-    schema.plugin['stackpress/plugins/types/transform'] = {};
+    schema.plugin[`${import.meta.dirname}/transform`] = {};
   });
 };
