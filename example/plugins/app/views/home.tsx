@@ -19,7 +19,7 @@ export function Head(props: HeadProps) {
 
 export default function HomePage(props: BodyProps) {
   const theme = props.request.session.theme as string | undefined;
-  const [count, setCount] = useState(0)
+  const [ count, setCount ] = useState(0)
 
   return (
     <LayoutBlank

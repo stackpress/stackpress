@@ -23,7 +23,12 @@ export type { ModalProviderProps } from './modal/ModalProvider';
 export type { ThemeContextProps } from './theme/ThemeContext';
 export type { ThemeProviderProps } from './theme/ThemeProvider';
 
-export type { BodyProps, HeadProps } from '../types';
+export type { 
+  BodyProps, 
+  HeadProps, 
+  FieldProps, 
+  ControlProps
+} from '../types';
 
 import LayoutHead from './layout/components/LayoutHead';
 import LayoutLeft from './layout/components/LayoutLeft';

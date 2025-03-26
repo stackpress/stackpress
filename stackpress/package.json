@@ -185,7 +185,7 @@
     "@stackpress/lib": "0.5.7",
     "cookies-next": "5.1.0",
     "fast-glob": "3.3.2",
-    "frui": "0.1.3",
+    "frui": "0.1.4",
     "js-cookie": "3.0.5",
     "jsonwebtoken": "9.0.2",
     "mustache": "4.2.0",

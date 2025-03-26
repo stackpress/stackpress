@@ -1,0 +1,58 @@
+{
+  "type": "module",
+  "name": "frui",
+  "version": "0.1.4",
+  "license": "MIT",
+  "description": "A collection of vanilla react components written in typescript.",
+  "author": "Chris <chris@incept.asia>",
+  "homepage": "https://github.com/OSSPhilippines/frui",
+  "bugs": "https://github.com/OSSPhilippines/frui/issues",
+  "repository": "OSSPhilippines/frui",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./types": "./dist/types.js",
+    "./data/*": "./dist/data/*.js",
+    "./element/*": "./dist/elements/*.js",
+    "./field/*": "./dist/components/*.js",
+    "./format/*": "./dist/formats/*.js"
+  },
+  "typesVersions": {
+    "*": {
+      ".": [ "./dist/index.d.ts" ],
+      "types": [ "./dist/types.d.ts" ],
+      "./data/*": [ "./dist/data/*.d.ts" ],
+      "./element/*": [ "./dist/elements/*.d.ts" ],
+      "./field/*": [ "./dist/components/*.d.ts" ],
+      "./format/*": [ "./dist/formats/*.d.ts" ]
+    }
+  },
+  "files": [
+    "dist",
+    "styles",
+    "frui.css",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "inputmask": "5.0.9",
+    "markdown-to-jsx": "7.7.4",
+    "moment": "2.30.1"
+  },
+  "devDependencies": {
+    "@types/inputmask": "5.0.3",
+    "@types/node": "20.2.5",
+    "@types/react": "18.2.78",
+    "@types/react-dom": "18.2.25",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "ts-loader": "9.5.2",
+    "ts-node": "10.9.2",
+    "typescript": "5.7.2"
+  }
+}

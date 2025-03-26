@@ -46,10 +46,10 @@ export function generateField(
   const capital = capitalize(camelize(column.name));
   const path = `${model.name}/components/fields/${capital}Field.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
-  //import type { FieldProps, ControlProps } from 'adent/types';
+  //import type { FieldProps, ControlProps } from 'stackpress/view';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'adent/types',
+    moduleSpecifier: 'stackpress/view',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
   //import { useLanguage } from 'r22n';

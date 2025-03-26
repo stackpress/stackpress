@@ -80,9 +80,14 @@ export function event(action: string, model: Model, directory: Directory) {
     '', 
     { overwrite: true }
   );
-  //import create from 'stackpress/plugins/sql/events/create';
+  //import { Request, Response, Server } from "stackpress/server";';
   source.addImportDeclaration({
-    moduleSpecifier: `stackpress/plugins/sql/events/${lower}`,
+    moduleSpecifier: 'stackpress/server',
+    namedImports: [ 'Request', 'Response', 'Server' ]
+  });
+  //import create from 'stackpress/sql/events/create';
+  source.addImportDeclaration({
+    moduleSpecifier: `stackpress/sql/events/${lower}`,
     defaultImport: lower
   });
   //import config from '../config';
@@ -90,15 +95,16 @@ export function event(action: string, model: Model, directory: Directory) {
     moduleSpecifier: `../config`,
     defaultImport: 'config'
   });
-  //export default function ProfileCreateEvent(req: ServerRequest, res: Response)
+  //export default function ProfileCreateEvent(req: Request, res: Response)
   source.addFunction({
     name: `${model.title}${title}Event`,
     isAsync: true,
     isDefaultExport: true,
     parameters: [
-      { name: 'req', type: 'ServerRequest' },
-      { name: 'res', type: 'Response' }
+      { name: 'req', type: 'Request' },
+      { name: 'res', type: 'Response' },
+      { name: 'ctx', type: 'Server' }
     ],
-    statements: (`return ${lower}(config)(req, res);`)
+    statements: (`return ${lower}(config)(req, res, ctx);`)
   });
 };

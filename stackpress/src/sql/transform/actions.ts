@@ -52,7 +52,6 @@ export default function generate(directory: Directory, registry: Registry) {
       isTypeOnly: true,
       moduleSpecifier: '../types',
       namedImports: [ 
-        model.title,
         `${model.title}Extended`
       ]
     });
@@ -64,7 +63,7 @@ export default function generate(directory: Directory, registry: Registry) {
     //import { Actions } from 'stackpress/sql/actions';
     source.addImportDeclaration({
       moduleSpecifier: 'stackpress/sql/actions',
-      defaultImport: 'Actions'
+      namedImports: [ 'Actions' ]
     });
     //import config from '../config';
     source.addImportDeclaration({
@@ -158,9 +157,9 @@ export function batch(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ model.title ]
   });
-  //import batch from 'stackpress/batch';
+  //import batch from 'stackpress/sql/actions/batch';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/batch',
+    moduleSpecifier: 'stackpress/sql/actions/batch',
     defaultImport: 'batch'
   });
   //import config from '../config';
@@ -206,9 +205,9 @@ export function create(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ model.title ]
   });
-  //import create from 'stackpress/create';
+  //import create from 'stackpress/sql/actions/create';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/create',
+    moduleSpecifier: 'stackpress/sql/actions/create',
     defaultImport: 'create'
   });
   //import config from '../config';
@@ -248,9 +247,9 @@ export function detail(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import detail from 'stackpress/detail';
+  //import detail from 'stackpress/sql/actions/detail';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/detail',
+    moduleSpecifier: 'stackpress/sql/actions/detail',
     defaultImport: 'detail'
   });
   //import config from '../config';
@@ -290,9 +289,9 @@ export function get(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import get from 'stackpress/get';
+  //import get from 'stackpress/sql/actions/get';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/get',
+    moduleSpecifier: 'stackpress/sql/actions/get',
     defaultImport: 'get'
   });
   //import config from '../config';
@@ -334,9 +333,9 @@ export function remove(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import remove from 'stackpress/remove';
+  //import remove from 'stackpress/sql/actions/remove';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/remove',
+    moduleSpecifier: 'stackpress/sql/actions/remove',
     defaultImport: 'remove'
   });
   //import config from '../config';
@@ -376,9 +375,9 @@ export function restore(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import restore from 'stackpress/restore';
+  //import restore from 'stackpress/sql/actions/restore';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/restore',
+    moduleSpecifier: 'stackpress/sql/actions/restore',
     defaultImport: 'restore'
   });
   //import config from '../config';
@@ -424,9 +423,9 @@ export function search(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import search from 'stackpress/search';
+  //import search from 'stackpress/sql/actions/search';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/search',
+    moduleSpecifier: 'stackpress/sql/actions/search',
     defaultImport: 'search'
   });
   //import config from '../config';
@@ -472,9 +471,9 @@ export function update(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import update from 'stackpress/update';
+  //import update from 'stackpress/sql/actions/update';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/update',
+    moduleSpecifier: 'stackpress/sql/actions/update',
     defaultImport: 'update'
   });
   //import config from '../config';
@@ -522,9 +521,9 @@ export function upsert(model: Model, directory: Directory) {
     moduleSpecifier: '../types',
     namedImports: [ `${model.title}Extended` ]
   });
-  //import upsert from 'stackpress/upsert';
+  //import upsert from 'stackpress/sql/actions/upsert';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/upsert',
+    moduleSpecifier: 'stackpress/sql/actions/upsert',
     defaultImport: 'upsert'
   });
   //import config from '../config';

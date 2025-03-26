@@ -52,6 +52,7 @@ import type { Actions } from '../sql/actions';
 // General Types
 
 export type Scalar = string | number | boolean | null | undefined;
+export type ExtendsType<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 
 //--------------------------------------------------------------------//
 // Schema Types
@@ -240,6 +241,7 @@ export type SigninType = 'username' | 'email' | 'phone';
 // View Types
 
 export type RollupResults = [ OutputChunk, ...(OutputAsset | OutputChunk)[]];
+
 export type FileMeta = {
   filepath: string,
   basepath: string,
@@ -286,6 +288,20 @@ export type HeadProps<
   I extends UnknownNest = UnknownNest,
   O extends UnknownNest = UnknownNest
 > = BodyProps<C, I, O> & { styles?: string[] }; 
+
+export type FieldProps = {
+  className?: string,
+  error?: boolean,
+  value: any,
+  change: (name: string, value: any) => void
+};
+
+export type ControlProps = {
+  className?: string,
+  error?: string,
+  value: any,
+  change: (name: string, value: any) => void
+}
 
 //--------------------------------------------------------------------//
 // Server Configuration Types

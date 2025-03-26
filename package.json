@@ -2,7 +2,8 @@
   "private": true,
   "workspaces": [
     "example",
-    "stackpress"
+    "stackpress",
+    "frui"
   ],
   "scripts": {
     "build": "yarn --cwd stackpress build",
