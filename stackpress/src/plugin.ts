@@ -1,14 +1,14 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
 //module plugins
-import schema from './plugins/schema/plugin';
-import types from './plugins/types/plugin';
-import sql from './plugins/sql/plugin';
-import view from './plugins/view/plugin';
-import admin from './plugins/admin/plugin';
-import language from './plugins/language/plugin';
-import user from './plugins/user/plugin';
-import api from './plugins/api/plugin';
+import schema from './schema/plugin';
+import types from './types/plugin';
+import sql from './sql/plugin';
+import view from './view/plugin';
+import admin from './admin/plugin';
+import language from './language/plugin';
+import session from './session/plugin';
+import api from './api/plugin';
 
 export default async function plugin(server: Server) {
   //load the plugins
@@ -18,6 +18,6 @@ export default async function plugin(server: Server) {
   view(server);
   admin(server);
   language(server);
-  user(server);
+  session(server);
   api(server);
 };

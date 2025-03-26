@@ -9,7 +9,7 @@ import Revisions from '../schema/Revisions';
 //sql
 import { sequence } from '../sql/helpers';
 //plugins
-import create from '../plugins/sql/schema';
+import create from '../sql/schema';
 
 export default async function push(server: Server<any, any, any>, database: Engine) {
   //get config

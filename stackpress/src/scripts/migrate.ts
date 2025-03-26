@@ -11,7 +11,7 @@ import type { DatabaseConfig } from '../types';
 //sql
 import { sequence } from '../sql/helpers';
 //plugins
-import create from '../plugins/sql/schema';
+import create from '../sql/schema';
 
 export default async function migrate(server: Server<any, any, any>, database: Engine) {
   //get config
