@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 //hooks
 import { useLanguage } from 'r22n';
 //components
-import Button from 'frui/Button';
+import Button from 'frui/element/Button';
 
 export type ModalConfirmProps = { 
   open: Function,

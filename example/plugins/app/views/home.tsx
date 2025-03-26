@@ -19,7 +19,7 @@ export function Head(props: HeadProps) {
 
 export default function HomePage(props: BodyProps) {
   const theme = props.request.session.theme as string | undefined;
-  const [ count, setCount ] = useState(0)
+  const [count, setCount] = useState(0)
 
   return (
     <LayoutBlank
@@ -29,8 +29,8 @@ export default function HomePage(props: BodyProps) {
       logo="https://www.stackpress.io/images/stackpress-logo-icon.png"
     >
       <div className="px-p-10">
-        <h1 className="px-py-40">Welcome to Stackpress</h1>
-        <div className="p-8">
+        <h1>Welcome to Stackpress</h1>
+        <div className="p-4">
           <button onClick={() => setCount((count) => count + 1)}>
             count is {count}
           </button>

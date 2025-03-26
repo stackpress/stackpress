@@ -52,9 +52,9 @@ export function generateFormat(
   const capital = capitalize(camelize(column.name));
   const path = `${model.name}/components/views/${capital}Format.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
-  //import Text from 'frui/formats/Text';
+  //import Text from 'frui/format/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/formats/${format.component}`,
+    moduleSpecifier: `frui/format/${format.component}`,
     defaultImport: format.component
   });
   const props = `{ value: ${

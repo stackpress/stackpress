@@ -13,20 +13,21 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
+    "./frui.css": "./frui.css",
     "./types": "./dist/types.js",
     "./data/*": "./dist/data/*.js",
-    "./element/*": "./dist/elements/*.js",
-    "./field/*": "./dist/components/*.js",
-    "./format/*": "./dist/formats/*.js"
+    "./element/*": "./dist/element/*.js",
+    "./field/*": "./dist/field/*.js",
+    "./format/*": "./dist/format/*.js"
   },
   "typesVersions": {
     "*": {
       ".": [ "./dist/index.d.ts" ],
       "types": [ "./dist/types.d.ts" ],
-      "./data/*": [ "./dist/data/*.d.ts" ],
-      "./element/*": [ "./dist/elements/*.d.ts" ],
-      "./field/*": [ "./dist/components/*.d.ts" ],
-      "./format/*": [ "./dist/formats/*.d.ts" ]
+      "data/*": [ "./dist/data/*.d.ts" ],
+      "element/*": [ "./dist/element/*.d.ts" ],
+      "field/*": [ "./dist/field/*.d.ts" ],
+      "format/*": [ "./dist/format/*.d.ts" ]
     }
   },
   "files": [
@@ -46,9 +47,9 @@
   },
   "devDependencies": {
     "@types/inputmask": "5.0.3",
-    "@types/node": "20.2.5",
-    "@types/react": "18.2.78",
-    "@types/react-dom": "18.2.25",
+    "@types/node": "22.9.3",
+    "@types/react": "19.0.10",
+    "@types/react-dom": "19.0.4",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "ts-loader": "9.5.2",

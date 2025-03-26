@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 
 import { useState, useEffect } from 'react';
-import Modal from 'frui/Modal';
+import Modal from 'frui/element/Modal';
 import ModalContext from './ModalContext';
 
 export type ModalProviderProps = { 

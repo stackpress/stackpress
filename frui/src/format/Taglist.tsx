@@ -1,8 +1,8 @@
 //types
 import type { CSSProperties } from 'react';
-import type { BadgeProps } from '../elements/Badge';
+import type { BadgeProps } from '../element/Badge';
 //components
-import Badge from '../elements/Badge';
+import Badge from '../element/Badge';
 
 /**
  * Taglist Props

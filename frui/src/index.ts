@@ -1,9 +1,9 @@
-export * as FieldType from './fields';
-export * as FormatType from './formats';
-export * from './elements/Alert';
-export * from './elements/Badge';
-export * from './elements/Button';
-export * from './elements/Fieldset';
-export * from './elements/Loader';
-export * from './elements/Modal';
-export *  from './elements/Table';
+export * as FieldType from './field';
+export * as FormatType from './format';
+export * from './element/Alert';
+export * from './element/Badge';
+export * from './element/Button';
+export * from './element/Fieldset';
+export * from './element/Loader';
+export * from './element/Modal';
+export *  from './element/Table';

@@ -22,7 +22,7 @@ export type CurrencyData = {
 /**
  * Currency Option
  */
-export type CurrencyOption = SelectOption<CurrencyData>;
+export type CurrencyOption = SelectOption<string>;
 
 /**
  * Currency Config
@@ -53,7 +53,8 @@ export function useCurrency(config: CurrencyConfig) {
     .map(currency => ({ 
       ...currency, 
       flag: countries.find(
-        country => country.cur === currency.code
+        country => (currency.code === 'USD' && country.iso3 === 'USA')
+          || (currency.code !== 'USD' && country.cur === currency.code)
       )?.flag 
     }))
     .filter(currency => !!currency.flag)
@@ -61,13 +62,13 @@ export function useCurrency(config: CurrencyConfig) {
 
   const selected = typeof value === 'string' 
     ? options.filter(
-        option => option.value?.code === value
+        option => option.value === value
       )[0] as CurrencyOption
     : undefined;
 
   const selectedDefault = typeof defaultValue === 'string' 
     ? options.filter(
-        option => option.value?.code === defaultValue
+        option => option.value === defaultValue
       )[0] as CurrencyOption
     : undefined;
 
@@ -96,7 +97,7 @@ export default function Currency(props: CurrencyProps) {
           </span>  
         </>
       ),
-      value: currency,
+      value: currency.code,
       keyword: (keyword: string) => currency.code.toLowerCase().indexOf(keyword) >= 0
         || currency.name.toLowerCase().indexOf(keyword) >= 0
         || currency.code.toLowerCase().indexOf(keyword) >= 0

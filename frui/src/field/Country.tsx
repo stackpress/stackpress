@@ -26,7 +26,7 @@ export type CountryData = {
 /**
  * Country Option
  */
-export type CountryOption = SelectOption<CountryData>;
+export type CountryOption = SelectOption<string>;
 
 /**
  * Country Config
@@ -56,13 +56,13 @@ export function useCountry(config: CountryConfig) {
 
   const selected = typeof value === 'string' 
     ? options.filter(
-        option => option.value?.iso3 === value
+        option => option.value === value
       )[0] as CountryOption
     : undefined;
   
   const selectedDefault = typeof defaultValue === 'string' 
     ? options.filter(
-        option => option.value?.iso3 === defaultValue
+        option => option.value === defaultValue
       )[0] as CountryOption
     : undefined;
 
@@ -91,7 +91,7 @@ export default function Country(props: CountryProps) {
           </span>  
         </>
       ),
-      value: country,
+      value: country.iso3,
       keyword: (keyword: string) => country.iso3.toLowerCase().indexOf(keyword) >= 0
         || country.name.toLowerCase().indexOf(keyword) >= 0
         || country.iso3.toLowerCase().indexOf(keyword) >= 0

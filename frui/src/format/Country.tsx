@@ -1,13 +1,12 @@
 //types
 import type { CSSProperties } from 'react';
 //helpers
-import currencies from '../data/currencies';
 import countries from '../data/countries';
 
 /**
- * Currency Props
+ * Country Props
  */
-export type CurrencyProps = {
+export type CountryProps = { 
   value: string, 
   flag?: boolean, 
   text?: boolean,
@@ -19,9 +18,9 @@ export type CurrencyProps = {
 };
 
 /**
- * Currency Format Component (Main)
+ * Country Format Component (Main)
  */
-export default function Currency(props: CurrencyProps) {
+export default function Country(props: CountryProps) {
   const { 
     value, 
     flag = true, 
@@ -32,19 +31,11 @@ export default function Currency(props: CurrencyProps) {
     className, 
     style = {}
   } = props;
-  const currency = currencies
-    .filter(currency => currency.type === 'fiat')
-    .map(currency => ({ 
-      ...currency, 
-      flag: countries.find(
-        country => country.cur === currency.code
-      )?.flag 
-    }))
-    .filter(currency => !!currency.flag)
-    .find(currency => (
-      currency.code === value
-    ));
-  if (!currency) {
+
+  const country = countries.find(
+    country => country.iso3 === value
+  );
+  if (!country) {
     const classNames = ['frui-format-country-text'];
     if (className) {
       classNames.push(className);
@@ -63,9 +54,11 @@ export default function Currency(props: CurrencyProps) {
     }
     return (
       <span className={classNames.join(' ')} style={style}>
-        <span className="text-lg">{currency.flag}</span>
+        <span className="frui-format-country-flag">
+          {country.flag}
+        </span>
         <span className="frui-format-country-text">
-          {currency.name}
+          {country.name}
         </span>
       </span>
     );  
@@ -75,7 +68,9 @@ export default function Currency(props: CurrencyProps) {
       classNames.push(className);
     }
     return (
-      <span className="text-lg">{currency.flag}</span>
+      <span className="frui-format-country-flag">
+        {country.flag}
+      </span>
     );
   }
 
@@ -85,7 +80,7 @@ export default function Currency(props: CurrencyProps) {
   }
   return (
     <span className={classNames.join(' ')} style={style}>
-      {currency.name}
+      {country.name}
     </span>
   );
 };

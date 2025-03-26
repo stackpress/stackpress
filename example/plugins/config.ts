@@ -168,6 +168,9 @@ export const config: Config = {
         { method: 'ALL', route: '/api/**' }
       ],
       GUEST: [
+        { method: 'GET', route: '/form' },
+        { method: 'GET', route: '/profile/**' },
+
         { method: 'GET', route: '/client/**' },
         { method: 'GET', route: '/__ink_dev__' },
         { method: 'GET', route: '/dev.js' },

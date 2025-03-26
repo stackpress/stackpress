@@ -1,12 +1,13 @@
 //types
 import type { CSSProperties } from 'react';
 //helpers
+import currencies from '../data/currencies';
 import countries from '../data/countries';
 
 /**
- * Country Props
+ * Currency Props
  */
-export type CountryProps = { 
+export type CurrencyProps = {
   value: string, 
   flag?: boolean, 
   text?: boolean,
@@ -18,9 +19,9 @@ export type CountryProps = {
 };
 
 /**
- * Country Format Component (Main)
+ * Currency Format Component (Main)
  */
-export default function Country(props: CountryProps) {
+export default function Currency(props: CurrencyProps) {
   const { 
     value, 
     flag = true, 
@@ -31,11 +32,19 @@ export default function Country(props: CountryProps) {
     className, 
     style = {}
   } = props;
-
-  const country = countries.find(
-    country => country.iso3 === value
-  );
-  if (!country) {
+  const currency = currencies
+    .filter(currency => currency.type === 'fiat')
+    .map(currency => ({ 
+      ...currency, 
+      flag: countries.find(
+        country => country.cur === currency.code
+      )?.flag 
+    }))
+    .filter(currency => !!currency.flag)
+    .find(currency => (
+      currency.code === value
+    ));
+  if (!currency) {
     const classNames = ['frui-format-country-text'];
     if (className) {
       classNames.push(className);
@@ -54,9 +63,11 @@ export default function Country(props: CountryProps) {
     }
     return (
       <span className={classNames.join(' ')} style={style}>
-        <span className="text-lg">{country.flag}</span>
+        <span className="frui-format-country-flag">
+          {currency.flag}
+        </span>
         <span className="frui-format-country-text">
-          {country.name}
+          {currency.name}
         </span>
       </span>
     );  
@@ -66,17 +77,19 @@ export default function Country(props: CountryProps) {
       classNames.push(className);
     }
     return (
-      <span className="text-lg">{country.flag}</span>
+      <span className="frui-format-country-flag">
+        {currency.flag}
+      </span>
     );
   }
 
   const classNames = ['frui-format-country-text'];
-    if (className) {
-      classNames.push(className);
-    }
+  if (className) {
+    classNames.push(className);
+  }
   return (
     <span className={classNames.join(' ')} style={style}>
-      {country.name}
+      {currency.name}
     </span>
   );
 };

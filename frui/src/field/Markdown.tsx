@@ -5,7 +5,7 @@ import { type ReactNode, useState } from 'react';
 //components
 import MarkdownFrame from 'markdown-to-jsx';
 import Textarea from './Textarea';
-import Button from '../elements/Button';
+import Button from '../element/Button';
 //using react-dom/server to render markdown... on the client side
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -64,9 +64,6 @@ export default function Markdown(props: MarkdownProps) {
   ) as string;
 
   const markdown = renderToStaticMarkup(
-    //@ts-ignore - Type 'ReactNode | Promise<ReactNode>' is not 
-    //assignable to type 'ReactNode'. Type 'bigint' is not 
-    //assignable to type 'ReactNode'.
     <MarkdownFrame children={current} /> as ReactNode
   );
 

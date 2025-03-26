@@ -8,7 +8,6 @@ import MarkdownFrame from 'markdown-to-jsx';
  */
 export default function Markdown({ value }: MarkdownProps) {
   return (
-    //@ts-ignore - Type 'string' is not assignable to type 'ReactNode'.
     <MarkdownFrame children={value} />
   );
 };

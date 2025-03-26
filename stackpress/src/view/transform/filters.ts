@@ -57,14 +57,14 @@ export function generateFormat(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/Control';
+  //import Control from 'frui/element/Control';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/Control',
+    moduleSpecifier: 'frui/element/Control',
     defaultImport: 'Control'
   });
   //import Text from 'frui/fields/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/fields/${filter.component}`,
+    moduleSpecifier: `frui/field/${filter.component}`,
     defaultImport: filter.component
   });
   //export function NameField(props: FieldProps) {
