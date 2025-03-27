@@ -1,11 +1,14 @@
 //stackpress
 import type { Data } from '@stackpress/idea-parser';
-//local
+//config
+import fields from '../config/fields';
+import formats from '../config/formats';
+//schema
 import type { 
   SchemaAssertion, 
   SchemaComponent, 
   SchemaRelation 
-} from '../../types';
+} from '../types';
 
 export default class Attributes extends Map<string, unknown> {
   /**
@@ -127,11 +130,28 @@ export default class Attributes extends Map<string, unknown> {
       const attributes = typeof args[0] === 'object' 
         ? (args[0] || {}) as Record<string, Data>
         : {};
-     
-      return { method, args, attributes };
+      //determine the component
+      const component = fields[method] || {
+        component: false,
+        attributes: {}
+      };
+      return { 
+        method, 
+        args, 
+        attributes: {
+          ...component.attributes, 
+          ...attributes
+        }, 
+        component: component.name 
+      };
     }
 
-    return { method: 'none', args: [], attributes: {} };
+    return { 
+      component: false, 
+      method: 'none', 
+      args: [], 
+      attributes: {} 
+    };
   }
 
   /**
@@ -153,11 +173,28 @@ export default class Attributes extends Map<string, unknown> {
       const attributes = typeof args[0] === 'object' 
         ? (args[0] || {}) as Record<string, Data>
         : {};
-     
-      return { method, args, attributes };
+      //determine the component
+      const component = fields[method] || {
+        component: false,
+        attributes: {}
+      };
+      return { 
+        method, 
+        args, 
+        attributes: {
+          ...component.attributes, 
+          ...attributes
+        }, 
+        component: component.name 
+      };
     }
 
-    return { method: 'none', args: [], attributes: {} };
+    return { 
+      component: false, 
+      method: 'none', 
+      args: [], 
+      attributes: {} 
+    };
   }
 
   /**
@@ -239,10 +276,27 @@ export default class Attributes extends Map<string, unknown> {
       const attributes = typeof args[0] === 'object' 
         ? (args[0] || {}) as Record<string, Data>
         : {};
-     
-      return { method, args, attributes };
+      //determine the component
+      const component = formats[method] || {
+        component: false,
+        attributes: {}
+      };
+      return { 
+        method, 
+        args, 
+        attributes: {
+          ...component.attributes, 
+          ...attributes
+        }, 
+        component: component.name 
+      };
     }
-    return { method: 'none',  args: [], attributes: {} };
+    return { 
+      component: false, 
+      method: 'none', 
+      args: [], 
+      attributes: {} 
+    };
   }
 
   /**
@@ -360,10 +414,28 @@ export default class Attributes extends Map<string, unknown> {
         ? (args[0] || {}) as Record<string, Data>
         : {};
      
-      return { method, args, attributes };
+      //determine the component
+      const component = fields[method] || {
+        component: false,
+        attributes: {}
+      };
+      return { 
+        method, 
+        args, 
+        attributes: {
+          ...component.attributes, 
+          ...attributes
+        }, 
+        component: component.name 
+      };
     }
 
-    return { method: 'none', args: [], attributes: {} };
+    return { 
+      component: false, 
+      method: 'none', 
+      args: [], 
+      attributes: {} 
+    };
   }
 
   /**
@@ -436,10 +508,27 @@ export default class Attributes extends Map<string, unknown> {
       const attributes = typeof args[0] === 'object' 
         ? (args[0] || {}) as Record<string, Data>
         : {};
-     
-      return { method, args, attributes };
+      //determine the component
+      const component = formats[method] || {
+        component: false,
+        attributes: {}
+      };
+      return { 
+        method, 
+        args, 
+        attributes: {
+          ...component.attributes, 
+          ...attributes
+        }, 
+        component: component.name 
+      };
     }
-    return { method: 'none', args: [], attributes: {} };
+    return { 
+      component: false, 
+      method: 'none', 
+      args: [], 
+      attributes: {} 
+    };
   }
 
   /**

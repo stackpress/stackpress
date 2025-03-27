@@ -2,8 +2,8 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { SigninType, SessionPlugin } from '../../types';
+//session
+import type { SigninType, SessionPlugin } from '../types';
 
 export default async function SignInPage(
   req: Request, 

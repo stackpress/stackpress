@@ -6,7 +6,7 @@ import { isObject } from '@stackpress/ingest/helpers';
 //root
 import type { AuthExtended } from '../../types';
 //session
-import { decrypt } from '../../session/helpers';
+import { decrypt } from '../helpers';
 
 export default async function AuthDetail(
   _req: Request, 

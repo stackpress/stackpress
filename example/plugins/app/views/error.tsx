@@ -1,5 +1,9 @@
 import '../styles/page.css';
-import type { BodyProps, HeadProps, Trace } from 'stackpress/view';
+import type { 
+  Trace,
+  PageBodyProps, 
+  PageHeadProps 
+} from 'stackpress/view';
 
 //placeholder for translation
 const _ = (text: string) => text;
@@ -8,7 +12,7 @@ export type Config = {
   server: { mode: string }
 }
 
-export default function ErrorPage(props: BodyProps<Config>) {
+export default function ErrorPage(props: PageBodyProps<Config>) {
   const {
     data = { server: { mode: 'production' } },
     response
@@ -64,7 +68,7 @@ export default function ErrorPage(props: BodyProps<Config>) {
   )
 }
 
-export function Head(props: HeadProps<Config>) {
+export function Head(props: PageHeadProps<Config>) {
   const {
     request,
     response,

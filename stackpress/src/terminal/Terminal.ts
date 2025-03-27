@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/Server';
 import Terminal from '@stackpress/lib/Terminal';
 import FileLoader from '@stackpress/lib/FileLoader';
 import Transformer from '@stackpress/idea-transformer/Transformer';
-//local
+//root
 import type { IdeaProjectProps } from '../types';
 
 export default class InceptTerminal extends Terminal {

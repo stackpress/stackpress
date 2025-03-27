@@ -1,96 +1,96 @@
-import type { ColumnOption } from './types';
+import type { ColumnOption } from '../types';
 
 export default {
   "none": {
-    "component": false,
+    "name": false,
     "attributes": {}
   },
   "color": {
-    "component": "Input",
+    "name": "Input",
     "attributes": { "type": "color" }
   },
   "email": {
-    "component": "Input",
+    "name": "Input",
     "attributes": {
       "type": "email"
     }
   },
   "input": {
-    "component": "Input",
+    "name": "Input",
     "attributes": {}
   },
   "mask": {
-    "component": "Mask",
+    "name": "Mask",
     "attributes": {}
   },
   "phone": {
-    "component": "Input",
+    "name": "Input",
     "attributes": {
       "type": "phone"
     }
   },
   "password": {
-    "component": "Password",
+    "name": "Password",
     "attributes": {}
   },
   "slug": {
-    "component": "Slug",
+    "name": "Slug",
     "attributes": {}
   },
   "text": {
-    "component": "Input",
+    "name": "Input",
     "attributes": {
       "type": "text"
     }
   },
   "url": {
-    "component": "Input",
+    "name": "Input",
     "attributes": {
       "type": "url"
     }
   },
   "code": {
-    "component": "CodeEditor",
+    "name": "CodeEditor",
     "attributes": {}
   },
   "markdown": {
-    "component": "Markdown",
+    "name": "Markdown",
     "attributes": {}
   },
   "textarea": {
-    "component": "Textarea",
+    "name": "Textarea",
     "attributes": {}
   },
   "wysiwyg": {
-    "component": "Wysiwyg",
+    "name": "Wysiwyg",
     "attributes": {}
   },
   "integer": {
-    "component": "Number",
+    "name": "Number",
     "attributes": {
       "step": 1
     }
   },
   "number": {
-    "component": "Number",
+    "name": "Number",
     "attributes": {}
   },
   "price": {
-    "component": "Number",
+    "name": "Number",
     "attributes": {
       "step": 0.01
     }
   },
   "range": {
-    "component": "Range",
+    "name": "Range",
     "attributes": {}
   },
   "rating": {
-    "component": "Rating",
+    "name": "Rating",
     "attributes": {}
   },
   "small": {
-    "component": "Number",
+    "name": "Number",
     "attributes": {
       "max": 9,
       "min": 0,
@@ -98,107 +98,107 @@ export default {
     }
   },
   "date": {
-    "component": "Date",
+    "name": "Date",
     "attributes": {}
   },
   "datetime": {
-    "component": "Datetime",
+    "name": "Datetime",
     "attributes": {}
   },
   "time": {
-    "component": "Time",
+    "name": "Time",
     "attributes": {}
   },
   "autocomplete": {
-    "component": "Autocomplete",
+    "name": "Autocomplete",
     "attributes": {}
   },
   "checkbox": {
-    "component": "Checkbox",
+    "name": "Checkbox",
     "attributes": {}
   },
   "checklist": {
-    "component": "Checklist",
+    "name": "Checklist",
     "attributes": {}
   },
   "country": {
-    "component": "Country",
+    "name": "Country",
     "attributes": {}
   },
   "currency": {
-    "component": "Currency",
+    "name": "Currency",
     "attributes": {}
   },
   "radio": {
-    "component": "Radio",
+    "name": "Radio",
     "attributes": {}
   },
   "select": {
-    "component": "Select",
+    "name": "Select",
     "attributes": {}
   },
   "selectlist": {
-    "component": "Selectlist",
+    "name": "Selectlist",
     "attributes": {}
   },
   "switch": {
-    "component": "Switch",
+    "name": "Switch",
     "attributes": {}
   },
   "file": {
-    "component": "File",
+    "name": "File",
     "attributes": {}
   },
   "filelist": {
-    "component": "Filelist",
+    "name": "Filelist",
     "attributes": {}
   },
   "image": {
-    "component": "Image",
+    "name": "Image",
     "attributes": {}
   },
   "imagelist": {
-    "component": "Imagelist",
+    "name": "Imagelist",
     "attributes": {}
   },
   "json": {
-    "component": "JSON",
+    "name": "JSON",
     "attributes": {}
   },
   "metadata": {
-    "component": "Metadata",
+    "name": "Metadata",
     "attributes": {}
   },
   "table": {
-    "component": "Table",
+    "name": "Table",
     "attributes": {}
   },
   "tags": {
-    "component": "Taglist",
+    "name": "Taglist",
     "attributes": {}
   },
   "textlist": {
-    "component": "Textlist",
+    "name": "Textlist",
     "attributes": {}
   },
   "fieldset": {
-    "component": "Fieldset",
+    "name": "Fieldset",
     "attributes": {}
   },
   "active": {
-    "component": false,
+    "name": false,
     "attributes": {}
   },
   "created": {
-    "component": false,
+    "name": false,
     "attributes": {}
   },
   "updated": {
-    "component": false,
+    "name": false,
     "attributes": {}
   },
   "relation": {
-    "component": "Select",
+    "name": "Select",
     "attributes": {
       "searchable": true
     }

@@ -4,22 +4,8 @@ import type { Directory, SourceFile } from 'ts-morph';
 import type Model from '../../schema/spec/Model';
 import type Fieldset from '../../schema/spec/Fieldset';
 import type Registry from '../../schema/Registry';
+import * as typemap from '../../schema/config/typemaps';
 import { formatCode } from '../../schema/helpers';
-
-export const typemap: Record<string, string> = {
-  String: 'string',
-  Text: 'string',
-  Number: 'number',
-  Integer: 'number',
-  Float: 'number',
-  Boolean: 'boolean',
-  Date: 'Date',
-  Time: 'Date',
-  Datetime: 'Date',
-  Json: 'Record<string, string|number|boolean|null>',
-  Object: 'Record<string, string|number|boolean|null>',
-  Hash: 'Record<string, string|number|boolean|null>'
-};
 
 /**
  * This is the The params comes form the cli
@@ -102,12 +88,12 @@ export function generateModel(source: SourceFile, model: Model) {
     type: formatCode(`{
       ${columns.filter(
         //filter out columns that are not in the model map
-        column => !!typemap[column.type] || !!column.enum || !!column.fieldset
+        column => !!column.typemap.model || !!column.enum || !!column.fieldset
       ).map(column => (
         //name?: string
         `${column.name}${
           !column.required ? '?' : ''
-        }: ${typemap[column.type] || column.type}${
+        }: ${column.typemap.model || column.type}${
           column.multiple ? '[]' : ''
         }`
       )).join(',\n')}
@@ -141,7 +127,7 @@ export function generateModel(source: SourceFile, model: Model) {
     .filter(column => !column.generated)
     .filter(column => [
       //should be a name on the map
-      ...Object.keys(typemap),
+      ...Object.keys(typemap.model),
       //...also include enum names
       ...model.enums.map(column => column.type),
       //...also include fieldset names
@@ -156,7 +142,7 @@ export function generateModel(source: SourceFile, model: Model) {
         //name?: string
         `${column.name}${
           !column.required || typeof column.default !== 'undefined' ? '?' : ''
-        }: ${typemap[column.type] || column.type}${
+        }: ${column.typemap.model || column.type}${
           column.multiple ? '[]' : ''
         }`
       )).join(',\n')}
@@ -191,12 +177,12 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
     type: formatCode(`{
       ${columns.filter(
         //filter out columns that are not in the map
-        column => !!typemap[column.type] || !!column.enum || !!column.fieldset
+        column => !!column.typemap.model || !!column.enum || !!column.fieldset
       ).map(column => (
         //name?: string
         `${column.name}${
           !column.required ? '?' : ''
-        }: ${typemap[column.type] || column.type}${
+        }: ${column.typemap.model || column.type}${
           column.multiple ? '[]' : ''
         }`
       )).join(',\n')}
@@ -207,7 +193,7 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
     .filter(column => !column.generated)
     .filter(column => [ 
       //should be a name on the map
-      ...Object.keys(typemap),
+      ...Object.keys(typemap.model),
       //...also include enum names
       ...fieldset.enums.map(column => column.type),
       //...also include fieldset names
@@ -222,7 +208,7 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
         //name?: string
         `${column.name}${
           !column.required || typeof column.default !== 'undefined' ? '?' : ''
-        }: ${typemap[column.type] || column.type}${
+        }: ${column.typemap.model || column.type}${
           column.multiple ? '[]' : ''
         }`
       )).join(',\n')}

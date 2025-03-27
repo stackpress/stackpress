@@ -3,7 +3,7 @@ import type { Directory } from 'ts-morph';
 //schema
 import type Column from '../../schema/spec/Column';
 import type Registry from '../../schema/Registry';
-//local
+//sql
 import { clen, numdata } from '../schema';
 
 export default function generate(directory: Directory, registry: Registry) {

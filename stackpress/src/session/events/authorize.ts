@@ -2,8 +2,8 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { SessionPlugin } from '../../types';
+//session
+import type { SessionPlugin } from '../types';
 
 export default async function Authorize(
   req: Request, 

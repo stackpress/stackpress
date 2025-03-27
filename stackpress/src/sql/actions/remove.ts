@@ -3,8 +3,9 @@ import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 //schema
 import type Model from '../../schema/spec/Model';
-//local
+//sql
 import { toErrorResponse } from '../helpers';
+//local
 import detail from './detail';
 import update from './update';
 

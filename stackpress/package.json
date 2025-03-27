@@ -50,13 +50,25 @@
     "./admin/pages/detail/*": "./dist/admin/pages/detail/*.js",
     "./admin/pages/*": "./dist/admin/pages/*.js",
     "./admin/plugin": "./dist/admin/plugin.js",
+    "./admin/types": "./dist/admin/types.js",
+    "./admin": "./dist/admin/index.js",
 
     "./api/plugin": "./dist/api/plugin.js",
+    "./api/types": "./dist/api/types.js",
+    "./api": "./dist/api/index.js",
+
+    "./client/plugin": "./dist/client/plugin.js",
+    "./client/types": "./dist/client/types.js",
+    "./client": "./dist/client/index.js",
     
     "./email/plugin": "./dist/email/plugin.js",
+    "./email/types": "./dist/email/types.js",
+    "./email": "./dist/email/index.js",
     
     "./Language": "./dist/language/Language.js",
     "./language/plugin": "./dist/language/plugin.js",
+    "./language/types": "./dist/language/types.js",
+    "./language": "./dist/language/index.js",
 
     "./Attribute": "./dist/schema/spec/Attribute.js",
     "./Column": "./dist/schema/spec/Column.js",
@@ -65,7 +77,7 @@
     "./assert": "./dist/schema/assert.js",
     "./Registry": "./dist/schema/Registry.js",
     "./Revisions": "./dist/schema/Revisions.js",
-    "./schema/plugin": "./dist/schema/plugin.js",
+    "./schema/types": "./dist/schema/types.js",
     "./schema": "./dist/schema/index.js",
     
     "./scripts/*": "./dist/scripts/*.js",
@@ -73,22 +85,25 @@
     
     "./http": "./dist/server/http.js",
     "./whatwg": "./dist/server/whatwg.js",
-    "./mysql": "./dist/sql/mysql.js",
-    "./pglite": "./dist/sql/pglite.js",
-    "./pgsql": "./dist/sql/pgsql.js",
-    "./sqlite": "./dist/sql/sqlite.js",
+    "./server/types": "./dist/server/types.js",
     "./server": "./dist/server/index.js",
     
     "./Session": "./dist/session/Session.js",
     "./session/plugin": "./dist/session/plugin.js",
+    "./session/types": "./dist/session/types.js",
     "./session": "./dist/session/index.js",
     
-    "./sql": "./dist/sql/index.js",
     "./sql/actions/*": "./dist/sql/actions/*.js",
     "./sql/actions": "./dist/sql/actions/index.js",
     "./sql/events/*": "./dist/sql/events/*.js",
     "./sql/events": "./dist/sql/events/index.js",
+    "./mysql": "./dist/sql/mysql.js",
+    "./pglite": "./dist/sql/pglite.js",
+    "./pgsql": "./dist/sql/pgsql.js",
+    "./sqlite": "./dist/sql/sqlite.js",
     "./sql/plugin": "./dist/sql/plugin.js",
+    "./sql/types": "./dist/sql/types.js",
+    "./sql": "./dist/sql/index.js",
     
     "./bin": "./dist/terminal/bin.js",
     "./Terminal": "./dist/terminal/Terminal.js",
@@ -100,6 +115,8 @@
     "./types/plugin": "./dist/types/plugin.js",
     "./types": "./dist/types/index.js",
     
+    "./view/plugin": "./dist/view/plugin.js",
+    "./view/types": "./dist/view/types.js",
     "./view": "./dist/view/index.js",
 
     "./Exception": "./dist/Exception.js",
@@ -113,14 +130,26 @@
       "admin/pages/detail/*": [ "./dist/admin/pages/detail/*.d.ts" ],
       "admin/pages/*": [ "./dist/admin/pages/*.d.ts" ],
       "admin/plugin": [ "./dist/admin/plugin.d.ts" ],
-  
+      "admin/types": [ "./dist/admin/types.d.ts" ],
+      "admin": [ "./dist/admin/index.d.ts" ],
+
       "api/plugin": [ "./dist/api/plugin.d.ts" ],
+      "api/types": [ "./dist/api/types.d.ts" ],
+      "api": [ "./dist/api/index.d.ts" ],
+
+      "client/plugin": [ "./dist/client/plugin.d.ts" ],
+      "client/types": [ "./dist/client/types.d.ts" ],
+      "client": [ "./dist/client/index.d.ts" ],
       
       "email/plugin": [ "./dist/email/plugin.d.ts" ],
+      "email/types": [ "./dist/email/types.d.ts" ],
+      "email": [ "./dist/email/index.d.ts" ],
       
       "Language": [ "./dist/language/Language.d.ts" ],
       "language/plugin": [ "./dist/language/plugin.d.ts" ],
-  
+      "language/types": [ "./dist/language/types.d.ts" ],
+      "language": [ "./dist/language/index.d.ts" ],
+
       "Attribute": [ "./dist/schema/spec/Attribute.d.ts" ],
       "Column": [ "./dist/schema/spec/Column.d.ts" ],
       "Fieldset": [ "./dist/schema/spec/Fieldset.d.ts" ],
@@ -128,7 +157,7 @@
       "assert": [ "./dist/schema/assert.d.ts" ],
       "Registry": [ "./dist/schema/Registry.d.ts" ],
       "Revisions": [ "./dist/schema/Revisions.d.ts" ],
-      "schema/plugin": [ "./dist/schema/plugin.d.ts" ],
+      "schema/types": [ "./dist/schema/types.d.ts" ],
       "schema": [ "./dist/schema/index.d.ts" ],
       
       "scripts/*": [ "./dist/scripts/*.d.ts" ],
@@ -136,32 +165,37 @@
       
       "http": [ "./dist/server/http.d.ts" ],
       "whatwg": [ "./dist/server/whatwg.d.ts" ],
-      "mysql": [ "./dist/sql/mysql.d.ts" ],
-      "pglite": [ "./dist/sql/pglite.d.ts" ],
-      "pgsql": [ "./dist/sql/pgsql.d.ts" ],
-      "sqlite": [ "./dist/sql/sqlite.d.ts" ],
+      "server/types": [ "./dist/server/types.d.ts" ],
       "server": [ "./dist/server/index.d.ts" ],
       
       "Session": [ "./dist/session/Session.d.ts" ],
       "session/plugin": [ "./dist/session/plugin.d.ts" ],
+      "session/types": [ "./dist/session/types.d.ts" ],
       "session": [ "./dist/session/index.d.ts" ],
       
-      "sql": [ "./dist/sql/index.d.ts" ],
       "sql/actions/*": [ "./dist/sql/actions/*.d.ts" ],
       "sql/actions": [ "./dist/sql/actions/index.d.ts" ],
       "sql/events/*": [ "./dist/sql/events/*.d.ts" ],
       "sql/events": [ "./dist/sql/events/index.d.ts" ],
+      "mysql": [ "./dist/sql/mysql.d.ts" ],
+      "pglite": [ "./dist/sql/pglite.d.ts" ],
+      "pgsql": [ "./dist/sql/pgsql.d.ts" ],
+      "sqlite": [ "./dist/sql/sqlite.d.ts" ],
       "sql/plugin": [ "./dist/sql/plugin.d.ts" ],
+      "sql/types": [ "./dist/sql/types.d.ts" ],
+      "sql": [ "./dist/sql/index.d.ts" ],
       
       "bin": [ "./dist/terminal/bin.d.ts" ],
       "Terminal": [ "./dist/terminal/Terminal.d.ts" ],
       "terminal": [ "./dist/terminal/index.d.ts" ],
-  
+
       "types/plugin": [ "./dist/types/plugin.d.ts" ],
       "types": [ "./dist/types/index.d.ts" ],
       
+      "view/plugin": [ "./dist/view/plugin.d.ts" ],
+      "view/types": [ "./dist/view/types.d.ts" ],
       "view": [ "./dist/view/index.d.ts" ],
-  
+
       "Exception": [ "./dist/Exception.d.ts" ],
       "lib": [ "./dist/lib.d.ts" ],
       "plugin": [ "./dist/plugin.d.ts" ],

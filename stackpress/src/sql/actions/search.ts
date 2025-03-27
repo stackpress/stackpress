@@ -2,10 +2,10 @@
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 import Nest from '@stackpress/lib/Nest';
-//root
-import type { SearchParams, SearchJoinMap } from '../../types';
 //schema
 import type Model from '../../schema/spec/Model';
+//sql
+import type { SearchParams, SearchJoinMap } from '../types';
 import { 
   toSqlString,
   toSqlFloat,

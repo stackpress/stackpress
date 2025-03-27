@@ -1,7 +1,7 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
 //module plugins
-import schema from './schema/plugin';
+import client from './client/plugin';
 import types from './types/plugin';
 import sql from './sql/plugin';
 import view from './view/plugin';
@@ -12,7 +12,7 @@ import api from './api/plugin';
 
 export default async function plugin(server: Server) {
   //load the plugins
-  schema(server);
+  client(server);
   types(server);
   sql(server);
   view(server);

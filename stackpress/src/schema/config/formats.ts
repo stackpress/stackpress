@@ -1,50 +1,50 @@
-import type { ColumnOption } from './types';
+import type { ColumnOption } from '../types';
 
 export default {
   "none": {
-    "component": false,
+    "name": false,
     "attributes": {}
   },
   "lower": {
-    "component": "Text",
+    "name": "Text",
     "attributes": {
       "format": "lowercase"
     }
   },
   "upper": {
-    "component": "Text",
+    "name": "Text",
     "attributes": {
       "format": "uppercase"
     }
   },
   "capital": {
-    "component": "Text",
+    "name": "Text",
     "attributes": {
       "format": "capitalize"
     }
   },
   "char": {
-    "component": "Overflow",
+    "name": "Overflow",
     "attributes": {
       "hellip": true
     }
   },
   "word": {
-    "component": "Overflow",
+    "name": "Overflow",
     "attributes": {
       "word": true,
       "hellip": true
     }
   },
   "number": {
-    "component": "Number",
+    "name": "Number",
     "attributes": {
       "separator": ",",
       "decimal": "."
     }
   },
   "price": {
-    "component": "Number",
+    "name": "Number",
     "attributes": {
       "decimals": 2,
       "separator": ",",
@@ -52,126 +52,126 @@ export default {
     }
   },
   "yesno": {
-    "component": "Yesno",
+    "name": "Yesno",
     "attributes": {
       "yes": "Yes",
       "no": "No"
     }
   },
   "rating": {
-    "component": "Rating",
+    "name": "Rating",
     "attributes": {}
   },
   "date": {
-    "component": "Date",
+    "name": "Date",
     "attributes": {}
   },
   "relative": {
-    "component": "Date",
+    "name": "Date",
     "attributes": {
       "format": "ago"
     }
   },
   "rel": {
-    "component": "Date",
+    "name": "Date",
     "attributes": {
       "format": "a"
     }
   },
   "html": {
-    "component": "HTML",
+    "name": "HTML",
     "attributes": {}
   },
   "escaped": {
-    "component": false,
+    "name": false,
     "attributes": {}
   },
   "markdown": {
-    "component": "Markdown",
+    "name": "Markdown",
     "attributes": {}
   },
   "color": {
-    "component": "Color",
+    "name": "Color",
     "attributes": {}
   },
   "link": {
-    "component": "Link",
+    "name": "Link",
     "attributes": {}
   },
   "image": {
-    "component": "Image",
+    "name": "Image",
     "attributes": {}
   },
   "email": {
-    "component": "Email",
+    "name": "Email",
     "attributes": {}
   },
   "phone": {
-    "component": "Phone",
+    "name": "Phone",
     "attributes": {}
   },
   "space": {
-    "component": "Separated",
+    "name": "Separated",
     "attributes": {
       "separator": " "
     }
   },
   "comma": {
-    "component": "Separated",
+    "name": "Separated",
     "attributes": {
       "separator": ", "
     }
   },
   "line": {
-    "component": "Separated",
+    "name": "Separated",
     "attributes": {
       "separator": "line"
     }
   },
   "ol": {
-    "component": "List",
+    "name": "List",
     "attributes": {
       "ordered": true
     }
   },
   "ul": {
-    "component": "List",
+    "name": "List",
     "attributes": {}
   },
   "tags": {
-    "component": "Taglist",
+    "name": "Taglist",
     "attributes": {}
   },
   "metadata": {
-    "component": "Metadata",
+    "name": "Metadata",
     "attributes": {}
   },
   "table": {
-    "component": "Table",
+    "name": "Table",
     "attributes": {}
   },
   "carousel": {
-    "component": "Imagelist",
+    "name": "Imagelist",
     "attributes": {}
   },
   "pretty": {
-    "component": "JSON",
+    "name": "JSON",
     "attributes": {}
   },
   "hide": {
-    "component": false,
+    "name": false,
     "attributes": {}
   },
   "custom": {
-    "component": false,
+    "name": false,
     "attributes": {}
   },
   "formula": {
-    "component": "Formula",
+    "name": "Formula",
     "attributes": {}
   },
   "detail": {
-    "component": "Link",
+    "name": "Link",
     "attributes": {}
   }
 } as Record<string, ColumnOption>;

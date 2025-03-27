@@ -1,10 +1,10 @@
 //stackpress
 import type { UnknownNest, NestedObject } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
-//root
-import type { SearchParams } from '../../types';
 //schema
 import type Model from '../../schema/spec/Model';
+//sql
+import type { SearchParams } from '../types';
 //local
 import batch from './batch';
 import create from './create';

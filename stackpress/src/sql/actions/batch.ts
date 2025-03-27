@@ -5,8 +5,9 @@ import type Engine from '@stackpress/inquire/Engine';
 import Exception from '../../Exception';
 //schema
 import type Model from '../../schema/spec/Model';
-//local
+//sql
 import { toResponse } from '../helpers';
+//local
 import create from './create';
 import update from './update';
 

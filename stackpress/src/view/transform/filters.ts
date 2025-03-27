@@ -1,27 +1,9 @@
 //modules
 import type { Directory } from 'ts-morph';
-//config
-import { fields } from './config';
 //registry
 import type Registry from '../../schema/Registry';
 import type Column from '../../schema/spec/Column';
 import type Model from '../../schema/spec/Model';
-import { capitalize, camelize, formatCode } from '../../schema/helpers';
-
-export const typemap: Record<string, string> = {
-  String: 'string',
-  Text: 'string',
-  Number: 'number',
-  Integer: 'number',
-  Float: 'number',
-  Boolean: 'boolean',
-  Date: 'Date',
-  Time: 'Date',
-  Datetime: 'Date',
-  Json: 'Record<string, string|number|boolean|null>',
-  Object: 'Record<string, string|number|boolean|null>',
-  Hash: 'Record<string, string|number|boolean|null>'
-};
 
 export default function generate(directory: Directory, registry: Registry) {
   //for each model
@@ -38,13 +20,10 @@ export function generateFormat(
   model: Model,
   column: Column
 ) {
-  //get the column field
-  const filter = fields[column.filter.method];
   //skip if no format component
-  if (!filter || !filter.component) return;
+  if (typeof column.filter.component !== 'string') return;
   //get the path where this should be saved
-  const capital = capitalize(camelize(column.name));
-  const path = `${model.name}/components/fields/${capital}Field.tsx`;
+  const path = `${model.name}/components/fields/${column.title}Field.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import type { FieldProps, ControlProps } from 'stackpress/view';
   source.addImportDeclaration({
@@ -64,26 +43,23 @@ export function generateFormat(
   });
   //import Text from 'frui/fields/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/field/${filter.component}`,
-    defaultImport: filter.component
+    moduleSpecifier: `frui/field/${column.filter.component}`,
+    defaultImport: column.filter.component
   });
   //export function NameField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${capital}Field`,
+    name: `${column.title}Field`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
-    statements: formatCode(`
+    statements: (`
       //props
       const { className, value, change, error = false } = props;
-      const attributes = ${JSON.stringify({
-        ...filter.attributes,
-        ...column.filter.attributes
-      })};
+      const attributes = ${JSON.stringify(column.filter.attributes)};
       //render
       return (
-        <${filter.component} 
+        <${column.filter.component} 
           {...attributes}
           className={className}
           error={error} 
@@ -96,11 +72,11 @@ export function generateFormat(
   //export function NameControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${capital}Control`,
+    name: `${column.title}Control`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
-    statements: column.required && !column.multiple ? formatCode(`
+    statements: column.required && !column.multiple ? (`
       //props
       const { className, value, change, error } = props;
       //hooks
@@ -108,7 +84,7 @@ export function generateFormat(
       //render
       return (
         <Control label={\`\${_('${column.label}')}*\`} error={error} className={className}>
-          <${capital}Field
+          <${column.title}Field
             className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 
             value={value} 
@@ -116,7 +92,7 @@ export function generateFormat(
           />
         </Control>
       );
-    `): formatCode(`
+    `): (`
       //props
       const { className, value, change, error } = props;
       //hooks
@@ -124,7 +100,7 @@ export function generateFormat(
       //render
       return (
         <Control label={_('${column.label}')} error={error} className={className}>
-          <${capital}Field
+          <${column.title}Field
             className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 
             value={value} 

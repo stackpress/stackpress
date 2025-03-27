@@ -1,6 +1,6 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress
+//schema
 import type Registry from '../../schema/Registry';
 
 /**

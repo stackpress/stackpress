@@ -2,11 +2,11 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { DatabasePlugin } from '../../types';
 //schema
 import type Model from '../../schema/spec/Model';
 //sql
+import type { DatabasePlugin } from '../types';
+//actions
 import get from '../actions/get';
 
 /**

@@ -4,27 +4,15 @@ import { nanoid } from 'nanoid';
 //stackpress
 import type { EnumConfig } from '@stackpress/idea-parser/types';
 //root
-import type { SchemaColumnInfo, SchemaSerialOptions } from '../../types';
-//local
+import type { SchemaColumnInfo, SchemaSerialOptions } from '../types';
+//config
+import * as typemap from '../config/typemaps';
+//schema
 import assert from '../assert';
+import { snakerize, capitalize, camelize } from '../helpers';
+//local
 import type Fieldset from './Fieldset';
 import Attributes from './Attributes';
-import { snakerize } from '../helpers';
-
-export const typemap: Record<string, string> = {
-  String: 'string',
-  Text: 'string',
-  Number: 'number',
-  Integer: 'integer',
-  Float: 'float',
-  Boolean: 'boolean',
-  Date: 'date',
-  Datetime: 'date',
-  Time: 'date',
-  Json: 'object',
-  Object: 'object',
-  Hash: 'object'
-};
 
 export default class Column {
   //ex. String, Number, Date, etc.
@@ -73,13 +61,13 @@ export default class Column {
           if (!assertions.find(v => v.method === 'array')) {
             assertions.unshift({ 
               method: 'array', 
-              args: [ typemap[type] ], 
+              args: [ typemap.method[type] ], 
               message: 'Invalid format'
             });
           }
-        } else if (!assertions.find(v => v.method === typemap[type])) {
+        } else if (!assertions.find(v => v.method === typemap.method[type])) {
           assertions.unshift({ 
-            method: typemap[type], 
+            method: typemap.method[type], 
             args: [], 
             message: 'Invalid format'
           });
@@ -236,7 +224,12 @@ export default class Column {
    */
   public get list() {
     if (this.model) {
-      return { method: 'hide', args: [], attributes: {} };
+      return { 
+        component: false, 
+        method: 'hide', 
+        args: [], 
+        attributes: {} 
+      };
     }
     return this.attributes.list;
   }
@@ -465,6 +458,26 @@ export default class Column {
   }
 
   /**
+   * Returns the capitalized column name
+   */
+  public get title() {
+    return capitalize(camelize(this.name));
+  }
+
+  public get typemap() {
+    return {
+      type: typemap.type[this.type],
+      model: typemap.model[this.type],
+      method: typemap.method[this.type],
+      literal: typemap.literal[this.type],
+      mysql: typemap.mysql[this.type],
+      pgsql: typemap.pgsql[this.type],
+      sqlite: typemap.sqlite[this.type],
+      helper: typemap.helper[this.type]
+    };
+  }
+
+  /**
    * Returns true if column is @unique
    */
   public get unique() {
@@ -477,7 +490,12 @@ export default class Column {
    */
   public get view() {
     if (this.model) {
-      return { method: 'hide', args: [], attributes: {} };
+      return { 
+        component: false, 
+        method: 'hide', 
+        args: [], 
+        attributes: {} 
+      };
     }
     return this.attributes.view;
   }
@@ -561,9 +579,9 @@ export default class Column {
       //there's no need to recursive serialize
       return object ? value: JSON.stringify(value);
     //if type is in the typemap
-    } else if (this.type in typemap) {
+    } else if (this.typemap.method) {
       //string, number, integer, float, boolean, date, object
-      const type = typemap[this.type];
+      const type = this.typemap.method;
       //if type is a number
       if ([ 'number', 'integer', 'float' ].includes(type)) {
         const serialized = Number(value);
@@ -657,9 +675,9 @@ export default class Column {
         }
       }
     //if type is in the typemap
-    } else if (this.type in typemap) {
+    } else if (this.typemap.method) {
       //string, number, integer, float, boolean, date, object
-      const type = typemap[this.type];
+      const type = this.typemap.method;
       if ([ 'number', 'integer', 'float' ].includes(type)) {
         const serialized = Number(value);
         return !isNaN(serialized) ? serialized : 0;

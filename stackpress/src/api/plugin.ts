@@ -1,12 +1,9 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
-//local
-import type { 
-  ApiConfig, 
-  ApiEndpoint, 
-  Application, 
-  Session 
-} from '../types';
+//root
+import type { Application, Session } from '../types';
+//api
+import type { ApiConfig, ApiEndpoint } from './types';
 import { authorize, unauthorized, validData } from './helpers';
 
 /**

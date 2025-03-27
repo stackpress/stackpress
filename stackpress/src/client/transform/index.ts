@@ -3,7 +3,7 @@ import { VariableDeclarationKind } from 'ts-morph';
 //root
 import type { IdeaPluginWithProject } from '../../types';
 //schema
-import Registry from '../Registry';
+import Registry from '../../schema/Registry';
 //local
 import generateConfig from './config';
 

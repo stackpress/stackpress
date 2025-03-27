@@ -3,10 +3,11 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //root
-import type { DatabasePlugin } from '../../types';
 import Exception from '../../Exception';
 //schema
 import type Model from '../../schema/spec/Model';
+//sql
+import type { DatabasePlugin } from '../types';
 
 /**
  * This is a factory function that creates an event 

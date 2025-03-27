@@ -1,8 +1,8 @@
 import '../styles/page.css';
 import { useState } from 'react';
-import { LayoutBlank, HeadProps, BodyProps } from 'stackpress/view';
+import { LayoutBlank, PageHeadProps, PageBodyProps } from 'stackpress/view';
 
-export function Head(props: HeadProps) {
+export function Head(props: PageHeadProps) {
   const { styles = [] } = props;
   return (
     <>
@@ -17,7 +17,7 @@ export function Head(props: HeadProps) {
   )
 }
 
-export default function HomePage(props: BodyProps) {
+export default function HomePage(props: PageBodyProps) {
   const theme = props.request.session.theme as string | undefined;
   const [count, setCount] = useState(0)
 

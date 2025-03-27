@@ -4,29 +4,6 @@ import type { Directory } from 'ts-morph';
 import type Registry from '../../schema/Registry';
 import type Column from '../../schema/spec/Column';
 import type Model from '../../schema/spec/Model';
-import { capitalize, camelize, formatCode } from '../../schema/helpers';
-//config
-import { formats } from './config';
-
-export type ColumnOption = { 
-  component: string|false, 
-  attributes: Record<string, any>
-};
-
-export const typemap: Record<string, string> = {
-  String: 'string',
-  Text: 'string',
-  Number: 'number',
-  Integer: 'number',
-  Float: 'number',
-  Boolean: 'boolean',
-  Date: 'Date',
-  Time: 'Date',
-  Datetime: 'Date',
-  Json: 'Record<string, string|number|boolean|null>',
-  Object: 'Record<string, string|number|boolean|null>',
-  Hash: 'Record<string, string|number|boolean|null>'
-};
 
 export default function generate(directory: Directory, registry: Registry) {
   //for each model
@@ -43,40 +20,33 @@ export function generateFormat(
   model: Model,
   column: Column
 ) {
-  //get the column format
-  const view = column.view;
-  const format = formats[view.method];
   //skip if no format component
-  if (!format || !format.component) return;
+  if (typeof column.view.component !== 'string') return;
   //get the path where this should be saved
-  const capital = capitalize(camelize(column.name));
-  const path = `${model.name}/components/views/${capital}Format.tsx`;
+  const path = `${model.name}/components/views/${column.title}Format.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import Text from 'frui/format/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/format/${format.component}`,
-    defaultImport: format.component
+    moduleSpecifier: `frui/format/${column.view.component}`,
+    defaultImport: column.view.component
   });
   const props = `{ value: ${
-    typemap[column.type]}${column.multiple ? '[]': ''
+    column.typemap.model}${column.multiple ? '[]': ''
   } }`;
   //export function NameFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: `${capital}Format`,
+    name: `${column.title}Format`,
     parameters: [
-      { name: 'props', type: `{ value: ${props} }` }
+      { name: 'props', type: props }
     ],
-    statements: formatCode(`
+    statements: (`
       //props
       const { value } = props;
-      const attributes = ${JSON.stringify({
-        ...format.attributes,
-        ...view.attributes
-      })};
+      const attributes = ${JSON.stringify(column.view.attributes)};
       //render
       return (
-        <${format.component} {...attributes} value={value} />
+        <${column.view.component} {...attributes} value={value} />
       );
     `)
   });

@@ -6,7 +6,7 @@ import type Server from '@stackpress/ingest/Server';
 import type { SessionExtended } from '../../types';
 //sql
 import { toResponse } from '../../sql/helpers';
-//local
+//api
 import { authorize, unauthorized } from '../helpers';
 
 export default async function APIToken(

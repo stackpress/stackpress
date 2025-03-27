@@ -2,7 +2,7 @@
 import type { IdeaPluginWithProject } from '../../types';
 //schema
 import Registry from '../../schema/Registry';
-//local
+//types
 import enumGenerator from './enums';
 import typeGenerator from './types';
 

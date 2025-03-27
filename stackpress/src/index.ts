@@ -37,7 +37,7 @@ export type {
 } from '@stackpress/lib'
 
 import Session from './session/Session';
-import I18N from './session/Language';
+import I18N from './language/Language';
 import Exception from './Exception';
 
 export * as sql from './sql';

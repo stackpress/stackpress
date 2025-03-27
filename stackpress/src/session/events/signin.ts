@@ -3,14 +3,14 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //root
-import type { 
-  ClientPlugin, 
-  AuthExtended, 
-  SessionPlugin,
-  DatabasePlugin 
-} from '../../types';
-//local
-import { signin } from '../../session/actions';
+import type { AuthExtended } from '../../types';
+//client
+import type { ClientPlugin } from '../../client/types';
+//sql
+import type { DatabasePlugin } from '../../sql/types';
+//session
+import type { SessionPlugin } from '../types';
+import { signin } from '../actions';
 
 export default async function AuthSignin(
   req: Request, 

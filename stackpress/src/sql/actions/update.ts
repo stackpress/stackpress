@@ -9,8 +9,9 @@ import type Engine from '@stackpress/inquire/Engine';
 import Exception from '../../Exception';
 //schema
 import type Model from '../../schema/spec/Model';
-//local
+//sql
 import { toErrorResponse } from '../helpers';
+//local
 import detail from './detail';
 
 /**

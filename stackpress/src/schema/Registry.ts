@@ -4,7 +4,7 @@ import type {
   SchemaConfig 
 } from '@stackpress/idea-parser/types';
 import { isObject } from '@stackpress/ingest/helpers';
-//local
+//spec
 import Fieldset from './spec/Fieldset';
 import Model from './spec/Model';
 

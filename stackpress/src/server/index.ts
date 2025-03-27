@@ -1,3 +1,5 @@
+export type * from './types';
+
 export * from '@stackpress/ingest';
 export * from '@stackpress/ingest/http/helpers';
 export {

@@ -1,9 +1,8 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { LanguageMap, LanguagePlugin } from '../types';
-//i18n
-import Language from '../session/Language';
+//language
+import type { LanguageMap, LanguagePlugin } from './types';
+import Language from './Language';
 
 /**
  * This interface is intended for the Incept library.

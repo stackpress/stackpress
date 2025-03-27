@@ -1,7 +1,7 @@
 //node
 import crypto from 'node:crypto';
-//root
-import type { SessionRoute } from '../types';
+//session
+import type { SessionRoute } from './types';
 
 export const isRegExp = /^\/.+\/[igmsuy]*$/;
 

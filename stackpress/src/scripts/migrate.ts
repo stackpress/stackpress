@@ -6,9 +6,8 @@ import type Engine from '@stackpress/inquire/Engine';
 import type Server from '@stackpress/ingest/Server';
 //schema
 import Revisions from '../schema/Revisions';
-//root
-import type { DatabaseConfig } from '../types'; 
 //sql
+import type { DatabaseConfig } from '../sql/types'; 
 import { sequence } from '../sql/helpers';
 //plugins
 import create from '../sql/schema';

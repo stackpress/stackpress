@@ -2,8 +2,8 @@
 import type { QueryObject } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { ClientPlugin } from '../types';
+//client
+import type { ClientPlugin } from '../client/types';
 //sql
 import { sequence } from '../sql/helpers';
 

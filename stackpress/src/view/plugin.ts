@@ -12,8 +12,8 @@ import type { IM, SR } from '@stackpress/ingest/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
 import Status from '@stackpress/lib/Status';
-//common
-import { ViewPlugin } from '../types';
+//view
+import { ViewPlugin } from './types';
 
 /**
  * This interface is intended for the Incept library.

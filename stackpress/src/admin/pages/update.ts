@@ -2,12 +2,12 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { AdminConfig } from '../../types';
 //session
 import { hash, encrypt } from '../../session/helpers';
 //schema
 import type Model from '../../schema/spec/Model';
+//admin
+import type { AdminConfig } from '../types';
 
 export default function AdminRemovePageFactory(model: Model) {
   return async function AdminRemovePage(

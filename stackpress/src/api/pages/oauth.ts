@@ -3,8 +3,11 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //root
-import type { SessionData, ApiConfig, Session } from '../../types';
-//local
+import type { Session } from '../../types';
+//session
+import type { SessionData } from '../../session/types';
+//api
+import type { ApiConfig } from '../types';
 import { unauthorized } from '../helpers';
 
 export default async function OAuth(

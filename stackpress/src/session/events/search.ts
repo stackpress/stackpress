@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/Server';
 //root
 import type { AuthExtended } from '../../types';
 //session
-import { decrypt } from '../../session/helpers';
+import { decrypt } from '../helpers';
 
 export default async function AuthSearch(
   _req: Request, 

@@ -23,12 +23,11 @@ export type { ModalProviderProps } from './modal/ModalProvider';
 export type { ThemeContextProps } from './theme/ThemeContext';
 export type { ThemeProviderProps } from './theme/ThemeProvider';
 
+export type * from './types';
 export type { 
-  BodyProps, 
-  HeadProps, 
-  FieldProps, 
-  ControlProps
-} from '../types';
+  SessionPermission,
+  SessionPermissionList
+} from '../session/types';
 
 import LayoutHead from './layout/components/LayoutHead';
 import LayoutLeft from './layout/components/LayoutLeft';
@@ -45,7 +44,15 @@ import ModalProvider from './modal/ModalProvider';
 import ThemeContext from './theme/ThemeContext';
 import ThemeProvider from './theme/ThemeProvider';
 
+import Crumbs from './element/Crumbs';
+import Pagination from './element/Pagination';
+
+export * from './element/Crumbs';
+export * from './element/Pagination';
+
 export * from './notify';
+export * from './hooks';
+export * from './helpers';
 export * from './modal/hooks';
 export * from './layout/hooks';
 export * from './theme/hooks';
@@ -64,6 +71,8 @@ export {
   ModalContext,
   ModalProvider,
   ThemeContext,
-  ThemeProvider
+  ThemeProvider,
+  Crumbs,
+  Pagination
 };
 

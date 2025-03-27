@@ -2,12 +2,9 @@
 import Mustache from 'mustache';
 //stackpress
 import type { NestedObject } from '@stackpress/lib';
-//root
-import type { SchemaColumnInfo, SchemaSerialOptions } from '../../types';
-//local
+//schema
+import type { SchemaColumnInfo, SchemaSerialOptions } from '../types';
 import type Registry from '../Registry';
-import Attributes from './Attributes';
-import Column from './Column';
 import { 
   camelize, 
   capitalize, 
@@ -15,6 +12,9 @@ import {
   generators,
   snakerize
 } from '../helpers';
+//local
+import Attributes from './Attributes';
+import Column from './Column';
 
 export default class Fieldset {
   //stores the registry
@@ -164,7 +164,7 @@ export default class Fieldset {
    * Returns the capitalized column name
    */
   public get title() {
-    return capitalize(this.name);
+    return capitalize(camelize(this.name));
   }
 
   /**

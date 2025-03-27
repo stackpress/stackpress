@@ -2,10 +2,10 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { SessionPlugin } from '../../types';
 //sql
 import { toResponse } from '../../sql/helpers';
+//session
+import type { SessionPlugin } from '../types';
 
 export default async function Session(
   req: Request, 

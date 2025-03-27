@@ -1,6 +1,6 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
-//local
+//email
 import emitter from './events';
 
 /**
