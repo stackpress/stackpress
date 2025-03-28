@@ -4,7 +4,7 @@ import type { IdeaPluginWithProject } from '../../types';
 import Registry from '../../schema/Registry';
 //local
 import generatePages from './pages';
-import generateViews from './views';
+//import generateViews from './views';
 import generateRoutes from './routes';
 
 /**
@@ -54,7 +54,7 @@ export default function generate(props: IdeaPluginWithProject) {
   // - profile/admin/restore.tsx
   // - profile/admin/search.tsx
   // - profile/admin/update.tsx
-  generateViews(project, registry);
+  //generateViews(project, registry);
   // - profile/admin/routes.ts
   generateRoutes(project, registry);
 

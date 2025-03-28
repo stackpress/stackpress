@@ -54,7 +54,7 @@ export function generateSearch(
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view',
-    namedImports: [ 'HeadProps', 'BodyProps', 'AdminDataProps' ]
+    namedImports: [ 'PageHeadProps', 'PageBodyProps', 'AdminDataProps' ]
   });
   //import { useStripe, Crumbs, Pagination, LayoutPanel } from 'stackpress/view';
   source.addImportDeclaration({

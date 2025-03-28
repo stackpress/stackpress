@@ -208,7 +208,8 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     const info = getColumnInfo(key, model).last;
     if (!info) return;
     const q = engine.dialect.q;
-    const selector = `${q}${info.model.snake}${q}.${q}${info.column.snake}${q}`;
+    //NOTE: inquire already adds the quotes around the column name
+    const selector = `${info.model.snake}${q}.${q}${info.column.snake}`;
     select.order(selector, direction.toUpperCase() as 'ASC' | 'DESC');
   });
 

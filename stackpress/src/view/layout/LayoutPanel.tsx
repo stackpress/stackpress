@@ -7,6 +7,7 @@ import { useTheme } from '../theme';
 import LayoutHead from './components/LayoutHead';
 import LayoutLeft from './components/LayoutLeft';
 import LayoutMain from './components/LayoutMain';
+import LayoutMenu from './components/LayoutMenu';
 import LayoutRight from './components/LayoutRight';
 //local
 import LayoutProvider from './LayoutProvider';
@@ -19,17 +20,24 @@ export type PanelAppProps = {
   language?: string,
   translations?: Record<string, string>,
   children?: React.ReactNode,
+  path?: string,
+  menu?: {
+    name: string;
+    icon: string;
+    path: string;
+    match: string;
+  }[],
   left?: React.ReactNode,
   right?: React.ReactNode
 };
 
 export function PanelApp(props: PanelAppProps) {
-  const { base, logo, brand, children } = props;
+  const { base, logo, brand, path, menu, children } = props;
   const [ left, toggleLeft ] = useToggle();
   const [ right, toggleRight ] = useToggle();
   const { theme, toggle: toggleTheme } = useTheme();
   return (
-    <div className={`${theme} relative px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
+    <div className={`${theme} relative overflow-hidden px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
       <LayoutHead 
         open={left} 
         theme={theme}
@@ -44,7 +52,9 @@ export function PanelApp(props: PanelAppProps) {
         open={left}
         toggle={toggleLeft}
       >
-        {props.left}
+        {menu ? (
+          <LayoutMenu path={path} menu={menu} />
+        ) : props.left}
       </LayoutLeft>
       <LayoutRight open={right}>{props.right}</LayoutRight>
       <LayoutMain open={left}>{children}</LayoutMain>
@@ -60,6 +70,13 @@ export type LayoutPanelProps = {
   language?: string,
   translations?: Record<string, string>,
   children?: React.ReactNode,
+  path?: string,
+  menu?: {
+    name: string;
+    icon: string;
+    path: string;
+    match: string;
+  }[],
   left?: React.ReactNode,
   right?: React.ReactNode
 };
@@ -69,6 +86,8 @@ export default function LayoutPanel(props: LayoutPanelProps) {
     base, 
     logo, 
     brand, 
+    path,
+    menu,
     left, 
     right, 
     theme,
@@ -80,7 +99,15 @@ export default function LayoutPanel(props: LayoutPanelProps) {
   useEffect(unload, []);
   return (
     <LayoutProvider theme={theme} language={language} translations={translations}>
-      <PanelApp base={base} logo={logo} brand={brand} left={left} right={right}>
+      <PanelApp 
+        base={base} 
+        logo={logo} 
+        brand={brand} 
+        left={left} 
+        right={right}
+        path={path}
+        menu={menu}
+      >
         {children}
       </PanelApp>
       <ToastContainer />

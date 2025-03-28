@@ -1,4 +1,6 @@
-import type { MouseEventHandler } from "react";
+import 'frui/frui.css';
+import 'stackpress/fouc.css';
+import type { MouseEventHandler, SetStateAction } from "react";
 import { useState } from 'react';
 import { useLanguage } from "r22n";
 import { Table, Thead, Trow, Tcol } from "frui/element/Table";
@@ -20,7 +22,7 @@ import {
   //components 
   Crumbs, 
   Pagination, 
-  LayoutPanel 
+  LayoutAdmin 
 } from "stackpress/view";
 import { ProfileExtended } from "../types";
 import { SearchParams } from "stackpress/sql";
@@ -29,7 +31,7 @@ import CreatedFormat from "../components/lists/CreatedFormat";
 import ImageFormat from "../components/lists/ImageFormat";
 import UpdatedFormat from "../components/lists/UpdatedFormat";
 
-export function SearchCrumbs() {
+export function AdminProfileSearchCrumbs() {
   //hooks
   const { _ } = useLanguage();
   //variables
@@ -42,15 +44,15 @@ export function SearchCrumbs() {
   return (<Crumbs crumbs={crumbs} />);
 }
 
-export function SearchFilters(props: { close: MouseEventHandler<HTMLElement> }) {
+export function AdminProfileSearchFilters(props: { close: MouseEventHandler<HTMLElement> }) {
   //props
   const { close } = props;
   //hooks
   const { _ } = useLanguage();
   return (
-    <aside className="flex flex-col w-full h-full bg-b2 border-r border-b1">
-      <header className="p-2 bg-b3 uppercase">
-        <i className="fas fa-chevron-right p-2 mr-2 cursor-pointer" onClick={close}></i>
+    <aside className="theme-bg-bg2 theme-bc-bd1 flex flex-col px-w-100-0 px-h-100-0 border-r">
+      <header className="theme-bg-bg3 px-px-10 px-py-14 uppercase">
+        <i className="fas fa-chevron-right px-mr-10 cursor-pointer" onClick={close}></i>
         {_('Filters')}
       </header>
       <form className="flex-grow overflow-auto">
@@ -65,7 +67,40 @@ export function SearchFilters(props: { close: MouseEventHandler<HTMLElement> }) 
   ); 
 }
 
-export function SearchResults(props: {
+export function AdminProfileSearchForm(props: { 
+  open: (value: SetStateAction<boolean>) => void,
+  can: (permit: string) => boolean,
+}) {
+  const { open, can } = props;
+  return (
+    <div className="flex items-center">
+      <Button 
+        className="border theme-bc-bd2 theme-bg-bg2 !px-px-14 !px-py-8" 
+        type="button" 
+        onClick={() => open((opened: boolean) => !opened)}
+      >
+        <i className="text-sm fas fa-fw fa-filter"></i>
+      </Button>
+      <div className="flex-grow">
+        <form className="flex items-center">
+          <Input className="!theme-bc-bd2" />
+          <Button className="theme-bc-bd2 theme-bg-bg2 border-r border-l-0 border-y !px-px-14 !px-py-8" type="submit">
+            <i className="text-sm fas fa-fw fa-search"></i>
+          </Button>
+        </form>
+      </div>
+      {can('profile-create') && (
+        <a href="create">
+          <Button success className="!px-px-16 !px-py-9">
+            <i className="fas fa-plus"></i>
+          </Button>
+        </a>
+      )}
+    </div>
+  ); 
+}
+
+export function AdminProfileSearchResults(props: {
   query: Partial<SearchParams>,
   results: ProfileExtended[]
 }) {
@@ -75,22 +110,22 @@ export function SearchResults(props: {
   const stripe = useStripe('theme-bg-bg0', 'theme-bg-bg1');
   return (
     <Table>
-      <Thead noWrap stickyTop className="theme-bc-bd2 theme-bg-bg2 text-left px-p-8">
+      <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left">
         {_('ID')}
       </Thead>
-      <Thead noWrap stickyTop className="theme-bc-bd2 theme-bg-bg2 text-left px-p-8">
+      <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left">
         {_('Name')}
       </Thead>
-      <Thead noWrap stickyTop className="theme-bc-bd2 theme-bg-bg2 text-left px-p-8">
+      <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left">
         {_('Image')}
       </Thead>
-      <Thead noWrap stickyTop className="theme-bc-bd2 theme-bg-bg2 text-left px-p-8">
+      <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left">
         {_('Type')}
       </Thead>
-      <Thead noWrap stickyTop className="theme-bc-bd2 theme-bg-bg2 text-right theme-info px-p-8">
+      <Thead noWrap stickyTop className="theme-info theme-bg-bg2 !theme-bc-bd2 px-p-10 text-right">
         <span
           className="cursor-pointer"
-          onClick={() => order('created')}
+          onClick={() => order('sort[created]')}
         >
           {_('Created')}
         </span>
@@ -104,10 +139,10 @@ export function SearchResults(props: {
           <i className="px-ml-2 text-xs fas fa-sort-down"></i>
         ) : null}
       </Thead>
-      <Thead noWrap stickyTop className="theme-bc-bd2 theme-bg-bg2 text-right theme-info px-p-8">
+      <Thead noWrap stickyTop className="theme-info theme-bg-bg2 !theme-bc-bd2 px-p-10 text-right">
         <span
           className="cursor-pointer"
-          onClick={() => order('updated')}
+          onClick={() => order('sort[updated]')}
         >
           {_('Updated')}
         </span>
@@ -123,16 +158,16 @@ export function SearchResults(props: {
       </Thead>
       {results.map((row, index) => (
         <Trow key={index}>
-          <Tcol noWrap className={`theme-bc-bd2 text-left px-p-5 ${stripe(index)}`}>
+          <Tcol noWrap className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}>
             {row.id}
           </Tcol>
-          <Tcol noWrap className={`theme-bc-bd2 text-left px-p-5 ${stripe(index)}`}>
+          <Tcol noWrap className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}>
             {row.name}
           </Tcol>
-          <Tcol noWrap className={`theme-bc-bd2 text-left px-p-5 ${stripe(index)}`}>
+          <Tcol noWrap className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}>
             {row.image && (<ImageFormat value={row.image} />)}
           </Tcol>
-          <Tcol noWrap className={`theme-bc-bd2 text-left px-p-5 ${stripe(index)}`}>
+          <Tcol noWrap className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}>
             <span
               className="cursor-pointer text-t-info"
               onClick={() => filter('type', row.type)}
@@ -140,11 +175,11 @@ export function SearchResults(props: {
               {row.type}
             </span>
           </Tcol>
-          <Tcol noWrap className={`theme-bc-bd2 text-right px-p-5 ${stripe(index)}`}>
-            <CreatedFormat value={row.created.toISOString()} />
+          <Tcol noWrap className={`!theme-bc-bd2 px-p-5 text-right ${stripe(index)}`}>
+            <CreatedFormat value={row.created.toString()} />
           </Tcol>
-          <Tcol noWrap className={`theme-bc-bd2 text-right px-p-5 ${stripe(index)}`}>
-            <UpdatedFormat value={row.created.toISOString()} />
+          <Tcol noWrap className={`!theme-bc-bd2 px-p-5 text-right ${stripe(index)}`}>
+            <UpdatedFormat value={row.updated.toString()} />
           </Tcol>
         </Trow>
       ))}
@@ -152,20 +187,17 @@ export function SearchResults(props: {
   ); 
 }
 
-export function SearchBody(props: PageBodyProps<
+export function AdminProfileSearchBody(props: PageBodyProps<
   AdminDataProps, 
   Partial<SearchParams>, 
   ProfileExtended[]
 >) {
   const {
-    //data,
     session,
     request,
     response
   } = props;
-  const can = (permit: string) => {
-    return session.permits.includes(permit);
-  };
+  const can = (permit: string) => session.permits.includes(permit);
   const { _ } = useLanguage();
   const query = request.data;
   const { skip = 0, take = 0 } = query;
@@ -174,53 +206,32 @@ export function SearchBody(props: PageBodyProps<
   const page = (skip: number) => paginate('skip', skip);
   //render
   return (
-    <main className="flex flex-col h-full bg-b0 relative">
-      <div className="px-p-6 theme-bg-bg2 w-full">
-        <SearchCrumbs />
+    <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
+      <div className="px-px-10 px-py-14 theme-bg-bg2">
+        <AdminProfileSearchCrumbs />
       </div>
-      <div className={`absolute top-0 bottom-0 w-64 z-40 duration-200 ${opened? 'right-0': '-right-64' }`}>
-        <SearchFilters close={() => open(false)} />
+      <div className={`absolute px-t-0 px-b-0 px-w-220 px-z-10 duration-200 ${opened? 'px-r-0': 'px-r--220' }`}>
+        <AdminProfileSearchFilters close={() => open(false)} />
       </div>
-      <div className="flex items-center p-3 w-full">
-        <Button 
-          className="border border-b2 bg-b2 px-4 py-2" 
-          type="button" 
-          onClick={() => open((opened: boolean) => !opened)}
-        >
-          <i className="text-sm fas fa-fw fa-filter"></i>
-        </Button>
-        <div className="flex-grow">
-          <form className="flex items-center">
-            <Input className="theme-bc-bd2" />
-            <Button className="theme-bc-bd2 theme-bg-bg2 border-r border-l-0 border-y px-4 py-2" type="submit">
-              <i className="text-sm fas fa-fw fa-search"></i>
-            </Button>
-          </form>
-        </div>
-        {can('profile-create') && (
-          <a href="create">
-            <Button success>
-              <i className="fas fa-plus"></i>
-            </Button>
-          </a>
-        )}
+      <div className="px-p-10">
+        <AdminProfileSearchForm open={open} can={can} />
       </div>
-      <div className="flex-grow px-3 w-full relative bottom-0 overflow-auto">
-        {!!results?.length && (
-          <h1 className="mb-3">{_(
-            'Showing %s - %s of %s',
-            (skip + 1).toString(),
-            (skip + results.length).toString(),
-            total.toString()
-          )}</h1>
-        )}
+      {!!results?.length && (
+        <h1 className="px-px-10 px-mb-10">{_(
+          'Showing %s - %s of %s',
+          (skip + 1).toString(),
+          (skip + results.length).toString(),
+          total.toString()
+        )}</h1>
+      )}
+      <div className="flex-grow px-px-10 w-full relative bottom-0 overflow-auto">
         {!results?.length ? (
           <Alert info>
-            <i className="fas fa-fw fa-info-circle mr-2"></i>
+            <i className="fas fa-fw fa-info-circle px-mr-5"></i>
             {_('No results found.')}
           </Alert>
         ): (
-          <SearchResults query={query} results={results} />
+          <AdminProfileSearchResults query={query} results={results} />
         )}
       </div>
       <Pagination 
@@ -233,19 +244,7 @@ export function SearchBody(props: PageBodyProps<
   );
 }
 
-export default function AdminProfileSearchPage(props: PageBodyProps<
-  AdminDataProps, 
-  Partial<SearchParams>, 
-  ProfileExtended[]
->) {
-  return (
-    <LayoutPanel>
-      <SearchBody {...props} />
-    </LayoutPanel>
-  );
-}
-
-export function Head(props: PageHeadProps<
+export function AdminProfileSearchHead(props: PageHeadProps<
   AdminDataProps, 
   Partial<SearchParams>, 
   ProfileExtended
@@ -263,3 +262,35 @@ export function Head(props: PageHeadProps<
     </>
   );  
 }
+
+export function AdminProfileSearchPage(props: PageBodyProps<
+  AdminDataProps, 
+  Partial<SearchParams>, 
+  ProfileExtended[]
+>) {
+  const { data, session, request } = props;
+  const theme = request.session.theme as string | undefined;
+  const {
+    root = '/admin',
+    name = 'Admin',
+    logo = '/images/logo-square.png',
+    menu = []
+  } = data.admin;
+  const path = request.url.pathname;
+  return (
+    <LayoutAdmin
+      theme={theme} 
+      brand={name}
+      base={root}
+      logo={logo}
+      path={path} 
+      menu={menu}
+      session={session}
+    >
+      <AdminProfileSearchBody {...props} />
+    </LayoutAdmin>
+  );
+}
+
+export const Head = AdminProfileSearchHead;
+export default AdminProfileSearchPage;

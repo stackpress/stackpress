@@ -72,7 +72,7 @@ export default async function generate(
   }
 
   //-----------------------------//
-  // 4. registry.ts
+  // 4. config.ts
   const source = directory.createSourceFile('config.ts', '', { overwrite: true });
 
   //import type { SchemaConfig } from '@stackpress/idea-parser';
@@ -80,15 +80,10 @@ export default async function generate(
     moduleSpecifier: '@stackpress/idea-parser',
     namedImports: [ 'SchemaConfig' ]
   });
-  //import Registry from 'stackpress/schema/Registry';
+  //import Registry from 'stackpress/Registry';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/schema/Registry',
+    moduleSpecifier: 'stackpress/Registry',
     defaultImport: 'Registry'
-  });
-  //import config from './config.json';
-  source.addImportDeclaration({
-    moduleSpecifier: './config.json',
-    defaultImport: 'config'
   });
   //export const config = {} as SchemaConfig;
   source.addVariableStatement({

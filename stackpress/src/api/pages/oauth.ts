@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/Server';
 //root
 import type { Session } from '../../types';
 //session
-import type { SessionData } from '../../session/types';
+import type { SessionData, SessionTokenData } from '../../session/types';
 //api
 import type { ApiConfig } from '../types';
 import { unauthorized } from '../helpers';
@@ -36,8 +36,8 @@ export default async function OAuth(
   }
 
   //get session
-  const session = await ctx.resolve('me', req);
-  if (!session.results) {
+  const session = await ctx.resolve<SessionTokenData>('me', req);
+  if (!session.results?.id) {
     const redirect = encodeURIComponent(
       req.url.pathname + req.url.search
     );

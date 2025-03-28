@@ -14,7 +14,8 @@ export type SessionData = Record<string, any> & {
   roles: string[]
 };
 export type SessionTokenData = SessionData & {
-  token: string
+  token: string,
+  permits: SessionPermission[]
 };
 
 export type SessionConstructor = { 

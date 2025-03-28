@@ -96,16 +96,11 @@ export default function generate(directory: Directory, registry: Registry) {
       moduleSpecifier: 'chai',
       namedImports: [ 'expect' ]
     });
-    //import type Engine from '@stackpress/inquire/dist/Engine';
+    //import type Engine from '@stackpress/inquire/Engine';
     source.addImportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: '@stackpress/inquire/dist/Engine',
+      moduleSpecifier: '@stackpress/inquire/Engine',
       defaultImport: 'Engine'
-    });
-    //import config from '../config';
-    source.addImportDeclaration({
-      moduleSpecifier: '../config',
-      defaultImport: 'config'
     });
     for (const dependent of dependents) {
       //import * as profileActions from '../../profile/actions';
@@ -188,10 +183,10 @@ export default function generate(directory: Directory, registry: Registry) {
           ${model.ids.length ? (`
             it('should get ${model.title}', async () => {
               const response = await search(engine);
-              const row = response.results[0];
+              const row = response.results?.[0];
 
               const key = '${model.ids[0].name}';
-              const value = row[key];
+              const value = row?.[key] as string;
 
               const actual = await get(engine, key, value);
               expect(actual.code).to.equal(200);
@@ -199,10 +194,10 @@ export default function generate(directory: Directory, registry: Registry) {
             });
             it('should get ${model.title} with ids', async () => {
               const response = await search(engine);
-              const row = response.results[0];
+              const row = response.results?.[0];
 
-              const ids = { ${
-                model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
+              const ids: Record<string, string|number> = { ${
+                model.ids.map(column => `${column.name}: row?.${column.name} as string|number`).join(', ')
               } };
 
               const actual = await detail(engine, ids);
@@ -211,12 +206,12 @@ export default function generate(directory: Directory, registry: Registry) {
             });
             it('should update ${model.title}', async () => {
               const response = await search(engine);
-              const row = response.results[0];
+              const row = response.results?.[0];
 
-              const ids = { ${
-                model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
+              const ids: Record<string, string|number> = { ${
+                model.ids.map(column => `${column.name}: row?.${column.name} as string|number`).join(', ')
               } };
-              const input = ${JSON.stringify(inputs[1])};
+              const input: Partial<Record<string, any>> = ${JSON.stringify(inputs[1])};
               Object.keys(ids).forEach(key => {
                 delete input[key];
               });
@@ -230,10 +225,10 @@ export default function generate(directory: Directory, registry: Registry) {
             });
             it('should remove ${model.title}', async () => {
               const response = await search(engine);
-              const row = response.results[0];
+              const row = response.results?.[0];
 
-              const ids = { ${
-                model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
+              const ids: Record<string, string|number> = { ${
+                model.ids.map(column => `${column.name}: row?.${column.name} as string|number`).join(', ')
               } };
 
               const actual = await remove(engine, ids);
@@ -243,10 +238,10 @@ export default function generate(directory: Directory, registry: Registry) {
             ${model.active ? (`
               it('should restore ${model.title}', async () => {
                 const response = await search(engine, { filter: { ${model.active.name}: -1 } });
-                const row = response.results[0];
+                const row = response.results?.[0];
 
-                const ids = { ${
-                  model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
+                const ids: Record<string, string|number> = { ${
+                  model.ids.map(column => `${column.name}: row?.${column.name} as string|number`).join(', ')
                 } };
 
                 const actual = await restore(engine, ids);

@@ -22,9 +22,9 @@ export default function generate(directory: Directory, registry: Registry) {
       { overwrite: true }
     );
 
-    //import Create from '@stackpress/inquire/dist/builder/Create';
+    //import Create from '@stackpress/inquire/Create';
     source.addImportDeclaration({
-      moduleSpecifier: '@stackpress/inquire/dist/builder/Create',
+      moduleSpecifier: '@stackpress/inquire/Create',
       defaultImport: 'Create'
     });
     //export function create() {}

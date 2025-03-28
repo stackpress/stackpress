@@ -4,22 +4,6 @@ import type { Directory } from 'ts-morph';
 import type Model from '../../schema/spec/Model';
 import Registry from '../../schema/Registry';
 
-//map from column types to sql types and helpers
-export const typemap: Record<string, string> = {
-  String: 'string',
-  Text: 'string',
-  Number: 'number',
-  Integer: 'number',
-  Float: 'number',
-  Boolean: 'boolean',
-  Date: 'string',
-  Time: 'string',
-  Datetime: 'string',
-  Json: 'string',
-  Object: 'string',
-  Hash: 'string'
-};
-
 export default function generate(directory: Directory, registry: Registry) {
   //loop through models
   for (const model of registry.model.values()) {
@@ -145,7 +129,7 @@ export function batch(model: Model, directory: Directory) {
     '', 
     { overwrite: true }
   );
-  //import type Engine from '@stackpress/Engine';
+  //import type Engine from '@stackpress/inquire/Engine';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '@stackpress/inquire/Engine',

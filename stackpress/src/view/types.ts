@@ -22,7 +22,7 @@ import type {
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type { IM, SR } from '@stackpress/ingest/types';
 //session
-import type { SessionPermission } from '../session/types';
+import type { SessionTokenData } from '../session/types';
 
 //--------------------------------------------------------------------//
 // View Types
@@ -41,14 +41,7 @@ export type PageBodyProps<
   O = undefined
 > = {
   data: C,
-  session: {
-    token: string;
-    permits: SessionPermission[];
-    id: string | number;
-    name?: string | undefined;
-    image?: string;
-    roles: string[];
-  },
+  session: SessionTokenData,
   request: {
     url: {
       hash: string,

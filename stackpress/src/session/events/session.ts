@@ -14,13 +14,6 @@ export default async function Session(
 ) {
   const session = ctx.plugin<SessionPlugin>('session');
   const me = session.load(req);
-  if (me.guest) {
-    res.setError({
-      code: 404,
-      status: 'Not Found',
-      error: 'No session found.'
-    });
-    return;
-  }
-  res.fromStatusResponse(toResponse(me.authorization));
+  const response = toResponse(me.authorization);
+  res.fromStatusResponse(response);
 }

@@ -25,8 +25,8 @@ export default function LayoutHead(props: LayoutHeadProps) {
   const themeColor = theme === 'dark' ? 'bg-gray-600': 'bg-orange-600';
   const themeIcon = theme === 'dark' ? 'fa-moon': 'fa-sun';
   return (
-    <header className={`theme-bg-bg1 duration-500 absolute px-h-60 px-r-0 px-t-0 ${full} ${left}`}>
-      <div className="flex items-center px-px-20 px-py-10 px-h-40">
+    <header className={`theme-bg-bg1 duration-200 absolute px-h-60 px-r-0 px-t-0 ${full} ${left}`}>
+      <div className="flex items-center px-px-20 px-h-100-0">
         {toggleLeft && (
           <button className="theme-tx1 md-hidden b-0 p-0 bg-transparent text-xl" onClick={toggleLeft}>
             <i className="fas fa-bars"></i>
@@ -47,14 +47,14 @@ export default function LayoutHead(props: LayoutHeadProps) {
         </div>
         {toggleTheme && (
           <button 
-            className={`flex justify-center items-center b-0 px-mr-10 px-px-5 px-py-3 rounded-full text-white ${themeColor}`}
+            className={`flex justify-center items-center b-0 px-mr-10 px-h-26 px-w-26 px-fs-18 rounded-full text-white ${themeColor}`}
             onClick={() => toggleTheme()}
           >
             <i className={`fas ${themeIcon}`}></i>
           </button>
         )}
         {toggleRight && (
-          <button className="theme-tx1 b-0 p-0 bg-transparent text-xl" onClick={toggleRight}>
+          <button className="theme-tx1 b-0 p-0 bg-transparent px-fs-26" onClick={toggleRight}>
             <i className="fas fa-user-circle"></i>
           </button>
         )}

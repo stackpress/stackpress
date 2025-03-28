@@ -142,15 +142,11 @@ export default function generate(props: IdeaPluginWithProject) {
   //load index.ts if it exists, if not create it
   const source = project.getSourceFile('index.ts') 
     || project.createSourceFile('index.ts', '', { overwrite: true });
-  //import config from './config.json';
+  //import config from './config';
   source.addImportDeclaration({ 
-    moduleSpecifier: './config.json', 
-    defaultImport: 'config' 
-  });
-  //import registry from './registry';
-  source.addImportDeclaration({ 
-    moduleSpecifier: './registry', 
-    defaultImport: 'registry' 
+    moduleSpecifier: './config', 
+    defaultImport: 'registry',
+    namedImports: [ 'config' ] 
   });
   //import * as modelProfile from './profile';
   for (const model of registry.model.values()) {

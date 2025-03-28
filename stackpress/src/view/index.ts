@@ -14,6 +14,11 @@ export type { LayoutRightProps } from './layout/components/LayoutRight';
 
 export type { BlankAppProps, LayoutBlankProps } from './layout/LayoutBlank';
 export type { PanelAppProps, LayoutPanelProps } from './layout/LayoutPanel';
+export type { 
+  AdminAppProps, 
+  LayoutAdminProps, 
+  AdminUserMenuProps 
+} from './layout/LayoutAdmin';
 export type { LayoutProviderProps } from './layout/LayoutProvider';
 
 export type { ModalConfirmProps } from './modal/ModalConfirm';
@@ -35,6 +40,10 @@ import LayoutMain from './layout/components/LayoutMain';
 import LayoutRight from './layout/components/LayoutRight';
 import LayoutBlank, { BlankApp } from './layout/LayoutBlank';
 import LayoutPanel, { PanelApp } from './layout/LayoutPanel';
+import LayoutAdmin, { 
+  AdminApp, 
+  AdminUserMenu 
+} from './layout/LayoutAdmin';
 import LayoutProvider from './layout/LayoutProvider';
 
 import ModalConfirm from './modal/ModalConfirm';
@@ -64,7 +73,10 @@ export {
   LayoutMain,
   PanelApp,
   BlankApp,
+  AdminApp,
+  AdminUserMenu,
   LayoutPanel,
+  LayoutAdmin,
   LayoutProvider,
   LayoutRight,
   ModalConfirm,

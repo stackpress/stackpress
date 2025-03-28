@@ -95,6 +95,11 @@ export default function generate(directory: Directory, registry: Registry) {
   const source = directory.createSourceFile('admin.ts', '', { 
     overwrite: true 
   });
+  //import Server from '@stackpress/ingest/Server';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/ingest/Server',
+    defaultImport: 'Server'
+  });
   //import profileRoutes from './profile/admin/routes';
   for (const model of registry.model.values()) {
     source.addImportDeclaration({

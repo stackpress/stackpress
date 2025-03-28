@@ -37,11 +37,11 @@ export default function generate(directory: Directory, registry: Registry) {
       '', 
       { overwrite: true }
     );
-    //import type { HTTPServer } from '@stackpress/ingest';
+    //import type { HttpServer } from '@stackpress/ingest';
     source.addImportDeclaration({
       isTypeOnly: true,
       moduleSpecifier: '@stackpress/ingest',
-      namedImports: [ 'HTTPServer' ]
+      namedImports: [ 'HttpServer' ]
     });
     //import actions from './actions';
     source.addImportDeclaration({
@@ -53,11 +53,11 @@ export default function generate(directory: Directory, registry: Registry) {
       moduleSpecifier: './events',
       defaultImport: 'events'
     });
-    //export default function tests(server: HTTPServer) {}
+    //export default function tests(server: HttpServer) {}
     source.addFunction({
       isDefaultExport: true,
       name: 'tests',
-      parameters: [{ name: 'server', type: 'HTTPServer' }],
+      parameters: [{ name: 'server', type: 'HttpServer' }],
       statements: (`
         actions(server.plugin('database'));
         events(server);  
@@ -73,6 +73,12 @@ export default function generate(directory: Directory, registry: Registry) {
     '', 
     { overwrite: true }
   );
+  //import type { HttpServer } from '@stackpress/ingest';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '@stackpress/ingest',
+    namedImports: [ 'HttpServer' ]
+  });
   //import profileTests from './profile/tests';
   for (const model of registry.model.values()) {
     source.addImportDeclaration({
@@ -83,11 +89,11 @@ export default function generate(directory: Directory, registry: Registry) {
 
   const models = Array.from(registry.model.values());
   const order = sequence(models);
-  //export default function tests(server: HTTPServer) {}
+  //export default function tests(server: HttpServer) {}
   source.addFunction({
     isDefaultExport: true,
     name: 'tests',
-    parameters: [{ name: 'server', type: 'HTTPServer' }],
+    parameters: [{ name: 'server', type: 'HttpServer' }],
     statements: order.reverse().map(model => `${model.camel}Tests(server);`)
   });
 };

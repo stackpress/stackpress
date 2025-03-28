@@ -33,24 +33,74 @@ export default function generate(directory: Directory, registry: Registry) {
       '', 
       { overwrite: true }
     );
-    //import { server } from '@stackpress/ingest/router/Server';
+    //import { server } from '@stackpress/ingest/Server';
     source.addImportDeclaration({
-      moduleSpecifier: '@stackpress/ingest/Router',
-      defaultImport: 'ServerRouter'
+      moduleSpecifier: '@stackpress/ingest/Server',
+      namedImports: [ 'server' ]
+    });
+    //import batch from './batch';
+    source.addImportDeclaration({
+      moduleSpecifier: `./batch`,
+      defaultImport: 'batch'
+    });
+    //import create from './create';
+    source.addImportDeclaration({
+      moduleSpecifier: `./create`,
+      defaultImport: 'create'
+    });
+    //import detail from './detail';
+    source.addImportDeclaration({
+      moduleSpecifier: `./detail`,
+      defaultImport: 'detail'
+    });
+    //import get from './get';
+    source.addImportDeclaration({
+      moduleSpecifier: `./get`,
+      defaultImport: 'get'
+    });
+    //import purge from './purge';
+    source.addImportDeclaration({
+      moduleSpecifier: `./purge`,
+      defaultImport: 'purge'
+    });
+    //import remove from './remove';
+    source.addImportDeclaration({
+      moduleSpecifier: `./remove`,
+      defaultImport: 'remove'
+    });
+    //import restore from './restore';
+    source.addImportDeclaration({
+      moduleSpecifier: `./restore`,
+      defaultImport: 'restore'
+    });
+    //import search from './search';
+    source.addImportDeclaration({
+      moduleSpecifier: `./search`,
+      defaultImport: 'search'
+    });
+    //import update from './update';
+    source.addImportDeclaration({
+      moduleSpecifier: `./update`,
+      defaultImport: 'update'
+    });
+    //import upsert from './upsert';
+    source.addImportDeclaration({
+      moduleSpecifier: `./upsert`,
+      defaultImport: 'upsert'
     });
     //const router = server();
     source.addStatements(`
       const router = server();
-      router.import.on('${model.dash}-batch', () => import('./batch'));
-      router.import.on('${model.dash}-create', () => import('./create'));
-      router.import.on('${model.dash}-detail', () => import('./detail'));
-      router.import.on('${model.dash}-get', () => import('./get'));
-      router.import.on('${model.dash}-purge', () => import('./purge'));
-      router.import.on('${model.dash}-remove', () => import('./remove'));
-      router.import.on('${model.dash}-restore', () => import('./restore'));
-      router.import.on('${model.dash}-search', () => import('./search'));
-      router.import.on('${model.dash}-update', () => import('./update'));
-      router.import.on('${model.dash}-upsert', () => import('./upsert'));
+      router.on('${model.dash}-batch', batch);
+      router.on('${model.dash}-create', create);
+      router.on('${model.dash}-detail', detail);
+      router.on('${model.dash}-get', get);
+      router.on('${model.dash}-purge', purge);
+      router.on('${model.dash}-remove', remove);
+      router.on('${model.dash}-restore', restore);
+      router.on('${model.dash}-search', search);
+      router.on('${model.dash}-update', update);
+      router.on('${model.dash}-upsert', upsert);
 
       export default router;
     `);

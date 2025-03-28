@@ -123,6 +123,7 @@
     "./lib": "./dist/lib.js",
     "./plugin": "./dist/plugin.js",
     "./unocss": "./dist/unocss.js",
+    "./fouc.css": "./dist/fouc.css",
     ".": "./dist/index.js"
   },
   "typesVersions": {
@@ -205,6 +206,7 @@
   },
   "files": [
     "dist",
+    "fouc.css",
     "LICENSE",
     "README.md"
   ],
