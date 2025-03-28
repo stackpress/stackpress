@@ -61,10 +61,11 @@ export function generateField(
       return (
         <${column.field.component} 
           {...attributes}
+          name="${column.name}${column.multiple ? '[]': ''}"
           className={className}
           error={error} 
           defaultValue={value} 
-          onUpdate={value => change('${column.name}', value)}
+          onUpdate={value => change && change('${column.name}', value)}
         />
       );
     `)

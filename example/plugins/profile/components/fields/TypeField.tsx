@@ -11,10 +11,11 @@ export function TypeField(props: FieldProps) {
   return (
     <Input 
       {...attributes}
+      name="type"
       className={className}
       error={error} 
       defaultValue={value} 
-      onUpdate={value => change('type', value)}
+      onUpdate={value => change && change('type', value)}
     />
   );  
 }

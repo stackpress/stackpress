@@ -11,10 +11,11 @@ export function ActiveField(props: FieldProps) {
   return (
     <Switch 
       {...attributes}
+      name="active"
       className={className}
       error={error} 
       defaultValue={value} 
-      onUpdate={value => change('active', value)}
+      onUpdate={value => change && change('active', value)}
     />
   );
 }

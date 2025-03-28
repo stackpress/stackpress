@@ -25,6 +25,45 @@ import type { IM, SR } from '@stackpress/ingest/types';
 import type { SessionTokenData } from '../session/types';
 
 //--------------------------------------------------------------------//
+// Other Types
+
+export type {
+  Trace,
+  UnknownNest,
+  NestedObject,
+  SuccessResponse, 
+  ErrorResponse, 
+  ResponseStatus, 
+  StatusResponse 
+} from '@stackpress/lib/types';
+
+export type { LayoutHeadProps } from './layout/components/LayoutHead';
+export type { LayoutLeftProps } from './layout/components/LayoutLeft';
+export type { LayoutMainProps } from './layout/components/LayoutMain';
+export type { LayoutRightProps } from './layout/components/LayoutRight';
+
+export type { BlankAppProps, LayoutBlankProps } from './layout/LayoutBlank';
+export type { PanelAppProps, LayoutPanelProps } from './layout/LayoutPanel';
+export type { 
+  AdminAppProps, 
+  LayoutAdminProps, 
+  AdminUserMenuProps 
+} from './layout/LayoutAdmin';
+export type { LayoutProviderProps } from './layout/LayoutProvider';
+
+export type { ModalConfirmProps } from './modal/ModalConfirm';
+export type { ModalContextProps } from './modal/ModalContext';
+export type { ModalProviderProps } from './modal/ModalProvider';
+
+export type { ThemeContextProps } from './theme/ThemeContext';
+export type { ThemeProviderProps } from './theme/ThemeProvider';
+
+export type { 
+  SessionPermission,
+  SessionPermissionList
+} from '../session/types';
+
+//--------------------------------------------------------------------//
 // View Types
 
 export type RollupResults = [ OutputChunk, ...(OutputAsset | OutputChunk)[]];
@@ -73,14 +112,14 @@ export type FieldProps = {
   className?: string,
   error?: boolean,
   value: any,
-  change: (name: string, value: any) => void
+  change?: (name: string, value: any) => void
 };
 
 export type ControlProps = {
   className?: string,
   error?: string,
   value: any,
-  change: (name: string, value: any) => void
+  change?: (name: string, value: any) => void
 }
 
 export type AdminDataProps = {
@@ -103,6 +142,7 @@ export type AdminDataProps = {
 
 //ie. ctx.config<ViewConfig>('view')
 export type ViewConfig = {
+  noview?: string,
   props: Record<string, unknown> & {
     icon?: string,
     logo?: string,

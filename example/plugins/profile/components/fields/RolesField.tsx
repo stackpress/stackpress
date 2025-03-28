@@ -11,10 +11,11 @@ export function RolesField(props: FieldProps) {
   return (
     <Textlist 
       {...attributes}
+      name="roles[]"
       className={className}
       error={error} 
       defaultValue={value} 
-      onUpdate={value => change('roles', value)}
+      onUpdate={value => change && change('roles', value)}
     />
   );
 }

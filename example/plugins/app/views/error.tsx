@@ -15,9 +15,11 @@ export type Config = {
 export default function ErrorPage(props: PageBodyProps<Config>) {
   const {
     data = { server: { mode: 'production' } },
+    request,
     response
   } = props;
 
+  const theme = request.session.theme as string | undefined;
   const mode = data.server?.mode || 'production';
   const production = mode === 'production';
   const notfound = response.code === 404;
@@ -28,24 +30,28 @@ export default function ErrorPage(props: PageBodyProps<Config>) {
   const stack = (response.stack || []) as (Trace & { 
     snippet: Record<string, string|undefined> 
   })[];
+  const red = theme === 'dark' ? 'bg-red-900' : 'bg-red-100';
   return (
-    <>
-      <h1>{title}</h1>
-      <p>
+    <main className={`${theme} px-p-10 px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
+      <h1 className="px-py-20 px-fs-20 font-bold">
+        {title}
+      </h1>
+      <p className={`${red} px-p-10 rounded`}>
+        <i className="text-red-600 px-mr-10 fas fa-fw fa-times-circle"></i>
         {description}
       </p>
       {!production && !notfound && stack.length > 0 && (
         <div>
           {stack.map((trace, index) => (
-            <div key={index} className="px-mb-20">
-              <h3 className="font-bold m-0">
+            <div key={index} className="theme-bc-bd0 px-mt-20 px-pb-20 border-b">
+              <h3 className="font-bold px-m-0">
                 #{stack.length - Number(index)} {trace.method}
               </h3>
-              <div className="font-italic theme-muted text-sm px-pt-10">
+              <div className="font-italic theme-muted text-sm">
                 {trace.file}:{trace.line}:{trace.char}
               </div>
               {trace.snippet && (
-                <div>
+                <div className="bg-black text-gray-300 px-mt-10 px-p-10 rounded">
                   {trace.snippet.before && (
                     <pre>{trace.line - 1} | {trace.snippet.before}</pre>
                   )}
@@ -64,7 +70,7 @@ export default function ErrorPage(props: PageBodyProps<Config>) {
           ))}
         </div>
       )}
-    </>
+    </main>
   )
 }
 

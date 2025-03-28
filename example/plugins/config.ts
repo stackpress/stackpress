@@ -59,6 +59,7 @@ export const config: Config = {
     }
   },
   view: {
+    noview: 'json',
     props: {
       icon: '/react.svg',
       logo: 'https://www.stackpress.io/images/stackpress-logo-icon.png',
@@ -169,7 +170,7 @@ export const config: Config = {
       ],
       GUEST: [
         { method: 'GET', route: '/form' },
-        { method: 'GET', route: '/profile/**' },
+        { method: 'ALL', route: '/profile/**' },
 
         { method: 'GET', route: '/client/**' },
         { method: 'GET', route: '/__ink_dev__' },

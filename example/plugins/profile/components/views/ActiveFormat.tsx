@@ -1,6 +1,6 @@
 import Yesno from "frui/format/Yesno";
 
-export default function ActiveFormat(props: { value: string }) {
+export default function ActiveFormat(props: { value: boolean }) {
   //props
   const { value } = props;
   const attributes = {"yes":"Yes","no":"No"};

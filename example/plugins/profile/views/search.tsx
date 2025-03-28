@@ -10,15 +10,18 @@ import Input from "frui/field/Input";
 import type { 
   PageHeadProps, 
   PageBodyProps, 
-  AdminDataProps 
+  AdminDataProps,
+  SessionPermission
 } from "stackpress/view";
 import { 
   //helpers
   paginate, 
   filter,
   order, 
+  Session,
   //hooks
   useStripe,
+  useLocation,
   //components 
   Crumbs, 
   Pagination, 
@@ -69,9 +72,11 @@ export function AdminProfileSearchFilters(props: { close: MouseEventHandler<HTML
 
 export function AdminProfileSearchForm(props: { 
   open: (value: SetStateAction<boolean>) => void,
-  can: (permit: string) => boolean,
+  can: (...permits: SessionPermission[]) => boolean,
 }) {
   const { open, can } = props;
+  const url = useLocation();
+  const route = url ? `${url.dirname}/create`: '/unauthorized';
   return (
     <div className="flex items-center">
       <Button 
@@ -89,7 +94,7 @@ export function AdminProfileSearchForm(props: {
           </Button>
         </form>
       </div>
-      {can('profile-create') && (
+      {can({ method: 'ALL', route }) && (
         <a href="create">
           <Button success className="!px-px-16 !px-py-9">
             <i className="fas fa-plus"></i>
@@ -156,6 +161,7 @@ export function AdminProfileSearchResults(props: {
           <i className="px-ml-2 text-xs fas fa-sort-down"></i>
         ) : null}
       </Thead>
+      <Thead stickyTop stickyRight className="!theme-bc-bd2 theme-bg-bg2 px-p-10" />
       {results.map((row, index) => (
         <Trow key={index}>
           <Tcol noWrap className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}>
@@ -181,6 +187,14 @@ export function AdminProfileSearchResults(props: {
           <Tcol noWrap className={`!theme-bc-bd2 px-p-5 text-right ${stripe(index)}`}>
             <UpdatedFormat value={row.updated.toString()} />
           </Tcol>
+          <Tcol stickyRight className={`!theme-bc-bd2 px-py-5 text-center ${stripe(index)}`}>
+            <a 
+              className="theme-bg-info px-p-2" 
+              href={`detail/${row.id}`}
+            >
+              <i className="fas fa-fw fa-caret-right"></i>
+            </a>
+          </Tcol>
         </Trow>
       ))}
     </Table>
@@ -197,7 +211,8 @@ export function AdminProfileSearchBody(props: PageBodyProps<
     request,
     response
   } = props;
-  const can = (permit: string) => session.permits.includes(permit);
+  const me = Session.load(session);
+  const can = me.can.bind(me);
   const { _ } = useLanguage();
   const query = request.data;
   const { skip = 0, take = 0 } = query;
@@ -224,7 +239,7 @@ export function AdminProfileSearchBody(props: PageBodyProps<
           total.toString()
         )}</h1>
       )}
-      <div className="flex-grow px-px-10 w-full relative bottom-0 overflow-auto">
+      <div className="flex-grow px-w-100-0 relative bottom-0 overflow-auto">
         {!results?.length ? (
           <Alert info>
             <i className="fas fa-fw fa-info-circle px-mr-5"></i>
@@ -247,7 +262,7 @@ export function AdminProfileSearchBody(props: PageBodyProps<
 export function AdminProfileSearchHead(props: PageHeadProps<
   AdminDataProps, 
   Partial<SearchParams>, 
-  ProfileExtended
+  ProfileExtended[]
 >) {
   const { data, styles = [] } = props;
   const { _ } = useLanguage();

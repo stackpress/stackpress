@@ -11,10 +11,11 @@ export function ImageField(props: FieldProps) {
   return (
     <Input 
       {...attributes}
+      name="image"
       className={className}
       error={error} 
       defaultValue={value} 
-      onUpdate={value => change('image', value)}
+      onUpdate={value => change && change('image', value)}
     />
   );  
 }

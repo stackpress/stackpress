@@ -64,7 +64,7 @@ export function generateFormat(
           className={className}
           error={error} 
           defaultValue={value} 
-          onUpdate={value => change('${column.name}', value)}
+          onUpdate={value => change && change('${column.name}', value)}
         />
       );
     `)

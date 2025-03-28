@@ -16,15 +16,15 @@ import type { ViewConfig } from '../view/types';
 import type { AuthConfig, SessionConfig } from '../session/types';
 import type InceptTerminal from '../terminal/Terminal';
 
-// export * from '../admin/types';
-// export * from '../api/types';
-// export * from '../client/types';
-// export * from '../language/types';
-// export * from '../schema/types';
-// export * from '../server/types';
-// export * from '../session/types';
-// export * from '../sql/types';
-// export * from '../view/types';
+export * from '../admin/types';
+export * from '../api/types';
+export * from '../client/types';
+export * from '../language/types';
+export * from '../schema/types';
+export * from '../server/types';
+export * from '../session/types';
+export * from '../sql/types';
+export * from '../view/types';
 
 export type { 
   EnumConfig,

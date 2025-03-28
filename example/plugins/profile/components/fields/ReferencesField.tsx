@@ -11,10 +11,11 @@ export function ReferencesField(props: FieldProps) {
   return (
     <Metadata 
       {...attributes}
+      name="references"
       className={className}
       error={error} 
       defaultValue={value} 
-      onUpdate={value => change('references', value)}
+      onUpdate={value => change && change('references', value)}
     />
   );
 }

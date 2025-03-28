@@ -11,10 +11,11 @@ export function NameField(props: FieldProps) {
   return (
     <Input 
       {...attributes}
+      name="name"
       className={className}
       error={error} 
       defaultValue={value} 
-      onUpdate={value => change('name', value)}
+      onUpdate={value => change && change('name', value)}
     />
   );
 }

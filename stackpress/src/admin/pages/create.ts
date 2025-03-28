@@ -67,8 +67,6 @@ export default function AdminCreatePageFactory(model: Model) {
       );
       //if error
       if (res.code !== 200) {
-        //pass straight to error
-        await ctx.emit('error', req, res);
         return;
       }
       //redirect
