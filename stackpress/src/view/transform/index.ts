@@ -7,6 +7,7 @@ import generateViews from './views';
 import generateFields from './fields';
 import generateFilters from './filters';
 import generateLists from './lists';
+import generateSpans from './spans';
 
 
 /**
@@ -16,6 +17,7 @@ import generateLists from './lists';
  * | | - filters/
  * | | - fields/
  * | | - lists/
+ * | | - spans/
  * | | - views/
  */
 
@@ -45,6 +47,8 @@ export default async function generate(props: IdeaPluginWithProject) {
   generateFilters(project, registry);
   // - profile/components/lists/
   generateLists(project, registry);
+  // - profile/components/spans/
+  generateSpans(project, registry);
   // - profile/components/views
   generateViews(project, registry);
 };

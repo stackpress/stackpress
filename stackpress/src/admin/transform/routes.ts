@@ -60,32 +60,32 @@ export default function generate(directory: Directory, registry: Registry) {
         const module = server.config.path('client.module', '.client');
         server.view.all(
           \`\${root}/${model.dash}/create\`, 
-          \`\${module}/${model.name}/admin/templates/create\`,
+          \`\${module}/${model.name}/admin/views/create\`,
           -100
         );
         server.view.all(
           \`\${root}/${model.dash}/detail/${ids}\`, 
-          \`\${module}/${model.name}/admin/templates/detail\`,
+          \`\${module}/${model.name}/admin/views/detail\`,
           -100
         );
         server.view.all(
           \`\${root}/${model.dash}/remove/${ids}\`, 
-          \`\${module}/${model.name}/admin/templates/remove\`,
+          \`\${module}/${model.name}/admin/views/remove\`,
           -100
         );
         server.view.all(
           \`\${root}/${model.dash}/restore/${ids}\`, 
-          \`\${module}/${model.name}/admin/templates/restore\`,
+          \`\${module}/${model.name}/admin/views/restore\`,
           -100
         );
         server.view.all(
           \`\${root}/${model.dash}/search\`, 
-          \`\${module}/${model.name}/admin/templates/search\`,
+          \`\${module}/${model.name}/admin/views/search\`,
           -100
         );
         server.view.all(
           \`\${root}/${model.dash}/update/${ids}\`, 
-          \`\${module}/${model.name}/admin/templates/update\`,
+          \`\${module}/${model.name}/admin/views/update\`,
           -100
         );
       `.trim()

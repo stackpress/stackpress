@@ -173,7 +173,7 @@ export default {
     "name": "Table",
     "attributes": {}
   },
-  "tags": {
+  "taglist": {
     "name": "Taglist",
     "attributes": {}
   },

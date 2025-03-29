@@ -115,6 +115,7 @@
     "./types/plugin": "./dist/types/plugin.js",
     "./types": "./dist/types/index.js",
     
+    "./view/import": "./dist/view/import.js",
     "./view/plugin": "./dist/view/plugin.js",
     "./view/types": "./dist/view/types.js",
     "./view": "./dist/view/index.js",
@@ -193,6 +194,7 @@
       "types/plugin": [ "./dist/types/plugin.d.ts" ],
       "types": [ "./dist/types/index.d.ts" ],
       
+      "view/import": [ "./dist/view/import.d.ts" ],
       "view/plugin": [ "./dist/view/plugin.d.ts" ],
       "view/types": [ "./dist/view/types.d.ts" ],
       "view": [ "./dist/view/index.d.ts" ],

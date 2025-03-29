@@ -31,7 +31,8 @@ export default function updateEventFactory(model: Model) {
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
 
-    const input = model.input(req.data());
+    //filter out non column data
+    const input = model.input(req.data(), false);
     const ids = Object.fromEntries(model.ids
       .map(column => [ column.name, req.data(column.name) ])
       .filter(entry => Boolean(entry[1]))

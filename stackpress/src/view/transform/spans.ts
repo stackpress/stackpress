@@ -10,23 +10,21 @@ export default function generate(directory: Directory, registry: Registry) {
   for (const model of registry.model.values()) {
     //generate all column fields
     model.columns.forEach(
-      column => generateFilter(directory, model, column)
+      column => generateSpan(directory, model, column)
     );
   }
 }
 
-export function generateFilter(
+export function generateSpan(
   directory: Directory, 
   model: Model,
   column: Column
 ) {
   //skip if no format component
-  if (typeof column.filter.component !== 'string') return;
+  if (typeof column.span.component !== 'string') return;
   //get the path where this should be saved
-  const path = `${model.name}/components/filters/${column.title}Filter.tsx`;
+  const path = `${model.name}/components/spans/${column.title}Span.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
-
-  const BoolComponent = [ 'Checkbox', 'Switch' ].indexOf(column.filter.component) !== -1;
 
   //import type { FieldProps, ControlProps } from 'stackpress/view';
   source.addImportDeclaration({
@@ -46,38 +44,48 @@ export function generateFilter(
   });
   //import Text from 'frui/fields/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/field/${column.filter.component}`,
-    defaultImport: column.filter.component
+    moduleSpecifier: `frui/field/${column.span.component}`,
+    defaultImport: column.span.component
   });
-  //export function NameFiter(props: FieldProps) {
+  //export function NameSpan(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}Filter`,
+    name: `${column.title}Span`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
     statements: (`
       //props
       const { className, value, change, error = false } = props;
-      const attributes = ${JSON.stringify(column.filter.attributes)};
+      const attributes = ${JSON.stringify(column.span.attributes)};
       //render
       return (
-        <${column.filter.component} 
-          {...attributes}
-          name="filter[${column.name}]${column.multiple ? '[]': ''}"
-          className={className}
-          error={error} 
-          defaultValue={value} 
-          ${BoolComponent ? 'defaultChecked={value}': ''}
-          onUpdate={value => change && change('filter[${column.name}]${column.multiple ? '[]': ''}', value)}
-        />
+        <>
+          <${column.span.component} 
+            {...attributes}
+            name="span[${column.name}][0]}"
+            className={className}
+            error={error} 
+            defaultValue={value[0]} 
+            onUpdate={value => change && change('span[${column.name}][0]', value)}
+          />
+          <br />
+          <${column.span.component} 
+            {...attributes}
+            name="span[${column.name}][1]}"
+            className={className}
+            error={error} 
+            defaultValue={value[1]} 
+            onUpdate={value => change && change('span[${column.name}][1]', value)}
+          />
+        </>
       );
     `)
   });
-  //export function NameFilterControl(props: ControlProps) {
+  //export function NameSpanControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}FilterControl`,
+    name: `${column.title}SpanControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -89,7 +97,6 @@ export function generateFilter(
       //render
       return (
         <Control label={_('${column.label}')} error={error} className={className}>
-          ${BoolComponent ? `<input type="hidden" name="${column.name}" value="false" />`: ''}
           <${column.title}Field
             className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 

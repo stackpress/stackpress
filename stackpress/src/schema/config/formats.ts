@@ -23,6 +23,10 @@ export default {
       "format": "capitalize"
     }
   },
+  "text": {
+    "name": "Text",
+    "attributes": {}
+  },
   "char": {
     "name": "Overflow",
     "attributes": {
@@ -35,6 +39,10 @@ export default {
       "word": true,
       "hellip": true
     }
+  },
+  "overflow": {
+    "name": "Overflow",
+    "attributes": {}
   },
   "number": {
     "name": "Number",

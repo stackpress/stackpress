@@ -470,7 +470,7 @@ export default class Attributes extends Map<string, unknown> {
   public get template() {
     const template = this.get('template');
     if (Array.isArray(template)) {
-      return template[0];
+      return template[0] as string|undefined;
     }
     return undefined;
   }

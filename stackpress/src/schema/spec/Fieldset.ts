@@ -255,13 +255,19 @@ export default class Fieldset {
   }
 
   /**
-   * Removes values that are not columns
+   * Removes values that are not input fields
    */
-  public input(values: Record<string, any>) {
+  public input(values: Record<string, any>, strict = true) {
     const inputs: Record<string, any> = {};
     
     for (const [ name, value ] of Object.entries(values)) {
       if (this.fields.find(column => column.name === name)) {
+        inputs[name] = value;
+        continue;
+      } else if (!strict) {
+        const column = this.column(name);
+        //if it's not a column or a model, skip it
+        if (!column || column.model) continue;
         inputs[name] = value;
       }
     }
@@ -276,6 +282,18 @@ export default class Fieldset {
       return '';
     }
     return Mustache.render(this.template, data);
+  }
+
+  /**
+   * Returns a function to generate a suggested label
+   */
+  public transformTemplate(to = '${data.%s}') {
+    const template = this.template || '';
+    return Array.from(
+      template.matchAll(/\{\{([a-zA-Z0-9_\.]+)\}\}/g)
+    ).reduce((result, match) => {
+      return result.replace(match[0], to.replaceAll('%s', match[1]));
+    }, template)
   }
 
   /**

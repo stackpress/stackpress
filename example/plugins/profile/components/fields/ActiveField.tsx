@@ -15,6 +15,7 @@ export function ActiveField(props: FieldProps) {
       className={className}
       error={error} 
       defaultValue={value} 
+      defaultChecked={value}
       onUpdate={value => change && change('active', value)}
     />
   );
@@ -28,8 +29,8 @@ export function ActiveControl(props: ControlProps) {
   //render
   return (
     <Control label={`${_('Active')}*`} error={error} className={className}>
+      <input type="hidden" name="active" value="false" />
       <ActiveField
-        className="!border-b2 dark:bg-gray-300 outline-none"
         error={!!error} 
         value={value} 
         change={change}

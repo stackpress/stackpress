@@ -1,38 +1,25 @@
 import 'frui/frui.css';
 import 'stackpress/fouc.css';
-import type { MouseEventHandler, SetStateAction } from "react";
-import { useState } from 'react';
-import { useLanguage } from "r22n";
-import { Table, Thead, Trow, Tcol } from "frui/element/Table";
-import Alert from "frui/element/Alert";
-import Button from "frui/element/Button";
-import Input from "frui/field/Input";
-import type { 
-  PageHeadProps, 
-  PageBodyProps, 
-  AdminDataProps,
-  SessionPermission
-} from "stackpress/view";
-import { 
-  //helpers
-  paginate, 
-  filter,
-  order, 
-  Session,
-  //hooks
-  useStripe,
-  useLocation,
-  //components 
-  Crumbs, 
-  Pagination, 
-  LayoutAdmin 
-} from "stackpress/view";
-import { ProfileExtended } from "../types";
-import { SearchParams } from "stackpress/sql";
 
-import CreatedFormat from "../components/lists/CreatedFormat";
-import ImageFormat from "../components/lists/ImageFormat";
-import UpdatedFormat from "../components/lists/UpdatedFormat";
+import type { ChangeEvent, MouseEventHandler, SetStateAction } from 'react';
+import type { PageHeadProps, PageBodyProps, AdminDataProps, 
+SessionPermission } from 'stackpress/view';
+import type { SearchParams } from 'stackpress/sql';
+import type { ProfileExtended } from '../types';
+
+import { useState } from 'react';
+import { useLanguage } from 'r22n';
+import { Table, Thead, Trow, Tcol } from 'frui/element/Table';
+import Alert from 'frui/element/Alert';
+import Button from 'frui/element/Button';
+import Input from 'frui/field/Input';
+import { paginate, filter, order, notify, flash, Session, useStripe, 
+useLocation, Crumbs, Pagination, LayoutAdmin } from 'stackpress/view';
+import { batchAndSend } from 'stackpress/view/import';
+
+import CreatedFormat from '../components/lists/CreatedFormat';
+import ImageFormat from '../components/lists/ImageFormat';
+import UpdatedFormat from '../components/lists/UpdatedFormat';
 
 export function AdminProfileSearchCrumbs() {
   //hooks
@@ -47,7 +34,9 @@ export function AdminProfileSearchCrumbs() {
   return (<Crumbs crumbs={crumbs} />);
 }
 
-export function AdminProfileSearchFilters(props: { close: MouseEventHandler<HTMLElement> }) {
+export function AdminProfileSearchFilters(props: { 
+  close: MouseEventHandler<HTMLElement> 
+}) {
   //props
   const { close } = props;
   //hooks
@@ -71,12 +60,29 @@ export function AdminProfileSearchFilters(props: { close: MouseEventHandler<HTML
 }
 
 export function AdminProfileSearchForm(props: { 
+  token: string, 
   open: (value: SetStateAction<boolean>) => void,
   can: (...permits: SessionPermission[]) => boolean,
 }) {
-  const { open, can } = props;
+  const { token, open, can } = props;
   const url = useLocation();
   const route = url ? `${url.dirname}/create`: '/unauthorized';
+  const upload = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    //get the input
+    const input = e.currentTarget;
+    //get the first file
+    const file = input.files?.[0];
+    //skip if we can't find the file
+    if (!file) return;
+    //proceed to send
+    batchAndSend('import', token, file, notify).then(() => {
+      flash('success', 'File imported successfully');
+      window.location.reload();
+    });
+    return false;
+  };
+
   return (
     <div className="flex items-center">
       <Button 
@@ -94,11 +100,16 @@ export function AdminProfileSearchForm(props: {
           </Button>
         </form>
       </div>
+      <a className="theme-white theme-bg-info px-px-16 px-py-9" href="export">
+        <i className="fas fa-download"></i>
+      </a>
+      <Button warning type="button" className="relative !px-px-16 !px-py-9">
+        <i className="cursor-pointer fas fa-upload"></i>
+        <input className="cursor-pointer opacity-0 absolute px-b-0 px-l-0 px-r-0 px-t-0" type="file" onChange={upload} />
+      </Button>
       {can({ method: 'ALL', route }) && (
-        <a href="create">
-          <Button success className="!px-px-16 !px-py-9">
-            <i className="fas fa-plus"></i>
-          </Button>
+        <a className="theme-white theme-bg-success px-px-16 px-py-9" href="create">
+          <i className="fas fa-plus"></i>
         </a>
       )}
     </div>
@@ -206,18 +217,17 @@ export function AdminProfileSearchBody(props: PageBodyProps<
   Partial<SearchParams>, 
   ProfileExtended[]
 >) {
-  const {
-    session,
-    request,
-    response
-  } = props;
+  //props
+  const { session, request, response } = props;
   const me = Session.load(session);
   const can = me.can.bind(me);
-  const { _ } = useLanguage();
   const query = request.data;
   const { skip = 0, take = 0 } = query;
   const { results = [], total = 0 } = response;
+  //hooks
+  const { _ } = useLanguage();
   const [ opened, open ] = useState(false);
+  //handlers
   const page = (skip: number) => paginate('skip', skip);
   //render
   return (
@@ -229,7 +239,7 @@ export function AdminProfileSearchBody(props: PageBodyProps<
         <AdminProfileSearchFilters close={() => open(false)} />
       </div>
       <div className="px-p-10">
-        <AdminProfileSearchForm open={open} can={can} />
+        <AdminProfileSearchForm token={session.token} open={open} can={can} />
       </div>
       {!!results?.length && (
         <h1 className="px-px-10 px-mb-10">{_(

@@ -30,7 +30,7 @@ export default function createEventFactory(model: Model) {
     //get the database engine
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
-    const input = model.input(req.data());
+    const input = model.input(req.data(), false);
     const response = await create(model, engine, input);
     res.fromStatusResponse(response);
   };

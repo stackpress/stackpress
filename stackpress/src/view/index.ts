@@ -16,6 +16,8 @@ import ModalConfirm from './modal/ModalConfirm';
 import ModalContext from './modal/ModalContext';
 import ModalProvider from './modal/ModalProvider';
 
+import notify from './notify';
+
 import ThemeContext from './theme/ThemeContext';
 import ThemeProvider from './theme/ThemeProvider';
 
@@ -52,6 +54,7 @@ export {
   ThemeContext,
   ThemeProvider,
   Crumbs,
-  Pagination
+  Pagination,
+  notify
 };
 

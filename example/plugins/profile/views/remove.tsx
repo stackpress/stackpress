@@ -1,17 +1,11 @@
 import 'frui/frui.css';
 import 'stackpress/fouc.css';
-import { useLanguage } from "r22n";
-import type { 
-  PageHeadProps, 
-  PageBodyProps, 
-  AdminDataProps 
-} from "stackpress/view";
-import { 
-  //components 
-  Crumbs, 
-  LayoutAdmin 
-} from "stackpress/view";
-import { ProfileInput, ProfileExtended } from "../types";
+
+import type { PageHeadProps, PageBodyProps, AdminDataProps } from 'stackpress/view';
+import type { ProfileInput, ProfileExtended } from '../types';
+
+import { useLanguage } from 'r22n';
+import { Crumbs, LayoutAdmin } from 'stackpress/view';
 
 export function AdminProfileRemoveCrumbs(props: {
   results: ProfileExtended

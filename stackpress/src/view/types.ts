@@ -63,8 +63,12 @@ export type {
   SessionPermissionList
 } from '../session/types';
 
-//--------------------------------------------------------------------//
-// View Types
+export type {
+  CSVParseError,
+  CSVParseResults,
+  BatchSendResults,
+  BatchSendResponse
+} from './import';
 
 export type RollupResults = [ OutputChunk, ...(OutputAsset | OutputChunk)[]];
 

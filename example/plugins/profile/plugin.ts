@@ -4,6 +4,7 @@ import type { Server } from 'stackpress/server';
 export default function plugin(server: Server) {
   server.on('route', async _ => {
     server.all('/profile/create', () => import('./pages/create'));
+    server.all('/profile/export', () => import('./pages/export'));
     server.all('/profile/detail/:id', () => import('./pages/detail'));
     server.all('/profile/remove/:id', () => import('./pages/remove'));
     server.all('/profile/restore/:id', () => import('./pages/restore'));

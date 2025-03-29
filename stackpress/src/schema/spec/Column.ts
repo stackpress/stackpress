@@ -468,6 +468,7 @@ export default class Column {
     return {
       type: typemap.type[this.type],
       model: typemap.model[this.type],
+      format: typemap.format[this.type],
       method: typemap.method[this.type],
       literal: typemap.literal[this.type],
       mysql: typemap.mysql[this.type],

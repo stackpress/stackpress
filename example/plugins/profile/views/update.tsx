@@ -1,26 +1,20 @@
 import 'frui/frui.css';
 import 'stackpress/fouc.css';
-import { useLanguage } from "r22n";
-import Button from "frui/element/Button";
-import type { 
-  NestedObject,
-  PageHeadProps, 
-  PageBodyProps, 
-  AdminDataProps 
-} from "stackpress/view";
-import { 
-  //components 
-  Crumbs, 
-  LayoutAdmin 
-} from "stackpress/view";
-import { ProfileInput, ProfileExtended } from "../types";
 
-import { ActiveControl } from "../components/fields/ActiveField";
-import { ImageControl } from "../components/fields/ImageField";
-import { NameControl } from "../components/fields/NameField";
-import { ReferencesControl } from "../components/fields/ReferencesField";
-import { RolesControl } from "../components/fields/RolesField";
-import { TypeControl } from "../components/fields/TypeField";
+import type { NestedObject, PageHeadProps, PageBodyProps, 
+AdminDataProps } from 'stackpress/view';
+import type { ProfileInput, ProfileExtended } from '../types';
+
+import { useLanguage } from 'r22n';
+import { Crumbs, LayoutAdmin } from 'stackpress/view';
+import Button from 'frui/element/Button';
+
+import { ActiveControl } from '../components/fields/ActiveField';
+import { ImageControl } from '../components/fields/ImageField';
+import { NameControl } from '../components/fields/NameField';
+import { ReferencesControl } from '../components/fields/ReferencesField';
+import { RolesControl } from '../components/fields/RolesField';
+import { TypeControl } from '../components/fields/TypeField';
 
 export function AdminProfileUpdateCrumbs(props: {
   results: ProfileExtended

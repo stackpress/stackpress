@@ -25,6 +25,9 @@ export function generateField(
   //get the path where this should be saved
   const path = `${model.name}/components/fields/${column.title}Field.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
+
+  const BoolComponent = [ 'Checkbox', 'Switch' ].indexOf(column.field.component) !== -1;
+
   //import type { FieldProps, ControlProps } from 'stackpress/view';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -65,15 +68,16 @@ export function generateField(
           className={className}
           error={error} 
           defaultValue={value} 
-          onUpdate={value => change && change('${column.name}', value)}
+          ${BoolComponent ? 'defaultChecked={value}': ''}
+          onUpdate={value => change && change('${column.name}${column.multiple ? '[]': ''}', value)}
         />
       );
     `)
   });
-  //export function NameControl(props: ControlProps) {
+  //export function NameFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}Control`,
+    name: `${column.title}FieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -85,6 +89,7 @@ export function generateField(
       //render
       return (
         <Control label={\`\${_('${column.label}')}*\`} error={error} className={className}>
+          ${BoolComponent ? `<input type="hidden" name="${column.name}" value="false" />`: ''}
           <${column.title}Field
             className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 
@@ -101,6 +106,7 @@ export function generateField(
       //render
       return (
         <Control label={_('${column.label}')} error={error} className={className}>
+          ${BoolComponent ? `<input type="hidden" name="${column.name}" value="false" />`: ''}
           <${column.title}Field
             className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 

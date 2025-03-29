@@ -9,8 +9,8 @@ import type Model from '../../schema/spec/Model';
 //admin
 import type { AdminConfig } from '../types';
 
-export default function AdminRemovePageFactory(model: Model) {
-  return async function AdminRemovePage(
+export default function AdminUpdatePageFactory(model: Model) {
+  return async function AdminUpdatePage(
     req: Request, 
     res: Response,
     ctx: Server

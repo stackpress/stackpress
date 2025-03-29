@@ -28,6 +28,21 @@ export const model: Record<string, string> = {
   Object: 'Record<string, string|number|boolean|null>',
   Hash: 'Record<string, string|number|boolean|null>'
 };
+//to format
+export const format: Record<string, string> = {
+  String: 'string',
+  Text: 'string',
+  Number: 'number',
+  Integer: 'number',
+  Float: 'number',
+  Boolean: 'boolean',
+  Date: 'string|number|Date',
+  Time: 'string|number|Date',
+  Datetime: 'string|number|Date',
+  Json: 'Record<string, any>',
+  Object: 'Record<string, any>',
+  Hash: 'Record<string, any>'
+};
 //to methods
 export const method: Record<string, string> = {
   String: 'string',
