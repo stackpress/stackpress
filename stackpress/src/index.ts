@@ -43,6 +43,7 @@ import Exception from './Exception';
 export * as sql from './sql';
 export * as scripts from './scripts';
 export * as terminal from './terminal';
+export * from './client';
 export * from './schema';
 
 export { encrypt, decrypt, hash } from './session/helpers';

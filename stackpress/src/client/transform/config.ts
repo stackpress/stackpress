@@ -6,7 +6,7 @@ import type { SchemaConfig } from '@stackpress/idea-parser';
 import type Server from '@stackpress/ingest/Server';
 //schema
 import type Registry from '../../schema/Registry';
-import Revisions from '../../schema/Revisions';
+import Revisions from '../Revisions';
 
 /**
  * This is the The params comes form the cli

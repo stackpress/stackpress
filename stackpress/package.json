@@ -57,6 +57,7 @@
     "./api/types": "./dist/api/types.js",
     "./api": "./dist/api/index.js",
 
+    "./Revisions": "./dist/client/Revisions.js",
     "./client/plugin": "./dist/client/plugin.js",
     "./client/types": "./dist/client/types.js",
     "./client": "./dist/client/index.js",
@@ -76,7 +77,6 @@
     "./Model": "./dist/schema/spec/Model.js",
     "./assert": "./dist/schema/assert.js",
     "./Registry": "./dist/schema/Registry.js",
-    "./Revisions": "./dist/schema/Revisions.js",
     "./schema/types": "./dist/schema/types.js",
     "./schema": "./dist/schema/index.js",
     
@@ -139,6 +139,7 @@
       "api/types": [ "./dist/api/types.d.ts" ],
       "api": [ "./dist/api/index.d.ts" ],
 
+      "Revisions": [ "./dist/client/Revisions.d.ts" ],
       "client/plugin": [ "./dist/client/plugin.d.ts" ],
       "client/types": [ "./dist/client/types.d.ts" ],
       "client": [ "./dist/client/index.d.ts" ],
@@ -158,7 +159,6 @@
       "Model": [ "./dist/schema/spec/Model.d.ts" ],
       "assert": [ "./dist/schema/assert.d.ts" ],
       "Registry": [ "./dist/schema/Registry.d.ts" ],
-      "Revisions": [ "./dist/schema/Revisions.d.ts" ],
       "schema/types": [ "./dist/schema/types.d.ts" ],
       "schema": [ "./dist/schema/index.d.ts" ],
       

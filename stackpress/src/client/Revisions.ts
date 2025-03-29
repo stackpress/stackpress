@@ -6,7 +6,7 @@ import glob from 'fast-glob';
 import type { SchemaConfig } from '@stackpress/idea-parser/types';
 import FileLoader from '@stackpress/lib/FileLoader';
 //schema
-import Registry from './Registry';
+import Registry from '../schema/Registry';
 
 export default class Revisions {
   /**
@@ -101,8 +101,10 @@ export default class Revisions {
         this._epochs = results.map(
           filename => Number(filename.split('.')[0])
         ).sort();
+      } else {
+        //if the root folder doesn't exist, return null
+        return null;
       }
-      return null;
     }
     return this.index(this._epochs.length - 1 - Math.abs(minus));
   }

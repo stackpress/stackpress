@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/Server';
 //client
 import type { ClientPlugin, ClientConfig } from '../client/types';
 //schema
-import Revisions from '../schema/Revisions';
+import Revisions from '../client/Revisions';
 //sql
 import { sequence } from '../sql/helpers';
 

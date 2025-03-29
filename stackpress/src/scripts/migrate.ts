@@ -5,7 +5,7 @@ import type { QueryObject } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 import type Server from '@stackpress/ingest/Server';
 //schema
-import Revisions from '../schema/Revisions';
+import Revisions from '../client/Revisions';
 //sql
 import type { DatabaseConfig } from '../sql/types'; 
 import { sequence } from '../sql/helpers';

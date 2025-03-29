@@ -4,7 +4,6 @@ import Fieldset from './spec/Fieldset';
 import Model from './spec/Model';
 import assert from './assert';
 import Registry from './Registry';
-import Revisions from './Revisions';
 
 export type * from './types';
 export * from './helpers';
@@ -15,6 +14,5 @@ export {
   Fieldset,
   Model,
   assert, 
-  Registry, 
-  Revisions 
+  Registry
 };
