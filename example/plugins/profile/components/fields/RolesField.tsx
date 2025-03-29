@@ -4,42 +4,36 @@ import Control from "frui/element/Control";
 import Textlist from "frui/field/Textlist";
 
 export function RolesField(props: FieldProps) {
-
-        //props
-        const { className, value, change, error = false } = props;
-        const attributes = {"add":"Add Role"};
-        //render
-        return (
-          <Textlist 
-            {...attributes}
-            name="roles[]"
-            className={className}
-            error={error} 
-            defaultValue={value} 
-            
-            onUpdate={value => change && change('roles[]', value)}
-          />
-        );
-      
+  //props
+  const { className, value, change, error = false } = props;
+  const attributes = { add: "Add Role" };
+  //render
+  return (
+    <Textlist
+      {...attributes}
+      name="roles[]"
+      className={className}
+      error={error}
+      defaultValue={value}
+      onUpdate={(value) => change && change("roles[]", value)}
+    />
+  );
 }
 
 export function RolesFieldControl(props: ControlProps) {
-
-        //props
-        const { className, value, change, error } = props;
-        //hooks
-        const { _ } = useLanguage();
-        //render
-        return (
-          <Control label={_('Roles')} error={error} className={className}>
-            
-            <RolesField
-              className="!border-b2 dark:bg-gray-300 outline-none"
-              error={!!error} 
-              value={value} 
-              change={change}
-            />
-          </Control>
-        );
-      
+  //props
+  const { className, value, change, error } = props;
+  //hooks
+  const { _ } = useLanguage();
+  //render
+  return (
+    <Control label={_("Roles")} error={error} className={className}>
+      <RolesField
+        className="!border-b2 dark:bg-gray-300 outline-none"
+        error={!!error}
+        value={value}
+        change={change}
+      />
+    </Control>
+  );
 }

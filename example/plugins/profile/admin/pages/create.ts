@@ -4,6 +4,10 @@ import type Server from "@stackpress/ingest/Server";
 import createPage from "stackpress/admin/pages/create";
 import config from "../../config";
 
-export default function AdminProfileCreatePage(req: Request, res: Response, ctx: Server) {
+export default function AdminProfileCreatePage(
+  req: Request,
+  res: Response,
+  ctx: Server,
+) {
   return createPage(config)(req, res, ctx);
 }

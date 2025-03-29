@@ -1,5 +1,8 @@
+//node
+import path from 'node:path';
 //modules
 import { Project, IndentationText } from 'ts-morph';
+import prettier from 'prettier';
 //stackpress
 import type Server from '@stackpress/ingest/Server';
 import Terminal from '@stackpress/lib/Terminal';
@@ -47,7 +50,23 @@ export default class InceptTerminal extends Terminal {
       const lang = server.config.path<string>('client.lang', 'js');
       //if you want ts, tsx files
       if (lang === 'ts') {
-        project.saveSync();
+        //get source files
+        const files = project.getSourceFiles();
+        for (const file of files) {
+          const filePath = file.getFilePath();
+          const content = file.getFullText();
+          //so we can pretty print
+          const pretty = await prettier.format(content, { 
+            parser: 'typescript' 
+          });
+          const fs = this.server.loader.fs;
+          //create the parent folder if not exists
+          const pathname = path.dirname(filePath);
+          if (!await fs.exists(pathname)) {
+            await fs.mkdir(pathname, { recursive: true });
+          }
+          await fs.writeFile(filePath, pretty);
+        }
         await this.server.emit('transformed', req, res);
       //if you want js, d.ts files
       } else {

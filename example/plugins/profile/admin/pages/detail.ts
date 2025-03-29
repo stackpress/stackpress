@@ -4,6 +4,10 @@ import type Server from "@stackpress/ingest/Server";
 import detailPage from "stackpress/admin/pages/detail";
 import config from "../../config";
 
-export default function AdminProfileDetailPage(req: Request, res: Response, ctx: Server) {
+export default function AdminProfileDetailPage(
+  req: Request,
+  res: Response,
+  ctx: Server,
+) {
   return detailPage(config)(req, res, ctx);
 }
