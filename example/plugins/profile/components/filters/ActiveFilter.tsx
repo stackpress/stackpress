@@ -1,29 +1,29 @@
 import type { FieldProps, ControlProps } from "stackpress/view";
 import { useLanguage } from "r22n";
 import Control from "frui/element/Control";
-import Input from "frui/field/Input";
+import Switch from "frui/field/Switch";
 
-export function NameField(props: FieldProps) {
+export function ActiveFilter(props: FieldProps) {
 
         //props
         const { className, value, change, error = false } = props;
-        const attributes = {"type":"text","required":true};
+        const attributes = {};
         //render
         return (
-          <Input 
+          <Switch 
             {...attributes}
-            name="name"
+            name="filter[active]"
             className={className}
             error={error} 
             defaultValue={value} 
-            
-            onUpdate={value => change && change('name', value)}
+            defaultChecked={value}
+            onUpdate={value => change && change('filter[active]', value)}
           />
         );
       
 }
 
-export function NameFieldControl(props: ControlProps) {
+export function ActiveFilterControl(props: ControlProps) {
 
         //props
         const { className, value, change, error } = props;
@@ -31,9 +31,9 @@ export function NameFieldControl(props: ControlProps) {
         const { _ } = useLanguage();
         //render
         return (
-          <Control label={`${_('Name')}*`} error={error} className={className}>
-            
-            <NameField
+          <Control label={_('Active')} error={error} className={className}>
+            <input type="hidden" name="active" value="false" />
+            <ActiveFilter
               className="!border-b2 dark:bg-gray-300 outline-none"
               error={!!error} 
               value={value} 

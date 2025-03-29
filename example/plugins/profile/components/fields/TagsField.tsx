@@ -1,29 +1,29 @@
 import type { FieldProps, ControlProps } from "stackpress/view";
 import { useLanguage } from "r22n";
 import Control from "frui/element/Control";
-import Input from "frui/field/Input";
+import Taglist from "frui/field/Taglist";
 
-export function NameField(props: FieldProps) {
+export function TagsField(props: FieldProps) {
 
         //props
         const { className, value, change, error = false } = props;
-        const attributes = {"type":"text","required":true};
+        const attributes = {};
         //render
         return (
-          <Input 
+          <Taglist 
             {...attributes}
-            name="name"
+            name="tags[]"
             className={className}
             error={error} 
             defaultValue={value} 
             
-            onUpdate={value => change && change('name', value)}
+            onUpdate={value => change && change('tags[]', value)}
           />
         );
       
 }
 
-export function NameFieldControl(props: ControlProps) {
+export function TagsFieldControl(props: ControlProps) {
 
         //props
         const { className, value, change, error } = props;
@@ -31,9 +31,9 @@ export function NameFieldControl(props: ControlProps) {
         const { _ } = useLanguage();
         //render
         return (
-          <Control label={`${_('Name')}*`} error={error} className={className}>
+          <Control label={_('Tags')} error={error} className={className}>
             
-            <NameField
+            <TagsField
               className="!border-b2 dark:bg-gray-300 outline-none"
               error={!!error} 
               value={value} 

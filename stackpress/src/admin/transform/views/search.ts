@@ -306,9 +306,9 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
                   : column.required && column.list.method !== 'none'
                   ? `<${column.title}ListFormat value={row.${column.name}} />`
                   : !column.required && column.list.method === 'none'
-                  ? `{row.${column.name} ?? row.${column.name}.toString()}`
+                  ? `{row.${column.name} ? row.${column.name}.toString() : ''}`
                   //!column.required && column.list.method !== 'none'
-                  : `{row.${column.name} ?? (<${column.title}ListFormat value={row.${column.name}} />)}`;
+                  : `{row.${column.name} ? (<${column.title}ListFormat value={row.${column.name}} />) : ''}`;
                 const align = column.sortable ? 'text-right' : 'text-left';
                 return column.filter.method !== 'none' ? (`
                   <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 ${align} \${stripe(index)}\`}>
@@ -349,7 +349,8 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     }],
     statements: (`
       //props
-      const { session, request, response } = props;
+      const { data, session, request, response } = props;
+      const { root = '/admin' } = data.admin || {};
       const me = Session.load(session);
       const can = me.can.bind(me);
       const query = request.data;
@@ -367,10 +368,10 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
             <Admin${model.title}SearchCrumbs />
           </div>
           <div className={\`absolute px-t-0 px-b-0 px-w-220 px-z-10 duration-200 \${opened? 'px-r-0': 'px-r--220' }\`}>
-            <Admin${model.title}SearchFilters close={() => open(false)} />
+            <Admin${model.title}SearchFilters query={query} close={() => open(false)} />
           </div>
           <div className="px-p-10">
-            <Admin${model.title}SearchForm token={session.token} open={open} can={can} />
+            <Admin${model.title}SearchForm root={root} token={session.token} open={open} can={can} />
           </div>
           {!!results?.length && (
             <h1 className="px-px-10 px-mb-10">{_(

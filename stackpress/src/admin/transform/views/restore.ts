@@ -26,6 +26,12 @@ export default function removePage(directory: Directory, _registry: Registry, mo
       'AdminDataProps'
     ]
   });
+  //import type { SearchParams } from 'stackpress/sql';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/sql',
+    namedImports: [ 'SearchParams' ]
+  });
   //import type { ProfileExtended } from '../../types';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -58,9 +64,11 @@ export default function removePage(directory: Directory, _registry: Registry, mo
       //variables
       const crumbs = [
         {
-          label: (<span className="theme-info">{_('${model.plural}')}</span>),
+          label: (
+            <span className="theme-info">{_('${model.plural}')}</span>
+          ),
           icon: '${model.icon}',
-          href: '\${root}/${model.dash}/search'
+          href: \`\${root}/${model.dash}/search\`
         },
         {
           label: (

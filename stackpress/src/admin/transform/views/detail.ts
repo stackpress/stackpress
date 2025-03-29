@@ -84,7 +84,7 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
             <span className="theme-info">{_('${model.plural}')}</span>
           ),
           icon: '${model.icon}',
-          href: '\${root}/${model.dash}/search'
+          href: \`\${root}/${model.dash}/search\`
         },
         {
           label: \`${model.transformTemplate('${results?.%s || \'\'}')}\`,
@@ -172,24 +172,26 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
         <Table>
           ${model.views.filter(
             column => column.view.method !== 'hide'
-          ).map(column => (`
-            <Trow>
-              <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 font-bold \${stripe(true)}\`}>
-                {_('${column.title}')}
-              </Tcol>
-              <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 \${stripe()}\`}>
-                ${column.required && column.list.method === 'none'
-                  ? `{results.${column.name}.toString()}`
-                  : column.required && column.list.method !== 'none'
-                  ? `<${column.title}ViewFormat value={results.${column.name}} />`
-                  : !column.required && column.list.method === 'none'
-                  ? `{results.${column.name} ?? results.${column.name}.toString()}`
-                  //!column.required && column.list.method !== 'none'
-                  : `{results.${column.name} ?? (<${column.title}ViewFormat value={results.${column.name}} />)}`
-                }
-              </Tcol>
-            </Trow>
-          `))}
+          ).map(column => {
+            return (`
+              <Trow>
+                <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 font-bold \${stripe(true)}\`}>
+                  {_('${column.title}')}
+                </Tcol>
+                <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 \${stripe()}\`}>
+                  ${column.required && !column.view.component
+                    ? `{results.${column.name}.toString()}`
+                    : column.required && column.view.component
+                    ? `<${column.title}ViewFormat value={results.${column.name}} />`
+                    : !column.required && !column.view.component
+                    ? `{results.${column.name} ? results.${column.name}.toString() : ''}`
+                    //!column.required && column.view.component
+                    : `{results.${column.name} ? (<${column.title}ViewFormat value={results.${column.name}} />) : ''}`
+                  }
+                </Tcol>
+              </Trow>
+            `);
+          })}
         </Table>
       ); 
     `)

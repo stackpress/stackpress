@@ -97,7 +97,7 @@ export function generateSpan(
       //render
       return (
         <Control label={_('${column.label}')} error={error} className={className}>
-          <${column.title}Field
+          <${column.title}Span
             className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 
             value={value} 

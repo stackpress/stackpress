@@ -9,10 +9,10 @@ export default function generate(directory: Directory, registry: Registry) {
     const ids = model.ids.map(column => `:${column.name}`).join('/')
     const file = `${model.name}/admin/routes.ts`;
     const source = directory.createSourceFile(file, '', { overwrite: true });
-    //import type Server from '@stackpress/ingest/dist/Server';
+    //import type Server from '@stackpress/ingest//Server';
     source.addImportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: '@stackpress/ingest/dist/Server',
+      moduleSpecifier: '@stackpress/ingest/Server',
       defaultImport: 'Server'
     });
     //export default function route(server: Server) {}
@@ -24,35 +24,35 @@ export default function generate(directory: Directory, registry: Registry) {
       ],
       statements: `
         const root = server.config.path('admin.root', '/admin');
-        server.imports.all(
+        server.import.all(
           \`\${root}/${model.dash}/create\`, 
           () => import('./pages/create')
         );
-        server.imports.all(
+        server.import.all(
           \`\${root}/${model.dash}/detail/${ids}\`, 
           () => import('./pages/detail')
         );
-        server.imports.all(
+        server.import.all(
           \`\${root}/${model.dash}/export\`, 
           () => import('./pages/export')
         );
-        server.imports.all(
+        server.import.all(
           \`\${root}/${model.dash}/import\`, 
           () => import('./pages/import')
         );
-        server.imports.all(
+        server.import.all(
           \`\${root}/${model.dash}/remove/${ids}\`, 
           () => import('./pages/remove')
         );
-        server.imports.all(
+        server.import.all(
           \`\${root}/${model.dash}/restore/${ids}\`, 
           () => import('./pages/restore')
         );
-        server.imports.all(
+        server.import.all(
           \`\${root}/${model.dash}/search\`, 
           () => import('./pages/search')
         );
-        server.imports.all(
+        server.import.all(
           \`\${root}/${model.dash}/update/${ids}\`, 
           () => import('./pages/update')
         );

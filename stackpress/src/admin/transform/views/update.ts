@@ -75,7 +75,7 @@ export default function removePage(directory: Directory, _registry: Registry, mo
         {
           label: (<span className="theme-info">{_('${model.plural}')}</span>),
           icon: '${model.icon}',
-          href: '\${root}/${model.dash}/search'
+          href: \`\${root}/${model.dash}/search\`
         },
         {
           label: (
@@ -154,7 +154,6 @@ export default function removePage(directory: Directory, _registry: Registry, mo
           </div>
           <div className="px-p-10">
             <Admin${model.title}UpdateForm 
-              root={root} 
               errors={errors} 
               input={input} 
             />

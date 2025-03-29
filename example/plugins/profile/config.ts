@@ -1,4 +1,5 @@
 import Registry from 'stackpress/Registry';
+import Model from 'stackpress/Model';
 import type { SchemaConfig } from 'stackpress/schema';
 
 export const schema: SchemaConfig = {
@@ -1876,3 +1877,6 @@ export const schema: SchemaConfig = {
 };
 
 export const registry = new Registry(schema);
+
+const model = registry.model.get('profile') as Model;
+export default model;
