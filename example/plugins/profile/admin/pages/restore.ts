@@ -4,7 +4,7 @@ import type Server from "@stackpress/ingest/Server";
 import restorePage from "stackpress/admin/pages/restore";
 import config from "../../config";
 
-export default function AdminProfileRestorePage(
+export default function AdminAddressRestorePage(
   req: Request,
   res: Response,
   ctx: Server,

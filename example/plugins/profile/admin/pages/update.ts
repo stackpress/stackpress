@@ -4,7 +4,7 @@ import type Server from "@stackpress/ingest/Server";
 import updatePage from "stackpress/admin/pages/update";
 import config from "../../config";
 
-export default function AdminProfileUpdatePage(
+export default function AdminAddressUpdatePage(
   req: Request,
   res: Response,
   ctx: Server,

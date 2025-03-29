@@ -4,7 +4,7 @@ import type Server from "@stackpress/ingest/Server";
 import removePage from "stackpress/admin/pages/remove";
 import config from "../../config";
 
-export default function AdminProfileRemovePage(
+export default function AdminAddressRemovePage(
   req: Request,
   res: Response,
   ctx: Server,

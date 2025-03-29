@@ -4,13 +4,13 @@ import type {
   AdminDataProps,
 } from "stackpress/view";
 import type { SearchParams } from "stackpress/sql";
-import type { ProfileExtended } from "../../types";
+import type { AddressExtended } from "../../types";
 import { useLanguage } from "r22n";
 import { Crumbs, LayoutAdmin } from "stackpress/view";
 
-export function AdminProfileRemoveCrumbs(props: {
+export function AdminAddressRemoveCrumbs(props: {
   root: string;
-  results: ProfileExtended;
+  results: AddressExtended;
 }) {
   const { root, results } = props;
   //hooks
@@ -18,14 +18,14 @@ export function AdminProfileRemoveCrumbs(props: {
   //variables
   const crumbs = [
     {
-      label: <span className="theme-info">{_("Profiles")}</span>,
-      icon: "user",
-      href: `${root}/profile/search`,
+      label: <span className="theme-info">{_("Addresses")}</span>,
+      icon: "map-marker",
+      href: `${root}/address/search`,
     },
     {
-      label: <span className="theme-info">{`${results?.name || ""}`}</span>,
-      icon: "user",
-      href: `${root}/profile/detail/${results.id}`,
+      label: <span className="theme-info">{`${results?.label || ""}`}</span>,
+      icon: "map-marker",
+      href: `${root}/address/detail/${results.id}`,
     },
     {
       label: _("Remove"),
@@ -35,9 +35,9 @@ export function AdminProfileRemoveCrumbs(props: {
   return <Crumbs crumbs={crumbs} />;
 }
 
-export function AdminProfileRemoveForm(props: {
+export function AdminAddressRemoveForm(props: {
   root: string;
-  results: ProfileExtended;
+  results: AddressExtended;
 }) {
   const { root, results } = props;
   const { _ } = useLanguage();
@@ -48,7 +48,7 @@ export function AdminProfileRemoveForm(props: {
         <strong className="font-semibold">
           {_(
             "Are you sure you want to remove %s forever?",
-            `${results?.name || ""}`,
+            `${results?.label || ""}`,
           )}
         </strong>
         <br />
@@ -57,7 +57,7 @@ export function AdminProfileRemoveForm(props: {
       <div className="px-mt-20">
         <a
           className="theme-bg-muted px-px-14 px-py-10 inline-block rounded"
-          href={`${root}/profile/detail/${results.id}`}
+          href={`${root}/address/detail/${results.id}`}
         >
           <i className="px-mr-5 inline-block fas fa-fw fa-arrow-left"></i>
           <span>Nevermind.</span>
@@ -74,33 +74,33 @@ export function AdminProfileRemoveForm(props: {
   );
 }
 
-export function AdminProfileRemoveBody(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+export function AdminAddressRemoveBody(
+  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
 ) {
   const { data, response } = props;
   const { root = "/admin" } = data.admin || {};
-  const results = response.results as ProfileExtended;
+  const results = response.results as AddressExtended;
   //render
   return (
     <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
       <div className="px-px-10 px-py-14 theme-bg-bg2">
-        <AdminProfileRemoveCrumbs root={root} results={results} />
+        <AdminAddressRemoveCrumbs root={root} results={results} />
       </div>
       <div className="px-p-10">
-        <AdminProfileRemoveForm root={root} results={results} />
+        <AdminAddressRemoveForm root={root} results={results} />
       </div>
     </main>
   );
 }
 
-export function AdminProfileRemoveHead(
-  props: PageHeadProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+export function AdminAddressRemoveHead(
+  props: PageHeadProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
 ) {
   const { data, styles = [] } = props;
   const { _ } = useLanguage();
   return (
     <>
-      <title>{_("Remove Profile")}</title>
+      <title>{_("Remove Address")}</title>
       {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
@@ -110,8 +110,8 @@ export function AdminProfileRemoveHead(
   );
 }
 
-export function AdminProfileRemovePage(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+export function AdminAddressRemovePage(
+  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
 ) {
   const { data, session, request } = props;
   const theme = request.session.theme as string | undefined;
@@ -132,10 +132,10 @@ export function AdminProfileRemovePage(
       menu={menu}
       session={session}
     >
-      <AdminProfileRemoveBody {...props} />
+      <AdminAddressRemoveBody {...props} />
     </LayoutAdmin>
   );
 }
 
-export const Head = AdminProfileRemoveHead;
-export default AdminProfileRemovePage;
+export const Head = AdminAddressRemoveHead;
+export default AdminAddressRemovePage;

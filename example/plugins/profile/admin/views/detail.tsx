@@ -5,21 +5,31 @@ import type {
   SessionPermission,
 } from "stackpress/view";
 import type { SearchParams } from "stackpress/sql";
-import type { ProfileExtended } from "../../types";
+import type { AddressExtended } from "../../types";
 import { useLanguage } from "r22n";
 import { Table, Trow, Tcol } from "frui/element/Table";
 import { Session, useStripe, Crumbs, LayoutAdmin } from "stackpress/view";
-import NameViewFormat from "../../components/views/NameViewFormat";
-import ImageViewFormat from "../../components/views/ImageViewFormat";
-import TypeViewFormat from "../../components/views/TypeViewFormat";
-import ReferencesViewFormat from "../../components/views/ReferencesViewFormat";
+import LabelViewFormat from "../../components/views/LabelViewFormat";
+import ContactViewFormat from "../../components/views/ContactViewFormat";
+import EmailViewFormat from "../../components/views/EmailViewFormat";
+import PhoneViewFormat from "../../components/views/PhoneViewFormat";
+import UnitViewFormat from "../../components/views/UnitViewFormat";
+import BuildingViewFormat from "../../components/views/BuildingViewFormat";
+import StreetViewFormat from "../../components/views/StreetViewFormat";
+import NeighborhoodViewFormat from "../../components/views/NeighborhoodViewFormat";
+import CityViewFormat from "../../components/views/CityViewFormat";
+import StateViewFormat from "../../components/views/StateViewFormat";
+import RegionViewFormat from "../../components/views/RegionViewFormat";
+import CountryViewFormat from "../../components/views/CountryViewFormat";
+import PostalViewFormat from "../../components/views/PostalViewFormat";
+import NotesViewFormat from "../../components/views/NotesViewFormat";
 import ActiveViewFormat from "../../components/views/ActiveViewFormat";
 import CreatedViewFormat from "../../components/views/CreatedViewFormat";
 import UpdatedViewFormat from "../../components/views/UpdatedViewFormat";
 
-export function AdminProfileDetailCrumbs(props: {
+export function AdminAddressDetailCrumbs(props: {
   root: string;
-  results: ProfileExtended;
+  results: AddressExtended;
 }) {
   //props
   const { root, results } = props;
@@ -28,21 +38,21 @@ export function AdminProfileDetailCrumbs(props: {
   //variables
   const crumbs = [
     {
-      label: <span className="theme-info">{_("Profiles")}</span>,
-      icon: "user",
-      href: `${root}/profile/search`,
+      label: <span className="theme-info">{_("Addresses")}</span>,
+      icon: "map-marker",
+      href: `${root}/address/search`,
     },
     {
-      label: `${results?.name || ""}`,
-      icon: "user",
+      label: `${results?.label || ""}`,
+      icon: "map-marker",
     },
   ];
   return <Crumbs crumbs={crumbs} />;
 }
 
-export function AdminProfileDetailActions(props: {
+export function AdminAddressDetailActions(props: {
   root: string;
-  results: ProfileExtended;
+  results: AddressExtended;
   can: (...permits: SessionPermission[]) => boolean;
 }) {
   const { root, results, can } = props;
@@ -50,15 +60,15 @@ export function AdminProfileDetailActions(props: {
   const routes = {
     update: {
       method: "ALL",
-      route: `${root}/profile/update/${results.id}`,
+      route: `${root}/address/update/${results.id}`,
     },
     remove: {
       method: "ALL",
-      route: `${root}/profile/remove/${results.id}`,
+      route: `${root}/address/remove/${results.id}`,
     },
     restore: {
       method: "ALL",
-      route: `${root}/profile/restore/${results.id}`,
+      route: `${root}/address/restore/${results.id}`,
     },
   };
   return (
@@ -94,7 +104,7 @@ export function AdminProfileDetailActions(props: {
   );
 }
 
-export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
+export function AdminAddressDetailResults(props: { results: AddressExtended }) {
   const { results } = props;
   const { _ } = useLanguage();
   const stripe = useStripe("theme-bg-bg0", "theme-bg-bg1");
@@ -117,10 +127,10 @@ export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
           noWrap
           className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
         >
-          {_("Name")}
+          {_("ProfileId")}
         </Tcol>
         <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
-          <NameViewFormat value={results.name} />
+          {results.profileId.toString()}
         </Tcol>
       </Trow>
       ,
@@ -129,10 +139,10 @@ export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
           noWrap
           className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
         >
-          {_("Image")}
+          {_("Label")}
         </Tcol>
         <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
-          {results.image ? <ImageViewFormat value={results.image} /> : ""}
+          <LabelViewFormat value={results.label} />
         </Tcol>
       </Trow>
       ,
@@ -141,10 +151,10 @@ export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
           noWrap
           className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
         >
-          {_("Type")}
+          {_("Contact")}
         </Tcol>
         <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
-          <TypeViewFormat value={results.type} />
+          {results.contact ? <ContactViewFormat value={results.contact} /> : ""}
         </Tcol>
       </Trow>
       ,
@@ -153,10 +163,10 @@ export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
           noWrap
           className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
         >
-          {_("Roles")}
+          {_("Email")}
         </Tcol>
         <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
-          {results.roles.toString()}
+          {results.email ? <EmailViewFormat value={results.email} /> : ""}
         </Tcol>
       </Trow>
       ,
@@ -165,10 +175,10 @@ export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
           noWrap
           className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
         >
-          {_("Tags")}
+          {_("Phone")}
         </Tcol>
         <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
-          {results.tags.toString()}
+          {results.phone ? <PhoneViewFormat value={results.phone} /> : ""}
         </Tcol>
       </Trow>
       ,
@@ -177,14 +187,150 @@ export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
           noWrap
           className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
         >
-          {_("References")}
+          {_("Unit")}
         </Tcol>
         <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
-          {results.references ? (
-            <ReferencesViewFormat value={results.references} />
+          {results.unit ? <UnitViewFormat value={results.unit} /> : ""}
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Building")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          {results.building ? (
+            <BuildingViewFormat value={results.building} />
           ) : (
             ""
           )}
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Street")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          <StreetViewFormat value={results.street} />
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Neighborhood")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          {results.neighborhood ? (
+            <NeighborhoodViewFormat value={results.neighborhood} />
+          ) : (
+            ""
+          )}
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("City")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          <CityViewFormat value={results.city} />
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("State")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          {results.state ? <StateViewFormat value={results.state} /> : ""}
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Region")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          {results.region ? <RegionViewFormat value={results.region} /> : ""}
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Country")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          <CountryViewFormat value={results.country} />
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Postal")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          <PostalViewFormat value={results.postal} />
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Notes")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          {results.notes ? <NotesViewFormat value={results.notes} /> : ""}
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Latitude")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          {results.latitude ? results.latitude.toString() : ""}
+        </Tcol>
+      </Trow>
+      ,
+      <Trow>
+        <Tcol
+          noWrap
+          className={`!theme-bc-bd2 px-p-5 font-bold ${stripe(true)}`}
+        >
+          {_("Longitude")}
+        </Tcol>
+        <Tcol noWrap className={`!theme-bc-bd2 px-p-5 ${stripe()}`}>
+          {results.longitude ? results.longitude.toString() : ""}
         </Tcol>
       </Trow>
       ,
@@ -227,38 +373,38 @@ export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
   );
 }
 
-export function AdminProfileDetailBody(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+export function AdminAddressDetailBody(
+  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
 ) {
   const { data, session, response } = props;
   const me = Session.load(session);
   const can = me.can.bind(me);
   const { root = "/admin" } = data.admin || {};
-  const results = response.results as ProfileExtended;
+  const results = response.results as AddressExtended;
   //render
   return (
     <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
       <div className="px-px-10 px-py-14 theme-bg-bg2">
-        <AdminProfileDetailCrumbs root={root} results={results} />
+        <AdminAddressDetailCrumbs root={root} results={results} />
       </div>
       <div className="px-w-100-0">
-        <AdminProfileDetailActions can={can} root={root} results={results} />
+        <AdminAddressDetailActions can={can} root={root} results={results} />
       </div>
       <div className="flex-grow px-w-100-0 overflow-auto">
-        <AdminProfileDetailResults results={results} />
+        <AdminAddressDetailResults results={results} />
       </div>
     </main>
   );
 }
 
-export function AdminProfileDetailHead(
-  props: PageHeadProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+export function AdminAddressDetailHead(
+  props: PageHeadProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
 ) {
   const { data, styles = [] } = props;
   const { _ } = useLanguage();
   return (
     <>
-      <title>{_("Profile Detail")}</title>
+      <title>{_("Address Detail")}</title>
       {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
@@ -268,8 +414,8 @@ export function AdminProfileDetailHead(
   );
 }
 
-export function AdminProfileDetailPage(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+export function AdminAddressDetailPage(
+  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
 ) {
   const { data, session, request } = props;
   const theme = request.session.theme as string | undefined;
@@ -290,10 +436,10 @@ export function AdminProfileDetailPage(
       menu={menu}
       session={session}
     >
-      <AdminProfileDetailBody {...props} />
+      <AdminAddressDetailBody {...props} />
     </LayoutAdmin>
   );
 }
 
-export const Head = AdminProfileDetailHead;
-export default AdminProfileDetailPage;
+export const Head = AdminAddressDetailHead;
+export default AdminAddressDetailPage;

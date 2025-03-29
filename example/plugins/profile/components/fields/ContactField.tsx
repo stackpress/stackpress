@@ -3,32 +3,32 @@ import { useLanguage } from "r22n";
 import Control from "frui/element/Control";
 import Input from "frui/field/Input";
 
-export function ImageField(props: FieldProps) {
+export function ContactField(props: FieldProps) {
   //props
   const { className, value, change, error = false } = props;
-  const attributes = { type: "url" };
+  const attributes = { type: "text" };
   //render
   return (
     <Input
       {...attributes}
-      name="image"
+      name="contact"
       className={className}
       error={error}
       defaultValue={value}
-      onUpdate={(value) => change && change("image", value)}
+      onUpdate={(value) => change && change("contact", value)}
     />
   );
 }
 
-export function ImageFieldControl(props: ControlProps) {
+export function ContactFieldControl(props: ControlProps) {
   //props
   const { className, value, change, error } = props;
   //hooks
   const { _ } = useLanguage();
   //render
   return (
-    <Control label={_("Image")} error={error} className={className}>
-      <ImageField
+    <Control label={_("Contact Person")} error={error} className={className}>
+      <ContactField
         className="!border-b2 dark:bg-gray-300 outline-none"
         error={!!error}
         value={value}

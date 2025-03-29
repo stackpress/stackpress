@@ -2,56 +2,56 @@ import type Server from "@stackpress/ingest/Server";
 
 export default function routes(server: Server) {
   const root = server.config.path("admin.root", "/admin");
-  server.import.all(`${root}/profile/create`, () => import("./pages/create"));
+  server.import.all(`${root}/address/create`, () => import("./pages/create"));
   server.import.all(
-    `${root}/profile/detail/:id`,
+    `${root}/address/detail/:id`,
     () => import("./pages/detail"),
   );
-  server.import.all(`${root}/profile/export`, () => import("./pages/export"));
-  server.import.all(`${root}/profile/import`, () => import("./pages/import"));
+  server.import.all(`${root}/address/export`, () => import("./pages/export"));
+  server.import.all(`${root}/address/import`, () => import("./pages/import"));
   server.import.all(
-    `${root}/profile/remove/:id`,
+    `${root}/address/remove/:id`,
     () => import("./pages/remove"),
   );
   server.import.all(
-    `${root}/profile/restore/:id`,
+    `${root}/address/restore/:id`,
     () => import("./pages/restore"),
   );
-  server.import.all(`${root}/profile/search`, () => import("./pages/search"));
+  server.import.all(`${root}/address/search`, () => import("./pages/search"));
   server.import.all(
-    `${root}/profile/update/:id`,
+    `${root}/address/update/:id`,
     () => import("./pages/update"),
   );
 
   const module = server.config.path("client.module", ".client");
   server.view.all(
-    `${root}/profile/create`,
-    `${module}/Profile/admin/views/create`,
+    `${root}/address/create`,
+    `${module}/Address/admin/views/create`,
     -100,
   );
   server.view.all(
-    `${root}/profile/detail/:id`,
-    `${module}/Profile/admin/views/detail`,
+    `${root}/address/detail/:id`,
+    `${module}/Address/admin/views/detail`,
     -100,
   );
   server.view.all(
-    `${root}/profile/remove/:id`,
-    `${module}/Profile/admin/views/remove`,
+    `${root}/address/remove/:id`,
+    `${module}/Address/admin/views/remove`,
     -100,
   );
   server.view.all(
-    `${root}/profile/restore/:id`,
-    `${module}/Profile/admin/views/restore`,
+    `${root}/address/restore/:id`,
+    `${module}/Address/admin/views/restore`,
     -100,
   );
   server.view.all(
-    `${root}/profile/search`,
-    `${module}/Profile/admin/views/search`,
+    `${root}/address/search`,
+    `${module}/Address/admin/views/search`,
     -100,
   );
   server.view.all(
-    `${root}/profile/update/:id`,
-    `${module}/Profile/admin/views/update`,
+    `${root}/address/update/:id`,
+    `${module}/Address/admin/views/update`,
     -100,
   );
 }

@@ -4,7 +4,7 @@ import type Server from "@stackpress/ingest/Server";
 import createPage from "stackpress/admin/pages/create";
 import config from "../../config";
 
-export default function AdminProfileCreatePage(
+export default function AdminAddressCreatePage(
   req: Request,
   res: Response,
   ctx: Server,

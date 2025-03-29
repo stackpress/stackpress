@@ -1,34 +1,34 @@
 import type { FieldProps, ControlProps } from "stackpress/view";
 import { useLanguage } from "r22n";
 import Control from "frui/element/Control";
-import Textlist from "frui/field/Textlist";
+import Input from "frui/field/Input";
 
-export function RolesField(props: FieldProps) {
+export function RegionField(props: FieldProps) {
   //props
   const { className, value, change, error = false } = props;
-  const attributes = { add: "Add Role" };
+  const attributes = { type: "text" };
   //render
   return (
-    <Textlist
+    <Input
       {...attributes}
-      name="roles[]"
+      name="region"
       className={className}
       error={error}
       defaultValue={value}
-      onUpdate={(value) => change && change("roles[]", value)}
+      onUpdate={(value) => change && change("region", value)}
     />
   );
 }
 
-export function RolesFieldControl(props: ControlProps) {
+export function RegionFieldControl(props: ControlProps) {
   //props
   const { className, value, change, error } = props;
   //hooks
   const { _ } = useLanguage();
   //render
   return (
-    <Control label={_("Roles")} error={error} className={className}>
-      <RolesField
+    <Control label={_("Region")} error={error} className={className}>
+      <RegionField
         className="!border-b2 dark:bg-gray-300 outline-none"
         error={!!error}
         value={value}

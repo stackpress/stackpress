@@ -1,9 +1,9 @@
 import Text from "frui/format/Text";
 
-export default function TypeFormat(props: { value: string }) {
+export default function RegionFormat(props: { value: string }) {
   //props
   const { value } = props;
-  const attributes = { lower: true };
+  const attributes = {};
   //render
   return <Text {...attributes} value={value} />;
 }
