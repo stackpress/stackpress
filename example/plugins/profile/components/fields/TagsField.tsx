@@ -1,40 +1,34 @@
 import type { FieldProps, ControlProps } from "stackpress/view";
 import { useLanguage } from "r22n";
 import Control from "frui/element/Control";
-import Select from "frui/field/Select";
+import Taglist from "frui/field/Taglist";
 
-export function ProfileIdField(props: FieldProps) {
+export function TagsField(props: FieldProps) {
   //props
   const { className, value, change, error = false } = props;
-  const attributes = {
-    searchable: true,
-    href: "/admin/profile/search",
-    key: "profile",
-    foreign: "id",
-    template: "{{name}}",
-  };
+  const attributes = {};
   //render
   return (
-    <Select
+    <Taglist
       {...attributes}
-      name="profileId"
+      name="tags[]"
       className={className}
       error={error}
       defaultValue={value}
-      onUpdate={(value) => change && change("profileId", value)}
+      onUpdate={(value) => change && change("tags[]", value)}
     />
   );
 }
 
-export function ProfileIdFieldControl(props: ControlProps) {
+export function TagsFieldControl(props: ControlProps) {
   //props
   const { className, value, change, error } = props;
   //hooks
   const { _ } = useLanguage();
   //render
   return (
-    <Control label={`${_("Profile")}*`} error={error} className={className}>
-      <ProfileIdField
+    <Control label={_("Tags")} error={error} className={className}>
+      <TagsField
         className="!border-b2 dark:bg-gray-300 outline-none"
         error={!!error}
         value={value}

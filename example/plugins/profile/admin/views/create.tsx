@@ -4,33 +4,24 @@ import type {
   PageBodyProps,
   AdminDataProps,
 } from "stackpress/view";
-import type { AddressInput, Address } from "../../types";
+import type { ProfileInput, Profile } from "../../types";
 import { useLanguage } from "r22n";
 import Button from "frui/element/Button";
 import { Crumbs, LayoutAdmin } from "stackpress/view";
-import { ProfileIdFieldControl } from "../../components/fields/ProfileIdField";
-import { LabelFieldControl } from "../../components/fields/LabelField";
-import { ContactFieldControl } from "../../components/fields/ContactField";
-import { EmailFieldControl } from "../../components/fields/EmailField";
-import { PhoneFieldControl } from "../../components/fields/PhoneField";
-import { UnitFieldControl } from "../../components/fields/UnitField";
-import { BuildingFieldControl } from "../../components/fields/BuildingField";
-import { StreetFieldControl } from "../../components/fields/StreetField";
-import { NeighborhoodFieldControl } from "../../components/fields/NeighborhoodField";
-import { CityFieldControl } from "../../components/fields/CityField";
-import { StateFieldControl } from "../../components/fields/StateField";
-import { RegionFieldControl } from "../../components/fields/RegionField";
-import { CountryFieldControl } from "../../components/fields/CountryField";
-import { PostalFieldControl } from "../../components/fields/PostalField";
-import { NotesFieldControl } from "../../components/fields/NotesField";
+import { NameFieldControl } from "../../components/fields/NameField";
+import { ImageFieldControl } from "../../components/fields/ImageField";
+import { TypeFieldControl } from "../../components/fields/TypeField";
+import { RolesFieldControl } from "../../components/fields/RolesField";
+import { TagsFieldControl } from "../../components/fields/TagsField";
+import { ReferencesFieldControl } from "../../components/fields/ReferencesField";
 
-export function AdminAddressCreateCrumbs() {
+export function AdminProfileCreateCrumbs() {
   //hooks
   const { _ } = useLanguage();
   //variables
   const crumbs = [
     {
-      label: <span className="theme-info">{_("Addresses")}</span>,
+      label: <span className="theme-info">{_("Profiles")}</span>,
       icon: "user",
       href: "search",
     },
@@ -42,102 +33,48 @@ export function AdminAddressCreateCrumbs() {
   return <Crumbs crumbs={crumbs} />;
 }
 
-export function AdminAddressCreateForm(props: {
-  input: Partial<AddressInput>;
+export function AdminProfileCreateForm(props: {
+  input: Partial<ProfileInput>;
   errors: NestedObject<string | string[]>;
 }) {
   const { input, errors } = props;
   const { _ } = useLanguage();
   return (
     <form method="post">
-      <ProfileIdFieldControl
+      <NameFieldControl
         className="px-mb-20"
-        value={input.profileId}
-        error={errors.profileId?.toString()}
+        value={input.name}
+        error={errors.name?.toString()}
       />
       ,
-      <LabelFieldControl
+      <ImageFieldControl
         className="px-mb-20"
-        value={input.label}
-        error={errors.label?.toString()}
+        value={input.image}
+        error={errors.image?.toString()}
       />
       ,
-      <ContactFieldControl
+      <TypeFieldControl
         className="px-mb-20"
-        value={input.contact}
-        error={errors.contact?.toString()}
+        value={input.type}
+        error={errors.type?.toString()}
       />
       ,
-      <EmailFieldControl
+      <RolesFieldControl
         className="px-mb-20"
-        value={input.email}
-        error={errors.email?.toString()}
+        value={input.roles}
+        error={errors.roles?.toString()}
       />
       ,
-      <PhoneFieldControl
+      <TagsFieldControl
         className="px-mb-20"
-        value={input.phone}
-        error={errors.phone?.toString()}
+        value={input.tags}
+        error={errors.tags?.toString()}
       />
       ,
-      <UnitFieldControl
+      <ReferencesFieldControl
         className="px-mb-20"
-        value={input.unit}
-        error={errors.unit?.toString()}
-      />
-      ,
-      <BuildingFieldControl
-        className="px-mb-20"
-        value={input.building}
-        error={errors.building?.toString()}
-      />
-      ,
-      <StreetFieldControl
-        className="px-mb-20"
-        value={input.street}
-        error={errors.street?.toString()}
-      />
-      ,
-      <NeighborhoodFieldControl
-        className="px-mb-20"
-        value={input.neighborhood}
-        error={errors.neighborhood?.toString()}
-      />
-      ,
-      <CityFieldControl
-        className="px-mb-20"
-        value={input.city}
-        error={errors.city?.toString()}
-      />
-      ,
-      <StateFieldControl
-        className="px-mb-20"
-        value={input.state}
-        error={errors.state?.toString()}
-      />
-      ,
-      <RegionFieldControl
-        className="px-mb-20"
-        value={input.region}
-        error={errors.region?.toString()}
-      />
-      ,
-      <CountryFieldControl
-        className="px-mb-20"
-        value={input.country}
-        error={errors.country?.toString()}
-      />
-      ,
-      <PostalFieldControl
-        className="px-mb-20"
-        value={input.postal}
-        error={errors.postal?.toString()}
-      />
-      ,
-      <NotesFieldControl
-        className="px-mb-20"
-        value={input.notes}
-        error={errors.notes?.toString()}
+        value={input.references}
+        error={errors.references?.toString()}
       />
       <Button
         className="theme-bc-bd2 theme-bg-bg2 border !px-px-14 !px-py-8 px-mr-5"
@@ -150,8 +87,8 @@ export function AdminAddressCreateForm(props: {
   );
 }
 
-export function AdminAddressCreateBody(
-  props: PageBodyProps<AdminDataProps, Partial<AddressInput>, Address>,
+export function AdminProfileCreateBody(
+  props: PageBodyProps<AdminDataProps, Partial<ProfileInput>, Profile>,
 ) {
   const { request, response } = props;
   const input = response.results || request.data || {};
@@ -160,23 +97,23 @@ export function AdminAddressCreateBody(
   return (
     <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
       <div className="px-px-10 px-py-14 theme-bg-bg2">
-        <AdminAddressCreateCrumbs />
+        <AdminProfileCreateCrumbs />
       </div>
       <div className="px-p-10">
-        <AdminAddressCreateForm errors={errors} input={input} />
+        <AdminProfileCreateForm errors={errors} input={input} />
       </div>
     </main>
   );
 }
 
-export function AdminAddressCreateHead(
-  props: PageHeadProps<AdminDataProps, Partial<AddressInput>, Address>,
+export function AdminProfileCreateHead(
+  props: PageHeadProps<AdminDataProps, Partial<ProfileInput>, Profile>,
 ) {
   const { data, styles = [] } = props;
   const { _ } = useLanguage();
   return (
     <>
-      <title>{_("Create Address")}</title>
+      <title>{_("Create Profile")}</title>
       {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
@@ -186,8 +123,8 @@ export function AdminAddressCreateHead(
   );
 }
 
-export function AdminAddressCreatePage(
-  props: PageBodyProps<AdminDataProps, Partial<AddressInput>, Address>,
+export function AdminProfileCreatePage(
+  props: PageBodyProps<AdminDataProps, Partial<ProfileInput>, Profile>,
 ) {
   const { data, session, request } = props;
   const theme = request.session.theme as string | undefined;
@@ -208,10 +145,10 @@ export function AdminAddressCreatePage(
       menu={menu}
       session={session}
     >
-      <AdminAddressCreateBody {...props} />
+      <AdminProfileCreateBody {...props} />
     </LayoutAdmin>
   );
 }
 
-export const Head = AdminAddressCreateHead;
-export default AdminAddressCreatePage;
+export const Head = AdminProfileCreateHead;
+export default AdminProfileCreatePage;

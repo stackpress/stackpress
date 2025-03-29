@@ -6,7 +6,7 @@ import type {
   AdminDataProps,
   SessionPermission,
 } from "stackpress/view";
-import type { AddressExtended } from "../../types";
+import type { ProfileExtended } from "../../types";
 import { useState } from "react";
 import { useLanguage } from "r22n";
 import { Table, Thead, Trow, Tcol } from "frui/element/Table";
@@ -27,36 +27,30 @@ import {
 } from "stackpress/view";
 import { batchAndSend } from "stackpress/view/import";
 import IdListFormat from "../../components/lists/IdListFormat";
-import LabelListFormat from "../../components/lists/LabelListFormat";
-import ContactListFormat from "../../components/lists/ContactListFormat";
-import UnitListFormat from "../../components/lists/UnitListFormat";
-import BuildingListFormat from "../../components/lists/BuildingListFormat";
-import StreetListFormat from "../../components/lists/StreetListFormat";
-import NeighborhoodListFormat from "../../components/lists/NeighborhoodListFormat";
-import CityListFormat from "../../components/lists/CityListFormat";
-import StateListFormat from "../../components/lists/StateListFormat";
-import RegionListFormat from "../../components/lists/RegionListFormat";
-import CountryListFormat from "../../components/lists/CountryListFormat";
-import PostalListFormat from "../../components/lists/PostalListFormat";
+import NameListFormat from "../../components/lists/NameListFormat";
+import ImageListFormat from "../../components/lists/ImageListFormat";
+import TypeListFormat from "../../components/lists/TypeListFormat";
 import CreatedListFormat from "../../components/lists/CreatedListFormat";
 import UpdatedListFormat from "../../components/lists/UpdatedListFormat";
-import { ProfileIdFilterControl } from "../../components/filters/ProfileIdFilter";
+import { TypeFilterControl } from "../../components/filters/TypeFilter";
 import { ActiveFilterControl } from "../../components/filters/ActiveFilter";
+import { CreatedSpanControl } from "../../components/spans/CreatedSpan";
+import { UpdatedSpanControl } from "../../components/spans/UpdatedSpan";
 
-export function AdminAddressSearchCrumbs() {
+export function AdminProfileSearchCrumbs() {
   //hooks
   const { _ } = useLanguage();
   //variables
   const crumbs = [
     {
-      label: _("Addresses"),
-      icon: "map-marker",
+      label: _("Profiles"),
+      icon: "user",
     },
   ];
   return <Crumbs crumbs={crumbs} />;
 }
 
-export function AdminAddressSearchFilters(props: {
+export function AdminProfileSearchFilters(props: {
   query: SearchParams;
   close: MouseEventHandler<HTMLElement>;
 }) {
@@ -74,15 +68,16 @@ export function AdminAddressSearchFilters(props: {
         {_("Filters")}
       </header>
       <form className="flex-grow overflow-auto">
-        <ProfileIdFilterControl
-          className="px-mb-20"
-          value={query.filter?.profileId}
-        />
+        <TypeFilterControl className="px-mb-20" value={query.filter?.type} />
 
         <ActiveFilterControl
           className="px-mb-20"
           value={query.filter?.active}
         />
+
+        <CreatedSpanControl className="px-mb-20" value={query.span?.created} />
+
+        <UpdatedSpanControl className="px-mb-20" value={query.span?.updated} />
 
         <Button
           className="theme-bc-bd2 theme-bg-bg2 border !px-px-14 !px-py-8 px-mr-5"
@@ -96,7 +91,7 @@ export function AdminAddressSearchFilters(props: {
   );
 }
 
-export function AdminAddressSearchForm(props: {
+export function AdminProfileSearchForm(props: {
   root: string;
   token: string;
   open: (value: SetStateAction<boolean>) => void;
@@ -128,7 +123,17 @@ export function AdminAddressSearchForm(props: {
       >
         <i className="text-sm fas fa-fw fa-filter"></i>
       </Button>
-      <div className="flex-grow"></div>
+      <div className="flex-grow">
+        <form className="flex items-center">
+          <Input className="!theme-bc-bd2" />
+          <Button
+            className="theme-bc-bd2 theme-bg-bg2 border-r border-l-0 border-y !px-px-14 !px-py-8"
+            type="submit"
+          >
+            <i className="text-sm fas fa-fw fa-search"></i>
+          </Button>
+        </form>
+      </div>
       <a className="theme-white theme-bg-info px-px-16 px-py-9" href="export">
         <i className="fas fa-download"></i>
       </a>
@@ -140,7 +145,7 @@ export function AdminAddressSearchForm(props: {
           onChange={upload}
         />
       </Button>
-      {can({ method: "ALL", route: `${root}/address/create` }) && (
+      {can({ method: "ALL", route: `${root}/profile/create` }) && (
         <a
           className="theme-white theme-bg-success px-px-16 px-py-9"
           href="create"
@@ -152,7 +157,7 @@ export function AdminAddressSearchForm(props: {
   );
 }
 
-export function AdminAddressSearchResults(props: {
+export function AdminProfileSearchResults(props: {
   query: Partial<SearchParams>;
   results: ProfileExtended[];
 }) {
@@ -175,14 +180,6 @@ export function AdminAddressSearchResults(props: {
         stickyTop
         className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
       >
-        {_("Profile")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
         {_("Name")}
       </Thead>
 
@@ -191,7 +188,7 @@ export function AdminAddressSearchResults(props: {
         stickyTop
         className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
       >
-        {_("Contact Person")}
+        {_("Image")}
       </Thead>
 
       <Thead
@@ -199,111 +196,7 @@ export function AdminAddressSearchResults(props: {
         stickyTop
         className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
       >
-        {_("Contact Email Address")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Contact Phone Number")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Unit Number")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Building Name")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Street Address")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Neighborhood")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("City")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("State")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Region")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Country")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Postal Code")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Notes")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Latitude")}
-      </Thead>
-
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
-        {_("Longitude")}
+        {_("Type")}
       </Thead>
 
       <Thead
@@ -358,128 +251,26 @@ export function AdminAddressSearchResults(props: {
             noWrap
             className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
           >
+            <NameListFormat value={row.name} />
+          </Tcol>
+          ,
+          <Tcol
+            noWrap
+            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
+          >
+            {row.image ? <ImageListFormat value={row.image} /> : ""}
+          </Tcol>
+          ,
+          <Tcol
+            noWrap
+            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
+          >
             <span
               className="cursor-pointer text-t-info"
-              onClick={() => filter("type", row.profileId)}
+              onClick={() => filter("type", row.type)}
             >
-              <ProfileIdListFormat value={row.profileId} />
+              <TypeListFormat value={row.type} />
             </span>
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            <LabelListFormat value={row.label} />
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.contact ? <ContactListFormat value={row.contact} /> : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.email ? row.email.toString() : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.phone ? row.phone.toString() : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.unit ? <UnitListFormat value={row.unit} /> : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.building ? <BuildingListFormat value={row.building} /> : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            <StreetListFormat value={row.street} />
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.neighborhood ? (
-              <NeighborhoodListFormat value={row.neighborhood} />
-            ) : (
-              ""
-            )}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            <CityListFormat value={row.city} />
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.state ? <StateListFormat value={row.state} /> : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.region ? <RegionListFormat value={row.region} /> : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            <CountryListFormat value={row.country} />
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            <PostalListFormat value={row.postal} />
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.notes ? row.notes.toString() : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.latitude ? row.latitude.toString() : ""}
-          </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
-            {row.longitude ? row.longitude.toString() : ""}
           </Tcol>
           ,
           <Tcol
@@ -509,11 +300,11 @@ export function AdminAddressSearchResults(props: {
   );
 }
 
-export function AdminAddressSearchBody(
+export function AdminProfileSearchBody(
   props: PageBodyProps<
     AdminDataProps,
     Partial<SearchParams>,
-    AddressExtended[]
+    ProfileExtended[]
   >,
 ) {
   //props
@@ -533,15 +324,15 @@ export function AdminAddressSearchBody(
   return (
     <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
       <div className="px-px-10 px-py-14 theme-bg-bg2">
-        <AdminAddressSearchCrumbs />
+        <AdminProfileSearchCrumbs />
       </div>
       <div
         className={`absolute px-t-0 px-b-0 px-w-220 px-z-10 duration-200 ${opened ? "px-r-0" : "px-r--220"}`}
       >
-        <AdminAddressSearchFilters query={query} close={() => open(false)} />
+        <AdminProfileSearchFilters query={query} close={() => open(false)} />
       </div>
       <div className="px-p-10">
-        <AdminAddressSearchForm
+        <AdminProfileSearchForm
           root={root}
           token={session.token}
           open={open}
@@ -565,7 +356,7 @@ export function AdminAddressSearchBody(
             {_("No results found.")}
           </Alert>
         ) : (
-          <AdminAddressSearchResults query={query} results={results} />
+          <AdminProfileSearchResults query={query} results={results} />
         )}
       </div>
       <Pagination total={total} take={take} skip={skip} paginate={page} />
@@ -573,18 +364,18 @@ export function AdminAddressSearchBody(
   );
 }
 
-export function AdminAddressSearchHead(
+export function AdminProfileSearchHead(
   props: PageHeadProps<
     AdminDataProps,
     Partial<SearchParams>,
-    AddressExtended[]
+    ProfileExtended[]
   >,
 ) {
   const { data, styles = [] } = props;
   const { _ } = useLanguage();
   return (
     <>
-      <title>{_("Search Addresses")}</title>
+      <title>{_("Search Profiles")}</title>
       {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
@@ -594,11 +385,11 @@ export function AdminAddressSearchHead(
   );
 }
 
-export function AdminAddressSearchPage(
+export function AdminProfileSearchPage(
   props: PageBodyProps<
     AdminDataProps,
     Partial<SearchParams>,
-    AddressExtended[]
+    ProfileExtended[]
   >,
 ) {
   const { data, session, request } = props;
@@ -620,10 +411,10 @@ export function AdminAddressSearchPage(
       menu={menu}
       session={session}
     >
-      <AdminAddressSearchBody {...props} />
+      <AdminProfileSearchBody {...props} />
     </LayoutAdmin>
   );
 }
 
-export const Head = AdminAddressSearchHead;
-export default AdminAddressSearchPage;
+export const Head = AdminProfileSearchHead;
+export default AdminProfileSearchPage;

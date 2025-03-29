@@ -4,7 +4,7 @@ import type Server from "@stackpress/ingest/Server";
 import importPage from "stackpress/admin/pages/import";
 import config from "../../config";
 
-export default function AdminAddressImportPage(
+export default function AdminProfileImportPage(
   req: Request,
   res: Response,
   ctx: Server,

@@ -4,7 +4,7 @@ import type Server from "@stackpress/ingest/Server";
 import searchPage from "stackpress/admin/pages/search";
 import config from "../../config";
 
-export default function AdminAddressSearchPage(
+export default function AdminProfileSearchPage(
   req: Request,
   res: Response,
   ctx: Server,

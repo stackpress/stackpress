@@ -4,13 +4,13 @@ import type {
   AdminDataProps,
 } from "stackpress/view";
 import type { SearchParams } from "stackpress/sql";
-import type { AddressExtended } from "../../types";
+import type { ProfileExtended } from "../../types";
 import { useLanguage } from "r22n";
 import { Crumbs, LayoutAdmin } from "stackpress/view";
 
-export function AdminAddressRestoreCrumbs(props: {
+export function AdminProfileRestoreCrumbs(props: {
   root: string;
-  results: AddressExtended;
+  results: ProfileExtended;
 }) {
   const { root, results } = props;
   //hooks
@@ -18,14 +18,14 @@ export function AdminAddressRestoreCrumbs(props: {
   //variables
   const crumbs = [
     {
-      label: <span className="theme-info">{_("Addresses")}</span>,
-      icon: "map-marker",
-      href: `${root}/address/search`,
+      label: <span className="theme-info">{_("Profiles")}</span>,
+      icon: "user",
+      href: `${root}/profile/search`,
     },
     {
-      label: <span className="theme-info">{`${results?.label || ""}`}</span>,
-      icon: "map-marker",
-      href: `${root}/address/detail/${results.id}`,
+      label: <span className="theme-info">{`${results?.name || ""}`}</span>,
+      icon: "user",
+      href: `${root}/profile/detail/${results.id}`,
     },
     {
       label: _("Restore"),
@@ -35,9 +35,9 @@ export function AdminAddressRestoreCrumbs(props: {
   return <Crumbs crumbs={crumbs} />;
 }
 
-export function AdminAddressRestoreForm(props: {
+export function AdminProfileRestoreForm(props: {
   root: string;
-  results: AddressExtended;
+  results: ProfileExtended;
 }) {
   const { root, results } = props;
   const { _ } = useLanguage();
@@ -46,13 +46,13 @@ export function AdminAddressRestoreForm(props: {
       <div className="theme-bg-bg1 px-fs-16 px-p-20">
         <i className="px-mr-5 inline-block fas fa-fw fa-info-circle"></i>
         <strong className="font-semibold">
-          {_("Are you sure you want to restore %s?", `${results?.label || ""}`)}
+          {_("Are you sure you want to restore %s?", `${results?.name || ""}`)}
         </strong>
       </div>
       <div className="px-mt-20">
         <a
           className="theme-bg-muted px-px-14 px-py-10 inline-block rounded"
-          href={`${root}/address/detail/${results.id}`}
+          href={`${root}/profile/detail/${results.id}`}
         >
           <i className="px-mr-5 inline-block fas fa-fw fa-arrow-left"></i>
           <span>Nevermind.</span>
@@ -69,33 +69,33 @@ export function AdminAddressRestoreForm(props: {
   );
 }
 
-export function AdminAddressRestoreBody(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
+export function AdminProfileRestoreBody(
+  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
 ) {
   const { data, response } = props;
   const { root = "/admin" } = data.admin || {};
-  const results = response.results as AddressExtended;
+  const results = response.results as ProfileExtended;
   //render
   return (
     <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
       <div className="px-px-10 px-py-14 theme-bg-bg2">
-        <AdminAddressRestoreCrumbs root={root} results={results} />
+        <AdminProfileRestoreCrumbs root={root} results={results} />
       </div>
       <div className="px-p-10">
-        <AdminAddressRestoreForm root={root} results={results} />
+        <AdminProfileRestoreForm root={root} results={results} />
       </div>
     </main>
   );
 }
 
-export function AdminAddressRestoreHead(
-  props: PageHeadProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
+export function AdminProfileRestoreHead(
+  props: PageHeadProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
 ) {
   const { data, styles = [] } = props;
   const { _ } = useLanguage();
   return (
     <>
-      <title>{_("Restore Address")}</title>
+      <title>{_("Restore Profile")}</title>
       {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
@@ -105,8 +105,8 @@ export function AdminAddressRestoreHead(
   );
 }
 
-export function AdminAddressRestorePage(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, AddressExtended>,
+export function AdminProfileRestorePage(
+  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
 ) {
   const { data, session, request } = props;
   const theme = request.session.theme as string | undefined;
@@ -127,10 +127,10 @@ export function AdminAddressRestorePage(
       menu={menu}
       session={session}
     >
-      <AdminAddressRestoreBody {...props} />
+      <AdminProfileRestoreBody {...props} />
     </LayoutAdmin>
   );
 }
 
-export const Head = AdminAddressRestoreHead;
-export default AdminAddressRestorePage;
+export const Head = AdminProfileRestoreHead;
+export default AdminProfileRestorePage;

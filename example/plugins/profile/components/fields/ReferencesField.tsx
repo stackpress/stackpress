@@ -1,34 +1,34 @@
 import type { FieldProps, ControlProps } from "stackpress/view";
 import { useLanguage } from "r22n";
 import Control from "frui/element/Control";
-import Input from "frui/field/Input";
+import Metadata from "frui/field/Metadata";
 
-export function LabelField(props: FieldProps) {
+export function ReferencesField(props: FieldProps) {
   //props
   const { className, value, change, error = false } = props;
-  const attributes = { type: "text" };
+  const attributes = { add: "Add Reference" };
   //render
   return (
-    <Input
+    <Metadata
       {...attributes}
-      name="label"
+      name="references"
       className={className}
       error={error}
       defaultValue={value}
-      onUpdate={(value) => change && change("label", value)}
+      onUpdate={(value) => change && change("references", value)}
     />
   );
 }
 
-export function LabelFieldControl(props: ControlProps) {
+export function ReferencesFieldControl(props: ControlProps) {
   //props
   const { className, value, change, error } = props;
   //hooks
   const { _ } = useLanguage();
   //render
   return (
-    <Control label={`${_("Name")}*`} error={error} className={className}>
-      <LabelField
+    <Control label={_("References")} error={error} className={className}>
+      <ReferencesField
         className="!border-b2 dark:bg-gray-300 outline-none"
         error={!!error}
         value={value}
