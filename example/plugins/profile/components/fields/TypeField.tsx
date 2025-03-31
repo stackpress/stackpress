@@ -28,12 +28,7 @@ export function TypeFieldControl(props: ControlProps) {
   //render
   return (
     <Control label={`${_("Type")}*`} error={error} className={className}>
-      <TypeField
-        className="!border-b2 dark:bg-gray-300 outline-none"
-        error={!!error}
-        value={value}
-        change={change}
-      />
+      <TypeField error={!!error} value={value} change={change} />
     </Control>
   );
 }

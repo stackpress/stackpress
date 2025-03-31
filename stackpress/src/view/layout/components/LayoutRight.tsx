@@ -1,7 +1,4 @@
-export type LayoutRightProps = {
-  open: boolean
-  children: React.ReactNode
-};
+import type { LayoutRightProps } from '../../types'
 
 export default function LayoutRight({ open, children }: LayoutRightProps) {
   const right = open ? 'px-r-0' : 'px-r--220';

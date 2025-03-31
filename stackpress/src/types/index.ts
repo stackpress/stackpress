@@ -12,7 +12,7 @@ import type { AdminConfig } from '../admin/types';
 import type { EmailConfig } from '../email/types';
 import type { LanguageConfig } from '../language/types';
 import type { DatabaseConfig } from '../sql/types';
-import type { ViewConfig } from '../view/types';
+import type { ViewConfig, BrandConfig } from '../view/types';
 import type { AuthConfig, SessionConfig } from '../session/types';
 import type InceptTerminal from '../terminal/Terminal';
 
@@ -55,6 +55,7 @@ export type IdeaPluginWithProject = PluginProps<IdeaProjectProps>;
 // Server Configuration Types
 
 export type Config = UnknownNest & {
+  brand?: BrandConfig,
   server: ServerConfig,
   client?: ClientConfig,
   cookie?: CookieOptions,
@@ -66,115 +67,4 @@ export type Config = UnknownNest & {
   view?: ViewConfig,
   auth?: AuthConfig,
   session?: SessionConfig
-};
-
-//--------------------------------------------------------------------//
-// Model Types
-
-export type Profile = {
-  id: string;
-  name: string;
-  image?: string;
-  type: string;
-  roles: string[];
-  tags: string[];
-  references?: Record<string, string | number | boolean | null>;
-  active: boolean;
-  created: Date;
-  updated: Date;
-};
-export type ProfileExtended = Profile;
-export type ProfileInput = {
-  id?: string;
-  name: string;
-  image?: string;
-  type?: string;
-  roles: string[];
-  tags?: string[];
-  references?: Record<string, string | number | boolean | null>;
-  active?: boolean;
-  created?: Date;
-  updated?: Date;
-};
-export type Auth = {
-  id: string;
-  profileId: string;
-  type: string;
-  nonce: string;
-  token: string;
-  secret: string;
-  verified: boolean;
-  consumed: Date;
-  active: boolean;
-  created: Date;
-  updated: Date;
-};
-export type AuthExtended = Auth & {
-  profile: Profile;
-};
-export type AuthInput = {
-  id?: string;
-  profileId: string;
-  type?: string;
-  token: string;
-  secret: string;
-  verified?: boolean;
-  consumed?: Date;
-  active?: boolean;
-  created?: Date;
-  updated?: Date;
-};
-export type ProfileAuth = Profile & { auth: Record<string, Partial<Auth>> };
-
-export type Application = {
-  id: string;
-  name: string;
-  logo?: string;
-  website?: string;
-  secret: string;
-  scopes: string[];
-  active: boolean;
-  expires: Date;
-  created: Date;
-  updated: Date;
-};
-export type ApplicationExtended = Application;
-export type ApplicationInput = {
-  id?: string;
-  name: string;
-  logo?: string;
-  website?: string;
-  secret?: string;
-  scopes?: string[];
-  active?: boolean;
-  expires: Date;
-  created?: Date;
-  updated?: Date;
-};
-
-export type Session = {
-  id: string;
-  applicationId: string;
-  profileId: string;
-  secret: string;
-  scopes: string[];
-  active: boolean;
-  expires: Date;
-  created: Date;
-  updated: Date;
-};
-export type SessionExtended = Session & {
-  application: Application;
-  profile: Profile;
-};
-export type SessionInput = {
-  id?: string;
-  applicationId: string;
-  profileId: string;
-  secret?: string;
-  scopes?: string[];
-  active?: boolean;
-  expires: Date;
-  created?: Date;
-  updated?: Date;
 };

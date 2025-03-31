@@ -6,6 +6,8 @@ import type Server from '@stackpress/ingest/Server';
 import type { Session } from '../../types';
 //session
 import type { SessionData, SessionTokenData } from '../../session/types';
+//view
+import type { ViewConfig, BrandConfig } from '../../view/types';
 //api
 import type { ApiConfig } from '../types';
 import { unauthorized } from '../helpers';
@@ -15,14 +17,26 @@ export default async function OAuth(
   res: Response, 
   ctx: Server
 ) {
-  //set data for template layer
-  const { scopes = {}, endpoints = [] } = ctx.config.path('api');
-  res.data.set('api', { scopes, endpoints });
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
     return;
   }
+  //get the view, brand and api config
+  const view = ctx.config.path<ViewConfig>('view', {});
+  const brand = ctx.config.path<BrandConfig>('brand', {});
+  const { scopes = {}, endpoints = [] } = ctx.config.path('api');
+  res.data.set('api', { scopes, endpoints });
+  res.data.set('view', { 
+    base: view.base || '/',
+    props: view.props || {}
+  });
+  res.data.set('brand', { 
+    name: brand.name || 'Stackpress',
+    logo: brand.logo || '/logo.png',
+    icon: brand.icon || '/icon.png',
+    favicon: brand.favicon || '/favicon.ico',
+  });
   //there must be a client id and redirect uri
   const id = req.data<string>('client_id');
   const redirect = req.data<string>('redirect_uri');

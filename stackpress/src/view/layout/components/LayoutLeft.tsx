@@ -1,11 +1,5 @@
-export type LayoutLeftProps = {
-  brand?: string,
-  base?: string,
-  logo?: string,
-  open: boolean,
-  toggle: () => void,
-  children: React.ReactNode
-};
+import type { LayoutLeftProps } from '../../types';
+
 export default function LayoutLeft(props: LayoutLeftProps) {
   const { brand, base, logo, open, toggle, children } = props;
   const left = open ? 'rmd-px-l-0' : 'rmd-px-l--220';

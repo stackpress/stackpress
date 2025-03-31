@@ -1,11 +1,4 @@
-import type { JSX } from 'react';
-
-export type Crumb = { 
-  href?: string, 
-  label: string|JSX.Element, 
-  icon?: string,
-  permit?: string[]
-};
+import type { Crumb, CrumbsProps } from '../types';
 
 const Item = ({ href, label, icon, last }: Crumb & { last?: boolean }) => {
   const item = href
@@ -43,11 +36,6 @@ const Header = ({ trail }: { trail: Crumb[] }) => {
       <span className="font-bold">{item.label}</span>
     </div>
   );
-};
-
-export type CrumbsProps = {
-  crumbs: Crumb[], 
-  className?: string
 };
 
 export default function Crumbs({ crumbs, className }: CrumbsProps) {

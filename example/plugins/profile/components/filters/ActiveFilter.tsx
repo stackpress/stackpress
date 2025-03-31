@@ -30,12 +30,7 @@ export function ActiveFilterControl(props: ControlProps) {
   return (
     <Control label={_("Active")} error={error} className={className}>
       <input type="hidden" name="active" value="false" />
-      <ActiveFilter
-        className="!border-b2 dark:bg-gray-300 outline-none"
-        error={!!error}
-        value={value}
-        change={change}
-      />
+      <ActiveFilter error={!!error} value={value} change={change} />
     </Control>
   );
 }

@@ -1,9 +1,7 @@
+//modules
 import { createContext } from 'react';
-
-export type ThemeContextProps = { 
-  theme: string,
-  toggle: () => void
-};
+//views
+import type { ThemeContextProps } from '../types';
 
 const ThemeContext = createContext<ThemeContextProps>({
   theme: 'light', 

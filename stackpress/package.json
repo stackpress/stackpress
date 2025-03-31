@@ -124,7 +124,7 @@
     "./lib": "./dist/lib.js",
     "./plugin": "./dist/plugin.js",
     "./unocss": "./dist/unocss.js",
-    "./fouc.css": "./dist/fouc.css",
+    "./fouc.css": "./fouc.css",
     ".": "./dist/index.js"
   },
   "typesVersions": {
@@ -233,7 +233,7 @@
     "prettier": "3.5.3",
     "r22n": "1.0.7",
     "react-toastify": "11.0.5",
-    "reactus": "0.1.14",
+    "reactus": "0.1.15",
     "ts-morph": "24.0.0"
   },
   "devDependencies": {

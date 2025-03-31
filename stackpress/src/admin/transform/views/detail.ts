@@ -10,22 +10,22 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.ids.map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${root}/${model.dash}/${action}/${path}\``;
+  const link = (action: string) => `\`\${base}/${model.dash}/${action}/${path}\``;
   
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
 
-  //import type { PageHeadProps, PageBodyProps, AdminDataProps, 
-  //SessionPermission } from 'stackpress/view';
+  //import type { ServerPageProps, AdminConfigProps } from 'stackpress/view';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view',
-    namedImports: [
-      'PageHeadProps',
-      'PageBodyProps',
-      'AdminDataProps',
-      'SessionPermission'
-    ]
+    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
+  });
+  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/admin/types',
+    namedImports: [ 'AdminConfigProps' ]
   });
   //import type { SearchParams } from 'stackpress/sql';
   source.addImportDeclaration({
@@ -49,10 +49,10 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'frui/element/Table',
     namedImports: [ 'Table', 'Trow', 'Tcol' ]
   });
-  //import { Session, useStripe, Crumbs, LayoutAdmin } from 'stackpress/view';
+  //import { useServer, useStripe, Crumbs, LayoutAdmin } from 'stackpress/view';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view',
-    namedImports: [ 'Session', 'useStripe', 'Crumbs', 'LayoutAdmin' ]
+    namedImports: [ 'useServer', 'useStripe', 'Crumbs', 'LayoutAdmin' ]
   });
   //import CreatedViewFormat from '../../components/views/CreatedViewFormat';
   model.views.forEach(column => {
@@ -70,11 +70,11 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}DetailCrumbs`,
     parameters: [{ 
       name: 'props', 
-      type: `{ root: string, results: ${model.title}Extended }` 
+      type: `{ base: string, results: ${model.title}Extended }` 
     }],
     statements: (`
       //props
-      const { root, results } = props;
+      const { base, results } = props;
       //hooks
       const { _ } = useLanguage();
       //variables
@@ -84,7 +84,7 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
             <span className="theme-info">{_('${model.plural}')}</span>
           ),
           icon: '${model.icon}',
-          href: \`\${root}/${model.dash}/search\`
+          href: \`\${base}/${model.dash}/search\`
         },
         {
           label: \`${model.transformTemplate('${results?.%s || \'\'}')}\`,
@@ -101,25 +101,25 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     parameters: [{ 
       name: 'props', 
       type: `{
-        root: string,
+        base: string,
         results: ${model.title}Extended,
         can: (...permits: SessionPermission[]) => boolean,
       }` 
     }],
     statements: (`
-      const { root, results, can } = props;
+      const { base, results, can } = props;
       const { _ } = useLanguage();
       const routes = {
         update: { 
-          method: 'ALL', 
+          method: 'GET', 
           route: ${link('update')}
         },
         remove: { 
-          method: 'ALL', 
+          method: 'GET', 
           route: ${link('remove')}
         },
         restore: { 
-          method: 'ALL', 
+          method: 'GET', 
           route: ${link('restore')}
         },
       };
@@ -200,30 +200,25 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
   source.addFunction({
     isExported: true,
     name: `Admin${model.title}DetailBody`,
-    parameters: [{ 
-      name: 'props', 
-      type: `PageBodyProps<${[
-        `AdminDataProps`, 
+    statements: (`
+      const { config, session, response } = useServer<${[
+        `AdminConfigProps`, 
         'Partial<SearchParams>', 
         `${model.title}Extended`
-      ].join(', ')}>` 
-    }],
-    statements: (`
-      const { data, session, response } = props;
-      const me = Session.load(session);
-      const can = me.can.bind(me);
-      const { root = '/admin' } = data.admin || {};
+      ].join(', ')}>();
+      const can = session.can.bind(session);
+      const base = config.path('admin.base', '/admin');
       const results = response.results as ${model.title}Extended;
       //render
       return (
         <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
           <div className="px-px-10 px-py-14 theme-bg-bg2">
-            <Admin${model.title}DetailCrumbs root={root} results={results} />
+            <Admin${model.title}DetailCrumbs base={base} results={results} />
           </div>
           <div className="px-w-100-0">
             <Admin${model.title}DetailActions 
               can={can} 
-              root={root} 
+              base={base} 
               results={results} 
             />
           </div>
@@ -240,19 +235,21 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}DetailHead`,
     parameters: [{ 
       name: 'props', 
-      type: `PageHeadProps<${[
-        `AdminDataProps`, 
-        'Partial<SearchParams>', 
-        `${model.title}Extended`
-      ].join(', ')}>` 
+      type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: (`
       const { data, styles = [] } = props;
+      const { favicon = '/favicon.ico' } = data?.brand || {};
       const { _ } = useLanguage();
+      const mimetype = favicon.endsWith('.png')
+        ? 'image/png'
+        : favicon.endsWith('.svg')
+        ? 'image/svg+xml'
+        : 'image/x-icon';
       return (
         <>
           <title>{_('${model.singular} Detail')}</title>
-          {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
+          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
           <link rel="stylesheet" type="text/css" href="/styles/global.css" />
           {styles.map((href, index) => (
             <link key={index} rel="stylesheet" type="text/css" href={href} />
@@ -267,33 +264,12 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}DetailPage`,
     parameters: [{ 
       name: 'props', 
-      type: `PageBodyProps<${[
-        `AdminDataProps`, 
-        'Partial<SearchParams>', 
-        `${model.title}Extended`
-      ].join(', ')}>` 
+      type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: (`
-      const { data, session, request } = props;
-      const theme = request.session.theme as string | undefined;
-      const {
-        root = '/admin',
-        name = 'Admin',
-        logo = '/images/logo-square.png',
-        menu = []
-      } = data.admin;
-      const path = request.url.pathname;
       return (
-        <LayoutAdmin
-          theme={theme} 
-          brand={name}
-          base={root}
-          logo={logo}
-          path={path} 
-          menu={menu}
-          session={session}
-        >
-          <Admin${model.title}DetailBody {...props} />
+        <LayoutAdmin {...props}>
+          <Admin${model.title}DetailBody />
         </LayoutAdmin>
       );
     `)

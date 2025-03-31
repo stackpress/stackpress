@@ -1,4 +1,5 @@
 //modules
+import type { JSX, ReactNode } from 'react';
 import type { 
   OutputChunk, 
   OutputAsset, 
@@ -20,9 +21,229 @@ import type {
 } from 'reactus';
 //stackpress
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
-import type { IM, SR } from '@stackpress/ingest/types';
+import type { IM, SR, Method } from '@stackpress/ingest/types';
+//language
+import { LanguageConfig } from '../language/types';
 //session
 import type { SessionTokenData } from '../session/types';
+
+//--------------------------------------------------------------------//
+// Server Prop Types
+
+export type ServerUrlProps = {
+  hash: string,
+  host: string,
+  hostname: string,
+  href: string,
+  origin: string,
+  pathname: string,
+  port: string,
+  protocol: string,
+  search: string
+};
+export type ServerSessionProps = SessionTokenData;
+export type ServerRequestProps<
+  I extends UnknownNest = UnknownNest
+> = {
+  url: ServerUrlProps,
+  headers: Record<string, string|string[]>,
+  session: Record<string, string|string[]>,
+  method: Method,
+  mime: string,
+  data: I
+};
+export type ServerResponseProps<
+  O = UnknownNest
+> = Partial<StatusResponse<O>>;
+
+export type ServerProps<
+  C extends UnknownNest = UnknownNest,
+  I extends UnknownNest = UnknownNest,
+  O = UnknownNest
+> = {
+  data: C,
+  session: ServerSessionProps,
+  request: ServerRequestProps<I>,
+  response: ServerResponseProps<O>
+}
+
+export type ServerContextProps = ServerProps<
+  UnknownNest, 
+  UnknownNest, 
+  any
+>;
+export type ServerProviderProps<
+  C extends UnknownNest = UnknownNest,
+  I extends UnknownNest = UnknownNest,
+  O = UnknownNest
+> = Partial<ServerProps<C, I, O>> & { 
+  children: ReactNode 
+};
+
+export type ServerConfigProps<
+  C extends UnknownNest = UnknownNest
+> = C & {
+  language: LanguageConfig,
+  view: ViewConfig,
+  brand: BrandConfig
+};
+
+export type ServerPageProps<
+  C extends UnknownNest = UnknownNest,
+  I extends UnknownNest = UnknownNest,
+  O = UnknownNest
+> = ServerProps<C, I, O> & { styles?: string[] };
+
+//--------------------------------------------------------------------//
+// Element Types
+
+export type Crumb = { 
+  href?: string, 
+  label: string|JSX.Element, 
+  icon?: string,
+  permit?: string[]
+};
+
+export type CrumbsProps = {
+  crumbs: Crumb[], 
+  className?: string
+};
+
+export type PaginationProps = {
+  total?: number,
+  skip?: number, 
+  take?: number, 
+  radius?: number,
+  paginate?: Function
+};
+
+//--------------------------------------------------------------------//
+// Layout Types
+
+export type LayoutHeadProps = {
+  open?: boolean,
+  theme: string,
+  base?: string,
+  logo?: string,
+  brand?: string,
+  toggleLeft?: () => void,
+  toggleRight?: () => void,
+  toggleTheme?: () => void
+};
+
+export type LayoutLeftProps = {
+  brand?: string,
+  base?: string,
+  logo?: string,
+  open: boolean,
+  toggle: () => void,
+  children: ReactNode
+};
+
+export type LayoutMainProps = {
+  open?: boolean
+  children: ReactNode
+};
+
+export type LayoutMenuProps = {
+  path?: string,
+  menu: {
+    name: string;
+    icon: string;
+    path: string;
+    match: string;
+  }[]
+};
+
+export type LayoutRightProps = {
+  open: boolean
+  children: ReactNode
+};
+
+export type LayoutProviderProps = Partial<ServerProps<ServerConfigProps>> & {
+  children: ReactNode
+};
+
+export type PanelAppProps = { 
+  menu?: {
+    name: string;
+    icon: string;
+    path: string;
+    match: string;
+  }[],
+  left?: ReactNode,
+  right?: ReactNode,
+  children: ReactNode
+};
+
+export type LayoutPanelProps = LayoutProviderProps & PanelAppProps;
+
+//--------------------------------------------------------------------//
+// Modal Types
+
+export type ModalConfirmProps = { 
+  open: Function,
+  message: ReactNode
+  confirmed: Function
+};
+
+export type ModalContextProps = { 
+  _title: string,
+  _className: string,
+  _body?: ReactNode,
+  opened: boolean,
+  title: (title: string) => void,
+  open: (opened: boolean) => void,
+  className: (className: string) => void,
+  body: (body: ReactNode) => void
+};
+
+export type ModalProviderProps = { 
+  title?: string,
+  className?: string,
+  children: ReactNode
+};
+
+//--------------------------------------------------------------------//
+// Notify Types
+
+export type NotifyContextProps = {
+  config: {
+    position: string,
+    autoClose: number,
+    hideProgressBar: boolean,
+    closeOnClick: boolean,
+    pauseOnHover: boolean,
+    draggable: boolean,
+    theme: string,
+  }
+};
+
+export type NotifyProviderProps = { 
+  config?: {
+    position: string,
+    autoClose: number,
+    hideProgressBar: boolean,
+    closeOnClick: boolean,
+    pauseOnHover: boolean,
+    draggable: boolean,
+    theme: string,
+  },
+  children: ReactNode 
+};
+
+//--------------------------------------------------------------------//
+// Theme Types
+
+export type ThemeContextProps = { 
+  theme: string,
+  toggle: () => void
+};
+
+export type ThemeProviderProps = { 
+  theme?: string,
+  children: ReactNode 
+};
 
 //--------------------------------------------------------------------//
 // Other Types
@@ -37,28 +258,14 @@ export type {
   StatusResponse 
 } from '@stackpress/lib/types';
 
-export type { LayoutHeadProps } from './layout/components/LayoutHead';
-export type { LayoutLeftProps } from './layout/components/LayoutLeft';
-export type { LayoutMainProps } from './layout/components/LayoutMain';
-export type { LayoutRightProps } from './layout/components/LayoutRight';
-
-export type { BlankAppProps, LayoutBlankProps } from './layout/LayoutBlank';
-export type { PanelAppProps, LayoutPanelProps } from './layout/LayoutPanel';
-export type { 
-  AdminAppProps, 
-  LayoutAdminProps, 
-  AdminUserMenuProps 
-} from './layout/LayoutAdmin';
-export type { LayoutProviderProps } from './layout/LayoutProvider';
-
-export type { ModalConfirmProps } from './modal/ModalConfirm';
-export type { ModalContextProps } from './modal/ModalContext';
-export type { ModalProviderProps } from './modal/ModalProvider';
-
-export type { ThemeContextProps } from './theme/ThemeContext';
-export type { ThemeProviderProps } from './theme/ThemeProvider';
+export type { AdminConfigProps } from '../admin/types';
+export type { ApiConfigProps } from '../api/types';
 
 export type { 
+  SessionRoute,
+  AuthConfigProps,
+  SessionData,
+  SessionTokenData,
   SessionPermission,
   SessionPermissionList
 } from '../session/types';
@@ -70,47 +277,16 @@ export type {
   BatchSendResponse
 } from './import';
 
-export type RollupResults = [ OutputChunk, ...(OutputAsset | OutputChunk)[]];
+export type RollupResults = [ 
+  OutputChunk, 
+  ...(OutputAsset | OutputChunk)[]
+];
 
 export type FileMeta = {
   filepath: string,
   basepath: string,
   extname: string
 };
-
-export type PageBodyProps<
-  C extends UnknownNest = UnknownNest,
-  I extends UnknownNest = UnknownNest,
-  O = undefined
-> = {
-  data: C,
-  session: SessionTokenData,
-  request: {
-    url: {
-      hash: string,
-      host: string,
-      hostname: string,
-      href: string,
-      origin: string,
-      pathname: string,
-      port: string,
-      protocol: string,
-      search: string
-    },
-    headers: UnknownNest,
-    session: UnknownNest,
-    method: string,
-    mime: string,
-    data: I
-  },
-  response: StatusResponse<O>
-}
-
-export type PageHeadProps<
-  C extends UnknownNest = UnknownNest,
-  I extends UnknownNest = UnknownNest,
-  O = undefined
-> = PageBodyProps<C, I, O> & { styles?: string[] }; 
 
 export type FieldProps = {
   className?: string,
@@ -126,34 +302,31 @@ export type ControlProps = {
   change?: (name: string, value: any) => void
 }
 
-export type AdminDataProps = {
-  icon?: string,
-  logo?: string,
-  brand?: string,
-  base?: string,
-  admin: { 
-    root: string,
-    name: string, 
-    logo: string,
-    menu: {
-      name: string,
-      icon: string,
-      path: string,
-      match: string
-    }[]
-  }
+export type NotifyConfig = {
+  position: string,
+  autoClose: number,
+  hideProgressBar: boolean,
+  closeOnClick: boolean,
+  pauseOnHover: boolean,
+  draggable: boolean,
+  theme: string,
 };
 
 //ie. ctx.config<ViewConfig>('view')
 export type ViewConfig = {
   noview?: string,
-  props: Record<string, unknown> & {
-    icon?: string,
-    logo?: string,
-    brand?: string,
-    base?: string
-  },
+  base?: string,
+  notify?: NotifyConfig,
+  props?: Record<string, unknown>,
   engine?: Partial<ReactusConfig>
+};
+
+//ie. ctx.config<BrandConfig>('brand')
+export type BrandConfig = {
+  name?: string,
+  logo?: string,
+  icon?: string,
+  favicon?: string
 };
 
 //ie. ctx.plugin<ViewPlugin>('view')

@@ -28,12 +28,7 @@ export function TagsFieldControl(props: ControlProps) {
   //render
   return (
     <Control label={_("Tags")} error={error} className={className}>
-      <TagsField
-        className="!border-b2 dark:bg-gray-300 outline-none"
-        error={!!error}
-        value={value}
-        change={change}
-      />
+      <TagsField error={!!error} value={value} change={change} />
     </Control>
   );
 }

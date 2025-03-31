@@ -1,12 +1,5 @@
-export type LayoutMenuProps = {
-  path?: string,
-  menu: {
-    name: string;
-    icon: string;
-    path: string;
-    match: string;
-  }[]
-};
+import type { LayoutMenuProps } from '../../types';
+
 export default function LayoutMenu(props: LayoutMenuProps) {
   const { path = '', menu = [] } = props;
   return (

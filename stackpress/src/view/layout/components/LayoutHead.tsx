@@ -1,13 +1,4 @@
-export type LayoutHeadProps = {
-  open?: boolean,
-  theme: string,
-  base?: string,
-  logo?: string,
-  brand?: string,
-  toggleLeft?: () => void,
-  toggleRight?: () => void,
-  toggleTheme?: () => void
-};
+import type { LayoutHeadProps } from '../../types';
 
 export default function LayoutHead(props: LayoutHeadProps) {
   const { 

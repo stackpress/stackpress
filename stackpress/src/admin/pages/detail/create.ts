@@ -7,6 +7,10 @@ import type Server from '@stackpress/ingest/Server';
 import { decrypt } from '../../../session/helpers';
 //schema
 import type Model from '../../../schema/spec/Model';
+//language
+import type { LanguageConfig } from '../../../language/types';
+//view
+import type { ViewConfig, BrandConfig } from '../../../view/types';
 //admin
 import type { AdminConfig } from '../../types';
 
@@ -16,20 +20,41 @@ export default function AdminDetailCreatePageFactory(model: Model) {
     res: Response,
     ctx: Server
   ) {
-    //get the admin config
-    const admin = ctx.config<AdminConfig>('admin') || {};
-    //set data for template layer
-    res.data.set('admin', { 
-      root: admin.root || '/admin',
-      name: admin.name || 'Admin', 
-      logo: admin.logo || '/images/logo-square.png',
-      menu: admin.menu || []
-    });
     //if there is a response body or there is an error code
     if (res.body || (res.code && res.code !== 200)) {
       //let the response pass through
       return;
     }
+    //get the view, brandm lang and admin config
+    const view = ctx.config.path<ViewConfig>('view', {});
+    const brand = ctx.config.path<BrandConfig>('brand', {});
+    const language = ctx.config.path<LanguageConfig>('language', {
+      key: 'locale',
+      locale: 'en_US',
+      languages: {}
+    });
+    const admin = ctx.config.path<AdminConfig>('admin', {});
+    //set data for template layer
+    res.data.set('view', { 
+      base: view.base || '/',
+      props: view.props || {}
+    });
+    res.data.set('brand', { 
+      name: brand.name || 'Stackpress',
+      logo: brand.logo || '/logo.png',
+      icon: brand.icon || '/icon.png',
+      favicon: brand.favicon || '/favicon.ico'
+    });
+    res.data.set('language', { 
+      key: language.key || 'locale',
+      locale: language.locale || 'en_US',
+      languages: language.languages || {}
+    });
+    res.data.set('admin', { 
+      name: admin.name || 'Admin',
+      base: admin.base || '/admin',
+      menu: admin.menu || []
+    });
     //get id from url params
     const ids = model.ids.map(column => req.data(column.name)).filter(Boolean);
     if (ids.length === model.ids.length) {

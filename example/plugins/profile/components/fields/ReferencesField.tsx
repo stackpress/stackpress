@@ -28,12 +28,7 @@ export function ReferencesFieldControl(props: ControlProps) {
   //render
   return (
     <Control label={_("References")} error={error} className={className}>
-      <ReferencesField
-        className="!border-b2 dark:bg-gray-300 outline-none"
-        error={!!error}
-        value={value}
-        change={change}
-      />
+      <ReferencesField error={!!error} value={value} change={change} />
     </Control>
   );
 }

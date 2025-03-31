@@ -1,7 +1,5 @@
-export type LayoutMainProps = {
-  open?: boolean
-  children: React.ReactNode
-};
+import type { LayoutMainProps } from '../../types';
+
 export default function LayoutMain(props: LayoutMainProps) {
   const { open, children } = props;
   const left = open ? 'rmd-px-l-220' : 'rmd-px-l-0';

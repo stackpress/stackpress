@@ -1,6 +1,6 @@
-//hooks
+//modules
 import { useContext } from 'react';
-//components
+//theme
 import ThemeContext from './ThemeContext';
 
 export function useTheme() {

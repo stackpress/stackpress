@@ -16,7 +16,7 @@ import { matchAnyEvent, matchAnyRoute } from './helpers';
 /**
  * Used to get session data from tokens and check permissions
  */
-export default class Session {
+export default class SessionServer {
   //this is the permission list for all roles
   protected static _access: SessionPermissionList = {};
   //when the token expires
@@ -126,9 +126,9 @@ export default class Session {
    */
   public static load(token: string|Request) {
     if (typeof token === 'string') {
-      return new Session(token);
+      return new SessionServer(token);
     }
-    return new Session(this.token(token) || '');
+    return new SessionServer(this.token(token) || '');
   }
 
   //session token
@@ -156,7 +156,7 @@ export default class Session {
         try {
           const response = jwt.verify(
             this.token, 
-            Session.seed
+            SessionServer.seed
           );
           this._data = typeof response === 'string' 
             ? JSON.parse(response) as SessionData
@@ -214,7 +214,7 @@ export default class Session {
     const roles: string[] = this.data?.roles || [ 'GUEST' ];
     return roles.map(
       //ie. [ ['GUEST', 'USER'], ['USER', 'ADMIN'] ]
-      role => Session.access[role] || []
+      role => SessionServer.access[role] || []
     ).flat().filter(
       //unique
       (value, index, self) => self.indexOf(value) === index
@@ -225,7 +225,7 @@ export default class Session {
    * Saves the active locale to the session
    */
   public save(res: Response) {
-    res.session.set(Session.key, this.token);
+    res.session.set(SessionServer.key, this.token);
     return this;
   }
 };

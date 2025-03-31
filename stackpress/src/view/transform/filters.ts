@@ -91,7 +91,6 @@ export function generateFilter(
         <Control label={_('${column.label}')} error={error} className={className}>
           ${BoolComponent ? `<input type="hidden" name="${column.name}" value="false" />`: ''}
           <${column.title}Filter
-            className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 
             value={value} 
             change={change}

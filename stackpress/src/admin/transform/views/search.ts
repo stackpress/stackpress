@@ -8,6 +8,8 @@ import type Model from '../../../schema/spec/Model';
 export default function searchPage(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/search.tsx`;
   const source = directory.createSourceFile(file, '', { overwrite: true });
+  const ids = model.ids.map(column => column.name);
+  const path = ids.map(name => `\${row.${name}}`).join('/');
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
 
@@ -23,17 +25,17 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/sql',
     namedImports: [ 'SearchParams' ]
   });
-  //import type { PageHeadProps, PageBodyProps, AdminDataProps, 
-  //SessionPermission } from 'stackpress/view';
+  //import type { ServerPageProps, SessionPermission } from 'stackpress/view';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view',
-    namedImports: [
-      'PageHeadProps',
-      'PageBodyProps',
-      'AdminDataProps',
-      'SessionPermission'
-    ]
+    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
+  });
+  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/admin/types',
+    namedImports: [ 'AdminConfigProps' ]
   });
   //import type { ProfileExtended } from '../../types';
   source.addImportDeclaration({
@@ -71,21 +73,13 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'frui/field/Input',
     defaultImport: 'Input'
   });
-  //import { paginate, filter, order, notify, flash, Session, useStripe,
+  //import { paginate, filter, order, notify, flash, useServer, useStripe, 
   //Crumbs, Pagination, LayoutAdmin } from 'stackpress/view';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view',
     namedImports: [
-      'paginate',
-      'filter',
-      'order',
-      'notify',
-      'flash',
-      'Session',
-      'useStripe',
-      'Crumbs',
-      'Pagination',
-      'LayoutAdmin'
+      'paginate',  'filter',    'order',  'notify',     'flash',
+      'useServer', 'useStripe', 'Crumbs', 'Pagination', 'LayoutAdmin'
     ]
   });
   //import { batchAndSend } from 'stackpress/view/import';
@@ -158,7 +152,7 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
             <i className="fas fa-chevron-right px-mr-10 cursor-pointer" onClick={close}></i>
             {_('Filters')}
           </header>
-          <form className="flex-grow overflow-auto">
+          <form className="flex-grow overflow-auto px-p-10">
             ${Array.from(model.columns.values()).map(column => {
               if (column.filter.component) {
                 return (`
@@ -178,7 +172,7 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
               return '';
             }).join('\n')}
             <Button 
-              className="theme-bc-bd2 theme-bg-bg2 border !px-px-14 !px-py-8 px-mr-5" 
+              className="theme-bc-primary theme-bg-primary border !px-px-14 !px-py-8" 
               type="submit"
             >
               <i className="text-sm fas fa-fw fa-filter"></i>
@@ -196,14 +190,14 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     parameters: [{ 
       name: 'props', 
       type: (`{ 
-        root: string,
+        base: string,
         token: string, 
         open: (value: SetStateAction<boolean>) => void,
-        can: (...permits: SessionPermission[]) => boolean,
+        can: (...permits: SessionPermission[]) => boolean
       }`) 
     }],
     statements: (`
-      const { root, token, open, can } = props;
+      const { base, token, open, can } = props;
       const upload = (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
         //get the input
@@ -239,18 +233,23 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
               </form>
             `): ''}
           </div>
-          <a className="theme-white theme-bg-info px-px-16 px-py-9" href="export">
-            <i className="fas fa-download"></i>
-          </a>
-          <Button warning type="button" className="relative !px-px-16 !px-py-9">
-            <i className="cursor-pointer fas fa-upload"></i>
-            <input className="cursor-pointer opacity-0 absolute px-b-0 px-l-0 px-r-0 px-t-0" type="file" onChange={upload} />
-          </Button>
-          {can({ method: 'ALL', route: \`\${root}/${model.dash}/create\` }) && (
+          {can({ method: 'GET', route: \`\${base}/${model.dash}/export\` }) ?(
+            <a className="theme-white theme-bg-info px-px-16 px-py-9" href="export">
+              <i className="fas fa-download"></i>
+            </a>
+          ): null}
+          
+          {can({ method: 'GET', route: \`\${base}/${model.dash}/import\` }) ?(
+            <Button warning type="button" className="relative !px-px-16 !px-py-9">
+              <i className="cursor-pointer fas fa-upload"></i>
+              <input className="cursor-pointer opacity-0 absolute px-b-0 px-l-0 px-r-0 px-t-0" type="file" onChange={upload} />
+            </Button>
+          ): null}
+          {can({ method: 'GET', route: \`\${base}/${model.dash}/create\` }) ? (
             <a className="theme-white theme-bg-success px-px-16 px-py-9" href="create">
               <i className="fas fa-plus"></i>
             </a>
-          )}
+          ): null}
         </div>
       );  
     `)
@@ -261,10 +260,15 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}SearchResults`,
     parameters: [{ 
       name: 'props', 
-      type: ('{ query: Partial<SearchParams>, results: ProfileExtended[] }') 
+      type: (`{ 
+        base: string,
+        query: Partial<SearchParams>, 
+        results: ProfileExtended[], 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`) 
     }],
     statements: (`
-      const { query, results } = props;
+      const { can, base, query, results } = props;
       const { sort = {} } = query;
       const { _ } = useLanguage();
       const stripe = useStripe('theme-bg-bg0', 'theme-bg-bg1');
@@ -273,7 +277,7 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
           ${model.lists.filter(
             column => column.list.method !== 'hide'
           ).map(column => column.sortable ? (`
-            <Thead noWrap stickyTop className="theme-info theme-bg-bg2 !theme-bc-bd2 px-p-10 text-right">
+            <Thead noWrap stickyTop className="theme-info theme-bg-bg2 !theme-bc-bd2 text-right">
               <span
                 className="cursor-pointer"
                 onClick={() => order('sort[${column.name}]')}
@@ -291,11 +295,11 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
               ) : null}
             </Thead>
           `): (`
-            <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left">
+            <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 text-left">
               {_('${column.label}')}
             </Thead>
           `)).join('\n')}
-          <Thead stickyTop stickyRight className="!theme-bc-bd2 theme-bg-bg2 px-p-10" />
+          <Thead stickyTop stickyRight className="!theme-bc-bd2 theme-bg-bg2" />
           {results.map((row, index) => (
             <Trow key={index}>
               ${model.lists.filter(
@@ -311,27 +315,29 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
                   : `{row.${column.name} ? (<${column.title}ListFormat value={row.${column.name}} />) : ''}`;
                 const align = column.sortable ? 'text-right' : 'text-left';
                 return column.filter.method !== 'none' ? (`
-                  <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 ${align} \${stripe(index)}\`}>
+                  <Tcol noWrap className={\`!theme-bc-bd2${align} \${stripe(index)}\`}>
                     <span
-                      className="cursor-pointer text-t-info"
+                      className="cursor-pointer theme-info"
                       onClick={() => filter('type', row.${column.name})}
                     >
                       ${value}
                     </span>
                   </Tcol>
                 `) : (`
-                  <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 ${align} \${stripe(index)}\`}>
+                  <Tcol noWrap className={\`!theme-bc-bd2 ${align} \${stripe(index)}\`}>
                     ${value}
                   </Tcol>
                 `);
-              })}
-              <Tcol stickyRight className={\`!theme-bc-bd2 px-py-5 text-center \${stripe(index)}\`}>
-                <a 
-                  className="theme-bg-info px-p-2" 
-                  href={\`detail/\${row.id}\`}
-                >
-                  <i className="fas fa-fw fa-caret-right"></i>
-                </a>
+              }).join('\n')}
+              <Tcol stickyRight className={\`!theme-bc-bd2 text-center \${stripe(index)}\`}>
+                {can({ method: 'GET', route: \`\${base}/${model.dash}/detail/${path}\`}) ? (
+                  <a 
+                    className="theme-bg-info px-p-2" 
+                    href={\`detail/\${row.id}\`}
+                  >
+                    <i className="fas fa-fw fa-caret-right"></i>
+                  </a>
+                ) : null}
               </Tcol>
             </Trow>
           ))}
@@ -343,19 +349,20 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
   source.addFunction({
     isExported: true,
     name: `Admin${model.title}SearchBody`,
-    parameters: [{ 
-      name: 'props', 
-      type: (`PageBodyProps<AdminDataProps, Partial<SearchParams>, ${model.title}Extended[]>`) 
-    }],
     statements: (`
       //props
-      const { data, session, request, response } = props;
-      const { root = '/admin' } = data.admin || {};
-      const me = Session.load(session);
-      const can = me.can.bind(me);
-      const query = request.data;
-      const { skip = 0, take = 0 } = query;
-      const { results = [], total = 0 } = response;
+      const { config, session, request, response } = useServer<${[
+        'AdminConfigProps', 
+        'Partial<SearchParams>', 
+        `${model.title}Extended[]`
+      ].join(', ')}>();
+      const base = config.path('admin.base', '/admin');
+      const can = session.can.bind(session);
+      const query = request.data();
+      const skip = query.skip || 0;
+      const take = query.take || 50;
+      const results = response.results as ${model.title}Extended[];
+      const total = response.total || 0;
       //hooks
       const { _ } = useLanguage();
       const [ opened, open ] = useState(false);
@@ -367,11 +374,16 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
           <div className="px-px-10 px-py-14 theme-bg-bg2">
             <Admin${model.title}SearchCrumbs />
           </div>
-          <div className={\`absolute px-t-0 px-b-0 px-w-220 px-z-10 duration-200 \${opened? 'px-r-0': 'px-r--220' }\`}>
+          <div className={\`absolute px-t-0 px-b-0 px-w-360 px-z-10 duration-200 \${opened? 'px-r-0': 'px-r--360' }\`}>
             <Admin${model.title}SearchFilters query={query} close={() => open(false)} />
           </div>
           <div className="px-p-10">
-            <Admin${model.title}SearchForm root={root} token={session.token} open={open} can={can} />
+            <Admin${model.title}SearchForm 
+              base={base} 
+              token={session.data.token} 
+              open={open} 
+              can={can} 
+            />
           </div>
           {!!results?.length && (
             <h1 className="px-px-10 px-mb-10">{_(
@@ -388,7 +400,12 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
                 {_('No results found.')}
               </Alert>
             ): (
-              <Admin${model.title}SearchResults query={query} results={results} />
+              <Admin${model.title}SearchResults 
+                base={base}
+                can={can} 
+                query={query} 
+                results={results} 
+              />
             )}
           </div>
           <Pagination 
@@ -407,15 +424,21 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}SearchHead`,
     parameters: [{ 
       name: 'props', 
-      type: (`PageHeadProps<AdminDataProps, Partial<SearchParams>, ${model.title}Extended[]>`) 
+      type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: (`
       const { data, styles = [] } = props;
+      const { favicon = '/favicon.ico' } = data?.brand || {};
       const { _ } = useLanguage();
+      const mimetype = favicon.endsWith('.png')
+        ? 'image/png'
+        : favicon.endsWith('.svg')
+        ? 'image/svg+xml'
+        : 'image/x-icon';
       return (
         <>
           <title>{_('Search ${model.plural}')}</title>
-          {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
+          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
           <link rel="stylesheet" type="text/css" href="/styles/global.css" />
           {styles.map((href, index) => (
             <link key={index} rel="stylesheet" type="text/css" href={href} />
@@ -430,29 +453,12 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}SearchPage`,
     parameters: [{ 
       name: 'props', 
-      type: (`PageBodyProps<AdminDataProps, Partial<SearchParams>, ${model.title}Extended[]>`) 
+      type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: (`
-      const { data, session, request } = props;
-      const theme = request.session.theme as string | undefined;
-      const {
-        root = '/admin',
-        name = 'Admin',
-        logo = '/images/logo-square.png',
-        menu = []
-      } = data.admin;
-      const path = request.url.pathname;
       return (
-        <LayoutAdmin
-          theme={theme} 
-          brand={name}
-          base={root}
-          logo={logo}
-          path={path} 
-          menu={menu}
-          session={session}
-        >
-          <Admin${model.title}SearchBody {...props} />
+        <LayoutAdmin {...props}>
+          <Admin${model.title}SearchBody />
         </LayoutAdmin>
       );
     `)

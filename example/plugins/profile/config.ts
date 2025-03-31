@@ -1878,5 +1878,5 @@ export const schema: SchemaConfig = {
 
 export const registry = new Registry(schema);
 
-const model = registry.model.get('profile') as Model;
+const model = registry.model.get('Profile') as Model;
 export default model;

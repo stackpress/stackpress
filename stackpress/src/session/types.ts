@@ -1,8 +1,12 @@
 //stackpress
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
+//language
+import { LanguageConfig } from '../language/types';
+//view
+import { ViewConfig, BrandConfig } from '../view/types';
 //session
-import type Session from '../session/Session';
+import type SessionServer from './Session';
 
 export type SessionRoute = { method: string, route: string };
 export type SessionPermission = string | SessionRoute;
@@ -18,7 +22,7 @@ export type SessionTokenData = SessionData & {
   permits: SessionPermission[]
 };
 
-export type SessionConstructor = { 
+export type SessionServerConstructor = { 
   get access(): SessionPermissionList;
   get seed(): string;
   get key(): string;
@@ -27,8 +31,8 @@ export type SessionConstructor = {
   authorize(req: Request, res: Response, permits?: SessionPermission[]): boolean;
   create(data: SessionData): string;
   token(req: Request): string | null;
-  load(token: string | Request): Session;
-  new (): Session
+  load(token: string | Request): SessionServer;
+  new (): SessionServer
 };
 
 export type SignupInput = {
@@ -42,6 +46,7 @@ export type SignupInput = {
 };
 
 export type SigninInput = {
+  type?: SigninType,
   username?: string,
   email?: string,
   phone?: string,
@@ -50,10 +55,16 @@ export type SigninInput = {
 
 export type SigninType = 'username' | 'email' | 'phone';
 
+export type AuthConfigProps = {
+  language: LanguageConfig,
+  view: ViewConfig,
+  brand: BrandConfig,
+  auth: AuthConfig
+};
+
 //ie. ctx.config<AuthConfig>('auth')
 export type AuthConfig = {
-  name: string,
-  logo: string,
+  base?: string,
   '2fa': {},
   captcha: {},
   roles: string[],
@@ -78,4 +89,63 @@ export type SessionConfig = {
 };
 
 //ie. ctx.plugin<AuthPlugin>('auth')
-export type SessionPlugin = SessionConstructor;
+export type SessionPlugin = SessionServerConstructor;
+
+//--------------------------------------------------------------------//
+// Model Types
+
+export type Profile = {
+  id: string;
+  name: string;
+  image?: string;
+  type: string;
+  roles: string[];
+  tags: string[];
+  references?: Record<string, string | number | boolean | null>;
+  active: boolean;
+  created: Date;
+  updated: Date;
+};
+export type ProfileExtended = Profile;
+export type ProfileInput = {
+  id?: string;
+  name: string;
+  image?: string;
+  type?: string;
+  roles: string[];
+  tags?: string[];
+  references?: Record<string, string | number | boolean | null>;
+  active?: boolean;
+  created?: Date;
+  updated?: Date;
+};
+
+export type Auth = {
+  id: string;
+  profileId: string;
+  type: string;
+  nonce: string;
+  token: string;
+  secret: string;
+  verified: boolean;
+  consumed: Date;
+  active: boolean;
+  created: Date;
+  updated: Date;
+};
+export type AuthExtended = Auth & {
+  profile: Profile;
+};
+export type AuthInput = {
+  id?: string;
+  profileId: string;
+  type?: string;
+  token: string;
+  secret: string;
+  verified?: boolean;
+  consumed?: Date;
+  active?: boolean;
+  created?: Date;
+  updated?: Date;
+};
+export type ProfileAuth = Profile & { auth: Record<string, Partial<Auth>> };

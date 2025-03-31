@@ -28,12 +28,7 @@ export function RolesFieldControl(props: ControlProps) {
   //render
   return (
     <Control label={_("Roles")} error={error} className={className}>
-      <RolesField
-        className="!border-b2 dark:bg-gray-300 outline-none"
-        error={!!error}
-        value={value}
-        change={change}
-      />
+      <RolesField error={!!error} value={value} change={change} />
     </Control>
   );
 }

@@ -3,10 +3,11 @@ import type { ReactNode } from 'react';
 //hooks
 import React from 'react';
 import { useContext } from 'react';
-//components
+//notify
+import { useNotify } from '../notify/hooks';
+//modal
 import ModalContext from './ModalContext';
 import Confirm from './ModalConfirm';
-import notify from '../notify';
 
 export function useModal() {
   const { className, title, body, open } = useContext(ModalContext);
@@ -20,6 +21,7 @@ export function useConfirm(config: {
 }) {
   const { label, message, action } = config;
   const { open, title, body } = useModal();
+  const { notify } = useNotify();
   const confirmed = () => action().then(() => {
     open(false);
   }).catch(e => {

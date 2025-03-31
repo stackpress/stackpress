@@ -28,12 +28,7 @@ export function TypeFilterControl(props: ControlProps) {
   //render
   return (
     <Control label={_("Type")} error={error} className={className}>
-      <TypeFilter
-        className="!border-b2 dark:bg-gray-300 outline-none"
-        error={!!error}
-        value={value}
-        change={change}
-      />
+      <TypeFilter error={!!error} value={value} change={change} />
     </Control>
   );
 }

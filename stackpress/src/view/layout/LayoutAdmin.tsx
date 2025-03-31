@@ -1,35 +1,38 @@
 //modules
+import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import { useLanguage } from 'r22n';
-//
-import type { SessionTokenData } from '../../session/types';
-//view
-import { unload, ToastContainer } from '../notify';
-import { useTheme } from '../theme';
+//admin
+import type { AdminConfigProps } from '../../admin/types';
+//views
+import type { LayoutProviderProps } from '../types';
+//notify
+import NotifyContainer from '../notify/NotifyContainer';
+import { unload } from '../notify/hooks';
+//theme
+import { useTheme } from '../theme/hooks';
+//client
+import { useConfig, useSession, useRequest } from '../server/hooks';
 //components
 import LayoutHead from './components/LayoutHead';
 import LayoutLeft from './components/LayoutLeft';
 import LayoutMain from './components/LayoutMain';
 import LayoutMenu from './components/LayoutMenu';
 import LayoutRight from './components/LayoutRight';
-//local
+//layout
 import LayoutProvider from './LayoutProvider';
 import { useToggle } from './hooks';
 
-export type AdminUserMenuProps = {
-  session?: SessionTokenData
-};
-
-export function AdminUserMenu(props: AdminUserMenuProps) {
-  const { session } = props;
+export function AdminUserMenu() {
+  const session = useSession();
   const { changeLanguage } = useLanguage();
   return (
     <section className="flex flex-col px-h-100-0">
       <header>
-        {session?.id ? (
+        {session.data.id ? (
           <div className="px-px-10 px-py-14 theme-tx1 flex items-center">
             <i className="px-fs-26 inline-block px-mr-10 fas fa-user-circle" />
-            <span>{session?.name}</span>
+            <span>{session.data.name}</span>
           </div>
         ) : null}
         <nav className="theme-bg-bg3 px-px-10 px-py-12">
@@ -44,9 +47,9 @@ export function AdminUserMenu(props: AdminUserMenuProps) {
         </nav>
       </header>
       <main className="flex-grow bg-t-0">
-        {session?.id ? (
+        {session.data.id ? (
           <div className="px-h-100-0">
-            {session?.roles && session.roles.includes('ADMIN') && (
+            {session.data.roles && session.data.roles.includes('ADMIN') && (
               <nav className="theme-bc-bd0 flex items-center px-px-10 px-py-14 border-b" >
                 <i className="inline-block px-mr-10 fas fa-guage" />
                 <a className="theme-info" href="/admin/profile/search">Admin</a>
@@ -75,26 +78,19 @@ export function AdminUserMenu(props: AdminUserMenuProps) {
   );
 }
 
-export type AdminAppProps = { 
-  base?: string,
-  logo?: string,
-  brand?: string,
-  session?: SessionTokenData,
-  children?: React.ReactNode,
-  path?: string,
-  menu?: {
+export function AdminApp({ children }: { children: ReactNode }) {
+  const config = useConfig<AdminConfigProps>();
+  const request = useRequest();
+  const [ left, toggleLeft ] = useToggle();
+  const [ right, toggleRight ] = useToggle();
+  const { theme, toggle: toggleTheme } = useTheme();
+  const menu = config.path<{
     name: string;
     icon: string;
     path: string;
     match: string;
-  }[]
-};
-
-export function AdminApp(props: AdminAppProps) {
-  const { base, logo, brand, path, menu, session, children } = props;
-  const [ left, toggleLeft ] = useToggle();
-  const [ right, toggleRight ] = useToggle();
-  const { theme, toggle: toggleTheme } = useTheme();
+  }[]>('admin.menu', []);
+  const pathname = request.url.pathname;
   return (
     <div className={`${theme} relative overflow-hidden px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
       <LayoutHead 
@@ -105,68 +101,41 @@ export function AdminApp(props: AdminAppProps) {
         toggleTheme={toggleTheme} 
       />
       <LayoutLeft
-        brand={brand}
-        base={base}
-        logo={logo}
+        brand={config.path('brand.name', 'Stackpress')}
+        base={config.path('admin.base', '/admin')}
+        logo={config.path('brand.icon', 'icon.png')}
         open={left}
         toggle={toggleLeft}
       >
-        <LayoutMenu path={path} menu={menu || []} />
+        <LayoutMenu path={pathname} menu={menu} />
       </LayoutLeft>
       <LayoutRight open={right}>
-        <AdminUserMenu session={session} />
+        <AdminUserMenu />
       </LayoutRight>
       <LayoutMain open={left}>{children}</LayoutMain>
     </div>
   );
 }
 
-export type LayoutAdminProps = { 
-  base?: string,
-  logo?: string,
-  brand?: string,
-  theme?: string,
-  language?: string,
-  session?: SessionTokenData,
-  translations?: Record<string, string>,
-  children?: React.ReactNode,
-  path?: string,
-  menu?: {
-    name: string;
-    icon: string;
-    path: string;
-    match: string;
-  }[]
-};
-
-export default function LayoutAdmin(props: LayoutAdminProps) {
+export default function LayoutAdmin(props: LayoutProviderProps) {
   const { 
-    base, 
-    logo, 
-    brand, 
-    path,
-    menu,
-    theme,
+    data,
     session,
-    language, 
-    translations, 
+    request,
+    response,
     children 
   } = props;
   //unload flash message
   useEffect(unload, []);
   return (
-    <LayoutProvider theme={theme} language={language} translations={translations}>
-      <AdminApp 
-        base={base} 
-        logo={logo} 
-        brand={brand} 
-        path={path}
-        menu={menu}
-        session={session}
-      >
-        {children}
-      </AdminApp>
-      <ToastContainer />
+    <LayoutProvider 
+      data={data}
+      session={session}
+      request={request}
+      response={response}
+    >
+      <AdminApp>{children}</AdminApp>
+      <NotifyContainer />
     </LayoutProvider>
   );
 }

@@ -11,17 +11,17 @@ export default function createPage(directory: Directory, _registry: Registry, mo
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
 
-  //import type { NestedObject, PageHeadProps, PageBodyProps, 
-  //AdminDataProps } from 'stackpress/view';
+  //import type { NestedObject, ServerPageProps } from 'stackpress/view';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view',
-    namedImports: [
-      'NestedObject',
-      'PageHeadProps',
-      'PageBodyProps',
-      'AdminDataProps'
-    ]
+    namedImports: [ 'NestedObject', 'ServerPageProps' ]
+  });
+  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/admin/types',
+    namedImports: [ 'AdminConfigProps' ]
   });
   //import type { ProfileInput, Profile } from '../../types';
   source.addImportDeclaration({
@@ -39,10 +39,10 @@ export default function createPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'frui/element/Button',
     defaultImport: 'Button'
   });
-  //import { Crumbs, LayoutAdmin } from 'stackpress/view';
+  //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view',
-    namedImports: [ 'Crumbs', 'LayoutAdmin' ]
+    namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
   });
   //import { ActiveFieldControl } from '../../components/fields/ActiveField';
   model.fields.forEach(column => {
@@ -98,9 +98,9 @@ export default function createPage(directory: Directory, _registry: Registry, mo
               value={input.${column.name}} 
               error={errors.${column.name}?.toString()} 
             />
-          `))}
+          `)).join('\n')}
           <Button 
-            className="theme-bc-bd2 theme-bg-bg2 border !px-px-14 !px-py-8 px-mr-5" 
+            className="theme-bc-primary theme-bg-primary border !px-px-14 !px-py-8" 
             type="submit"
           >
             <i className="text-sm fas fa-fw fa-save"></i>
@@ -114,18 +114,14 @@ export default function createPage(directory: Directory, _registry: Registry, mo
   source.addFunction({
     isExported: true,
     name: `Admin${model.title}CreateBody`,
-    parameters: [{ 
-      name: 'props', 
-      type: `PageBodyProps<${[
-        'AdminDataProps', 
+    statements: (`
+      const { request, response } = useServer<${[
+        'AdminConfigProps', 
         `Partial<${model.title}Input>`,
         model.title
-      ].join(', ')}>` 
-    }],
-    statements: (`
-      const { request, response } = props;
-      const input = response.results || request.data || {};
-      const errors = response.errors || {};
+      ].join(', ')}>();
+      const input = { ...response.results, ...request.data() };
+      const errors = response.errors();
       //render
       return (
         <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
@@ -145,19 +141,21 @@ export default function createPage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}CreateHead`,
     parameters: [{ 
       name: 'props', 
-      type: `PageHeadProps<${[
-        'AdminDataProps', 
-        `Partial<${model.title}Input>`,
-        model.title
-      ].join(', ')}>` 
+      type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: (`
       const { data, styles = [] } = props;
+      const { favicon = '/favicon.ico' } = data?.brand || {};
       const { _ } = useLanguage();
+      const mimetype = favicon.endsWith('.png')
+        ? 'image/png'
+        : favicon.endsWith('.svg')
+        ? 'image/svg+xml'
+        : 'image/x-icon';
       return (
         <>
           <title>{_('Create ${model.singular}')}</title>
-          {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
+          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
           <link rel="stylesheet" type="text/css" href="/styles/global.css" />
           {styles.map((href, index) => (
             <link key={index} rel="stylesheet" type="text/css" href={href} />
@@ -172,33 +170,12 @@ export default function createPage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}CreatePage`,
     parameters: [{ 
       name: 'props', 
-      type: `PageBodyProps<${[
-        'AdminDataProps', 
-        `Partial<${model.title}Input>`,
-        model.title
-      ].join(', ')}>` 
+      type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: (`
-      const { data, session, request } = props;
-      const theme = request.session.theme as string | undefined;
-      const {
-        root = '/admin',
-        name = 'Admin',
-        logo = '/images/logo-square.png',
-        menu = []
-      } = data.admin;
-      const path = request.url.pathname;
       return (
-        <LayoutAdmin
-          theme={theme} 
-          brand={name}
-          base={root}
-          logo={logo}
-          path={path} 
-          menu={menu}
-          session={session}
-        >
-          <Admin${model.title}CreateBody {...props} />
+        <LayoutAdmin {...props}>
+          <Admin${model.title}CreateBody />
         </LayoutAdmin>
       );  
     `)

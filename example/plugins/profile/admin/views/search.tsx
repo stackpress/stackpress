@@ -1,11 +1,7 @@
 import type { ChangeEvent, MouseEventHandler, SetStateAction } from "react";
 import type { SearchParams } from "stackpress/sql";
-import type {
-  PageHeadProps,
-  PageBodyProps,
-  AdminDataProps,
-  SessionPermission,
-} from "stackpress/view";
+import type { ServerPageProps, SessionPermission } from "stackpress/view";
+import type { AdminConfigProps } from "stackpress/admin/types";
 import type { ProfileExtended } from "../../types";
 import { useState } from "react";
 import { useLanguage } from "r22n";
@@ -19,7 +15,7 @@ import {
   order,
   notify,
   flash,
-  Session,
+  useServer,
   useStripe,
   Crumbs,
   Pagination,
@@ -67,7 +63,7 @@ export function AdminProfileSearchFilters(props: {
         ></i>
         {_("Filters")}
       </header>
-      <form className="flex-grow overflow-auto">
+      <form className="flex-grow overflow-auto px-p-10">
         <TypeFilterControl className="px-mb-20" value={query.filter?.type} />
 
         <ActiveFilterControl
@@ -80,7 +76,7 @@ export function AdminProfileSearchFilters(props: {
         <UpdatedSpanControl className="px-mb-20" value={query.span?.updated} />
 
         <Button
-          className="theme-bc-bd2 theme-bg-bg2 border !px-px-14 !px-py-8 px-mr-5"
+          className="theme-bc-primary theme-bg-primary border !px-px-14 !px-py-8"
           type="submit"
         >
           <i className="text-sm fas fa-fw fa-filter"></i>
@@ -92,12 +88,12 @@ export function AdminProfileSearchFilters(props: {
 }
 
 export function AdminProfileSearchForm(props: {
-  root: string;
+  base: string;
   token: string;
   open: (value: SetStateAction<boolean>) => void;
   can: (...permits: SessionPermission[]) => boolean;
 }) {
-  const { root, token, open, can } = props;
+  const { base, token, open, can } = props;
   const upload = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     //get the input
@@ -134,75 +130,66 @@ export function AdminProfileSearchForm(props: {
           </Button>
         </form>
       </div>
-      <a className="theme-white theme-bg-info px-px-16 px-py-9" href="export">
-        <i className="fas fa-download"></i>
-      </a>
-      <Button warning type="button" className="relative !px-px-16 !px-py-9">
-        <i className="cursor-pointer fas fa-upload"></i>
-        <input
-          className="cursor-pointer opacity-0 absolute px-b-0 px-l-0 px-r-0 px-t-0"
-          type="file"
-          onChange={upload}
-        />
-      </Button>
-      {can({ method: "ALL", route: `${root}/profile/create` }) && (
+      {can({ method: "GET", route: `${base}/profile/export` }) ? (
+        <a className="theme-white theme-bg-info px-px-16 px-py-9" href="export">
+          <i className="fas fa-download"></i>
+        </a>
+      ) : null}
+
+      {can({ method: "GET", route: `${base}/profile/import` }) ? (
+        <Button warning type="button" className="relative !px-px-16 !px-py-9">
+          <i className="cursor-pointer fas fa-upload"></i>
+          <input
+            className="cursor-pointer opacity-0 absolute px-b-0 px-l-0 px-r-0 px-t-0"
+            type="file"
+            onChange={upload}
+          />
+        </Button>
+      ) : null}
+      {can({ method: "GET", route: `${base}/profile/create` }) ? (
         <a
           className="theme-white theme-bg-success px-px-16 px-py-9"
           href="create"
         >
           <i className="fas fa-plus"></i>
         </a>
-      )}
+      ) : null}
     </div>
   );
 }
 
 export function AdminProfileSearchResults(props: {
+  base: string;
   query: Partial<SearchParams>;
   results: ProfileExtended[];
+  can: (...permits: SessionPermission[]) => boolean;
 }) {
-  const { query, results } = props;
+  const { can, base, query, results } = props;
   const { sort = {} } = query;
   const { _ } = useLanguage();
   const stripe = useStripe("theme-bg-bg0", "theme-bg-bg1");
   return (
     <Table>
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
+      <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 text-left">
         {_("ID")}
       </Thead>
 
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
+      <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 text-left">
         {_("Name")}
       </Thead>
 
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
+      <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 text-left">
         {_("Image")}
       </Thead>
 
-      <Thead
-        noWrap
-        stickyTop
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10 text-left"
-      >
+      <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 text-left">
         {_("Type")}
       </Thead>
 
       <Thead
         noWrap
         stickyTop
-        className="theme-info theme-bg-bg2 !theme-bc-bd2 px-p-10 text-right"
+        className="theme-info theme-bg-bg2 !theme-bc-bd2 text-right"
       >
         <span className="cursor-pointer" onClick={() => order("sort[created]")}>
           {_("Created")}
@@ -219,7 +206,7 @@ export function AdminProfileSearchResults(props: {
       <Thead
         noWrap
         stickyTop
-        className="theme-info theme-bg-bg2 !theme-bc-bd2 px-p-10 text-right"
+        className="theme-info theme-bg-bg2 !theme-bc-bd2 text-right"
       >
         <span className="cursor-pointer" onClick={() => order("sort[updated]")}>
           {_("Updated")}
@@ -233,66 +220,50 @@ export function AdminProfileSearchResults(props: {
         ) : null}
       </Thead>
 
-      <Thead
-        stickyTop
-        stickyRight
-        className="!theme-bc-bd2 theme-bg-bg2 px-p-10"
-      />
+      <Thead stickyTop stickyRight className="!theme-bc-bd2 theme-bg-bg2" />
       {results.map((row, index) => (
         <Trow key={index}>
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
+          <Tcol noWrap className={`!theme-bc-bd2 text-left ${stripe(index)}`}>
             <IdListFormat value={row.id} />
           </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
+
+          <Tcol noWrap className={`!theme-bc-bd2 text-left ${stripe(index)}`}>
             <NameListFormat value={row.name} />
           </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
+
+          <Tcol noWrap className={`!theme-bc-bd2 text-left ${stripe(index)}`}>
             {row.image ? <ImageListFormat value={row.image} /> : ""}
           </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-left ${stripe(index)}`}
-          >
+
+          <Tcol noWrap className={`!theme-bc-bd2text-left ${stripe(index)}`}>
             <span
-              className="cursor-pointer text-t-info"
+              className="cursor-pointer theme-info"
               onClick={() => filter("type", row.type)}
             >
               <TypeListFormat value={row.type} />
             </span>
           </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-right ${stripe(index)}`}
-          >
+
+          <Tcol noWrap className={`!theme-bc-bd2 text-right ${stripe(index)}`}>
             <CreatedListFormat value={row.created} />
           </Tcol>
-          ,
-          <Tcol
-            noWrap
-            className={`!theme-bc-bd2 px-p-5 text-right ${stripe(index)}`}
-          >
+
+          <Tcol noWrap className={`!theme-bc-bd2 text-right ${stripe(index)}`}>
             <UpdatedListFormat value={row.updated} />
           </Tcol>
+
           <Tcol
             stickyRight
-            className={`!theme-bc-bd2 px-py-5 text-center ${stripe(index)}`}
+            className={`!theme-bc-bd2 text-center ${stripe(index)}`}
           >
-            <a className="theme-bg-info px-p-2" href={`detail/${row.id}`}>
-              <i className="fas fa-fw fa-caret-right"></i>
-            </a>
+            {can({
+              method: "GET",
+              route: `${base}/profile/detail/${row.id}`,
+            }) ? (
+              <a className="theme-bg-info px-p-2" href={`detail/${row.id}`}>
+                <i className="fas fa-fw fa-caret-right"></i>
+              </a>
+            ) : null}
           </Tcol>
         </Trow>
       ))}
@@ -300,21 +271,20 @@ export function AdminProfileSearchResults(props: {
   );
 }
 
-export function AdminProfileSearchBody(
-  props: PageBodyProps<
-    AdminDataProps,
+export function AdminProfileSearchBody() {
+  //props
+  const { config, session, request, response } = useServer<
+    AdminConfigProps,
     Partial<SearchParams>,
     ProfileExtended[]
-  >,
-) {
-  //props
-  const { data, session, request, response } = props;
-  const { root = "/admin" } = data.admin || {};
-  const me = Session.load(session);
-  const can = me.can.bind(me);
-  const query = request.data;
-  const { skip = 0, take = 0 } = query;
-  const { results = [], total = 0 } = response;
+  >();
+  const base = config.path("admin.base", "/admin");
+  const can = session.can.bind(session);
+  const query = request.data();
+  const skip = query.skip || 0;
+  const take = query.take || 50;
+  const results = response.results as ProfileExtended[];
+  const total = response.total || 0;
   //hooks
   const { _ } = useLanguage();
   const [opened, open] = useState(false);
@@ -327,14 +297,14 @@ export function AdminProfileSearchBody(
         <AdminProfileSearchCrumbs />
       </div>
       <div
-        className={`absolute px-t-0 px-b-0 px-w-220 px-z-10 duration-200 ${opened ? "px-r-0" : "px-r--220"}`}
+        className={`absolute px-t-0 px-b-0 px-w-360 px-z-10 duration-200 ${opened ? "px-r-0" : "px-r--360"}`}
       >
         <AdminProfileSearchFilters query={query} close={() => open(false)} />
       </div>
       <div className="px-p-10">
         <AdminProfileSearchForm
-          root={root}
-          token={session.token}
+          base={base}
+          token={session.data.token}
           open={open}
           can={can}
         />
@@ -356,7 +326,12 @@ export function AdminProfileSearchBody(
             {_("No results found.")}
           </Alert>
         ) : (
-          <AdminProfileSearchResults query={query} results={results} />
+          <AdminProfileSearchResults
+            base={base}
+            can={can}
+            query={query}
+            results={results}
+          />
         )}
       </div>
       <Pagination total={total} take={take} skip={skip} paginate={page} />
@@ -365,18 +340,20 @@ export function AdminProfileSearchBody(
 }
 
 export function AdminProfileSearchHead(
-  props: PageHeadProps<
-    AdminDataProps,
-    Partial<SearchParams>,
-    ProfileExtended[]
-  >,
+  props: ServerPageProps<AdminConfigProps>,
 ) {
   const { data, styles = [] } = props;
+  const { favicon = "/favicon.ico" } = data?.brand || {};
   const { _ } = useLanguage();
+  const mimetype = favicon.endsWith(".png")
+    ? "image/png"
+    : favicon.endsWith(".svg")
+      ? "image/svg+xml"
+      : "image/x-icon";
   return (
     <>
       <title>{_("Search Profiles")}</title>
-      {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
+      {favicon && <link rel="icon" type={mimetype} href={favicon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
         <link key={index} rel="stylesheet" type="text/css" href={href} />
@@ -386,32 +363,11 @@ export function AdminProfileSearchHead(
 }
 
 export function AdminProfileSearchPage(
-  props: PageBodyProps<
-    AdminDataProps,
-    Partial<SearchParams>,
-    ProfileExtended[]
-  >,
+  props: ServerPageProps<AdminConfigProps>,
 ) {
-  const { data, session, request } = props;
-  const theme = request.session.theme as string | undefined;
-  const {
-    root = "/admin",
-    name = "Admin",
-    logo = "/images/logo-square.png",
-    menu = [],
-  } = data.admin;
-  const path = request.url.pathname;
   return (
-    <LayoutAdmin
-      theme={theme}
-      brand={name}
-      base={root}
-      logo={logo}
-      path={path}
-      menu={menu}
-      session={session}
-    >
-      <AdminProfileSearchBody {...props} />
+    <LayoutAdmin {...props}>
+      <AdminProfileSearchBody />
     </LayoutAdmin>
   );
 }

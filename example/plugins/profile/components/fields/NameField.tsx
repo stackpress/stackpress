@@ -28,12 +28,7 @@ export function NameFieldControl(props: ControlProps) {
   //render
   return (
     <Control label={`${_("Name")}*`} error={error} className={className}>
-      <NameField
-        className="!border-b2 dark:bg-gray-300 outline-none"
-        error={!!error}
-        value={value}
-        change={change}
-      />
+      <NameField error={!!error} value={value} change={change} />
     </Control>
   );
 }

@@ -91,7 +91,6 @@ export function generateField(
         <Control label={\`\${_('${column.label}')}*\`} error={error} className={className}>
           ${BoolComponent ? `<input type="hidden" name="${column.name}" value="false" />`: ''}
           <${column.title}Field
-            className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 
             value={value} 
             change={change}
@@ -108,7 +107,6 @@ export function generateField(
         <Control label={_('${column.label}')} error={error} className={className}>
           ${BoolComponent ? `<input type="hidden" name="${column.name}" value="false" />`: ''}
           <${column.title}Field
-            className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 
             value={value} 
             change={change}

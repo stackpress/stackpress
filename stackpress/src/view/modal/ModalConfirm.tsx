@@ -1,15 +1,9 @@
-//types
-import type { ReactNode } from 'react';
 //hooks
 import { useLanguage } from 'r22n';
 //components
 import Button from 'frui/element/Button';
-
-export type ModalConfirmProps = { 
-  open: Function,
-  message: ReactNode
-  confirmed: Function
-};
+//views
+import type { ModalConfirmProps } from '../types';
 
 const ModalConfirm = ({ open, message, confirmed }: ModalConfirmProps) => {
   const { _ } = useLanguage();

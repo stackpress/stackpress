@@ -28,12 +28,7 @@ export function ImageFieldControl(props: ControlProps) {
   //render
   return (
     <Control label={_("Image")} error={error} className={className}>
-      <ImageField
-        className="!border-b2 dark:bg-gray-300 outline-none"
-        error={!!error}
-        value={value}
-        change={change}
-      />
+      <ImageField error={!!error} value={value} change={change} />
     </Control>
   );
 }

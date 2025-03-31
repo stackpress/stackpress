@@ -1,20 +1,13 @@
-'use client';
-//types
-import type { ReactNode } from 'react';
-//hooks
+//modules
 import { useState, useEffect } from 'react';
-//components
-import ThemeContext from './ThemeContext';
-//helpers
 import { getCookie, setCookie } from 'cookies-next';
-
-export type ThemeProviderProps = { 
-  theme?: string,
-  children: ReactNode 
-};
+//views
+import type { ThemeProviderProps } from '../types';
+//theme
+import ThemeContext from './ThemeContext';
 
 // (this is what to put in app.tsx)
-const ThemeProvider: React.FC<ThemeProviderProps> = props => {
+export default function ThemeProvider(props: ThemeProviderProps) {
   const { children, theme: init = 'light' } = props;
   const [ theme, setTheme ] = useState(init);
   const toggle = () => {
@@ -32,6 +25,4 @@ const ThemeProvider: React.FC<ThemeProviderProps> = props => {
       {children}
     </ThemeContext.Provider>
   );
-};
-
-export default ThemeProvider;
+}

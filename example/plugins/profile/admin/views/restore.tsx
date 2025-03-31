@@ -1,18 +1,15 @@
-import type {
-  PageHeadProps,
-  PageBodyProps,
-  AdminDataProps,
-} from "stackpress/view";
+import type { ServerPageProps } from "stackpress/view";
+import type { AdminConfigProps } from "stackpress/admin/types";
 import type { SearchParams } from "stackpress/sql";
 import type { ProfileExtended } from "../../types";
 import { useLanguage } from "r22n";
-import { Crumbs, LayoutAdmin } from "stackpress/view";
+import { useServer, Crumbs, LayoutAdmin } from "stackpress/view";
 
 export function AdminProfileRestoreCrumbs(props: {
-  root: string;
+  base: string;
   results: ProfileExtended;
 }) {
-  const { root, results } = props;
+  const { base, results } = props;
   //hooks
   const { _ } = useLanguage();
   //variables
@@ -20,12 +17,12 @@ export function AdminProfileRestoreCrumbs(props: {
     {
       label: <span className="theme-info">{_("Profiles")}</span>,
       icon: "user",
-      href: `${root}/profile/search`,
+      href: `${base}/profile/search`,
     },
     {
       label: <span className="theme-info">{`${results?.name || ""}`}</span>,
       icon: "user",
-      href: `${root}/profile/detail/${results.id}`,
+      href: `${base}/profile/detail/${results.id}`,
     },
     {
       label: _("Restore"),
@@ -36,10 +33,10 @@ export function AdminProfileRestoreCrumbs(props: {
 }
 
 export function AdminProfileRestoreForm(props: {
-  root: string;
+  base: string;
   results: ProfileExtended;
 }) {
-  const { root, results } = props;
+  const { base, results } = props;
   const { _ } = useLanguage();
   return (
     <div>
@@ -52,7 +49,7 @@ export function AdminProfileRestoreForm(props: {
       <div className="px-mt-20">
         <a
           className="theme-bg-muted px-px-14 px-py-10 inline-block rounded"
-          href={`${root}/profile/detail/${results.id}`}
+          href={`${base}/profile/detail/${results.id}`}
         >
           <i className="px-mr-5 inline-block fas fa-fw fa-arrow-left"></i>
           <span>Nevermind.</span>
@@ -69,34 +66,42 @@ export function AdminProfileRestoreForm(props: {
   );
 }
 
-export function AdminProfileRestoreBody(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
-) {
-  const { data, response } = props;
-  const { root = "/admin" } = data.admin || {};
+export function AdminProfileRestoreBody() {
+  const { config, response } = useServer<
+    AdminConfigProps,
+    Partial<SearchParams>,
+    ProfileExtended
+  >();
+  const base = config.path("admin.base", "/admin");
   const results = response.results as ProfileExtended;
   //render
   return (
     <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
       <div className="px-px-10 px-py-14 theme-bg-bg2">
-        <AdminProfileRestoreCrumbs root={root} results={results} />
+        <AdminProfileRestoreCrumbs base={base} results={results} />
       </div>
       <div className="px-p-10">
-        <AdminProfileRestoreForm root={root} results={results} />
+        <AdminProfileRestoreForm base={base} results={results} />
       </div>
     </main>
   );
 }
 
 export function AdminProfileRestoreHead(
-  props: PageHeadProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+  props: ServerPageProps<AdminConfigProps>,
 ) {
   const { data, styles = [] } = props;
+  const { favicon = "/favicon.ico" } = data?.brand || {};
   const { _ } = useLanguage();
+  const mimetype = favicon.endsWith(".png")
+    ? "image/png"
+    : favicon.endsWith(".svg")
+      ? "image/svg+xml"
+      : "image/x-icon";
   return (
     <>
       <title>{_("Restore Profile")}</title>
-      {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
+      {favicon && <link rel="icon" type={mimetype} href={favicon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
         <link key={index} rel="stylesheet" type="text/css" href={href} />
@@ -106,28 +111,11 @@ export function AdminProfileRestoreHead(
 }
 
 export function AdminProfileRestorePage(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+  props: ServerPageProps<AdminConfigProps>,
 ) {
-  const { data, session, request } = props;
-  const theme = request.session.theme as string | undefined;
-  const {
-    root = "/admin",
-    name = "Admin",
-    logo = "/images/logo-square.png",
-    menu = [],
-  } = data.admin;
-  const path = request.url.pathname;
   return (
-    <LayoutAdmin
-      theme={theme}
-      brand={name}
-      base={root}
-      logo={logo}
-      path={path}
-      menu={menu}
-      session={session}
-    >
-      <AdminProfileRestoreBody {...props} />
+    <LayoutAdmin {...props}>
+      <AdminProfileRestoreBody />
     </LayoutAdmin>
   );
 }

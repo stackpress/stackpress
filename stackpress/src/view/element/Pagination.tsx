@@ -1,10 +1,4 @@
-export type PaginationProps = {
-  total?: number,
-  skip?: number, 
-  take?: number, 
-  radius?: number,
-  paginate?: Function
-};
+import type { PaginationProps } from '../types';
 
 /**
  * Paginataion Components

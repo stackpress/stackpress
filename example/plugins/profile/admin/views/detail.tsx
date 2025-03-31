@@ -1,14 +1,10 @@
-import type {
-  PageHeadProps,
-  PageBodyProps,
-  AdminDataProps,
-  SessionPermission,
-} from "stackpress/view";
+import type { ServerPageProps, SessionPermission } from "stackpress/view";
+import type { AdminConfigProps } from "stackpress/admin/types";
 import type { SearchParams } from "stackpress/sql";
 import type { ProfileExtended } from "../../types";
 import { useLanguage } from "r22n";
 import { Table, Trow, Tcol } from "frui/element/Table";
-import { Session, useStripe, Crumbs, LayoutAdmin } from "stackpress/view";
+import { useServer, useStripe, Crumbs, LayoutAdmin } from "stackpress/view";
 import NameViewFormat from "../../components/views/NameViewFormat";
 import ImageViewFormat from "../../components/views/ImageViewFormat";
 import TypeViewFormat from "../../components/views/TypeViewFormat";
@@ -18,11 +14,11 @@ import CreatedViewFormat from "../../components/views/CreatedViewFormat";
 import UpdatedViewFormat from "../../components/views/UpdatedViewFormat";
 
 export function AdminProfileDetailCrumbs(props: {
-  root: string;
+  base: string;
   results: ProfileExtended;
 }) {
   //props
-  const { root, results } = props;
+  const { base, results } = props;
   //hooks
   const { _ } = useLanguage();
   //variables
@@ -30,7 +26,7 @@ export function AdminProfileDetailCrumbs(props: {
     {
       label: <span className="theme-info">{_("Profiles")}</span>,
       icon: "user",
-      href: `${root}/profile/search`,
+      href: `${base}/profile/search`,
     },
     {
       label: `${results?.name || ""}`,
@@ -41,24 +37,24 @@ export function AdminProfileDetailCrumbs(props: {
 }
 
 export function AdminProfileDetailActions(props: {
-  root: string;
+  base: string;
   results: ProfileExtended;
   can: (...permits: SessionPermission[]) => boolean;
 }) {
-  const { root, results, can } = props;
+  const { base, results, can } = props;
   const { _ } = useLanguage();
   const routes = {
     update: {
-      method: "ALL",
-      route: `${root}/profile/update/${results.id}`,
+      method: "GET",
+      route: `${base}/profile/update/${results.id}`,
     },
     remove: {
-      method: "ALL",
-      route: `${root}/profile/remove/${results.id}`,
+      method: "GET",
+      route: `${base}/profile/remove/${results.id}`,
     },
     restore: {
-      method: "ALL",
-      route: `${root}/profile/restore/${results.id}`,
+      method: "GET",
+      route: `${base}/profile/restore/${results.id}`,
     },
   };
   return (
@@ -227,22 +223,23 @@ export function AdminProfileDetailResults(props: { results: ProfileExtended }) {
   );
 }
 
-export function AdminProfileDetailBody(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
-) {
-  const { data, session, response } = props;
-  const me = Session.load(session);
-  const can = me.can.bind(me);
-  const { root = "/admin" } = data.admin || {};
+export function AdminProfileDetailBody() {
+  const { config, session, response } = useServer<
+    AdminConfigProps,
+    Partial<SearchParams>,
+    ProfileExtended
+  >();
+  const can = session.can.bind(session);
+  const base = config.path("admin.base", "/admin");
   const results = response.results as ProfileExtended;
   //render
   return (
     <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
       <div className="px-px-10 px-py-14 theme-bg-bg2">
-        <AdminProfileDetailCrumbs root={root} results={results} />
+        <AdminProfileDetailCrumbs base={base} results={results} />
       </div>
       <div className="px-w-100-0">
-        <AdminProfileDetailActions can={can} root={root} results={results} />
+        <AdminProfileDetailActions can={can} base={base} results={results} />
       </div>
       <div className="flex-grow px-w-100-0 overflow-auto">
         <AdminProfileDetailResults results={results} />
@@ -252,14 +249,20 @@ export function AdminProfileDetailBody(
 }
 
 export function AdminProfileDetailHead(
-  props: PageHeadProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+  props: ServerPageProps<AdminConfigProps>,
 ) {
   const { data, styles = [] } = props;
+  const { favicon = "/favicon.ico" } = data?.brand || {};
   const { _ } = useLanguage();
+  const mimetype = favicon.endsWith(".png")
+    ? "image/png"
+    : favicon.endsWith(".svg")
+      ? "image/svg+xml"
+      : "image/x-icon";
   return (
     <>
       <title>{_("Profile Detail")}</title>
-      {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
+      {favicon && <link rel="icon" type={mimetype} href={favicon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
         <link key={index} rel="stylesheet" type="text/css" href={href} />
@@ -269,28 +272,11 @@ export function AdminProfileDetailHead(
 }
 
 export function AdminProfileDetailPage(
-  props: PageBodyProps<AdminDataProps, Partial<SearchParams>, ProfileExtended>,
+  props: ServerPageProps<AdminConfigProps>,
 ) {
-  const { data, session, request } = props;
-  const theme = request.session.theme as string | undefined;
-  const {
-    root = "/admin",
-    name = "Admin",
-    logo = "/images/logo-square.png",
-    menu = [],
-  } = data.admin;
-  const path = request.url.pathname;
   return (
-    <LayoutAdmin
-      theme={theme}
-      brand={name}
-      base={root}
-      logo={logo}
-      path={path}
-      menu={menu}
-      session={session}
-    >
-      <AdminProfileDetailBody {...props} />
+    <LayoutAdmin {...props}>
+      <AdminProfileDetailBody />
     </LayoutAdmin>
   );
 }

@@ -1,13 +1,9 @@
-import type {
-  NestedObject,
-  PageHeadProps,
-  PageBodyProps,
-  AdminDataProps,
-} from "stackpress/view";
+import type { NestedObject, ServerPageProps } from "stackpress/view";
+import type { AdminConfigProps } from "stackpress/admin/types";
 import type { ProfileInput, Profile } from "../../types";
 import { useLanguage } from "r22n";
 import Button from "frui/element/Button";
-import { Crumbs, LayoutAdmin } from "stackpress/view";
+import { useServer, Crumbs, LayoutAdmin } from "stackpress/view";
 import { NameFieldControl } from "../../components/fields/NameField";
 import { ImageFieldControl } from "../../components/fields/ImageField";
 import { TypeFieldControl } from "../../components/fields/TypeField";
@@ -46,38 +42,39 @@ export function AdminProfileCreateForm(props: {
         value={input.name}
         error={errors.name?.toString()}
       />
-      ,
+
       <ImageFieldControl
         className="px-mb-20"
         value={input.image}
         error={errors.image?.toString()}
       />
-      ,
+
       <TypeFieldControl
         className="px-mb-20"
         value={input.type}
         error={errors.type?.toString()}
       />
-      ,
+
       <RolesFieldControl
         className="px-mb-20"
         value={input.roles}
         error={errors.roles?.toString()}
       />
-      ,
+
       <TagsFieldControl
         className="px-mb-20"
         value={input.tags}
         error={errors.tags?.toString()}
       />
-      ,
+
       <ReferencesFieldControl
         className="px-mb-20"
         value={input.references}
         error={errors.references?.toString()}
       />
+
       <Button
-        className="theme-bc-bd2 theme-bg-bg2 border !px-px-14 !px-py-8 px-mr-5"
+        className="theme-bc-primary theme-bg-primary border !px-px-14 !px-py-8"
         type="submit"
       >
         <i className="text-sm fas fa-fw fa-save"></i>
@@ -87,12 +84,14 @@ export function AdminProfileCreateForm(props: {
   );
 }
 
-export function AdminProfileCreateBody(
-  props: PageBodyProps<AdminDataProps, Partial<ProfileInput>, Profile>,
-) {
-  const { request, response } = props;
-  const input = response.results || request.data || {};
-  const errors = response.errors || {};
+export function AdminProfileCreateBody() {
+  const { request, response } = useServer<
+    AdminConfigProps,
+    Partial<ProfileInput>,
+    Profile
+  >();
+  const input = { ...response.results, ...request.data() };
+  const errors = response.errors();
   //render
   return (
     <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
@@ -107,14 +106,20 @@ export function AdminProfileCreateBody(
 }
 
 export function AdminProfileCreateHead(
-  props: PageHeadProps<AdminDataProps, Partial<ProfileInput>, Profile>,
+  props: ServerPageProps<AdminConfigProps>,
 ) {
   const { data, styles = [] } = props;
+  const { favicon = "/favicon.ico" } = data?.brand || {};
   const { _ } = useLanguage();
+  const mimetype = favicon.endsWith(".png")
+    ? "image/png"
+    : favicon.endsWith(".svg")
+      ? "image/svg+xml"
+      : "image/x-icon";
   return (
     <>
       <title>{_("Create Profile")}</title>
-      {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
+      {favicon && <link rel="icon" type={mimetype} href={favicon} />}
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
         <link key={index} rel="stylesheet" type="text/css" href={href} />
@@ -124,28 +129,11 @@ export function AdminProfileCreateHead(
 }
 
 export function AdminProfileCreatePage(
-  props: PageBodyProps<AdminDataProps, Partial<ProfileInput>, Profile>,
+  props: ServerPageProps<AdminConfigProps>,
 ) {
-  const { data, session, request } = props;
-  const theme = request.session.theme as string | undefined;
-  const {
-    root = "/admin",
-    name = "Admin",
-    logo = "/images/logo-square.png",
-    menu = [],
-  } = data.admin;
-  const path = request.url.pathname;
   return (
-    <LayoutAdmin
-      theme={theme}
-      brand={name}
-      base={root}
-      logo={logo}
-      path={path}
-      menu={menu}
-      session={session}
-    >
-      <AdminProfileCreateBody {...props} />
+    <LayoutAdmin {...props}>
+      <AdminProfileCreateBody />
     </LayoutAdmin>
   );
 }

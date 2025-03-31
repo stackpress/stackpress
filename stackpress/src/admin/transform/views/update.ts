@@ -10,22 +10,22 @@ export default function removePage(directory: Directory, _registry: Registry, mo
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.ids.map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${root}/${model.dash}/${action}/${path}\``;
+  const link = (action: string) => `\`\${base}/${model.dash}/${action}/${path}\``;
 
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
 
-  //import type { NestedObject, PageHeadProps, PageBodyProps, 
-  //AdminDataProps } from 'stackpress/view';
+  //import type { NestedObject, ServerPageProps } from 'stackpress/view';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view',
-    namedImports: [
-      'NestedObject',
-      'PageHeadProps',
-      'PageBodyProps',
-      'AdminDataProps'
-    ]
+    namedImports: [ 'NestedObject', 'ServerPageProps' ]
+  });
+  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/admin/types',
+    namedImports: [ 'AdminConfigProps' ]
   });
   //import type { ProfileInput, ProfileExtended } from '../../types';
   source.addImportDeclaration({
@@ -38,10 +38,10 @@ export default function removePage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import { Crumbs, LayoutAdmin } from 'stackpress/view';
+  //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view',
-    namedImports: [ 'Crumbs', 'LayoutAdmin' ]
+    namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
   });
   //import Button from 'frui/element/Button';
   source.addImportDeclaration({
@@ -64,10 +64,10 @@ export default function removePage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}UpdateCrumbs`,
     parameters: [{ 
       name: 'props', 
-      type: `{ root: string, results: ${model.title}Extended }` 
+      type: `{ base: string, results: ${model.title}Extended }` 
     }],
     statements: (`
-      const { root, results } = props;
+      const { base, results } = props;
       //hooks
       const { _ } = useLanguage();
       //variables
@@ -75,7 +75,7 @@ export default function removePage(directory: Directory, _registry: Registry, mo
         {
           label: (<span className="theme-info">{_('${model.plural}')}</span>),
           icon: '${model.icon}',
-          href: \`\${root}/${model.dash}/search\`
+          href: \`\${base}/${model.dash}/search\`
         },
         {
           label: (
@@ -116,9 +116,9 @@ export default function removePage(directory: Directory, _registry: Registry, mo
               value={input.${column.name}} 
               error={errors.${column.name}?.toString()} 
             />
-          `))}
+          `)).join('\n')}
           <Button 
-            className="theme-bc-bd2 theme-bg-bg2 border !px-px-14 !px-py-8 px-mr-5" 
+            className="theme-bc-primary theme-bg-primary border !px-px-14 !px-py-8" 
             type="submit"
           >
             <i className="text-sm fas fa-fw fa-save"></i>
@@ -132,31 +132,24 @@ export default function removePage(directory: Directory, _registry: Registry, mo
   source.addFunction({
     isExported: true,
     name: `Admin${model.title}UpdateBody`,
-    parameters: [{ 
-      name: 'props', 
-      type: `PageBodyProps<${[
-        'AdminDataProps', 
+    statements: (`
+      const { config, request, response } = useServer<${[
+        'AdminConfigProps', 
         `Partial<${model.title}Input>`, 
         `${model.title}Extended`
-      ].join(',')}>` 
-    }],
-    statements: (`
-      const { data, request, response } = props;
-      const { root = '/admin' } = data.admin || {};
-      const input = request.data || response.results || {};
-      const errors = response.errors || {};
+      ].join(',')}>();
+      const base = config.path('admin.base', '/admin');
+      const input = { ...response.results, ...request.data() };
+      const errors = response.errors();
       const results = response.results as ${model.title}Extended;
       //render
       return (
         <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
           <div className="px-px-10 px-py-14 theme-bg-bg2">
-            <Admin${model.title}UpdateCrumbs root={root} results={results}  />
+            <Admin${model.title}UpdateCrumbs base={base} results={results} />
           </div>
           <div className="px-p-10">
-            <Admin${model.title}UpdateForm 
-              errors={errors} 
-              input={input} 
-            />
+            <Admin${model.title}UpdateForm errors={errors} input={input} />
           </div>
         </main>
       );
@@ -168,19 +161,21 @@ export default function removePage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}UpdateHead`,
     parameters: [{ 
       name: 'props', 
-      type: `PageHeadProps<${[
-        'AdminDataProps', 
-        `Partial<${model.title}Input>`, 
-        `${model.title}Extended`
-      ].join(',')}>` 
+      type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: (`
       const { data, styles = [] } = props;
+      const { favicon = '/favicon.ico' } = data?.brand || {};
       const { _ } = useLanguage();
+      const mimetype = favicon.endsWith('.png')
+        ? 'image/png'
+        : favicon.endsWith('.svg')
+        ? 'image/svg+xml'
+        : 'image/x-icon';
       return (
         <>
           <title>{_('Update ${model.singular}')}</title>
-          {data.icon && <link rel="icon" type="image/svg+xml" href={data.icon} />}
+          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
           <link rel="stylesheet" type="text/css" href="/styles/global.css" />
           {styles.map((href, index) => (
             <link key={index} rel="stylesheet" type="text/css" href={href} />
@@ -195,33 +190,12 @@ export default function removePage(directory: Directory, _registry: Registry, mo
     name: `Admin${model.title}UpdatePage`,
     parameters: [{ 
       name: 'props', 
-      type: `PageBodyProps<${[
-        'AdminDataProps', 
-        `Partial<${model.title}Input>`, 
-        `${model.title}Extended`
-      ].join(',')}>`  
+      type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: (`
-      const { data, session, request } = props;
-      const theme = request.session.theme as string | undefined;
-      const {
-        root = '/admin',
-        name = 'Admin',
-        logo = '/images/logo-square.png',
-        menu = []
-      } = data.admin;
-      const path = request.url.pathname;
       return (
-        <LayoutAdmin
-          theme={theme} 
-          brand={name}
-          base={root}
-          logo={logo}
-          path={path} 
-          menu={menu}
-          session={session}
-        >
-          <Admin${model.title}UpdateBody {...props} />
+        <LayoutAdmin {...props}>
+          <Admin${model.title}UpdateBody />
         </LayoutAdmin>
       );
     `)

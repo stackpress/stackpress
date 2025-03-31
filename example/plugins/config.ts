@@ -37,6 +37,12 @@ export type Config = StackpressConfig & { assets: string };
 
 export const config: Config = {
   assets,
+  brand: {
+    name: 'Stackpress',
+    logo: '/logo.png',
+    icon: '/icon.png',
+    favicon: '/favicon.ico'
+  },
   server: {
     port: 3000,
     cwd: cwd,
@@ -60,11 +66,15 @@ export const config: Config = {
   },
   view: {
     noview: 'json',
-    props: {
-      icon: '/react.svg',
-      logo: 'https://www.stackpress.io/images/stackpress-logo-icon.png',
-      brand: 'Stackpress',
-      base: '/'
+    base: '/',
+    notify: {
+      position: 'bottom-center',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: 'dark',
     },
     engine: {
       //path where to save assets (css, images, etc)
@@ -87,7 +97,11 @@ export const config: Config = {
       clientTemplate: CLIENT_TEMPLATE,
       //filepath to a global css file
       // - used in dev mode and build step
-      cssFile: 'virtual:uno.css',
+      cssFiles: [ 
+        'frui/frui.css', 
+        'stackpress/fouc.css', 
+        'virtual:uno.css' 
+      ],
       //style route prefix used in the document markup
       //ie. /assets/[id][extname]
       //<link rel="stylesheet" type="text/css" href="/client/[id][extname]" />
@@ -122,8 +136,7 @@ export const config: Config = {
     }
   },
   auth: {
-    name: 'Incept',
-    logo: '/images/incept-logo-long.png',
+    base: '/auth',
     '2fa': {},
     captcha: {},
     roles: [ 'USER' ],
@@ -188,8 +201,7 @@ export const config: Config = {
   cookie: { path: '/' },
   admin: {
     name: 'Admin',
-    logo: '/images/incept-logo-square-1.png',
-    root: '/admin',
+    base: '/admin',
     menu: [
       {
         name: 'Profiles',
@@ -313,6 +325,7 @@ export const config: Config = {
       en_US: {
         label: 'EN',
         translations: {
+          'Profiles': 'Profilios',
           'Sign In': 'Signin',
           'Home Page': 'Home Page'
         }

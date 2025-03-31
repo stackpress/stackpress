@@ -1,16 +1,10 @@
-'use client';
-//types
-import type { ReactNode } from 'react';
-
+//modules
 import { useState, useEffect } from 'react';
 import Modal from 'frui/element/Modal';
+//views
+import type { ModalProviderProps } from '../types';
+//modal
 import ModalContext from './ModalContext';
-
-export type ModalProviderProps = { 
-  title?: string,
-  className?: string,
-  children: ReactNode
-};
 
 // (this is what to put in app.tsx)
 const ModalProvider = ({ children, ...config }: ModalProviderProps) => {
