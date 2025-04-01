@@ -34,6 +34,13 @@ export function generateField(
     moduleSpecifier: 'stackpress/view',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
+  //import mustache from 'mustache';
+  if (column.field.method === 'relation') {
+    source.addImportDeclaration({
+      moduleSpecifier: 'mustache',
+      defaultImport: 'mustache'
+    });
+  }
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
@@ -59,19 +66,49 @@ export function generateField(
     statements: (`
       //props
       const { className, value, change, error = false } = props;
-      const attributes = ${JSON.stringify(column.field.attributes)};
-      //render
-      return (
-        <${column.field.component} 
-          {...attributes}
-          name="${column.name}${column.multiple ? '[]': ''}"
-          className={className}
-          error={error} 
-          defaultValue={value} 
-          ${BoolComponent ? 'defaultChecked={value}': ''}
-          onUpdate={value => change && change('${column.name}${column.multiple ? '[]': ''}', value)}
-        />
-      );
+      ${column.field.method === 'relation' ? (`
+        //render
+        return (
+          <${column.field.component} 
+            name="${column.name}${column.multiple ? '[]': ''}"
+            className={className}
+            error={error} 
+            defaultValue={value} 
+            searchable={true}
+            onQuery={async (query, update) => {
+              const response = await fetch(\`${
+                (column.field.attributes.search as string)?.includes('?')
+                  ? column.field.attributes.search + '&q=${query}'
+                  : column.field.attributes.search + '?q=${query}'
+              }\`);
+              const json = await response.json();
+              const options = json.results.map(row => ({
+                label: mustache.render('${column.field.attributes.template}', row),
+                value: row.${column.field.attributes.id}
+              }));
+              update(options);
+            }}
+          />
+        );
+      `) : (`
+        const attributes = ${JSON.stringify(column.field.attributes)};
+        //render
+        return (
+          <${column.field.component} 
+            {...attributes}
+            name="${column.name}${column.multiple ? '[]': ''}"
+            className={className}
+            error={error} 
+            ${BoolComponent ? (`
+              defaultValue="1"
+              defaultChecked={!!value}
+            `): (`
+              defaultValue={value} 
+            `)}
+            onUpdate={value => change && change('${column.name}${column.multiple ? '[]': ''}', value)}
+          />
+        );
+      `)}
     `)
   });
   //export function NameFieldControl(props: ControlProps) {
@@ -89,7 +126,7 @@ export function generateField(
       //render
       return (
         <Control label={\`\${_('${column.label}')}*\`} error={error} className={className}>
-          ${BoolComponent ? `<input type="hidden" name="${column.name}" value="false" />`: ''}
+          ${BoolComponent ? `<input type="hidden" name="${column.name}" value="0" />`: ''}
           <${column.title}Field
             error={!!error} 
             value={value} 

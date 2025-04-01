@@ -1,5 +1,5 @@
 //stackpress
-import type { ProfileAuth } from 'stackpress';
+import type { Profile } from 'stackpress';
 //plugins
 import bootstrap from '../plugins/bootstrap';
 
@@ -7,14 +7,37 @@ const secret = process.env.ADMIN_PASS || '123';
 
 async function populate() {
   const server = await bootstrap();
-  const admin = await server.resolve<ProfileAuth>('auth-signup', {
-    type: 'person',
+  const admin = await server.resolve<Profile>('profile-create', {
     name: 'Admin',
-    username: 'admin',
-    email: 'admin@project.com',
-    secret: secret,
-    roles: [ 'ADMIN' ]
+    type: 'person',
+    roles: [ 'ADMIN' ],
+    tags: [ 'admin', 'user' ],
+    references: {
+      foo: 'barfoo',
+      bar: 'foobar'
+    },
+    address1: {
+      label: 'Home',
+      street: '123 Main St',
+      city: 'Anytown',
+      country: 'USA',
+      postalCode: '12345'
+    }
   });
+  await server.resolve('auth-create', {
+    type: 'username',
+    token: 'admin',
+    secret: secret,
+  })
+  
+  // const admin = await server.resolve<ProfileAuth>('auth-signup', {
+  //   type: 'person',
+  //   name: 'Admin',
+  //   username: 'admin',
+  //   email: 'admin@project.com',
+  //   secret: secret,
+  //   roles: [ 'ADMIN' ]
+  // });
   const app = await server.resolve('application-create', {
     profileId: admin.results?.id,
     name: 'Example App',

@@ -55,6 +55,13 @@ export default definePreset(() => {
       [ /^rgba-bg-(\d+)-(\d+)-(\d+)-(\d+)$/, ([_, r, g, b, a]) => ({ 'background-color': `rgba(${r}, ${g}, ${b}, ${Number(a) / 100})` }) ],
       [ /^rgba-bc-(\d+)-(\d+)-(\d+)-(\d+)$/, ([_, r, g, b, a]) => ({ 'border-color': `rgba(${r}, ${g}, ${b}, ${Number(a) / 100})` }) ],
       //pixel perfect rule set
+      [ /^px-ba-([\.\d]+)$/, ([_, num]) => ({ 'border-width': `${num}px` }) ],
+      [ /^px-bb-([\.\d]+)$/, ([_, num]) => ({ 'border-bottom-width': `${num}px` }) ],
+      [ /^px-bl-([\.\d]+)$/, ([_, num]) => ({ 'border-left-width': `${num}px` }) ],
+      [ /^px-br-([\.\d]+)$/, ([_, num]) => ({' border-right-width': `${num}px` }) ],
+      [ /^px-bt-([\.\d]+)$/, ([_, num]) => ({ 'border-top-width': `${num}px` }) ],
+      [ /^px-bx-([\.\d]+)$/, ([_, num]) => ({ 'border-left-width': `${num}px`, 'border-right-width': `${num}px` }) ],
+      [ /^px-by-([\.\d]+)$/, ([_, num]) => ({ 'border-bottom-width': `${num}px`, 'border-top-width': `${num}px` }) ],
       [ /^px-m-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ margin: `${num}px` }) ],
       [ /^px-mb-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ 'margin-bottom': `${num}px` }) ],
       [ /^px-ml-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ 'margin-left': `${num}px` }) ],
@@ -75,7 +82,6 @@ export default definePreset(() => {
       [ /^px-mw-([\.\d]+)$/, ([_, num]) => ({ 'max-width': `${num}px` }) ],
       [ /^px-b-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ bottom: `${num}px` }) ],
       [ /^px-l-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ left: `${num}px` }) ],
-  
       [ /^px-r-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ right: `${num}px` }) ],
       [ /^px-t-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ top: `${num}px` }) ],
       [ /^px-o-(\d+)$/, ([_, num]) => ({ 'opacity': `${Number(num) / 100}` }) ],

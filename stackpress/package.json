@@ -120,6 +120,9 @@
     "./view/types": "./dist/view/types.js",
     "./view": "./dist/view/index.js",
 
+    "./dist/api/views/*": "./dist/api/views/*.js",
+    "./dist/session/views/*": "./dist/session/views/*.js",
+
     "./Exception": "./dist/Exception.js",
     "./lib": "./dist/lib.js",
     "./plugin": "./dist/plugin.js",
@@ -135,6 +138,7 @@
       "admin/types": [ "./dist/admin/types.d.ts" ],
       "admin": [ "./dist/admin/index.d.ts" ],
 
+      "api/views/*": [ "./dist/api/views/*.d.ts" ],
       "api/plugin": [ "./dist/api/plugin.d.ts" ],
       "api/types": [ "./dist/api/types.d.ts" ],
       "api": [ "./dist/api/index.d.ts" ],
@@ -171,6 +175,7 @@
       "server": [ "./dist/server/index.d.ts" ],
       
       "Session": [ "./dist/session/Session.d.ts" ],
+      "session/views/*": [ "./dist/session/views/*.d.ts" ],
       "session/plugin": [ "./dist/session/plugin.d.ts" ],
       "session/types": [ "./dist/session/types.d.ts" ],
       "session": [ "./dist/session/index.d.ts" ],
@@ -198,6 +203,9 @@
       "view/plugin": [ "./dist/view/plugin.d.ts" ],
       "view/types": [ "./dist/view/types.d.ts" ],
       "view": [ "./dist/view/index.d.ts" ],
+
+      "dist/api/views/*": [ "./dist/api/views/*.d.ts" ],
+      "dist/session/views/*": [ "./dist/session/views/*.d.ts" ],
 
       "Exception": [ "./dist/Exception.d.ts" ],
       "lib": [ "./dist/lib.d.ts" ],

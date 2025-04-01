@@ -94,8 +94,8 @@ export default class InceptTerminal extends Terminal {
       compilerOptions: {
         outDir: output,
         declaration: true, 
-        declarationMap: true, 
-        sourceMap: true, 
+        declarationMap: false, 
+        sourceMap: false, 
       },
       manipulationSettings: {
         indentationText: IndentationText.TwoSpaces

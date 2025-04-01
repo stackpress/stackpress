@@ -141,7 +141,8 @@ export type LayoutLeftProps = {
 };
 
 export type LayoutMainProps = {
-  open?: boolean
+  head?: boolean,
+  open?: boolean,
   children: ReactNode
 };
 
@@ -162,6 +163,15 @@ export type LayoutRightProps = {
 
 export type LayoutProviderProps = Partial<ServerProps<ServerConfigProps>> & {
   children: ReactNode
+};
+
+export type BlankAppProps = {
+  head?: boolean,
+  children: ReactNode
+};
+
+export type LayoutBlankProps = LayoutProviderProps & {
+  head?: boolean
 };
 
 export type PanelAppProps = { 

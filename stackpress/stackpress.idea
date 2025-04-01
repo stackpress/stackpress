@@ -79,22 +79,21 @@ model Auth
                      @id @default("cuid()")
                      @list.overflow({ length 10 hellip true })
   
-  profileId String   @label("Profile")
+  profileId String   @label("Profile") 
                      @field.relation({ 
-                      href "/admin/profile/search" 
-                      key "profile" 
-                      foreign "id" 
-                      template "{{name}}" 
-                    }) 
+                       id "id"
+                       search "/admin/profile/search?json"
+                       template "{{name}}" 
+                     }) 
                      @is.required("Required")
-                     @filter.relation({ 
-                      href "/admin/profile/search" 
-                      key "profile" 
-                      foreign "id" 
-                      template "{{name}}" 
-                    }) 
-                     @list.template({ key "profile" template "{{name}}" })
-                     @view.template({ key "profile" template "{{name}}" })
+                     @is.notempty("Cannot be empty")
+                     @filter.relation({
+                       id "id"
+                       search "/admin/profile/search?json"
+                       template "{{name}}" 
+                     }) 
+                     @list.template({ template "{{profile.name}}" }) 
+                     @view.template({ template "{{profile.name}}" })
                      
   type      String   @label("Type") 
                      @default("username") 
@@ -149,9 +148,26 @@ model Application
   @label("App" "Apps") 
   @template("{{name}}") 
   @icon("laptop") 
+  @query([ "*" "profile.*" ])
 {
-  id      String   @label("ID") 
+  id        String @label("ID") 
                    @id @default("cuid()")
+  
+  profileId String @label("Profile") 
+                   @field.relation({ 
+                     id "id"
+                     search "/admin/profile/search?json"
+                     template "{{name}}" 
+                   }) 
+                   @is.required("Required")
+                   @is.notempty("Cannot be empty")
+                   @filter.relation({
+                     id "id"
+                     search "/admin/profile/search?json"
+                     template "{{name}}" 
+                   }) 
+                   @list.template({ template "{{profile.name}}" }) 
+                   @view.template({ template "{{profile.name}}" })
 
   name    String   @label("Name") 
                    @searchable
@@ -208,36 +224,42 @@ model Session
   @label("Session" "Sessions") 
   @template("{{profile.name}}") 
   @icon("coffee") 
-  @query([ "*" "profile.*" "application.*"])
+  @query([ "*" "profile.*" "application.*" ])
 {
   id            String   @label("ID") 
                          @id @default("cuid()")
   
   applicationId String   @label("App") 
                          @field.relation({ 
-                           href "/admin/app/search" 
-                           key "application" 
-                           foreign "id" 
+                           id "id"
+                           search "/admin/application/search?json"
                            template "{{name}}" 
                          }) 
                          @is.required("Required")
                          @is.notempty("Cannot be empty")
                          @filter.relation({ 
-                           href "/admin/app/search" 
-                           key "application" 
-                           foreign "id" 
+                           id "id"
+                           search "/admin/application/search?json"
                            template "{{name}}" 
                          }) 
-                         @list.template({ key "application" template "{{name}}" }) 
-                         @view.template({ key "application" template "{{name}}" })
+                         @list.template({ template "{{application.name}}" }) 
+                         @view.template({ template "{{application.name}}" })
   
   profileId     String   @label("Profile") 
-                         @field.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
+                         @field.relation({ 
+                           id "id"
+                           search "/admin/profile/search?json"
+                           template "{{name}}" 
+                         }) 
                          @is.required("Required")
                          @is.notempty("Cannot be empty")
-                         @filter.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
-                         @list.template({ key "profile" template "{{name}}" }) 
-                         @view.template({ key "profile" template "{{name}}" })
+                         @filter.relation({
+                           id "id"
+                           search "/admin/profile/search?json"
+                           template "{{name}}" 
+                         }) 
+                         @list.template({ template "{{profile.name}}" }) 
+                         @view.template({ template "{{profile.name}}" })
 
   secret        String   @label("Secret") 
                          @default("cuid()")

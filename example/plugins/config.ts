@@ -51,7 +51,7 @@ export const config: Config = {
     bodySize: 0
   },
   client: { 
-    lang: 'ts',
+    lang: 'js',
     module: '.client',
     revisions: revisions,
     build: path.join(modules, '.client'),

@@ -175,18 +175,18 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
           ).map(column => {
             return (`
               <Trow>
-                <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 font-bold \${stripe(true)}\`}>
-                  {_('${column.title}')}
+                <Tcol noWrap className={\`!theme-bc-bd2 font-bold \${stripe(true)}\`}>
+                  {_('${column.label}')}
                 </Tcol>
-                <Tcol noWrap className={\`!theme-bc-bd2 px-p-5 \${stripe()}\`}>
+                <Tcol noWrap className={\`!theme-bc-bd2 \${stripe()}\`}>
                   ${column.required && !column.view.component
                     ? `{results.${column.name}.toString()}`
                     : column.required && column.view.component
-                    ? `<${column.title}ViewFormat value={results.${column.name}} />`
+                    ? `<${column.title}ViewFormat data={results} value={results.${column.name}} />`
                     : !column.required && !column.view.component
                     ? `{results.${column.name} ? results.${column.name}.toString() : ''}`
                     //!column.required && column.view.component
-                    : `{results.${column.name} ? (<${column.title}ViewFormat value={results.${column.name}} />) : ''}`
+                    : `{results.${column.name} ? (<${column.title}ViewFormat data={results} value={results.${column.name}} />) : ''}`
                   }
                 </Tcol>
               </Trow>

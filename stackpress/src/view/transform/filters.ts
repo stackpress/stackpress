@@ -34,6 +34,13 @@ export function generateFilter(
     moduleSpecifier: 'stackpress/view',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
+  //import mustache from 'mustache';
+  if (column.field.method === 'relation') {
+    source.addImportDeclaration({
+      moduleSpecifier: 'mustache',
+      defaultImport: 'mustache'
+    });
+  }
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
@@ -59,19 +66,50 @@ export function generateFilter(
     statements: (`
       //props
       const { className, value, change, error = false } = props;
-      const attributes = ${JSON.stringify(column.filter.attributes)};
-      //render
-      return (
-        <${column.filter.component} 
-          {...attributes}
-          name="filter[${column.name}]${column.multiple ? '[]': ''}"
-          className={className}
-          error={error} 
-          defaultValue={value} 
-          ${BoolComponent ? 'defaultChecked={value}': ''}
-          onUpdate={value => change && change('filter[${column.name}]${column.multiple ? '[]': ''}', value)}
-        />
-      );
+      ${column.filter.method === 'relation' ? (`
+        //render
+        return (
+          <${column.filter.component} 
+            name="filter[${column.name}]${column.multiple ? '[]': ''}"
+            className={className}
+            error={error} 
+            defaultValue={value} 
+            searchable={true}
+            onQuery={async (query, update) => {
+              const response = await fetch(\`${
+                (column.filter.attributes.search as string)?.includes('?')
+                  ? column.filter.attributes.search + '&q=${query}'
+                  : column.filter.attributes.search + '?q=${query}'
+              }\`);
+              const json = await response.json();
+              const options = json.results.map(row => ({
+                label: mustache.render('${column.filter.attributes.template}', row),
+                value: row.${column.filter.attributes.id}
+              }));
+              update(options);
+            }}
+          />
+        );
+      `) : (`
+        const attributes = ${JSON.stringify(column.filter.attributes)};
+        //render
+        return (
+          <${column.filter.component} 
+            {...attributes}
+            name="filter[${column.name}]${column.multiple ? '[]': ''}"
+            className={className}
+            error={error} 
+            ${BoolComponent ? (`
+              defaultValue="1"
+              defaultChecked={!!value}
+            `): (`
+              defaultValue={value} 
+            `)}
+            onUpdate={value => change && change('filter[${column.name}]${column.multiple ? '[]': ''}', value)}
+          />
+        );
+      `)}
+      
     `)
   });
   //export function NameFilterControl(props: ControlProps) {
@@ -89,7 +127,7 @@ export function generateFilter(
       //render
       return (
         <Control label={_('${column.label}')} error={error} className={className}>
-          ${BoolComponent ? `<input type="hidden" name="${column.name}" value="false" />`: ''}
+          ${BoolComponent ? `<input type="hidden" name="filter[${column.name}]${column.multiple ? '[]': ''}" value="0" />`: ''}
           <${column.title}Filter
             error={!!error} 
             value={value} 

@@ -17,7 +17,5 @@ export default function plugin(server: Server) {
     server.all('/profile/restore/:id', '@/plugins/profile/admin/views/restore', -100);
     server.all('/profile/search', '@/plugins/profile/admin/views/search', -100);
     server.all('/profile/update/:id', '@/plugins/profile/admin/views/update', -100);
-
-    server.all('/form', '@/plugins/profile/views/form', -100);
   });
 };

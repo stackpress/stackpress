@@ -24,7 +24,7 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
   const { input, errors } = props;
   const { _ } = useLanguage();
   return (
-    <form method="post">
+    <form className="px-px-10" method="post">
       {input.type === 'phone' ? (
         <Control 
           label={`${_('Phone Number')}*`} 
@@ -75,15 +75,14 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
       >
         <Password
           name="secret"
-          className="block"
           error={!!errors.secret}
           defaultValue={input.secret}
           required
         />
       </Control>
-      <div className="px-pt-20">
+      <div className="px-py-20">
         <Button
-          className="theme-bc-primary theme-bg-primary border !px-px-14 !px-py-8"
+          className="theme-bc-primary theme-bg-primary border px-w-100-0 !px-px-14 !px-py-8"
           type="submit"
         >
           {_('Sign In')}
@@ -122,27 +121,27 @@ export function AuthSigninBody() {
       ? _('Email') 
       : _('Username'),
     class: input.type === option 
-      ? 'theme-tx1 theme-bc-bd1 relative px-ml-2 px-p-10 rounded border px-bx-1 px-bt-1 px-bb-0 inline-flex items-center'
-      : 'theme-tx1 theme-bc-bd0 relative px-ml-2 px-p-10 rounded border px-bx-1 px-bt-1 px-bb-0 inline-flex items-center',
+      ? 'theme-tx1 theme-bg-bg1 relative px-ml-2 px-p-10 inline-flex items-center'
+      : 'theme-tx1 theme-bc-bd1 relative px-ml-2 px-p-10 border px-bx-1 px-bt-1 px-bb-0 inline-flex items-center',
     url: `${base}/signin/${option}`
   })): [];
   //render
   return (
-    <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
-      <div className="px-p-10">
+    <main className="theme-bg-bg0 px-w-100-0 px-h-100-0 overflow-auto">
+      <div className="flex flex-col mx-auto items-center px-w-360">
         {config.has('brand', 'logo') ? (
           <img 
             height="50" 
             alt={config.path('brand.name')} 
             src={config.path('brand.logo')} 
-            className="block mx-auto px-mb-10" 
+            className="block mx-auto px-mt-20 px-mb-10" 
           />
         ): (
           <h2 className="px-mb-10 px-fs-20 text-center">
             {config.path('brand.name')}
           </h2>
         )}
-        <section className="theme-bg-bg1 theme-bc-bd3 border px-w-360">
+        <section className="theme-bg-bg1 theme-bc-bd3 border px-w-100-0">
           <header className="theme-bg-bg2 flex items-center px-p-10">
             <i className="fas fa-fw fa-lock"></i>
             <h3 className="px-ml-5 uppercase font-normal px-fs-16">
@@ -161,6 +160,7 @@ export function AuthSigninBody() {
           ) : null}
           <AuthSigninForm errors={response.errors()} input={input} />
         </section>
+        <footer className="px-py-10"></footer>
       </div>
     </main>
   );
@@ -189,7 +189,7 @@ export function AuthSigninHead(props: ServerPageProps<AuthConfigProps>) {
 
 export function AuthSigninPage(props: ServerPageProps<AuthConfigProps>) {
   return (
-    <LayoutBlank {...props}>
+    <LayoutBlank head={false} {...props}>
       <AuthSigninBody />
     </LayoutBlank>
   );

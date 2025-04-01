@@ -181,5 +181,9 @@ export default {
   "detail": {
     "name": "Link",
     "attributes": {}
-  }
+  },
+  "template": {
+    "name": "HTML",
+    "attributes": {}
+  },
 } as Record<string, ColumnOption>;

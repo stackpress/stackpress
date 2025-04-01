@@ -30,9 +30,43 @@ export function generateFormat(
     moduleSpecifier: `frui/format/${column.list.component}`,
     defaultImport: column.list.component
   });
-  const props = `{ value: ${
-    column.typemap.format}${column.multiple ? '[]': ''
-  } }`;
+  const props = `{ 
+    data: ${model.title}Extended,
+    value: ${column.typemap.format}${column.multiple ? '[]': ''} 
+  }`;
+  //import mustache from 'mustache';
+  if (column.list.method === 'template') {
+    source.addImportDeclaration({
+      moduleSpecifier: 'mustache',
+      defaultImport: 'mustache'
+    });
+
+    //import type { ProfileExtended } from '../../types';
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: '../../types',
+      namedImports: [ `${model.title}Extended` ]
+    });
+    //export function NameFormat() {
+    source.addFunction({
+      isDefaultExport: true,
+      name: `${column.title}Format`,
+      parameters: [ { name: 'props', type: props } ],
+      statements: (`
+        //props
+        const { data } = props;
+        const value = mustache.render(
+          '${column.list.attributes.template}',
+          data
+        );
+        //render
+        return (
+          <${column.list.component} value={value} />
+        );
+      `)
+    });
+    return;
+  }
   //export function NameFormat() {
   source.addFunction({
     isDefaultExport: true,
@@ -42,11 +76,11 @@ export function generateFormat(
     ],
     statements: (`
       //props
-      const { value } = props;
+      const { data, value } = props;
       const attributes = ${JSON.stringify(column.list.attributes)};
       //render
       return (
-        <${column.list.component} {...attributes} value={value} />
+        <${column.list.component} {...attributes} data={data} value={value} />
       );
     `)
   });

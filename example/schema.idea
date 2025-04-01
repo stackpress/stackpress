@@ -9,8 +9,21 @@ use "stackpress/stackpress.idea"
 //just a general information of an entity.
 
 model Profile { 
+  address1    Address      @label("Primary Address") 
+                           @field.fieldset 
+                           @list.hide
+                           @view.fieldset
+                          
+  address2    Address?     @label("Optional Address") 
+                           @field.fieldset 
+                           @list.hide
+                           @view.fieldset
+
+  address3    Address[]    @label("Address Book") 
+                           @field.fieldset 
+                           @list.hide
+                           @view.fieldset
   files       File[]   
-  addresses   Address[] 
   connections Connection[] 
   memberships Connection[] 
 }
@@ -26,22 +39,41 @@ model Connection
   @label("Connection" "Connections") 
   @template("{{owner.name}} - {{member.name}}") 
   @icon("users") 
+  @query([ "*" "owner.*" "member.*" ])
 {
   ownerId  String   @label("Owner")
                     @id
-                    @field.relation({ href "/admin/profile/search" key "owner" foreign "id" template "{{name}}" }) 
-                    @filter.relation({ href "/admin/profile/search" key "owner" foreign "id" template "{{name}}" }) 
-                    @is.required
-                    @list.template({ key "owner" template "{{name}}" }) 
-                    @view.template({ key "owner" template "{{name}}" })
+                    @field.relation({ 
+                      id "id"
+                      search "/admin/profile/search?json"
+                      template "{{name}}" 
+                    }) 
+                    @is.required("Required")
+                    @is.notempty("Cannot be empty")
+                    @filter.relation({
+                      id "id"
+                      search "/admin/profile/search?json"
+                      template "{{name}}" 
+                    }) 
+                    @list.template({ template "{{owner.name}}" }) 
+                    @view.template({ template "{{owner.name}}" })
   
   memberId String   @label("Member")
                     @id
-                    @field.relation({ href "/admin/profile/search" key "member" foreign "id" template "{{name}}" }) 
-                    @filter.relation({ href "/admin/profile/search" key "member" foreign "id" template "{{name}}" }) 
-                    @is.required
-                    @list.template({ key "member" template "{{name}}" }) 
-                    @view.template({ key "member" template "{{name}}" })
+                    @field.relation({ 
+                      id "id"
+                      search "/admin/profile/search?json"
+                      template "{{name}}" 
+                    }) 
+                    @is.required("Required")
+                    @is.notempty("Cannot be empty")
+                    @filter.relation({
+                      id "id"
+                      search "/admin/profile/search?json"
+                      template "{{name}}" 
+                    }) 
+                    @list.template({ template "{{member.name}}" }) 
+                    @view.template({ template "{{member.name}}" })
   
   role     String   @label("Role")
                     @default("member")
@@ -79,6 +111,7 @@ model File
   @label("File" "Files") 
   @template("{{name}}") 
   @icon("file") 
+  @query([ "*" "profile.*" ])
 {
   //FIELDS:
   id          String   @label("ID") 
@@ -86,11 +119,20 @@ model File
                        @list.overflow({ length 10 hellip true })
   
   profileId   String   @label("Profile") 
-                       @field.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
-                       @is.required
-                       @filter.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
-                       @list.template({ key "profile" template "{{name}}" }) 
-                       @view.template({ key "profile" template "{{name}}" })
+                       @field.relation({ 
+                         id "id"
+                         search "/admin/profile/search?json"
+                         template "{{name}}" 
+                       }) 
+                       @is.required("Required")
+                       @is.notempty("Cannot be empty")
+                       @filter.relation({
+                         id "id"
+                         search "/admin/profile/search?json"
+                         template "{{name}}" 
+                       }) 
+                       @list.template({ template "{{profile.name}}" }) 
+                       @view.template({ template "{{profile.name}}" })
 
   name        String   @label("Name") 
                        @searchable
@@ -129,40 +171,15 @@ model File
 //--------------------------------------------------------------------//
 // Address System
 
-model Address 
+type Address 
   @label("Address" "Addresses") 
   @template("{{label}}") 
   @icon("map-marker") 
 {
-  id          String    @label("ID") 
-                        @id @default("cuid()")
-                        @list.overflow({ length 10 hellip true })
-  
-  profileId   String    @label("Profile") 
-                        @field.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
-                        @is.required
-                        @filter.relation({ href "/admin/profile/search" key "profile" foreign "id" template "{{name}}" }) 
-                        @list.template({ key "profile" template "{{name}}" }) 
-                        @view.template({ key "profile" template "{{name}}" })
-
   label       String    @label("Name") 
                         @field.text
                         @is.required
                         @list.text @view.text
-  
-  contact      String?  @label("Contact Person")
-                        @field.text
-                        @list.text @view.text
-  
-  email        String?  @label("Contact Email Address") 
-                        @field.email
-                        @is.email
-                        @view.email
-  
-  phone        String?  @label("Contact Phone Number") 
-                        @field.text
-                        @is.pattern("/^\+[0-9]{0,3} [0-9]+$/")
-                        @view.phone
   
   unit         String?  @label("Unit Number")
                         @field.text

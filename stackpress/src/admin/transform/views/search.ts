@@ -308,17 +308,17 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
                 const value = column.required && column.list.method === 'none'
                   ? `{row.${column.name}.toString()}`
                   : column.required && column.list.method !== 'none'
-                  ? `<${column.title}ListFormat value={row.${column.name}} />`
+                  ? `<${column.title}ListFormat data={row} value={row.${column.name}} />`
                   : !column.required && column.list.method === 'none'
                   ? `{row.${column.name} ? row.${column.name}.toString() : ''}`
                   //!column.required && column.list.method !== 'none'
-                  : `{row.${column.name} ? (<${column.title}ListFormat value={row.${column.name}} />) : ''}`;
+                  : `{row.${column.name} ? (<${column.title}ListFormat data={row} value={row.${column.name}} />) : ''}`;
                 const align = column.sortable ? 'text-right' : 'text-left';
                 return column.filter.method !== 'none' ? (`
-                  <Tcol noWrap className={\`!theme-bc-bd2${align} \${stripe(index)}\`}>
+                  <Tcol noWrap className={\`!theme-bc-bd2 ${align} \${stripe(index)}\`}>
                     <span
                       className="cursor-pointer theme-info"
-                      onClick={() => filter('type', row.${column.name})}
+                      onClick={() => filter('filter[${column.name}]', row.${column.name})}
                     >
                       ${value}
                     </span>
