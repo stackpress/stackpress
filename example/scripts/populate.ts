@@ -21,10 +21,11 @@ async function populate() {
       street: '123 Main St',
       city: 'Anytown',
       country: 'USA',
-      postalCode: '12345'
+      postal: '12345'
     }
   });
   await server.resolve('auth-create', {
+    profileId: admin.results?.id,
     type: 'username',
     token: 'admin',
     secret: secret,

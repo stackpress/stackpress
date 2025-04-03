@@ -196,13 +196,19 @@ export default class Fieldset {
   /**
    * Asserts the values
    */
-  public assert(values: Record<string, any>, strict = true) {
+  public assert(values: Record<string, any> = {}, strict = true) {
     const errors: NestedObject<string|string[]> = {};
     for (const column of this.columns.values()) {
       if (column.model) {
         continue;
       }
-      if (column.fieldset) {
+      const value = column.unserialize(values[column.name]);
+      const message = column.assert(value, strict);
+      if (typeof message === 'string') {
+        errors[column.name] = message;
+      //if its a fieldset, and is required, it would have been caught 
+      //above, therefore only validate the fieldset if there is a value
+      } else if (column.fieldset && values[column.name]) {
         const assertions = column.fieldset.assert(
           values[column.name], 
           strict
@@ -210,12 +216,6 @@ export default class Fieldset {
         if (assertions) {
           errors[column.name] = assertions;
         }
-        continue;
-      }
-      const value = column.unserialize(values[column.name]);
-      const message = column.assert(value, strict);
-      if (typeof message === 'string') {
-        errors[column.name] = message;
       }
     }
     return Object.keys(errors).length > 0 ? errors : null;
@@ -255,7 +255,7 @@ export default class Fieldset {
   }
 
   /**
-   * Removes values that are not input fields
+   * Removes values that are not columns or (strict) input fields
    */
   public input(values: Record<string, any>, strict = true) {
     const inputs: Record<string, any> = {};

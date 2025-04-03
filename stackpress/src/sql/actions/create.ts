@@ -33,18 +33,17 @@ export default async function create<M extends UnknownNest = UnknownNest>(
   }
 
   const data = { ...model.defaults, ...input };
-
   //action and return response
   try {
     const results = await engine
-      .insert(model.snake)
+      .insert<Record<string, any>>(model.snake)
       .values(model.serialize(data) as NestedObject<string>)
       .returning('*');
     if (results.length) {
-      return toResponse(results[0]) as StatusResponse<Partial<M>>;
+      return toResponse(model.unserialize(results[0])) as StatusResponse<Partial<M>>;
     }
   } catch (e) {
     return toErrorResponse(e as Error) as StatusResponse<Partial<M>>;
   }
-  return toResponse(data) as StatusResponse<Partial<M>>;
+  return toResponse(model.unserialize(data)) as StatusResponse<Partial<M>>;
 };

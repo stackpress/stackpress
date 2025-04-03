@@ -23,7 +23,7 @@ export default async function migrate(server: Server<any, any, any>, database: E
   //collect all the revisions
   const revisions = new Revisions(root, server.loader);
   //if there are no revisions
-  if (!revisions.size()) {
+  if (!await revisions.last()) {
     return;
   }
   const fs = server.loader.fs;

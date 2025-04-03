@@ -20,6 +20,7 @@ model Profile {
                            @view.fieldset
 
   address3    Address[]    @label("Address Book") 
+                           @default("[]")
                            @field.fieldset 
                            @list.hide
                            @view.fieldset
@@ -224,24 +225,33 @@ type Address
   notes        String?  @label("Notes")
                         @field.textarea
                         @view.text
+
+  
+  contacts     Contact[] @label("Contacts") 
+                         @field.fieldset 
+                         @list.hide
+                         @view.fieldset
   
   latitude     Float?   @label("Latitude")
   longitude    Float?   @label("Longitude")
+}
+
+type Contact 
+  @label("Contact" "Contacts") 
+  @template("{{name}}") 
+  @icon("user") 
+{ 
+  name  String  @label("Contact Person")
+                @field.text
+                @list.text @view.text
   
-  active       Boolean  @label("Active") 
-                        @default(true) 
-                        @filter.switch
-                        @list.hide @view.yesno
+  email String? @label("Contact Email Address") 
+                @field.email
+                @is.email
+                @view.email
   
-  created      Datetime @label("Created") 
-                        @default("now()") @sortable
-                        @list.date("m d, Y h:iA") 
-                        @view.date("m d, Y h:iA")
-  
-  updated      Datetime @label("Updated") 
-                        @default("now()") @timestamp @sortable
-                        @list.date("m d, Y h:iA") 
-                        @view.date("m d, Y h:iA")
-  
-  profile   Profile  @relation({ local "profileId" foreign "id" })
+  phone String  @label("Contact Phone Number") 
+                @field.text
+                @is.pattern("/^\+[0-9]{0,3} [0-9]+$/")
+                @view.phone
 }

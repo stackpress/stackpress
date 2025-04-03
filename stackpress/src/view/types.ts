@@ -301,6 +301,7 @@ export type FileMeta = {
 export type FieldProps = {
   className?: string,
   error?: boolean,
+  name?: string,
   value: any,
   change?: (name: string, value: any) => void
 };
@@ -308,6 +309,7 @@ export type FieldProps = {
 export type ControlProps = {
   className?: string,
   error?: string,
+  name?: string,
   value: any,
   change?: (name: string, value: any) => void
 }

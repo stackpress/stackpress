@@ -48,6 +48,14 @@ export default function createPage(directory: Directory, _registry: Registry, mo
   model.fields.forEach(column => {
     //skip if no component
     if (typeof column.field.component !== 'string') return;
+    if (column.field.method === 'fieldset') {
+      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField';
+      source.addImportDeclaration({
+        moduleSpecifier: `../../components/fields/${column.title}Field`,
+        namedImports: [ `${column.title}FieldsetControl` ]
+      });
+      return;
+    }
     source.addImportDeclaration({
       moduleSpecifier: `../../components/fields/${column.title}Field`,
       namedImports: [ `${column.title}FieldControl` ]
@@ -92,9 +100,17 @@ export default function createPage(directory: Directory, _registry: Registry, mo
       const { _ } = useLanguage();
       return (
         <form method="post">
-          ${model.fields.map(column => (`
+          ${model.fields.map(column => column.field.method === 'fieldset' ? (`
+            <${column.title}FieldsetControl 
+              className="px-mb-20"
+              name="${column.name}"
+              value={input.${column.name}} 
+              error={errors.${column.name}?.toString()} 
+            />
+          `) : (`
             <${column.title}FieldControl 
               className="px-mb-20"
+              name="${column.name}"
               value={input.${column.name}} 
               error={errors.${column.name}?.toString()} 
             />
@@ -128,7 +144,7 @@ export default function createPage(directory: Directory, _registry: Registry, mo
           <div className="px-px-10 px-py-14 theme-bg-bg2">
             <Admin${model.title}CreateCrumbs />
           </div>
-          <div className="px-p-10">
+          <div className="px-p-10 flex-grow overflow-auto">
             <Admin${model.title}CreateForm errors={errors} input={input} />
           </div>
         </main>

@@ -2,8 +2,6 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//session
-import { hash, encrypt } from '../../session/helpers';
 //schema
 import type Model from '../../schema/spec/Model';
 //language
@@ -59,47 +57,8 @@ export default function AdminUpdatePageFactory(model: Model) {
     if (ids.length === model.ids.length) {
       //if form submitted
       if (req.method === 'POST') {
-        //get the session seed (for encrypting)
-        const seed = ctx.config.path('session.seed', 'abc123');
-        //fix the data
-        const data = req.data();
-        //loop through the data
-        for (const key in data) {
-          //get the column meta
-          const column = model.column(key);
-          //if it's not a column, leave as is
-          if (!column) continue;
-          //determine if the column needs to be filled out
-          //(submitted fields will be empty strings)
-          const notEmpty = column.required || !!column.assertions.find(
-            assertion => assertion.method === 'notempty'
-          );
-          //determine if the field is actually empty
-          const isEmpty = data[key] === '' || data[key] === null;
-          //if the field needs to be filled out and is actually empty
-          if (notEmpty && isEmpty) {
-            //delete the key
-            delete data[key];
-            continue;
-          }
-          //determine if the field is encryptable
-          const canEncrypt = data[key] !== null && typeof data[key] !== 'undefined';
-          //if column is encryptable
-          if (canEncrypt) {
-            const string = String(data[key]);
-            if (string.length > 0) {
-              if (column.encrypted) {
-                //encrypt the key
-                data[key] = encrypt(string, seed);
-              } else if (column.hash) {
-                //hash the key
-                data[key] = hash(string);
-              }
-            }
-          }
-        }
         //emit update with the fixed fields
-        await ctx.resolve(`${model.dash}-update`, data, res);
+        await ctx.emit(`${model.dash}-update`, req, res);
         //if error
         if (res.code !== 200) {
           //pass straight to error

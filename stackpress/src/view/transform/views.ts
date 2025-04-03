@@ -2,8 +2,8 @@
 import type { Directory } from 'ts-morph';
 //registry
 import type Registry from '../../schema/Registry';
+import type Fieldset from '../../schema/spec/Fieldset';
 import type Column from '../../schema/spec/Column';
-import type Model from '../../schema/spec/Model';
 
 export default function generate(directory: Directory, registry: Registry) {
   //for each model
@@ -13,17 +13,24 @@ export default function generate(directory: Directory, registry: Registry) {
       column => generateFormat(directory, model, column)
     );
   }
+  //for each fieldset
+  for (const fieldset of registry.fieldset.values()) {
+    //generate all column formats
+    fieldset.columns.forEach(
+      column => generateFormat(directory, fieldset, column)
+    );
+  }
 }
 
 export function generateFormat(
   directory: Directory, 
-  model: Model,
+  fieldset: Fieldset,
   column: Column
 ) {
   //skip if no format component
   if (typeof column.view.component !== 'string') return;
   //get the path where this should be saved
-  const path = `${model.name}/components/views/${column.title}ViewFormat.tsx`;
+  const path = `${fieldset.name}/components/views/${column.title}ViewFormat.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import Text from 'frui/format/Text';
   source.addImportDeclaration({
@@ -31,7 +38,7 @@ export function generateFormat(
     defaultImport: column.view.component
   });
   const props = `{ 
-    data: ${model.title}Extended,
+    data: ${fieldset.title}Extended,
     value: ${column.typemap.format}${column.multiple ? '[]': ''} 
   }`;
   if (column.view.method === 'template') {
@@ -44,7 +51,7 @@ export function generateFormat(
     source.addImportDeclaration({
       isTypeOnly: true,
       moduleSpecifier: '../../types',
-      namedImports: [ `${model.title}Extended` ]
+      namedImports: [ `${fieldset.title}Extended` ]
     });
     //export function NameFormat() {
     source.addFunction({
