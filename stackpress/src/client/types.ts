@@ -31,7 +31,7 @@ export type ClientPlugin<
     config: Model,
     events: Server,
     schema: Create,
-    actions: (engine: Engine) => Actions<M>,
+    actions: (engine: Engine, seed?: string) => Actions<M>,
     admin(server: Server<any, any, any>): void
   }>
 };

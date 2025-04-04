@@ -3,8 +3,6 @@ import type { UnknownNest } from '@stackpress/lib/types';
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//session
-import { decrypt } from '../../../session/helpers';
 //schema
 import type Model from '../../../schema/spec/Model';
 //language
@@ -71,26 +69,7 @@ export default function AdminDetailSearchPageFactory(model: Model) {
         await ctx.emit('error', req, res);
         return;
       }
-      //get the session seed (for decrypting)
-      const seed = ctx.config.path('session.seed', 'abc123');
-      const results = response.results as UnknownNest;
-      //decrypt the data
-      for (const key in results) {
-        const column = model.column(key);
-        if (column && column.encrypted) {
-          const string = String(results[key]);
-          if (string.length > 0) {
-            try {
-              results[key] = decrypt(String(results[key]), seed);
-            } catch(e) {
-              //this can fail if the data was not encrypted 
-              //using the same seed or not encrypted at all 
-            }
-            
-          }
-        }
-      }
-      res.setResults(results);
+      res.setResults(response.results as UnknownNest);
     }
   };
 };

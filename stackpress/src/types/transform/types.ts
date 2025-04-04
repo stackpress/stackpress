@@ -5,7 +5,6 @@ import type Model from '../../schema/spec/Model';
 import type Fieldset from '../../schema/spec/Fieldset';
 import type Registry from '../../schema/Registry';
 import * as typemap from '../../schema/config/typemaps';
-import { formatCode } from '../../schema/helpers';
 
 /**
  * This is the The params comes form the cli
@@ -85,7 +84,7 @@ export function generateModel(source: SourceFile, model: Model) {
   source.addTypeAlias({
     isExported: true,
     name: model.title,
-    type: formatCode(`{
+    type: (`{
       ${columns.filter(
         //filter out columns that are not in the model map
         column => !!column.typemap.model || !!column.enum || !!column.fieldset
@@ -104,7 +103,7 @@ export function generateModel(source: SourceFile, model: Model) {
     source.addTypeAlias({
       isExported: true,
       name: `${model.title}Extended`,
-      type: formatCode(`${model.title} & {
+      type: (`${model.title} & {
         ${model.relations.map(column => (
           //user?: User
           `${column.name}${
@@ -137,7 +136,7 @@ export function generateModel(source: SourceFile, model: Model) {
   source.addTypeAlias({
     isExported: true,
     name: `${model.title}Input`,
-    type: formatCode(`{
+    type: (`{
       ${inputs.map(column => (
         //name?: string
         `${column.name}${
@@ -174,7 +173,7 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
   source.addTypeAlias({
     isExported: true,
     name: fieldset.title,
-    type: formatCode(`{
+    type: (`{
       ${columns.filter(
         //filter out columns that are not in the map
         column => !!column.typemap.model || !!column.enum || !!column.fieldset
@@ -203,7 +202,7 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
   source.addTypeAlias({
     isExported: true,
     name: `${fieldset.title}Input`,
-    type: formatCode(`{
+    type: (`{
       ${inputs.map(column => (
         //name?: string
         `${column.name}${

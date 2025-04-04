@@ -29,7 +29,8 @@ import {
 export default async function search<M extends UnknownNest = UnknownNest>(
   model: Model, 
   engine: Engine,
-  query: SearchParams = {}
+  query: SearchParams = {},
+  seed?: string
 ): Promise<StatusResponse<M[]>> {
   //extract params
   let {
@@ -140,6 +141,7 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     if (!info) return;
     const q = engine.dialect.q;
     const selector = `${q}${info.model.snake}${q}.${q}${info.column.snake}${q}`;
+    value = info.column.serialize(value, undefined, seed) as string|number|boolean;
     const serialized = stringable.includes(info.column.type)
       ? toSqlString(value)
       : floatable.includes(info.column.type)
@@ -151,50 +153,58 @@ export default async function search<M extends UnknownNest = UnknownNest>(
       : dateable.includes(info.column.type)
       ? toSqlDate(value)?.toISOString()
       : String(value);
-    select.where(`${selector} = ?`, [ serialized || String(value) ]);
-    count.where(`${selector} = ?`, [ serialized || String(value) ]);
+    if (typeof serialized !== 'undefined' && serialized !== '') {
+      select.where(`${selector} = ?`, [ serialized ]);
+      count.where(`${selector} = ?`, [ serialized ]);
+    }
   });
   //spans
-  Object.entries(span).forEach(([ key, value ]) => {
+  Object.entries(span).forEach(([ key, values ]) => {
     const info = getColumnInfo(key, model).last;
     if (!info) return;
     const q = engine.dialect.q;
     const selector = `${q}${info.model.snake}${q}.${q}${info.column.snake}${q}`;
-    if (typeof value[0] !== 'undefined'
-      && value[0] !== null
-      && value[0] !== ''
+    if (typeof values[0] !== 'undefined'
+      && values[0] !== null
+      && values[0] !== ''
     ) {
+      const value = info.column.unserialize(values[0], undefined, seed);
       const serialized = stringable.includes(info.column.type)
-        ? toSqlString(value[0])
+        ? toSqlString(value)
         : floatable.includes(info.column.type)
-        ? toSqlFloat(value[0])
+        ? toSqlFloat(value)
         : intable.includes(info.column.type)
-        ? toSqlInteger(value[0])
+        ? toSqlInteger(value)
         : boolable.includes(info.column.type)
-        ? toSqlBoolean(value[0])
+        ? toSqlBoolean(value)
         : dateable.includes(info.column.type)
-        ? toSqlDate(value[0])?.toISOString()
-        : String(value[0]);
-      select.where(`${selector} >= ?`, [ serialized || String(value[0]) ]);
-      count.where(`${selector} >= ?`, [ serialized || String(value[0]) ]);
+        ? toSqlDate(value)?.toISOString()
+        : String(value);
+      if (typeof serialized !== 'undefined' && serialized !== '') {
+        select.where(`${selector} >= ?`, [ serialized ]);
+        count.where(`${selector} >= ?`, [ serialized ]);
+      }
     }
-    if (typeof value[1] !== 'undefined'
-      && value[1] !== null
-      && value[1] !== ''
+    if (typeof values[1] !== 'undefined'
+      && values[1] !== null
+      && values[1] !== ''
     ) {
+      const value = info.column.unserialize(values[1], undefined, seed);
       const serialized = stringable.includes(info.column.type)
-        ? toSqlString(value[1])
+        ? toSqlString(value)
         : floatable.includes(info.column.type)
-        ? toSqlFloat(value[1])
+        ? toSqlFloat(value)
         : intable.includes(info.column.type)
-        ? toSqlInteger(value[1])
+        ? toSqlInteger(value)
         : boolable.includes(info.column.type)
-        ? toSqlBoolean(value[1])
+        ? toSqlBoolean(value)
         : dateable.includes(info.column.type)
-        ? toSqlDate(value[1])?.toISOString()
-        : String(value[1]);
-      select.where(`${selector} <= ?`, [ serialized || String(value[1]) ]);
-      count.where(`${selector} <= ?`, [ serialized || String(value[1]) ]);
+        ? toSqlDate(value)?.toISOString()
+        : String(value);
+      if (typeof serialized !== 'undefined') {
+        select.where(`${selector} <= ?`, [ serialized ]);
+        count.where(`${selector} <= ?`, [ serialized ]);
+      }
     }
   });
   //sort
@@ -239,7 +249,7 @@ export default async function search<M extends UnknownNest = UnknownNest>(
         }
         nest.withPath.set(
           selector.name, 
-          selector.last.column.unserialize(value)
+          selector.last.column.unserialize(value, undefined, seed)
         );
       });
       rows.push(nest.get<M>());

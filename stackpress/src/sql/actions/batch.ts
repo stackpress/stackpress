@@ -19,7 +19,8 @@ export type Action = 'check' | 'create' | 'update';
 export default async function batch<M extends UnknownNest = UnknownNest>(
   model: Model, 
   engine: Engine,
-  rows: M[]
+  rows: M[],
+  seed?: string
 ) {
   //map rows with actions
   const actions: { row: M, action: Action }[] = rows.map(row => {
@@ -70,7 +71,7 @@ export default async function batch<M extends UnknownNest = UnknownNest>(
       for (const { row, action } of actions) {
         //if create action
         if (action === 'create') {
-          const response = await create<M>(model, engine, row);
+          const response = await create<M>(model, engine, row, seed);
           if (response.code !== 200) error = true;
           results.push(response);
         //if update action
@@ -78,7 +79,7 @@ export default async function batch<M extends UnknownNest = UnknownNest>(
           const filter = Object.fromEntries(
             ids.map(id => [id, row[id] as string|number])
           );
-          const response = await update<M>(model, engine, filter, row);
+          const response = await update<M>(model, engine, filter, row, seed);
           if (response.code !== 200) error = true;
           results.push(response);
         }

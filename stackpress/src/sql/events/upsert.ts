@@ -4,8 +4,6 @@ import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //schema
 import type Model from '../../schema/spec/Model';
-//session
-import { hash, encrypt } from '../../session/helpers';
 //sql
 import type { DatabasePlugin } from '../types';
 //actions
@@ -36,29 +34,7 @@ export default function upsertEventFactory(model: Model) {
     const input = model.input(req.data(), false);
     //get the session seed (for encrypting)
     const seed = ctx.config.path('session.seed', 'abc123');
-    //loop through the input and encrypt or hash the values
-    for (const key in input) {
-      //get the column meta
-      const column = model.column(key);
-      //if it's not a column, leave as is
-      if (!column) continue;
-      //determine if the field is encryptable
-      const canEncrypt = typeof input[key] !== 'undefined' && input[key] !== null;
-      //if column is encryptable
-      if (canEncrypt) {
-        const string = String(input[key]);
-        if (string.length > 0) {
-          if (column.encrypted) {
-            //encrypt the key
-            input[key] = encrypt(string, seed);
-          } else if (column.hash) {
-            //hash the key
-            input[key] = hash(string);
-          }
-        }
-      }
-    }
-    const response = await upsert(model, engine, input);
+    const response = await upsert(model, engine, input, seed);
     res.fromStatusResponse(response);
   };
 };

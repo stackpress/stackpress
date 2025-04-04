@@ -14,13 +14,19 @@ export default async function get<M extends UnknownNest = UnknownNest>(
   engine: Engine,
   key: string, 
   value: string|number,
-  columns = [ '*' ]
+  columns = [ '*' ],
+  seed?: string
 ): Promise<StatusResponse<M|null>> {
   const filter: Record<string, string|number|boolean> = { [key]: value };
   if (model.active) {
     filter[model.active.name] = -1;
   }
-  const response = await search<M>(model, engine, { columns, filter, take: 1 });
+  const response = await search<M>(
+    model, 
+    engine, 
+    { columns, filter, take: 1 },
+    seed
+  );
   //@ts-ignore - Property 'results' does not exist on type 'ErrorResponse'.
   if (Array.isArray(response.results)) {
     //@ts-ignore - Property 'results' does not exist on type 'ErrorResponse'.

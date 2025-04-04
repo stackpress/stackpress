@@ -6,13 +6,13 @@ import type {
 import type Engine from '@stackpress/inquire/Engine';
 //schema
 import { email } from '../schema/assert';
+import { hash, encrypt } from '../schema/helpers';
 //root
 import type { Auth, AuthExtended, Profile, ProfileAuth } from '../types';
 //client
 import { ClientPlugin } from '../client/types';
 //local
 import type { SignupInput, SigninType, SigninInput } from './types';
-import { encrypt, hash } from './helpers';
 
 /**
  * Signup action
@@ -31,7 +31,8 @@ export async function signup(
     return { code: 400, error: 'Invalid Parameters', errors };
   }
   //create profile
-  const response = await client.model.profile.actions(engine).create({
+  const profile = client.model.profile;
+  const response = await profile.actions(engine, seed).create({
     name: input.name as string,
     type: input.type || 'person',
     roles: input.roles || []
@@ -44,19 +45,15 @@ export async function signup(
     auth: Record<string, Auth> 
   };
   results.auth = {};
-  const actions = client.model.auth.actions(engine);
-  //salt the secret
-  const secret = hash(String(input.secret));
+  const actions = client.model.auth.actions(engine, seed);
   //if email
   if (input.email) {
-    //encrypt email
-    const token = encrypt(String(input.email), seed);
     //create email auth
     const auth = await actions.create({
       profileId: results.id,
       type: 'email',
-      token: token,
-      secret: secret
+      token: String(input.email),
+      secret: String(input.secret)
     });
     if (auth.code !== 200) {
       return auth as StatusResponse<ProfileAuth>;
@@ -65,14 +62,12 @@ export async function signup(
   } 
   //if phone
   if (input.phone) {
-    //encrypt phone
-    const token = encrypt(String(input.phone), seed);
     //create phone auth
     const auth = await actions.create({
       profileId: results.id,
       type: 'phone',
-      token: token,
-      secret: secret
+      token: String(input.phone),
+      secret: String(input.secret)
     });
     if (auth.code !== 200) {
       return auth as StatusResponse<ProfileAuth>;
@@ -81,14 +76,12 @@ export async function signup(
   }
   //if username
   if (input.username) {
-    //encrypt username
-    const token = encrypt(String(input.username), seed);
     //create username auth
     const auth = await actions.create({
       profileId: results.id,
       type: 'username',
-      token: token,
-      secret: secret
+      token: String(input.username),
+      secret: String(input.secret)
     });
     if (auth.code !== 200) {
       return auth as StatusResponse<ProfileAuth>;

@@ -21,7 +21,8 @@ export default async function update<M extends UnknownNest = UnknownNest>(
   model: Model, 
   engine: Engine,
   ids: Record<string, string|number>,
-  input: NestedObject
+  input: NestedObject,
+  seed?: string
 ): Promise<StatusResponse<M>> {
   //collect errors, if any
   const errors = model.assert(input, false);
@@ -38,7 +39,7 @@ export default async function update<M extends UnknownNest = UnknownNest>(
   //action and return response
   const update = engine
     .update(model.snake)
-    .set(model.serialize(input) as NestedObject<string>);
+    .set(model.serialize(input, undefined, seed) as NestedObject<string>);
   for (const column of model.ids) {
     if (!ids[column.name]) {
       return Exception
@@ -53,5 +54,11 @@ export default async function update<M extends UnknownNest = UnknownNest>(
   } catch (e) {
     return toErrorResponse(e as Error) as StatusResponse<M>;
   }
-  return await detail(model, engine, ids) as StatusResponse<M>;
+  return await detail(
+    model, 
+    engine, 
+    ids, 
+    undefined, 
+    seed
+  ) as StatusResponse<M>;
 };

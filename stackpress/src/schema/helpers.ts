@@ -1,9 +1,7 @@
+//node
+import crypto from 'node:crypto';
 //modules
 import mustache from 'mustache';
-//stackpress
-import type { Data } from '@stackpress/idea-parser';
-import NodeFS from '@stackpress/lib/NodeFS';
-import FileLoader from '@stackpress/lib/FileLoader';
 
 export const generators = [
   'cuid()',
@@ -61,6 +59,56 @@ export function dasherize(string: string) {
 }
 
 /**
+ * Used to decrypt sensitive info from the database
+ */
+export function decrypt(encrypted: string, seed: string) {
+  const value = Buffer.from(encrypted, 'hex');
+  //make a hash based on the seed
+  const hash = crypto
+    .createHash('sha256')
+    .update(seed)
+    .digest('base64')
+    .substring(0, 32);
+  //make an iv based on the hash
+  const iv = hash.substring(0, 16);
+  const decipher = crypto.createDecipheriv('aes-256-cbc', hash, iv);
+  return Buffer.concat([
+    decipher.update(value), 
+    decipher.final()
+  ]).toString();
+};
+
+/**
+ * Creates a hash salt of a string
+ */
+export function hash(string: string) {
+  return crypto
+    .createHash('shake256')
+    .update(string)
+    .digest('hex');
+}
+
+/**
+ * Used to encrypt sensitive info in the database
+ */
+export function encrypt(value: string, seed: string) {
+  //make a hash based on the seed
+  const hash = crypto
+    .createHash('sha256')
+    .update(seed)
+    .digest('base64')
+    .substring(0, 32);
+  //make an iv based on the hash
+  const iv = hash.substring(0, 16);
+  const cipher = crypto.createCipheriv('aes-256-cbc', hash, iv);
+  const encrypted = Buffer.concat([ 
+    cipher.update(value), 
+    cipher.final() 
+  ]);
+  return encrypted.toString('hex');
+};
+
+/**
  * Converts a word into lower format
  * ie. "Title" to "title"
  */
@@ -89,65 +137,6 @@ export function snakerize(string: string) {
 export function render(template: string, data: Record<string, any> = {}) {
   return mustache.render(template, data);
 }
-
-/**
- * Returns the actual value even if it is an environment variable
- * ex. output "./modules/types.ts"
- * ex. output "env(OUTPUT)"
- */
-export function enval<T = Data>(value: Data) {
-  const string = (value || '').toString();
-  const type = string.indexOf('env(') === 0 ? 'env': 'literal';
-  const deconstructed = type === 'env' 
-    ? string.replace('env(', '').replace(')', '')
-    : value as T;
-  return { type, value: deconstructed };
-};
-
-/**
- * Returns the absolute path of a file considering environment variables
- */
-export function ensolute(output: string, cwd: string) {
-  const path = enval<string>(output);
-  const loader = new FileLoader(new NodeFS(), cwd);
-  return path.type === 'env' 
-    ? process.env[path.value]
-    : loader.absolute(path.value, cwd);
-}
-
-/**
- * A simple code formatter
- */
-export function formatCode(code: string): string {
-  code = code
-    .replace(/\}\s+else\s+if\s+\(/g, '} else if (')
-    .replace(/\s*\n\s*\n\s*/g, "\n")
-    .trim();
-  const lines = code.split("\n");
-  let indent = 0;
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (line.match(/^\}/g) || line.match(/^\)/g) || line.match(/^<\//g) || line.match(/^\/>/g)) {
-      indent -= 2;
-    }
-    lines[i] = `${' '.repeat(indent >= 0 ? indent: 0)}${line}`;
-    if (line.match(/\s*\{\s*$/g) || line.match(/\s*\(\s*$/g) || line.match(/\s*<[a-zA-Z][^>]*>{0,1}\s*$/g)) {
-      indent += 2;
-    }
-  }
-  return lines.join("\n");
-};
-
-/**
- * A simple code formatter
- */
-export function pipeCode(code: string) {
-  const lines: string[] = [];
-  for (const line of code.split("\n")) {
-    lines.push(line.replace(/^\s*\|\s{0,1}/g, ''))
-  }
-  return lines.join("\n").trim();
-};
 
 /**
  * Convers an object of attributes to a string

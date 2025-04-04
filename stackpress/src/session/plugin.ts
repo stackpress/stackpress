@@ -22,9 +22,6 @@ export default function plugin(ctx: Server) {
   ctx.on('listen', (_req, _res, ctx) => {
     //if no auth config, return
     if (!ctx.config.get('auth')) return;
-    ctx.import.on('auth-search', () => import('./events/search'), -100);
-    ctx.import.on('auth-detail', () => import('./events/detail'), -100);
-    ctx.import.on('auth-get', () => import('./events/detail'), -100);
     ctx.import.on('auth-signup', () => import('./events/signup'));
     ctx.import.on('auth-signin', () => import('./events/signin'));
     ctx.import.on('auth-signout', () => import('./events/signout'));

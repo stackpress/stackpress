@@ -9,7 +9,14 @@ import type { SchemaColumnInfo, SchemaSerialOptions } from '../types';
 import * as typemap from '../config/typemaps';
 //schema
 import assert from '../assert';
-import { snakerize, capitalize, camelize } from '../helpers';
+import { 
+  capitalize, 
+  camelize, 
+  decrypt, 
+  encrypt, 
+  hash, 
+  snakerize 
+} from '../helpers';
 //local
 import type Fieldset from './Fieldset';
 import Attributes from './Attributes';
@@ -564,7 +571,8 @@ export default class Column {
    */
   public serialize(
     value: any, 
-    options: SchemaSerialOptions = {}
+    options: SchemaSerialOptions = {},
+    seed?: string
   ): string|number|boolean|Date|null|undefined {
     const { bool = true, date = true, object = false } = options;
     //if value is null or undefined and not required
@@ -575,12 +583,20 @@ export default class Column {
     //if value is null or undefined and required
     } else if (typeof value === 'undefined') {
       return value;
+    }
+    //serialize and hash
+    if (typeof value === 'string' && this.hash) {
+      return hash(value);
+    } else if (typeof value === 'string' && this.encrypted && seed) {
+      return encrypt(value, seed);
+    }
     //if fieldset or multiple
-    } else if (this.fieldset || this.multiple) {
+    if (this.fieldset || this.multiple) {
       //there's no need to recursive serialize
       return object ? value: JSON.stringify(value);
+    }
     //if type is in the typemap
-    } else if (this.typemap.method) {
+    if (this.typemap.method) {
       //string, number, integer, float, boolean, date, object
       const type = this.typemap.method;
       //if type is a number
@@ -635,10 +651,11 @@ export default class Column {
         //let JSON serialize the value
         return object ? value: JSON.stringify(value);
       }
-      //it shouldn't reach here, but if it does...
+      //if string...
       return value?.toString() || value;
+    }
     //allow: string|number|null|undefined
-    } else if (value === null 
+    if (value === null 
       || typeof value === 'string'
       || typeof value === 'number'
       || typeof value === 'undefined'
@@ -661,7 +678,11 @@ export default class Column {
   /**
    * Unserializes a value coming from the database
    */
-  public unserialize(value: any, options: SchemaSerialOptions = {}) {
+  public unserialize(
+    value: any, 
+    options: SchemaSerialOptions = {},
+    seed?: string
+  ) {
     const { bool = true, date = true } = options;
     //if value is null or undefined
     if (value === null || typeof value === 'undefined') {
@@ -675,8 +696,17 @@ export default class Column {
           return this.multiple ? []: {};
         }
       }
+    }
+    //fieldset
+    if (this.fieldset) {
+      return this.fieldset.unserialize(value, options, seed);
+    }
+    //unserialize
+    if (typeof value === 'string' && this.encrypted && seed) {
+      return decrypt(value, seed);
+    }
     //if type is in the typemap
-    } else if (this.typemap.method) {
+    if (this.typemap.method) {
       //string, number, integer, float, boolean, date, object
       const type = this.typemap.method;
       if ([ 'number', 'integer', 'float' ].includes(type)) {

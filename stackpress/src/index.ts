@@ -46,12 +46,14 @@ export * as terminal from './terminal';
 export * from './client';
 export * from './schema';
 
-export { encrypt, decrypt, hash } from './session/helpers';
 export  { jsonCompare } from '@stackpress/inquire/helpers';
 export {
   camelize,
   capitalize,
   dasherize,
+  decrypt,
+  encrypt, 
+  hash,
   lowerize,
   snakerize,
   render

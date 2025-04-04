@@ -18,7 +18,8 @@ import { toResponse, toErrorResponse } from '../helpers';
 export default async function create<M extends UnknownNest = UnknownNest>(
   model: Model, 
   engine: Engine,
-  input: NestedObject
+  input: NestedObject,
+  seed?: string
 ): Promise<StatusResponse<Partial<M>>> {
   //collect errors, if any
   const errors = model.assert(input, true);
@@ -37,10 +38,12 @@ export default async function create<M extends UnknownNest = UnknownNest>(
   try {
     const results = await engine
       .insert<Record<string, any>>(model.snake)
-      .values(model.serialize(data) as NestedObject<string>)
+      .values(model.serialize(data, undefined, seed) as NestedObject<string>)
       .returning('*');
     if (results.length) {
-      return toResponse(model.unserialize(results[0])) as StatusResponse<Partial<M>>;
+      return toResponse(
+        model.unserialize(results[0], undefined, seed)
+      ) as StatusResponse<Partial<M>>;
     }
   } catch (e) {
     return toErrorResponse(e as Error) as StatusResponse<Partial<M>>;

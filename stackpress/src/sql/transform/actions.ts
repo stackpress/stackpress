@@ -54,12 +54,16 @@ export default function generate(directory: Directory, registry: Registry) {
       moduleSpecifier: `../config`,
       defaultImport: 'config'
     });
-    //export default function actions(engine: Engine) {}
+    //export default function actions(engine: Engine, seed?: string) {}
     source.addFunction({
       isDefaultExport: true,
       name: 'actions',
-      parameters: [ { name: 'engine', type: 'Engine' } ],
-      statements: `return new Actions<${model.title}Extended>(config, engine);`
+      parameters: [ 
+        { name: 'engine', type: 'Engine' },
+        //seed?: string
+        { name: 'seed', type: 'string', hasQuestionToken: true }
+      ],
+      statements: `return new Actions<${model.title}Extended>(config, engine, seed);`
     });
     //import batch from './batch';
     source.addImportDeclaration({
@@ -159,9 +163,11 @@ export function batch(model: Model, directory: Directory) {
       //engine: Engine,
       { name: 'engine', type: 'Engine' },
       //rows: Profile[]
-      { name: 'rows', type: `${model.title}[]` }
+      { name: 'rows', type: `${model.title}[]` },
+      //seed?: string
+      { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return batch<${model.title}>(config, engine, rows);`)
+    statements: (`return batch<${model.title}>(config, engine, rows, seed);`)
   });
 };
 
@@ -207,9 +213,11 @@ export function create(model: Model, directory: Directory) {
       //engine: Engine,
       { name: 'engine', type: 'Engine' },
       //input: NestedObject
-      { name: 'input', type: 'NestedObject' }
+      { name: 'input', type: 'NestedObject' },
+      //seed?: string
+      { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return create<${model.title}>(config, engine, input);`)
+    statements: (`return create<${model.title}>(config, engine, input, seed);`)
   });
 };
 
@@ -249,9 +257,13 @@ export function detail(model: Model, directory: Directory) {
       //engine: Engine,
       { name: 'engine', type: 'Engine' },
       //ids: Record<string, string|number>
-      { name: 'ids', type: 'Record<string, string|number>' }
+      { name: 'ids', type: 'Record<string, string|number>' },
+      //columns?: string[]
+      { name: 'columns', type: 'string[]', hasQuestionToken: true },
+      //seed?: string
+      { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return detail<${model.title}Extended>(config, engine, ids);`)
+    statements: (`return detail<${model.title}Extended>(config, engine, ids, columns);`)
   });
 };
 
@@ -293,9 +305,13 @@ export function get(model: Model, directory: Directory) {
       //key: string
       { name: 'key', type: 'string' },
       //value: string|number
-      { name: 'value', type: 'string|number' }
+      { name: 'value', type: 'string|number' },
+      //columns?: string[]
+      { name: 'columns', type: 'string[]', hasQuestionToken: true },
+      //seed?: string
+      { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return get<${model.title}Extended>(config, engine, key, value);`)
+    statements: (`return get<${model.title}Extended>(config, engine, key, value, columns, seed);`)
   });
 };
 
@@ -425,9 +441,11 @@ export function search(model: Model, directory: Directory) {
       //engine: Engine,
       { name: 'engine', type: 'Engine' },
       //query: SearchParams = {}
-      { name: 'params', type: 'SearchParams', initializer: '{}' }
+      { name: 'params', type: 'SearchParams', initializer: '{}' },
+      //seed?: string
+      { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return search<${model.title}Extended>(config, engine, params);`)
+    statements: (`return search<${model.title}Extended>(config, engine, params, seed);`)
   });
 };
 
@@ -475,9 +493,11 @@ export function update(model: Model, directory: Directory) {
       //ids: Record<string, string|number>
       { name: 'ids', type: 'Record<string, string|number>' },
       //input: NestedObject
-      { name: 'input', type: 'NestedObject' }
+      { name: 'input', type: 'NestedObject' },
+      //seed?: string
+      { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return update<${model.title}Extended>(config, engine, ids, input);`)
+    statements: (`return update<${model.title}Extended>(config, engine, ids, input, seed);`)
   });
 };
 
@@ -523,8 +543,10 @@ export function upsert(model: Model, directory: Directory) {
       //engine: Engine,
       { name: 'engine', type: 'Engine' },
       //input: NestedObject
-      { name: 'input', type: 'NestedObject' }
+      { name: 'input', type: 'NestedObject' },
+      //seed?: string
+      { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return upsert<${model.title}Extended>(config, engine, input);`)
+    statements: (`return upsert<${model.title}Extended>(config, engine, input, seed);`)
   });
 };

@@ -301,7 +301,8 @@ export default class Fieldset {
    */
   public serialize(
     values: Record<string, any>, 
-    options: SchemaSerialOptions = {}
+    options: SchemaSerialOptions = {},
+    seed?: string
   ) {
     const serialized: Record<string, string|number|boolean|Date|null|undefined> = {};
     for (const [ name, value ] of Object.entries(values)) {
@@ -309,7 +310,7 @@ export default class Fieldset {
       if (!column) {
         continue;
       }
-      serialized[column.snake] = column.serialize(value, options);
+      serialized[column.snake] = column.serialize(value, options, seed);
     }
     return serialized;
   }
@@ -319,7 +320,8 @@ export default class Fieldset {
    */
   public unserialize(
     values: Record<string, any>, 
-    options: SchemaSerialOptions = {}
+    options: SchemaSerialOptions = {},
+    seed?: string
   ) {
     const unserialized: Record<string, any> = {};
     for (const [ name, value ] of Object.entries(values)) {
@@ -328,7 +330,7 @@ export default class Fieldset {
         unserialized[name] = value;
         continue;
       }
-      unserialized[column.name] = column.unserialize(value, options);
+      unserialized[column.name] = column.unserialize(value, options, seed);
     }
     return unserialized;
   }
