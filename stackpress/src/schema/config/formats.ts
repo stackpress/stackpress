@@ -186,4 +186,8 @@ export default {
     "name": "HTML",
     "attributes": {}
   },
+  "fieldset": {
+    "name": "Fieldset",
+    "attributes": {}
+  }
 } as Record<string, ColumnOption>;

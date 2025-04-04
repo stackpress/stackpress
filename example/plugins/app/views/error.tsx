@@ -1,9 +1,5 @@
 import '../styles/page.css';
-import type { 
-  Trace,
-  PageBodyProps, 
-  PageHeadProps 
-} from 'stackpress/view';
+import type { Trace, ServerPageProps } from 'stackpress/view';
 
 //placeholder for translation
 const _ = (text: string) => text;
@@ -12,7 +8,7 @@ export type Config = {
   server: { mode: string }
 }
 
-export default function ErrorPage(props: PageBodyProps<Config>) {
+export default function ErrorPage(props: ServerPageProps<Config>) {
   const {
     data = { server: { mode: 'production' } },
     request,
@@ -74,7 +70,7 @@ export default function ErrorPage(props: PageBodyProps<Config>) {
   )
 }
 
-export function Head(props: PageHeadProps<Config>) {
+export function Head(props: ServerPageProps<Config>) {
   const {
     request,
     response,
@@ -92,14 +88,14 @@ export function Head(props: PageHeadProps<Config>) {
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta property="og:title" content={title} />
-      <meta property="og:image" content="/images/banner.png" />
+      <meta property="og:image" content="/icon.png" />
       <meta property="og:url" content={url} />
       <meta property="og:type" content="website" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:title" content={title} />
-      <meta name="twitter:image" content="/images/banner.png" />
+      <meta name="twitter:image" content="/icon.png" />
 
-      <link rel="icon" type="image/svg+xml" href="/react.svg" />
+      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
         <link key={index} rel="stylesheet" type="text/css" href={href} />

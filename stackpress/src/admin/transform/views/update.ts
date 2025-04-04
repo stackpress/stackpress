@@ -43,9 +43,9 @@ export default function removePage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/view',
     namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
   });
-  //import Button from 'frui/element/Button';
+  //import Button from 'frui/form/Button';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Button',
+    moduleSpecifier: 'frui/form/Button',
     defaultImport: 'Button'
   });
   //import { ActiveFieldControl } from '../../components/fields/ActiveField';

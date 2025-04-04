@@ -1,7 +1,7 @@
 //modules
 import { useLanguage } from 'r22n';
-import Control from 'frui/element/Control';
-import Button from 'frui/element/Button';
+import Control from 'frui/form/Control';
+import Button from 'frui/form/Button';
 import Input from 'frui/field/Input';
 import Password from 'frui/field/Password';
 //views

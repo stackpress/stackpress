@@ -46,9 +46,9 @@ export function generateFilter(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/element/Control';
+  //import Control from 'frui/form/Control';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Control',
+    moduleSpecifier: 'frui/form/Control',
     defaultImport: 'Control'
   });
   //import Text from 'frui/fields/Text';

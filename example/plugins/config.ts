@@ -157,6 +157,15 @@ export const config: Config = {
     seed: seed,
     access: {
       ADMIN: [
+        { method: 'GET', route: '/form' },
+        { method: 'ALL', route: '/@vite/client' },
+        { method: 'ALL', route: '/@react-refresh' },
+        { method: 'ALL', route: '/@fs/**' },
+        { method: 'ALL', route: '/node_modules/**' },
+        { method: 'ALL', route: '/__uno.css' },
+        { method: 'ALL', route: '/plugins/**' },
+        { method: 'ALL', route: '/react.svg' },
+
         { method: 'GET', route: '/client/**' },
         { method: 'GET', route: '/__ink_dev__' },
         { method: 'GET', route: '/dev.js' },
@@ -183,7 +192,13 @@ export const config: Config = {
       ],
       GUEST: [
         { method: 'GET', route: '/form' },
-        { method: 'ALL', route: '/profile/**' },
+        { method: 'ALL', route: '/@vite/client' },
+        { method: 'ALL', route: '/@react-refresh' },
+        { method: 'ALL', route: '/@fs/**' },
+        { method: 'ALL', route: '/node_modules/**' },
+        { method: 'ALL', route: '/__uno.css' },
+        { method: 'ALL', route: '/plugins/**' },
+        { method: 'ALL', route: '/react.svg' },
 
         { method: 'GET', route: '/client/**' },
         { method: 'GET', route: '/__ink_dev__' },

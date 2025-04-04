@@ -1,7 +1,7 @@
 //hooks
 import { useLanguage } from 'r22n';
 //components
-import Button from 'frui/element/Button';
+import Button from 'frui/form/Button';
 //views
 import type { ModalConfirmProps } from '../types';
 

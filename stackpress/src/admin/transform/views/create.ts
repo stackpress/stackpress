@@ -34,9 +34,9 @@ export default function createPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Button from 'frui/element/Button';
+  //import Button from 'frui/form/Button';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Button',
+    moduleSpecifier: 'frui/form/Button',
     defaultImport: 'Button'
   });
   //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view';

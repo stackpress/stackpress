@@ -1,6 +1,6 @@
 //modules
 import { useLanguage } from 'r22n';
-import Button from 'frui/element/Button';
+import Button from 'frui/form/Button';
 import Switch from 'frui/field/Switch';
 //views
 import type { ServerPageProps } from '../../view/types';

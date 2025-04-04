@@ -63,9 +63,9 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'frui/element/Alert',
     defaultImport: 'Alert'
   });
-  //import Button from 'frui/element/Button';
+  //import Button from 'frui/form/Button';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Button',
+    moduleSpecifier: 'frui/form/Button',
     defaultImport: 'Button'
   });
   //import Input from 'frui/field/Input';

@@ -63,9 +63,9 @@ export function generateRelation(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/element/Control';
+  //import Control from 'frui/form/Control';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Control',
+    moduleSpecifier: 'frui/form/Control',
     defaultImport: 'Control'
   });
   //import Text from 'frui/field/Text';
@@ -181,19 +181,14 @@ export function generateFieldset(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/element/Control';
+  //import Control from 'frui/form/Control';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Control',
+    moduleSpecifier: 'frui/form/Control',
     defaultImport: 'Control'
   });
-  //import Button from 'frui/element/Button';
+  //import make from 'frui/form/Fieldset';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Button',
-    defaultImport: 'Button'
-  });
-  //import make from 'frui/element/Fieldset';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Fieldset',
+    moduleSpecifier: 'frui/form/Fieldset',
     defaultImport: 'make'
   });
   //import LabelFieldControl from '../../../Address/components/fields/LabelField';
@@ -422,9 +417,9 @@ export function generateBoolean(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/element/Control';
+  //import Control from 'frui/form/Control';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Control',
+    moduleSpecifier: 'frui/form/Control',
     defaultImport: 'Control'
   });
   //import Text from 'frui/field/Text';
@@ -518,9 +513,9 @@ export function generateField(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/element/Control';
+  //import Control from 'frui/form/Control';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Control',
+    moduleSpecifier: 'frui/form/Control',
     defaultImport: 'Control'
   });
   //import Text from 'frui/field/Text';
