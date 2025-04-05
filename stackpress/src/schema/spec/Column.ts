@@ -12,6 +12,7 @@ import assert from '../assert';
 import { 
   capitalize, 
   camelize, 
+  dasherize,
   decrypt, 
   encrypt, 
   hash, 
@@ -120,6 +121,13 @@ export default class Column {
    */
   public get clen() {
     return this.attributes.clen;
+  }
+
+  /**
+   * Returns the dashed fieldset name
+   */
+  public get dash() {
+    return dasherize(this.name);
   }
 
   /**

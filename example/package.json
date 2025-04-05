@@ -27,7 +27,7 @@
     "@stackpress/inquire-pglite": "0.5.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "stackpress": "0.1.14"
+    "stackpress": "0.1.15"
   },
   "devDependencies": {
     "@types/chai": "4.3.20",

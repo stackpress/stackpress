@@ -234,11 +234,10 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
             `): ''}
           </div>
           {can({ method: 'GET', route: \`\${base}/${model.dash}/export\` }) ?(
-            <a className="theme-white theme-bg-info px-px-16 px-py-9" href="export">
+            <Button info className="px-px-16 px-py-9" href="export">
               <i className="fas fa-download"></i>
-            </a>
+            </Button>
           ): null}
-          
           {can({ method: 'GET', route: \`\${base}/${model.dash}/import\` }) ?(
             <Button warning type="button" className="relative !px-px-16 !px-py-9">
               <i className="cursor-pointer fas fa-upload"></i>
@@ -246,9 +245,9 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
             </Button>
           ): null}
           {can({ method: 'GET', route: \`\${base}/${model.dash}/create\` }) ? (
-            <a className="theme-white theme-bg-success px-px-16 px-py-9" href="create">
+            <Button success className="px-px-16 px-py-9" href="create">
               <i className="fas fa-plus"></i>
-            </a>
+            </Button>
           ): null}
         </div>
       );  
@@ -331,12 +330,9 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
               }).join('\n')}
               <Tcol stickyRight className={\`!theme-bc-bd2 text-center \${stripe(index)}\`}>
                 {can({ method: 'GET', route: \`\${base}/${model.dash}/detail/${path}\`}) ? (
-                  <a 
-                    className="theme-bg-info px-p-2" 
-                    href={\`detail/\${row.id}\`}
-                  >
+                  <Button info className="px-p-2" href={\`detail/\${row.id}\`}>
                     <i className="fas fa-fw fa-caret-right"></i>
-                  </a>
+                  </Button>
                 ) : null}
               </Tcol>
             </Trow>

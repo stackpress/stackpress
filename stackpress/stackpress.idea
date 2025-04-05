@@ -64,8 +64,8 @@ model Profile
   
   auth        Auth?
 
-  applications Application[]
-  sessions     Session[]   
+  applications Application[] @label("Applications")
+  sessions     Session[]     @label("Sessions")
 }
 
 //Auth is used to authenticate a profile and create a session.
@@ -216,7 +216,7 @@ model Application
                    @list.date("m d, Y h:iA") 
                    @view.date("m d, Y h:iA")
 
-  session Session[]  
+  session Session[] @label("Sessions") 
   profile Profile   @relation({ local "profileId" foreign "id" })
 }
 

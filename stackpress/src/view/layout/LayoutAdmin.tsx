@@ -51,7 +51,7 @@ export function AdminUserMenu() {
           <div className="px-h-100-0">
             {session.data.roles && session.data.roles.includes('ADMIN') && (
               <nav className="theme-bc-bd0 flex items-center px-px-10 px-py-14 border-b" >
-                <i className="inline-block px-mr-10 fas fa-guage" />
+                <i className="inline-block px-mr-10 fas fa-gauge" />
                 <a className="theme-info" href="/admin/profile/search">Admin</a>
               </nav>
             )}

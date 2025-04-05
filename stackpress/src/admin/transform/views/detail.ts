@@ -10,7 +10,10 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.ids.map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${base}/${model.dash}/${action}/${path}\``;
+  const link = (
+    action: string,
+    extras = ''
+  ) => `\`\${base}/${model.dash}/${action}/${path}${extras}\``;
   
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';

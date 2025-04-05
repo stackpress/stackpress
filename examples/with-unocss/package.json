@@ -1,0 +1,49 @@
+{
+  "type": "module",
+  "name": "stackpress-with-unocss",
+  "version": "1.0.0",
+  "private": true,
+  "plugins": [
+    "./plugins/app/plugin",
+    "./plugins/store/plugin",
+    "stackpress"
+  ],
+  "scripts": {
+    "build": "yarn build:ts && yarn migrate && yarn build:app",
+    "build:ts": "tsc",
+    "build:app": "dotenv -e .env -- tsx scripts/build.ts",
+    "develop": "dotenv -e .env -- tsx scripts/serve.ts",
+    "emit": "dotenv -e .env -- tsx scripts/event.ts",
+    "generate": "dotenv -e .env -- tsx scripts/generate.ts",
+    "migrate": "dotenv -e .env -- tsx scripts/migrate.ts",
+    "populate": "dotenv -e .env -- tsx scripts/populate.ts",
+    "purge": "dotenv -e .env -- tsx scripts/purge.ts",
+    "push": "dotenv -e .env -- tsx scripts/push.ts",
+    "query": "dotenv -e .env -- tsx scripts/query.ts",
+    "test": "nyc ts-mocha -r tsx tests/*.test.ts"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.2.17",
+    "@stackpress/inquire-pglite": "0.5.7",
+    "frui": "0.1.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "stackpress": "0.1.15"
+  },
+  "devDependencies": {
+    "@types/chai": "4.3.20",
+    "@types/mocha": "10.0.10",
+    "@types/node": "22.9.3",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.1",
+    "chai": "4.5.0",
+    "dotenv-cli": "7.4.4",
+    "mocha": "10.8.2",
+    "nyc": "17.1.0",
+    "ts-mocha": "10.0.0",
+    "ts-node": "10.9.2",
+    "tsx": "4.19.3",
+    "typescript": "5.7.2",
+    "unocss": "66.0.0"
+  }
+}
