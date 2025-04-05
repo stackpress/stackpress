@@ -132,6 +132,6 @@ dist
 packages/stackpress
 
 .DS_Store
-example/.build
-example/public/client
+examples/*/.build
+examples/*/public/client
 archives
