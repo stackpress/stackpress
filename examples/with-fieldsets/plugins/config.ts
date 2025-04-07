@@ -99,7 +99,7 @@ export const config: Config = {
       // - used in dev mode and build step
       cssFiles: [ 
         'frui/frui.css', 
-        'stackpress/fouc.css', 
+        'stackpress/stackpress.css', 
         'virtual:uno.css' 
       ],
       //style route prefix used in the document markup

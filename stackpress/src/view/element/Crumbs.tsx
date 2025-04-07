@@ -7,7 +7,7 @@ const Item = ({ href, label, icon, last }: Crumb & { last?: boolean }) => {
 
   return (
     <>
-      {icon && <i className={`fas fa-fw fa-${icon} inline-block mr-1 text-t1`}></i>}
+      {icon && <i className={`theme-tx1 fas fa-fw fa-${icon} inline-block px-mr-5`}></i>}
       {item}
       {!last && <i className="fas fa-fw fa-chevron-right mx-1 text-t1"></i>}
     </>
@@ -24,15 +24,15 @@ const Header = ({ trail }: { trail: Crumb[] }) => {
         className="flex md:hidden items-center cursor-pointer whitespace-nowrap overflow-x-hidden" 
         href={href}
       >
-        <i className="mr-1 fas fa-fw fa-chevron-left text-xl text-t2"></i>
-        {!!item.icon && <i className={`mr-0.5 fas fa-fw fa-${item.icon} text-sm`}></i>}
+        <i className="theme-tx2 px-mr-5 fas fa-fw fa-chevron-left text-xl"></i>
+        {!!item.icon && <i className={`px-mr-2 fas fa-fw fa-${item.icon} text-sm`}></i>}
         <span className="font-bold">{item.label}</span>
       </a>
     );
   }
   return (
     <div className="flex md:hidden items-center whitespace-nowrap overflow-x-hidden">
-      {!!item.icon && <i className={`mr-0.5 fas fa-fw fa-${item.icon} text-sm`}></i>}
+      {!!item.icon && <i className={`px-mr-2 fas fa-fw fa-${item.icon} text-sm`}></i>}
       <span className="font-bold">{item.label}</span>
     </div>
   );

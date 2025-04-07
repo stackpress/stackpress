@@ -127,7 +127,7 @@
     "./lib": "./dist/lib.js",
     "./plugin": "./dist/plugin.js",
     "./unocss": "./dist/unocss.js",
-    "./fouc.css": "./fouc.css",
+    "./stackpress.css": "./stackpress.css",
     ".": "./dist/index.js"
   },
   "typesVersions": {

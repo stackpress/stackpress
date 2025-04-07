@@ -39,8 +39,8 @@ export default function Pagination(props: PaginationProps) {
         <button
           key={i}
           onClick={() => refresh(page)}
-          className={`relative z-10 inline-flex items-center border border-white px-4 py-2 text-sm font-semibold 
-            ${page === current ? 'bg-gray-600 text-white border border-white z-10 pointer-events-none' : 'text-t1 hover:bg-gray-600'}`}
+          className={`relative px-z-10 inline-flex items-center border border-white px-px-10 px-py-5 text-sm font-semibold 
+            ${page === current ? 'bg-gray-600 text-white border border-white px-z-10 pointer-events-none' : 'theme-tx1 hover:bg-gray-600'}`}
         >
           {page}
         </button>
@@ -48,7 +48,7 @@ export default function Pagination(props: PaginationProps) {
       {next && (
         <button
           onClick={() => refresh(current + 1)}
-          className="relative border border-gray-300 bg-b2 px-4 py-2 text-sm font-medium text-t1 hover:bg-gray-600"
+          className="theme-bg-bg2 relative border border-gray-300 px-px-10 px-py-5 text-sm font-medium text-t1 hover:bg-gray-600"
         >
           <i className="fas fa-chevron-right"></i>
         </button>
