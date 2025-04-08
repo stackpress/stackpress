@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -217,9 +217,9 @@
   "files": [
     "dist",
     "tsconfig",
-    "fouc.css",
     "LICENSE",
     "README.md",
+    "stackpress.css",
     "stackpress.idea"
   ],
   "scripts": {
@@ -242,7 +242,7 @@
     "prettier": "3.5.3",
     "r22n": "1.0.7",
     "react-toastify": "11.0.5",
-    "reactus": "0.1.19",
+    "reactus": "0.1.20",
     "ts-morph": "24.0.0"
   },
   "devDependencies": {
