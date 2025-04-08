@@ -33,8 +33,12 @@ export default function plugin(ctx: Server) {
     if (!schema.plugin) {
       schema.plugin = {};
     }
+    //commonjs or esm dirname
+    const dirname = typeof __dirname === 'string' 
+      ? __dirname
+      : import.meta.dirname; 
     //add this plugin generator to the schema
     //so it can be part of the transformation
-    schema.plugin[`${import.meta.dirname}/transform`] = {};
+    schema.plugin[`${dirname}/transform`] = {};
   });
 };
