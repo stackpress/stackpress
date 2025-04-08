@@ -1,1 +1,1 @@
-export type * from './types';
+export type { EmailConfig } from './types';

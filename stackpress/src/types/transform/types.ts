@@ -34,18 +34,20 @@ export default function generate(directory: Directory, registry: Registry) {
   // 3. types.ts
   const source = directory.createSourceFile('types.ts', '', { overwrite: true });
 
-  //export * from './module/profile';
+  //export type * from './module/profile';
   for (const model of registry.model.values()) {
     source.addExportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: `./${model.name}/types`
+      moduleSpecifier: `./${model.name}/types`,
+      namedExports: [ model.title, `${model.title}Input`, `${model.title}Extended` ]
     });
   }
-  //export * from './module/profile';
+  //export type * from './module/profile';
   for (const fieldset of registry.fieldset.values()) {
     source.addExportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: `./${fieldset.name}/types`
+      moduleSpecifier: `./${fieldset.name}/types`,
+      namedExports: [ fieldset.title, `${fieldset.title}Input` ]
     });
   }
 };

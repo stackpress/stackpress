@@ -76,16 +76,6 @@ export function decrypt(encrypted: string, seed: string) {
     decipher.update(value), 
     decipher.final()
   ]).toString();
-};
-
-/**
- * Creates a hash salt of a string
- */
-export function hash(string: string) {
-  return crypto
-    .createHash('shake256')
-    .update(string)
-    .digest('hex');
 }
 
 /**
@@ -106,7 +96,17 @@ export function encrypt(value: string, seed: string) {
     cipher.final() 
   ]);
   return encrypted.toString('hex');
-};
+}
+
+/**
+ * Creates a hash salt of a string
+ */
+export function hash(string: string) {
+  return crypto
+    .createHash('shake256')
+    .update(string)
+    .digest('hex');
+}
 
 /**
  * Converts a word into lower format

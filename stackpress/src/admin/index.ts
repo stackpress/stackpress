@@ -9,7 +9,10 @@ import AdminUpdatePageFactory from './pages/update';
 import AdminDetailCreatePageFactory from './pages/detail/create';
 import AdminDetailSearchPageFactory from './pages/detail/search';
 
-export type * from './types';
+export type {
+  AdminConfigProps,
+  AdminConfig
+} from './types';
 
 export {
   AdminCreatePageFactory,
