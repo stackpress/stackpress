@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -227,10 +227,10 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "2.2.2",
-    "@stackpress/idea-transformer": "0.5.8",
-    "@stackpress/ingest": "0.5.8",
-    "@stackpress/inquire": "0.5.8",
-    "@stackpress/lib": "0.5.8",
+    "@stackpress/idea-transformer": "0.5.9",
+    "@stackpress/ingest": "0.5.9",
+    "@stackpress/inquire": "0.5.9",
+    "@stackpress/lib": "0.5.9",
     "cookies-next": "5.1.0",
     "fast-glob": "3.3.2",
     "js-cookie": "3.0.5",
@@ -242,7 +242,7 @@
     "prettier": "3.5.3",
     "r22n": "1.0.7",
     "react-toastify": "11.0.5",
-    "reactus": "0.1.20",
+    "reactus": "0.1.21",
     "ts-morph": "24.0.0"
   },
   "devDependencies": {
