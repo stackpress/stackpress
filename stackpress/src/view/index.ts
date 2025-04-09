@@ -94,6 +94,32 @@ import NotifyProvider from './notify/NotifyProvider';
 import ThemeContext from './theme/ThemeContext';
 import ThemeProvider from './theme/ThemeProvider';
 
+export {
+  VFS_PROTOCOL,
+  VFS_RESOLVED,
+  BASE62_ALPHABET,
+  HASH_LENGTH,
+  DOCUMENT_TEMPLATE,
+  PAGE_TEMPLATE,
+  CLIENT_TEMPLATE,
+  id as fileHash,
+  renderJSX,
+  css as viteCSSPlugin,
+  file as viteFilePlugin,
+  hmr as viteHMRPlugin,
+  vfs as viteVFSPlugin,
+  DocumentBuilder,
+  DocumentLoader,
+  DocumentRender,
+  ServerLoader,
+  ServerManifest,
+  ServerResource,
+  VirtualServer,
+  Builder,
+  Document, 
+  Server
+} from 'reactus';
+
 export { useStripe } from './hooks';
 export { paginate, order, filter } from './helpers';
 export { useModal, useConfirm } from './modal/hooks';
