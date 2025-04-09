@@ -1,6 +1,6 @@
 import '../styles/page.css';
 import { useState } from 'react';
-import { LayoutBlank, ServerPageProps } from 'stackpress/view';
+import { LayoutBlank, ServerPageProps } from 'stackpress/view/client';
 
 export function Head(props: ServerPageProps) {
   const { styles = [] } = props;

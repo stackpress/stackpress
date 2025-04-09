@@ -1,5 +1,5 @@
 import '../styles/page.css';
-import type { Trace, ServerPageProps } from 'stackpress/view';
+import type { Trace, ServerPageProps } from 'stackpress/view/client';
 
 //placeholder for translation
 const _ = (text: string) => text;
