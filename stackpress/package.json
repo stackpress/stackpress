@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -118,6 +118,7 @@
     "./view/import": "./dist/view/import.js",
     "./view/plugin": "./dist/view/plugin.js",
     "./view/types": "./dist/view/types.js",
+    "./view/client": "./dist/view/client.js",
     "./view": "./dist/view/index.js",
 
     "./dist/api/views/*": "./dist/api/views/*.js",
@@ -202,6 +203,7 @@
       "view/import": [ "./dist/view/import.d.ts" ],
       "view/plugin": [ "./dist/view/plugin.d.ts" ],
       "view/types": [ "./dist/view/types.d.ts" ],
+      "view/client": [ "./dist/view/client.d.ts" ],
       "view": [ "./dist/view/index.d.ts" ],
 
       "dist/api/views/*": [ "./dist/api/views/*.d.ts" ],
@@ -242,7 +244,7 @@
     "prettier": "3.5.3",
     "r22n": "1.0.7",
     "react-toastify": "11.0.5",
-    "reactus": "0.1.22",
+    "reactus": "0.1.23",
     "ts-morph": "24.0.0"
   },
   "devDependencies": {

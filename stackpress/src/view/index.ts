@@ -55,44 +55,7 @@ export type {
   ViewConfig,
   BrandConfig,
   ViewPlugin
-} from './types';
-
-import ServerContext, { 
-  unknownHost,
-  config as defaultServerConfig 
-} from './server/ServerContext';
-import ServerProvider from './server/ServerProvider';
-import ServerRequest from './server/ServerRequest';
-import ServerResponse from './server/ServerResponse';
-import ServerSession from './server/ServerSession';
-
-import Crumbs from './element/Crumbs';
-import Pagination from './element/Pagination';
-
-import LayoutHead from './layout/components/LayoutHead';
-import LayoutLeft from './layout/components/LayoutLeft';
-import LayoutMain from './layout/components/LayoutMain';
-import LayoutRight from './layout/components/LayoutRight';
-import LayoutBlank, { BlankApp } from './layout/LayoutBlank';
-import LayoutPanel, { PanelApp } from './layout/LayoutPanel';
-import LayoutAdmin, { 
-  AdminApp, 
-  AdminUserMenu 
-} from './layout/LayoutAdmin';
-import LayoutProvider from './layout/LayoutProvider';
-
-import ModalConfirm from './modal/ModalConfirm';
-import ModalContext from './modal/ModalContext';
-import ModalProvider from './modal/ModalProvider';
-
-import NotifyContainer from './notify/NotifyContainer';
-import NotifyContext, { 
-  config as defaultNotifyConfig 
-} from './notify/NotifyContext';
-import NotifyProvider from './notify/NotifyProvider';
-
-import ThemeContext from './theme/ThemeContext';
-import ThemeProvider from './theme/ThemeProvider';
+} from './client';
 
 export {
   VFS_PROTOCOL,
@@ -120,27 +83,28 @@ export {
   Server
 } from 'reactus';
 
-export { useStripe } from './hooks';
-export { paginate, order, filter } from './helpers';
-export { useModal, useConfirm } from './modal/hooks';
-export { useToggle } from './layout/hooks';
-export { useNotify, notify, flash, unload } from './notify/hooks';
-export { useTheme } from './theme/hooks';
-export { 
+export {
+  useStripe,
+  paginate, 
+  order, 
+  filter,
+  useModal, 
+  useConfirm,
+  useToggle,
+  useNotify, 
+  notify, 
+  flash, 
+  unload,
+  useTheme,
   useRequest, 
   useResponse, 
   useConfig, 
   useSession, 
-  useServer 
-} from './server/hooks';
-export {
+  useServer,
   matchAnyEvent,
   matchAnyRoute,
   matchEvent,
-  matchRoute
-} from './server/helpers';
-
-export {
+  matchRoute,
   ServerContext,
   ServerProvider,
   ServerRequest,
@@ -171,5 +135,4 @@ export {
   defaultServerConfig,
   defaultNotifyConfig,
   unknownHost
-};
-
+} from './client';
