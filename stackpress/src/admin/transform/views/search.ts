@@ -25,10 +25,10 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/sql',
     namedImports: [ 'SearchParams' ]
   });
-  //import type { ServerPageProps, SessionPermission } from 'stackpress/view';
+  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'ServerPageProps', 'SessionPermission' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
@@ -74,9 +74,9 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     defaultImport: 'Input'
   });
   //import { paginate, filter, order, notify, flash, useServer, useStripe, 
-  //Crumbs, Pagination, LayoutAdmin } from 'stackpress/view';
+  //Crumbs, Pagination, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [
       'paginate',  'filter',    'order',  'notify',     'flash',
       'useServer', 'useStripe', 'Crumbs', 'Pagination', 'LayoutAdmin'

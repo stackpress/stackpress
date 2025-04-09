@@ -18,10 +18,10 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
 
-  //import type { ServerPageProps, AdminConfigProps } from 'stackpress/view';
+  //import type { ServerPageProps, AdminConfigProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'ServerPageProps', 'SessionPermission' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
@@ -52,9 +52,9 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'frui/element/Table',
     namedImports: [ 'Table', 'Trow', 'Tcol' ]
   });
-  //import { useServer, useStripe, Crumbs, LayoutAdmin } from 'stackpress/view';
+  //import { useServer, useStripe, Crumbs, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useServer', 'useStripe', 'Crumbs', 'LayoutAdmin' ]
   });
   //import CreatedViewFormat from '../../components/views/CreatedViewFormat';

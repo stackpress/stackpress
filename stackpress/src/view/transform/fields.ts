@@ -47,10 +47,10 @@ export function generateRelation(
   const path = `${model.name}/components/fields/${column.title}Field.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
-  //import type { FieldProps, ControlProps } from 'stackpress/view';
+  //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
   //import mustache from 'mustache';
@@ -164,10 +164,10 @@ export function generateFieldset(
     moduleSpecifier: 'frui/element/Fieldset',
     namedImports: [ 'FieldsProps', 'FieldsetProps' ]
   });
-  //import type { ControlProps } from 'stackpress/view';
+  //import type { ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'ControlProps' ]
   });
   //import type { AddressInput } from '../../../Address/types';
@@ -406,10 +406,10 @@ export function generateBoolean(
   //get the path where this should be saved
   const path = `${fieldset.name}/components/fields/${column.title}Field.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
-  //import type { FieldProps, ControlProps } from 'stackpress/view';
+  //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
   //import { useLanguage } from 'r22n';
@@ -502,10 +502,10 @@ export function generateField(
   //get the path where this should be saved
   const path = `${fieldset.name}/components/fields/${column.title}Field.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
-  //import type { FieldProps, ControlProps } from 'stackpress/view';
+  //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
   //import { useLanguage } from 'r22n';

@@ -26,10 +26,10 @@ export function generateSpan(
   const path = `${model.name}/components/spans/${column.title}Span.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
-  //import type { FieldProps, ControlProps } from 'stackpress/view';
+  //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
   //import { useLanguage } from 'r22n';

@@ -28,10 +28,10 @@ export function generateFilter(
 
   const BoolComponent = [ 'Checkbox', 'Switch' ].indexOf(column.filter.component) !== -1;
 
-  //import type { FieldProps, ControlProps } from 'stackpress/view';
+  //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
   //import mustache from 'mustache';

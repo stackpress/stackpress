@@ -11,10 +11,10 @@ export default function createPage(directory: Directory, _registry: Registry, mo
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
 
-  //import type { NestedObject, ServerPageProps } from 'stackpress/view';
+  //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'NestedObject', 'ServerPageProps' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
@@ -39,9 +39,9 @@ export default function createPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'frui/form/Button',
     defaultImport: 'Button'
   });
-  //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view';
+  //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
   });
   //import { ActiveFieldControl } from '../../components/fields/ActiveField';

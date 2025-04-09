@@ -50,9 +50,9 @@ export function generateFieldsetTable(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import { useStripe } from 'stackpress/view';
+  //import { useStripe } from 'stackpress/view/client';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useStripe' ]
   });
   //import { Table, Thead, Trow, Tcol } from 'frui/element/Table';
@@ -129,9 +129,9 @@ export function generateFieldsetInfo(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import { useStripe } from 'stackpress/view';
+  //import { useStripe } from 'stackpress/view/client';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view',
+    moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useStripe' ]
   });
   //import { Table, Trow, Tcol } from 'frui/element/Table';
