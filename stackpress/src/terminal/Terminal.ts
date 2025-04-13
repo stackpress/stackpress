@@ -68,8 +68,6 @@ export default class InceptTerminal extends Terminal {
         await project.emit();
         await this.server.emit('transformed', req, res);
       }
-      //sometimes this hangs...
-      process.exit(0);
     });
   }
 

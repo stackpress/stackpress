@@ -11,11 +11,10 @@ async function generate() {
   await terminal.server.resolve('idea', { 
     transformer: terminal.transformer 
   });
-  const response = await terminal.server.resolve(
+  await terminal.server.resolve(
     terminal.command, 
     terminal.data || {}
   );
-  console.log(JSON.stringify(response, null, 2));
 }
 
 generate()
