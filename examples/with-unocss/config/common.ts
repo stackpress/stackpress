@@ -26,11 +26,8 @@ export const server = {
 };
 
 export const client = { 
-  lang: 'js',
-  module: '.client',
-  revisions: path.join(build, 'revisions'),
-  build: path.join(modules, '.client'),
-  tsconfig: path.join(cwd, 'tsconfig.json')
+  //whether to compiler client in `js` or `ts`
+  lang: 'js'
 };
 
 export const database = {

@@ -1,7 +1,7 @@
 //config
 import { bootstrap } from '../config/develop';
 
-async function serve() {
+async function develop() {
   //get server
   const server = await bootstrap();
   //get server port
@@ -13,7 +13,7 @@ async function serve() {
   });
 };
 
-serve().catch(e => {
+develop().catch(e => {
   console.error(e);
   process.exit(1);
 });
