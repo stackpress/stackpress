@@ -41,7 +41,6 @@ export const config: Config = {
     ...common.view,
     //reactus specific settings
     engine: {
-      cwd: common.cwd,
       //base path (used in vite)
       basePath: '/',
       //client script route prefix used in the document markup
