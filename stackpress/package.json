@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
