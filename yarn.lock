@@ -3673,10 +3673,10 @@ react@19.1.0:
   resolved "https://registry.yarnpkg.com/react/-/react-19.1.0.tgz#926864b6c48da7627f004795d6cce50e90793b75"
   integrity sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==
 
-reactus@0.1.27:
-  version "0.1.27"
-  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.1.27.tgz#481da25aacfc68f0cd55883a8ca44d1c0e9be813"
-  integrity sha512-PMg8J+OJ6W43f+h8LwDtoFC/hWa5cWxvo86gYbmUsmQyhp/5CJCu8i9Ue+r3FsEb7uONWOlYzqDRlcuoCPwcyQ==
+reactus@0.1.28:
+  version "0.1.28"
+  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.1.28.tgz#6692c80e20763719247560c7ee3a2903f1929fcc"
+  integrity sha512-sa2lGr91n97iWnk7AC4MFoMP8+eVkdImiMKkFB7WOH05St9PICInlvPWzJYL2YB/pik2Hk8stzvOObDBoANW2Q==
   dependencies:
     "@stackpress/lib" "0.5.10"
     "@vitejs/plugin-react" "4.3.4"
