@@ -463,7 +463,7 @@
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
     "fast-glob": "3.3.2",
-    "frui": "0.1.4",
+    "frui": "0.1.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "ts-node": "10.9.2",
@@ -472,12 +472,13 @@
     "unocss": "66.0.0"
   },
   "peerDevDependencies": {
+    "@stackpress/idea-transformer": "0.5.10",
     "fast-glob": "3.3.2",
     "ts-morph": "24.0.0",
     "unocss": "66.0.0"
   },
   "peerProdDependencies": {
-    "frui": "0.1.4",
+    "frui": "0.1.5",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   }
