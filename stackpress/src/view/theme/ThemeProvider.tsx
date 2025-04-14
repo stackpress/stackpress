@@ -1,10 +1,12 @@
 //modules
 import { useState, useEffect } from 'react';
-import cookie from 'js-cookie';
+import UniversalCookie from 'universal-cookie';
 //views
 import type { ThemeProviderProps } from '../types';
 //theme
 import ThemeContext from './ThemeContext';
+
+const cookie = new UniversalCookie();
 
 // (this is what to put in app.tsx)
 export default function ThemeProvider(props: ThemeProviderProps) {

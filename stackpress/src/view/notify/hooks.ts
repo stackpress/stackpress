@@ -1,12 +1,13 @@
 //modules
 import type { ToastOptions } from 'react-toastify';
 import React, { useContext } from 'react';
-import cookie from 'js-cookie';
+import UniversalCookie from 'universal-cookie';
 import { toast } from 'react-toastify';
 //notify
 import NotifyContext, { config } from './NotifyContext';
 
 const cookieConfig = { path: '/' };
+const cookie = new UniversalCookie();
 
 /**
  * No hook notify function

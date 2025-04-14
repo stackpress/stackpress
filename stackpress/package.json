@@ -441,7 +441,6 @@
     "@stackpress/ingest": "0.5.10",
     "@stackpress/inquire": "0.5.10",
     "@stackpress/lib": "0.5.10",
-    "js-cookie": "3.0.5",
     "jsonwebtoken": "9.0.2",
     "mustache": "4.2.0",
     "nanoid": "3.3.8",
@@ -450,11 +449,11 @@
     "prettier": "3.5.3",
     "r22n": "1.0.8",
     "react-toastify": "11.0.5",
-    "reactus": "0.1.30"
+    "reactus": "0.1.30",
+    "universal-cookie": "8.0.1"
   },
   "devDependencies": {
     "@stackpress/idea-transformer": "0.5.10",
-    "@types/js-cookie": "3.0.6",
     "@types/jsonwebtoken": "9.0.9",
     "@types/mustache": "4.2.5",
     "@types/nodemailer": "6.4.17",
