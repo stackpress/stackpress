@@ -1,7 +1,7 @@
 //modules
 import type { ToastOptions } from 'react-toastify';
 import React, { useContext } from 'react';
-import { getCookie, setCookie, deleteCookie } from 'cookies-next';
+import cookie from 'js-cookie';
 import { toast } from 'react-toastify';
 //notify
 import NotifyContext, { config } from './NotifyContext';
@@ -32,16 +32,16 @@ export function notify(
  * No hook flash
  */
 export function flash(type: string, message: string, close: number = 5000) {
-  setCookie('flash', JSON.stringify({ type, message, close }), cookieConfig);
+  cookie.set('flash', JSON.stringify({ type, message, close }), cookieConfig);
 };
 
 /**
  * No hook unload
  */
 export function unload() {
-  const value = getCookie('flash');
+  const value = cookie.get('flash');
   if (value) {
-    deleteCookie('flash', cookieConfig);
+    cookie.remove('flash', cookieConfig);
     const args: Record<string, any> = JSON.parse(value as string);
     notify(args.type, args.message, args.close);
   }
@@ -68,9 +68,9 @@ export function useNotify() {
     },
     flash,
     unload() {
-      const value = getCookie('flash');
+      const value = cookie.get('flash');
       if (value) {
-        deleteCookie('flash', cookieConfig);
+        cookie.remove('flash', cookieConfig);
         const args: Record<string, any> = JSON.parse(value as string);
         handlers.notify(args.type, args.message, args.close);
       }

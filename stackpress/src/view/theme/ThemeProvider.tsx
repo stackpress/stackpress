@@ -1,6 +1,6 @@
 //modules
 import { useState, useEffect } from 'react';
-import { getCookie, setCookie } from 'cookies-next';
+import cookie from 'js-cookie';
 //views
 import type { ThemeProviderProps } from '../types';
 //theme
@@ -13,11 +13,11 @@ export default function ThemeProvider(props: ThemeProviderProps) {
   const toggle = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    setCookie('theme', newTheme);
+    cookie.set('theme', newTheme);
   };
   const value = { theme, toggle };
   useEffect(() => {
-    setTheme(getCookie('theme') as string || 'light');
+    setTheme(cookie.get('theme') as string || 'light');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
