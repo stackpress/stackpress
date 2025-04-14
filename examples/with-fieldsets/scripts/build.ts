@@ -4,11 +4,11 @@ import path from 'node:path';
 //stackpress
 import { terminalControls } from 'stackpress/terminal';
 import * as scripts from 'stackpress/scripts';
-//plugins
-import bootstrap from '../plugins/bootstrap';
+//config
+import { bootstrap } from '../config/build';
 
 async function build() {
-  const server = await bootstrap('production');
+  const server = await bootstrap();
   //get config
   const cwd = server.config.path(
     'server.cwd',
@@ -20,7 +20,7 @@ async function build() {
   );
   const control = terminalControls('[EXAMPLE]');
   //make server, client and styles
-  control.warning('Building server, client and styles...');
+  control.warning('Building server, client and assets...');
   await scripts.build(server);
   //make a package.json
   control.warning('Building package.json...');

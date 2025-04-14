@@ -39,9 +39,9 @@ export default function plugin(ctx: Server) {
     ctx.import.all('/auth/signin/:type', () => import('./pages/signin'));
     ctx.import.all('/auth/signup', () => import('./pages/signup'));
     ctx.import.all('/auth/signout', () => import('./pages/signout'));
-
-    ctx.view.all('/auth/signin', 'stackpress/dist/session/views/signin', -100);
-    ctx.view.all('/auth/signin/:type', 'stackpress/dist/session/views/signin', -100);
-    ctx.view.all('/auth/signup', 'stackpress/dist/session/views/signup', -100);
+    
+    ctx.view.all('/auth/signin', 'stackpress/esm/session/views/signin', -100);
+    ctx.view.all('/auth/signin/:type', 'stackpress/esm/session/views/signin', -100);
+    ctx.view.all('/auth/signup', 'stackpress/esm/session/views/signup', -100);
   });
 };

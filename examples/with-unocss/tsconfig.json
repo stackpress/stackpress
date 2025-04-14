@@ -1,13 +1,13 @@
 {
-  "extends": "stackpress/tsconfig/client",
+  "extends": "stackpress/tsconfig/cjs",
   "compilerOptions": {
-    "moduleResolution": "bundler",
     "outDir": ".build",
   },
   "include": [ 
-    "scripts/**/*.ts", 
+    "config/**/*.ts", 
     "plugins/**/*.ts", 
-    "plugins/**/*.tsx"
+    "plugins/**/*.tsx",
+    "scripts/**/*.ts"
   ],
   "exclude": [ "dist", "node_modules", "tests" ]
 }

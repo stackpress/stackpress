@@ -3,6 +3,5 @@ export type ServerConfig = {
   cwd: string,
   mode: string,
   port: number,
-  build: string,
-  bodySize: number
+  build: string
 };

@@ -132,6 +132,9 @@ dist
 packages/stackpress
 
 .DS_Store
+cjs
+esm
 examples/*/.build
+examples/*/public/assets
 examples/*/public/client
 archives

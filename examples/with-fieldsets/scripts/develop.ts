@@ -1,5 +1,5 @@
-//plugins
-import bootstrap from '../plugins/bootstrap';
+//config
+import { bootstrap } from '../config/develop';
 
 async function serve() {
   //get server

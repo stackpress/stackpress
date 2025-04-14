@@ -16,10 +16,15 @@ export default function plugin(ctx: Server) {
     if (!schema.plugin) {
       schema.plugin = {};
     }
-    //commonjs or esm dirname
-    const dirname = typeof __dirname === 'string' 
-      ? __dirname
-      : import.meta.dirname; 
+    //@ts-ignore - __dirname supported in all versions of nodejs
+    let dirname = typeof __dirname === 'string' ? __dirname : ''; 
+    //@ts-ignore - meta supported after node 20
+    if (typeof globalThis.import !== 'undefined') {
+      try {
+        //@ts-ignore - meta supported after node 20
+        dirname = globalThis.import.meta.dirname;
+      } catch(e) {}
+    }
     //add this plugin generator to the schema
     //so it can be part of the transformation
     schema.plugin[`${dirname}/transform`] = {};

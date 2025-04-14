@@ -56,7 +56,8 @@ export type {
   NotifyConfig,
   ViewConfig,
   BrandConfig,
-  ViewPlugin
+  ViewPlugin,
+  PreviewPlugin
 } from './types';
 
 import ServerContext, { 

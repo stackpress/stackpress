@@ -12,11 +12,12 @@
     "build": "yarn build:ts && yarn migrate && yarn build:app",
     "build:ts": "tsc",
     "build:app": "dotenv -e .env -- tsx scripts/build.ts",
-    "develop": "dotenv -e .env -- tsx scripts/serve.ts",
+    "develop": "dotenv -e .env -- tsx scripts/develop.ts",
     "emit": "dotenv -e .env -- tsx scripts/event.ts",
     "generate": "dotenv -e .env -- tsx scripts/generate.ts",
     "migrate": "dotenv -e .env -- tsx scripts/migrate.ts",
     "populate": "dotenv -e .env -- tsx scripts/populate.ts",
+    "preview": "dotenv -e .env -- tsx scripts/preview.ts",
     "purge": "dotenv -e .env -- tsx scripts/purge.ts",
     "push": "dotenv -e .env -- tsx scripts/push.ts",
     "query": "dotenv -e .env -- tsx scripts/query.ts",
@@ -24,11 +25,11 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.2.17",
-    "@stackpress/inquire-pglite": "0.5.9",
+    "@stackpress/inquire-pglite": "0.5.10",
     "frui": "0.1.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "stackpress": "0.1.24"
+    "stackpress": "0.1.26"
   },
   "devDependencies": {
     "@types/chai": "4.3.20",
@@ -38,8 +39,10 @@
     "@types/react-dom": "19.1.1",
     "chai": "4.5.0",
     "dotenv-cli": "7.4.4",
+    "fast-glob": "3.3.2",
     "mocha": "10.8.2",
     "nyc": "17.1.0",
+    "reactus": "0.1.27",
     "ts-mocha": "10.0.0",
     "ts-node": "10.9.2",
     "tsx": "4.19.3",

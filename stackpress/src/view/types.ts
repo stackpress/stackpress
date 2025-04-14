@@ -19,6 +19,7 @@ import type {
   Builder as ReactusBuilder, 
   ServerConfig as ReactusConfig 
 } from 'reactus';
+import type ReactusPreview from 'reactus/server/Server';
 //stackpress
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type { IM, SR, Method } from '@stackpress/ingest/types';
@@ -256,47 +257,12 @@ export type ThemeProviderProps = {
 };
 
 //--------------------------------------------------------------------//
-// Other Types
-
-export type {
-  Trace,
-  UnknownNest,
-  NestedObject,
-  SuccessResponse, 
-  ErrorResponse, 
-  ResponseStatus, 
-  StatusResponse 
-} from '@stackpress/lib/types';
+// View Props Types
 
 export type { AdminConfigProps } from '../admin/types';
 export type { ApiConfigProps } from '../api/types';
 
-export type { 
-  SessionRoute,
-  AuthConfigProps,
-  SessionData,
-  SessionTokenData,
-  SessionPermission,
-  SessionPermissionList
-} from '../session/types';
-
-export type {
-  CSVParseError,
-  CSVParseResults,
-  BatchSendResults,
-  BatchSendResponse
-} from './import';
-
-export type RollupResults = [ 
-  OutputChunk, 
-  ...(OutputAsset | OutputChunk)[]
-];
-
-export type FileMeta = {
-  filepath: string,
-  basepath: string,
-  extname: string
-};
+export type { AuthConfigProps } from '../session/types';
 
 export type FieldProps = {
   className?: string,
@@ -314,6 +280,10 @@ export type ControlProps = {
   change?: (name: string, value: any) => void
 }
 
+//--------------------------------------------------------------------//
+// Config Types
+
+//ie. ctx.config<NotifyConfig>('view', 'notify')
 export type NotifyConfig = {
   position: string,
   autoClose: number,
@@ -340,6 +310,9 @@ export type BrandConfig = {
   icon?: string,
   favicon?: string
 };
+
+//--------------------------------------------------------------------//
+// Plugin Types
 
 //ie. ctx.plugin<ViewPlugin>('view')
 export type ViewPlugin = {
@@ -393,4 +366,63 @@ export type ViewPlugin = {
   buildPage: (entry: string, assets?: BuildResults) => Promise<RollupResults>,
   renderHMR: (entry: string) => Promise<string>,
   render: (entry: string, props?: UnknownNest) => Promise<string>
+};
+
+//ie. ctx.plugin<ViewPlugin>('view')
+export type PreviewPlugin = {
+  config: ReactusConfig,
+  paths: {
+    asset: string,
+    client: string,
+    css?: string,
+    head?: string,
+    page: string
+  };
+  routes: { client: string, css: string },
+  templates: {
+    client: string,
+    document: string,
+    page: string
+  };
+  server: ReactusPreview,
+  render: (entry: string, props?: UnknownNest) => Promise<string>
+};
+
+//--------------------------------------------------------------------//
+// Other Types
+
+export type {
+  Trace,
+  UnknownNest,
+  NestedObject,
+  SuccessResponse, 
+  ErrorResponse, 
+  ResponseStatus, 
+  StatusResponse 
+} from '@stackpress/lib/types';
+
+export type { 
+  SessionRoute,
+  SessionData,
+  SessionTokenData,
+  SessionPermission,
+  SessionPermissionList
+} from '../session/types';
+
+export type {
+  CSVParseError,
+  CSVParseResults,
+  BatchSendResults,
+  BatchSendResponse
+} from './import';
+
+export type RollupResults = [ 
+  OutputChunk, 
+  ...(OutputAsset | OutputChunk)[]
+];
+
+export type FileMeta = {
+  filepath: string,
+  basepath: string,
+  extname: string
 };

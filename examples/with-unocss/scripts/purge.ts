@@ -1,8 +1,8 @@
 //stackpress
 import type { Engine } from 'stackpress/sql';
 import * as scripts from 'stackpress/scripts';
-//plugins
-import bootstrap from '../plugins/bootstrap';
+//config
+import { bootstrap } from '../config/develop';
 
 async function purge() {
   const server = await bootstrap();

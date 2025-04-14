@@ -54,7 +54,8 @@ export type {
   NotifyConfig,
   ViewConfig,
   BrandConfig,
-  ViewPlugin
+  ViewPlugin,
+  PreviewPlugin
 } from './client';
 
 export {

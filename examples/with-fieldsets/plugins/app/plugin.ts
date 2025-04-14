@@ -1,10 +1,7 @@
 //stackpress
 import type { Server } from 'stackpress/server';
-//local
-import { config } from '../config';
 
 export default function plugin(server: Server) {
-  server.config.set(config);
   server.on('listen', async _ => {
     //on error, show error page
     server.on('error', () => import('./pages/error'));

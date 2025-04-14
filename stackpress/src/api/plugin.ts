@@ -40,7 +40,7 @@ export default function plugin(ctx: Server) {
     if (!Array.isArray(endpoints) || endpoints.length === 0) return;
     ctx.import.all('/auth/oauth/token', () => import('./pages/token'));
     ctx.import.all('/auth/oauth', () => import('./pages/oauth'));
-    ctx.view.all('/auth/oauth', 'stackpress/dist/api/views/oauth', -100);
+    ctx.view.all('/auth/oauth', 'stackpress/esm/api/views/oauth', -100);
     for (const endpoint of endpoints) {
       if (endpoint.type === 'session') {
         session(endpoint, ctx);

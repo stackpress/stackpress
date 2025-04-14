@@ -134,7 +134,8 @@ export type {
   NotifyConfig,
   ViewConfig,
   BrandConfig,
-  ViewPlugin
+  ViewPlugin,
+  PreviewPlugin
 } from '../view/types';
 
 export type {
