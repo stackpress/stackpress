@@ -3635,10 +3635,10 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-r22n@1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/r22n/-/r22n-1.0.7.tgz#016611558464b9b55087b2d6f9ab4ae3513a7bfb"
-  integrity sha512-dsiZuObXF5dQzuJVAZlLMAwbzzGBpM53PCcJ/wlcW1WGa3MijSqR8wdE/vM1bZbyGw9ZEgc9NcSrTtquvwyH5Q==
+r22n@1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/r22n/-/r22n-1.0.8.tgz#d5eb32fbad40ad1b25aaba8ef094abc1302227c3"
+  integrity sha512-VyBfes+7VF6ogJ2McvG/mvJQ12eVFjNh7cIx6X+aHiX6G++aPhO1gQpBBdp7ssH/hQUG34Z1mFLj6TpSCBDA5g==
 
 randombytes@^2.1.0:
   version "2.1.0"
@@ -3671,10 +3671,10 @@ react@19.1.0:
   resolved "https://registry.yarnpkg.com/react/-/react-19.1.0.tgz#926864b6c48da7627f004795d6cce50e90793b75"
   integrity sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==
 
-reactus@0.1.29:
-  version "0.1.29"
-  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.1.29.tgz#3740d9a9e0eb4fa28cebbbb4ea194a9fd2173cc5"
-  integrity sha512-+hSsI4hKMXdDU4dUnPhozQSSehR4LGncRhwttP8B3NsUP63RSwv4nWAAQiUgaL09lqH5zNsD/1v7J1NlEIm93Q==
+reactus@0.1.30:
+  version "0.1.30"
+  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.1.30.tgz#f3a0c01a246ad6cd0bb045ba45814b2fac1edb43"
+  integrity sha512-mCRUcgfcInuzFbjXGbcue0lDeNAt0wBFLzAIM1PG4wwwJyVajZs6TxdXgJYrX+C0NuxQxMdfBegty3tCAN12xg==
   dependencies:
     "@stackpress/lib" "0.5.10"
     "@vitejs/plugin-react" "4.3.4"

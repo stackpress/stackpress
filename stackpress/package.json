@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -448,9 +448,9 @@
     "nodemailer": "6.9.16",
     "papaparse": "5.5.1",
     "prettier": "3.5.3",
-    "r22n": "1.0.7",
+    "r22n": "1.0.8",
     "react-toastify": "11.0.5",
-    "reactus": "0.1.29"
+    "reactus": "0.1.30"
   },
   "devDependencies": {
     "@stackpress/idea-transformer": "0.5.10",
