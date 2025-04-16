@@ -1,3 +1,6 @@
+//node
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 //stackpress
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
@@ -26,15 +29,10 @@ export default function plugin(ctx: Server) {
     if (!schema.plugin) {
       schema.plugin = {};
     }
-    //@ts-ignore - __dirname supported in all versions of nodejs
-    let dirname = typeof __dirname === 'string' ? __dirname : ''; 
-    //@ts-ignore - meta supported after node 20
-    if (typeof globalThis.import !== 'undefined') {
-      try {
-        //@ts-ignore - meta supported after node 20
-        dirname = globalThis.import.meta.dirname;
-      } catch(e) {}
-    }
+    const dirname = typeof __dirname === 'undefined' 
+      //@ts-ignore - The import.meta only allowed in ESM
+      ? path.dirname(fileURLToPath(import.meta.url))
+      : __dirname;
     //add this plugin generator to the schema
     //so it can be part of the transformation
     schema.plugin[`${dirname}/transform`] = {};
