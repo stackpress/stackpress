@@ -29,7 +29,18 @@
     "uno:push": "yarn --cwd examples/with-unocss push",
     "uno:query": "yarn --cwd examples/with-unocss query",
     "uno:start": "yarn --cwd examples/with-unocss start",
-    "uno:test": "yarn --cwd examples/with-unocss test"
+    "uno:test": "yarn --cwd examples/with-unocss test",
+    "cjs:dev": "yarn --cwd examples/with-commonjs develop",
+    "cjs:emit": "yarn --cwd examples/with-commonjs emit",
+    "cjs:generate": "yarn --cwd examples/with-commonjs generate",
+    "cjs:migrate": "yarn --cwd examples/with-commonjs migrate",
+    "cjs:populate": "yarn --cwd examples/with-commonjs populate",
+    "cjs:preview": "yarn --cwd examples/with-commonjs preview",
+    "cjs:purge": "yarn --cwd examples/with-commonjs purge",
+    "cjs:push": "yarn --cwd examples/with-commonjs push",
+    "cjs:query": "yarn --cwd examples/with-commonjs query",
+    "cjs:start": "yarn --cwd examples/with-commonjs start",
+    "cjs:test": "yarn --cwd examples/with-commonjs test"
   },
   "devDependencies": {
     "npm-run-all": "4.1.5"

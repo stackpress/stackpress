@@ -1,6 +1,5 @@
 {
-  "type": "module",
-  "name": "stackpress-with-unocss",
+  "name": "stackpress-with-commonjs",
   "version": "1.0.0",
   "private": true,
   "plugins": [

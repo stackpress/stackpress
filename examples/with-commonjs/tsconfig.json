@@ -1,0 +1,13 @@
+{
+  "extends": "stackpress/tsconfig/cjs",
+  "compilerOptions": {
+    "outDir": ".build",
+  },
+  "include": [ 
+    "config/**/*.ts", 
+    "plugins/**/*.ts", 
+    "plugins/**/*.tsx",
+    "scripts/**/*.ts"
+  ],
+  "exclude": [ "dist", "node_modules", "tests" ]
+}
