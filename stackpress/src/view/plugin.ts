@@ -10,6 +10,8 @@ import type Server from '@stackpress/ingest/Server';
  * This interface is intended for the Incept library.
  */
 export default function plugin(ctx: Server) {
+  //if no view is configured, disable plugin
+  if (!ctx.config.has('view')) return;
   //on config, configure and register the language plugin
   ctx.on('config', async (_req, _res, ctx) => {
     //get server mode

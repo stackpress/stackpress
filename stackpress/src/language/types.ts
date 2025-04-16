@@ -22,9 +22,15 @@ export type LanguageConstructor = {
 
 //ie. ctx.config<LanguageConfig>('language')
 export type LanguageConfig = {
-  key: string,
-  locale: string,
-  languages: LanguageMap
+  //url flag (ie. ?locale) used to change the user's locale
+  //this is also the name of the cookie used to store the locale
+  //defaults to `locale`
+  key?: string,
+  //default locale
+  //defaults to `en_US`
+  locale?: string,
+  //languages and translations
+  languages?: LanguageMap
 };
 
 //ie. ctx.plugin<LanguagePlugin>('language')

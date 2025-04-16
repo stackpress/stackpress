@@ -31,11 +31,19 @@ export type SearchPath = {
 };
 
 export type DatabaseConfig = {
-  migrations: string,
-  schema: {
-    onDelete: 'CASCADE'|'SET NULL'|'RESTRICT',
-    onUpdate: 'CASCADE'|'SET NULL'|'RESTRICT'
-  }
+  //where to store create and alter table migration files
+    // - This is used in conjunction with `revisions`
+    // - This doesn't update the database, it simply logs the changes
+    //used by `stackpress/scripts/migrate`
+    //wont save if not provided
+    migrations?: string,
+    //cascading rules used when generating the database schema
+    //defaults to `CASCADE`
+    //TODO: implement in transform/schema.ts
+    schema?: {
+      onDelete?: 'CASCADE'|'SET NULL'|'RESTRICT',
+      onUpdate?: 'CASCADE'|'SET NULL'|'RESTRICT'
+    }
 };
 
 export type DatabasePlugin = Engine;

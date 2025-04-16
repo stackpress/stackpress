@@ -70,10 +70,17 @@ export type ApiWebhook = {
 
 //ie. ctx.config<ApiConfig>('api');
 export type ApiConfig = {
-  expires: number,
-  scopes: Record<string, ApiScope>,
-  endpoints: ApiEndpoint[],
-  webhooks: ApiWebhook[]
+  //when sessions expire. this is used with `session.created` column
+  //defaults to never expire
+  expires?: number,
+  //calls out external urls when specified events happen
+  webhooks?: ApiWebhook[],
+  //scopes are used to limit access to certain endpoints
+  //when creating the default application, make sure the 
+  //following scopes are included, or you will get a 401 
+  //error when trying to access the endpoints
+  scopes?: Record<string, ApiScope>,
+  endpoints?: ApiEndpoint[]
 };
 
 //--------------------------------------------------------------------//

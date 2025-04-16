@@ -10,6 +10,8 @@ import { authorize, unauthorized, validData } from './helpers.js';
  * This interface is intended for the Incept library.
  */
 export default function plugin(ctx: Server) {
+  //if no api config exists, disable the plugin
+  if (!ctx.config.get('api')) return;
   //on listen, add webhooks
   ctx.on('listen', (_req, _res, ctx) => {
     const { webhooks = [] } = ctx.config<ApiConfig>('api') || {};

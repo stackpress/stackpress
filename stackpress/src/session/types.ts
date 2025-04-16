@@ -83,9 +83,16 @@ export type AuthConfig = {
 
 //ie. ctx.config<SessionConfig>('session')
 export type SessionConfig = {
-  key: string,
+  //name of the session cookie
+  //defaults
+  key?: string,
+  //used to generate the session id
+  //also used to encrypt/decrypt data 
+  //in the database
   seed: string,
-  access: SessionPermissionList
+  //route and event access white list (blacklisted by default)
+  //mapped as role -> access entries[]
+  access?: SessionPermissionList
 };
 
 //ie. ctx.plugin<AuthPlugin>('auth')

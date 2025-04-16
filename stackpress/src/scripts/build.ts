@@ -1,5 +1,3 @@
-//node
-import path from 'node:path';
 //reactus
 import * as reactus from 'reactus';
 //stackpress
@@ -13,20 +11,11 @@ export default async function build(server: Server<any, any, any>) {
   //filepath to a global css file
   const cssFiles = server.config.path('view.engine.cssFiles', []);
   //path where to save assets (css, images, etc)
-  const assetPath = server.config.path(
-    'view.engine.assetPath', 
-    path.join(cwd, '.build/assets')
-  );
+  const assetPath = server.config.path('view.engine.assetPath');
   //path where to save and load (live) the client scripts (js)
-  const clientPath = server.config.path(
-    'view.engine.clientPath', 
-    path.join(cwd, '.build/client')
-  );
+  const clientPath = server.config.path('view.engine.clientPath');
   //path where to save and load (live) the server script (js)
-  const pagePath = server.config.path(
-    'view.engine.pagePath', 
-    path.join(cwd, '.build/pages')
-  );
+  const pagePath = server.config.path('view.engine.pagePath');
   const engine = reactus.build({
     cwd,
     plugins,
@@ -49,9 +38,9 @@ export default async function build(server: Server<any, any, any>) {
   }
 
   const responses = [
-    ...await engine.buildAllClients(),
-    ...await engine.buildAllAssets(),
-    ...await engine.buildAllPages()
+    ...clientPath ? await engine.buildAllClients(): [],
+    ...assetPath ? await engine.buildAllAssets(): [],
+    ...pagePath ? await engine.buildAllPages(): []
   ].map(response => {
     const results = response.results;
     if (typeof results?.contents === 'string') {

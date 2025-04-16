@@ -12,10 +12,23 @@ import type { Actions } from '../sql/actions/index.js';
 
 //ie. ctx.config<ClientConfig>('client');
 export type ClientConfig = {
-  lang: string,
-  revisions: string,
+  //where to store the generated client code
+  //used by `stackpress/terminal` (for generating client)
   build: string,
+  //whether to compiler client in `js` or `ts`
+  //used by client generator
+  //defaults to `js`
+  lang?: string,
+  //used by `stackpress/client` to `import()` 
+  //the generated client code to memory
   module: string,
+  //where to store serialized idea json files for historical 
+  //purposes. Revisions are used in conjuction with push and 
+  //migrate to determine the changes between each idea change.
+  //wont save if not provided (cant create migrations without this)
+  revisions?: string,
+  //what tsconfig file to base the typescript compiler on
+  //used by `stackpress/terminal` (for generating client)
   tsconfig: string
 };
 

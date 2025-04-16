@@ -43,25 +43,6 @@ export const database = {
   }
 };
 
-export const view = {
-  //url flag (ie. ?json) used to disable template 
-  //rendering and show the raw json data instead
-  noview: 'json',
-  //used by vite and in development mode
-  //to determine the root of the project
-  base: '/',
-  //frontend notification display settings
-  notify: {
-    position: 'bottom-center',
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    theme: 'dark',
-  }
-};
-
 export const email = {
   host: 'smtp.example.com',
   port: 587,

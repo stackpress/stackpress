@@ -8,6 +8,8 @@ import Session from './Session.js';
  * This interface is intended for the Incept library.
  */
 export default function plugin(ctx: Server) {
+  //if no session config, disable session
+  if (!ctx.config.get('session')) return;
   //on config, register session plugin
   ctx.on('config', (_req, _res, ctx) => {
     //if no session config, return
@@ -20,20 +22,18 @@ export default function plugin(ctx: Server) {
   });
   //on listen, add user events
   ctx.on('listen', (_req, _res, ctx) => {
-    //if no auth config, return
+    //if no auth config, disable auth routes
     if (!ctx.config.get('auth')) return;
     ctx.import.on('auth-signup', () => import('./events/signup'));
     ctx.import.on('auth-signin', () => import('./events/signin'));
     ctx.import.on('auth-signout', () => import('./events/signout'));
     ctx.import.on('authorize', () => import('./events/authorize'));
     ctx.import.on('request', () => import('./pages/authorize'));
-    //if no session config, return
-    if (!ctx.config.get('session')) return;
     ctx.import.on('me', () => import('./events/session'));
   });
   //on route, add user routes
   ctx.on('route', (_req, _res, ctx) => {
-    //if no auth config, return
+    //if no auth config, disable auth routes
     if (!ctx.config.get('auth')) return;
     ctx.import.all('/auth/signin', () => import('./pages/signin'));
     ctx.import.all('/auth/signin/:type', () => import('./pages/signin'));

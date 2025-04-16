@@ -12,10 +12,10 @@ import type { ClientPlugin } from '../client/types.js';
  * This interface is intended for the Incept library.
  */
 export default function plugin(ctx: Server) {
+  //if no admin config exists, disable the plugin
+  if (!ctx.config.get('admin')) return;
   //on route, add admin routes
   ctx.on('route', (_req, _res, ctx) => {
-    //if no admin config exists, return
-    if (!ctx.config.get('admin')) return;
     try {
       //it's possible that the client isnt generated yet...
       //config, registry, model, fieldset

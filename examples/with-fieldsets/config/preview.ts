@@ -14,9 +14,7 @@ export const config: Config = {
   assets: common.assets,
   server: {
     ...common.server,
-    mode: 'production',
-    //where to store the build files
-    build: common.build
+    mode: 'production'
   },
   client: { 
     ...common.client,
@@ -26,11 +24,7 @@ export const config: Config = {
     //where to store serialized idea json files for historical 
     //purposes. Revisions are used in conjuction with push and 
     //migrate to determine the changes between each idea change.
-    revisions: path.join(common.build, 'revisions'),
-    //where to store the generated client code
-    build: path.join(common.cwd, 'node_modules', '.client'),
-    //what tsconfig file to base the typescript compiler on
-    tsconfig: path.join(common.cwd, 'tsconfig.json')
+    revisions: path.join(common.build, 'revisions')
   },
   database: {
     ...common.database,

@@ -10,11 +10,14 @@ export type AdminConfigProps = {
 
 //ie. ctx.config<AdminConfig>('admin');
 export type AdminConfig = {
+  //name of the admin section. shown on the top left of the page
   name?: string,
+  //base route for the admin section
   base?: string,
+  //static admin menu items
   menu?: {
     name: string,
-    icon: string,
+    icon?: string,
     path: string,
     match: string
   }[]

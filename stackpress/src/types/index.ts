@@ -213,7 +213,7 @@ export type IdeaPluginWithProject = PluginProps<IdeaProjectProps>;
 
 export type Config = UnknownNest & {
   brand?: BrandConfig,
-  server: ServerConfig,
+  server?: ServerConfig,
   client?: ClientConfig,
   cookie?: CookieOptions,
   admin?: AdminConfig,

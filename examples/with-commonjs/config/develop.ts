@@ -2,7 +2,6 @@
 import path from 'node:path';
 //stackpress
 import { server as http } from 'stackpress/http';
-import { CLIENT_TEMPLATE, DOCUMENT_TEMPLATE } from 'stackpress/view';
 //config
 import type { Config } from './common';
 import * as common from './common';
@@ -34,34 +33,6 @@ export const config: Config = {
     // - This is used in conjunction with `revisions`
     // - This doesn't update the database, it simply logs the changes
     migrations: path.join(common.build, 'migrations')
-  },
-  view: {
-    ...common.view,
-    //reactus specific settings
-    engine: {
-      //base path (used in vite)
-      basePath: '/',
-      //client script route prefix used in the document markup
-      //ie. /client/[id][extname]
-      //<script type="module" src="/client/[id][extname]"></script>
-      //<script type="module" src="/client/abc123.tsx"></script>
-      clientRoute: '/client',
-      //template wrapper for the client script (tsx)
-      clientTemplate: CLIENT_TEMPLATE,
-      //filepath to a global css file
-      cssFiles: [ 
-        'frui/frui.css', 
-        'stackpress/stackpress.css'
-      ],
-      //template wrapper for the document markup (html)
-      documentTemplate: DOCUMENT_TEMPLATE,
-      //vite plugins
-      plugins: [],
-      //original vite options (overrides other settings related to vite)
-      vite: undefined,
-      //ignore files in watch mode
-      watchIgnore: []
-    }
   },
   session: {
     ...common.session,

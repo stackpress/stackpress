@@ -1,10 +1,7 @@
 //node
 import path from 'node:path';
-//modules
-import unocss from 'unocss/vite';
 //stackpress
 import { server as http } from 'stackpress/http';
-import { CLIENT_TEMPLATE, PAGE_TEMPLATE } from 'stackpress/view';
 //config
 import type { Config } from './common.js';
 import * as common from './common.js';
@@ -36,31 +33,6 @@ export const config: Config = {
     // - This is used in conjunction with `revisions`
     // - This doesn't update the database, it simply logs the changes
     migrations: path.join(common.build, 'migrations')
-  },
-  view: {
-    ...common.view,
-    //reactus specific settings
-    engine: {
-      //path where to save assets (css, images, etc)
-      assetPath: path.join(common.assets, 'assets'),
-      //path where to save the client scripts (js)
-      clientPath: path.join(common.assets, 'client'),
-      //template wrapper for the client script (tsx)
-      clientTemplate: CLIENT_TEMPLATE,
-      //filepath to a global css file
-      cssFiles: [ 
-        'frui/frui.css', 
-        'stackpress/stackpress.css'
-      ],
-      //path where to save and load (live) the server script (js)
-      pagePath: path.join(common.cwd, '.build/views'),
-      //template wrapper for the page script (tsx)
-      pageTemplate: PAGE_TEMPLATE,
-      //vite plugins
-      plugins: [ unocss() ],
-      //original vite options (overrides other settings related to vite)
-      vite: undefined
-    }
   },
   session: common.session,
   brand: common.brand,

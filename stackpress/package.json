@@ -59,6 +59,10 @@
       "require": "./cjs/admin/plugin.js",
       "import": "./esm/admin/plugin.js"
     },
+    "./admin/transform": {
+      "require": "./cjs/admin/transform/index.js",
+      "import": "./esm/admin/transform/index.js"
+    },
     "./admin/types": {
       "require": "./cjs/admin/types.js",
       "import": "./esm/admin/types.js"
@@ -84,6 +88,10 @@
     "./Revisions": {
       "require": "./cjs/client/Revisions.js",
       "import": "./esm/client/Revisions.js"
+    },
+    "./client/transform": {
+      "require": "./cjs/client/transform/index.js",
+      "import": "./esm/client/transform/index.js"
     },
     "./client/plugin": {
       "require": "./cjs/client/plugin.js",
@@ -237,6 +245,10 @@
       "require": "./cjs/sql/sqlite.js",
       "import": "./esm/sql/sqlite.js"
     },
+    "./sql/transform": {
+      "require": "./cjs/sql/transform/index.js",
+      "import": "./esm/sql/transform/index.js"
+    },
     "./sql/plugin": {
       "require": "./cjs/sql/plugin.js",
       "import": "./esm/sql/plugin.js"
@@ -263,6 +275,10 @@
       "import": "./esm/terminal/index.js"
     },
 
+    "./types/transform": {
+      "require": "./cjs/types/transform/index.js",
+      "import": "./esm/types/transform/index.js"
+    },
     "./types/plugin": {
       "require": "./cjs/types/plugin.js",
       "import": "./esm/types/plugin.js"
@@ -275,6 +291,10 @@
     "./view/import": {
       "require": "./cjs/view/import.js",
       "import": "./esm/view/import.js"
+    },
+    "./view/transform": {
+      "require": "./cjs/view/transform/index.js",
+      "import": "./esm/view/transform/index.js"
     },
     "./view/plugin": {
       "require": "./cjs/view/plugin.js",
@@ -335,6 +355,7 @@
     "*": {
       "admin/pages/detail/*": [ "./cjs/admin/pages/detail/*.d.ts" ],
       "admin/pages/*": [ "./cjs/admin/pages/*.d.ts" ],
+      "admin/transform": [ "./cjs/admin/transform/index.d.ts" ],
       "admin/plugin": [ "./cjs/admin/plugin.d.ts" ],
       "admin/types": [ "./cjs/admin/types.d.ts" ],
       "admin": [ "./cjs/admin/index.d.ts" ],
@@ -344,6 +365,7 @@
       "api": [ "./cjs/api/index.d.ts" ],
 
       "Revisions": [ "./cjs/client/Revisions.d.ts" ],
+      "client/transform": [ "./cjs/client/transform/index.d.ts" ],
       "client/plugin": [ "./cjs/client/plugin.d.ts" ],
       "client/types": [ "./cjs/client/types.d.ts" ],
       "client": [ "./cjs/client/index.d.ts" ],
@@ -387,6 +409,7 @@
       "pglite": [ "./cjs/sql/pglite.d.ts" ],
       "pgsql": [ "./cjs/sql/pgsql.d.ts" ],
       "sqlite": [ "./cjs/sql/sqlite.d.ts" ],
+      "sql/transform": [ "./cjs/sql/transform/index.d.ts" ],
       "sql/plugin": [ "./cjs/sql/plugin.d.ts" ],
       "sql/types": [ "./cjs/sql/types.d.ts" ],
       "sql": [ "./cjs/sql/index.d.ts" ],
@@ -395,10 +418,12 @@
       "Terminal": [ "./cjs/terminal/Terminal.d.ts" ],
       "terminal": [ "./cjs/terminal/index.d.ts" ],
 
+      "types/transform": [ "./cjs/types/transform/index.d.ts" ],
       "types/plugin": [ "./cjs/types/plugin.d.ts" ],
       "types": [ "./cjs/types/index.d.ts" ],
       
       "view/import": [ "./cjs/view/import.d.ts" ],
+      "view/transform": [ "./cjs/view/transform/index.d.ts" ],
       "view/plugin": [ "./cjs/view/plugin.d.ts" ],
       "view/types": [ "./cjs/view/types.d.ts" ],
       "view/client": [ "./cjs/view/client.d.ts" ],

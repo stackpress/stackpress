@@ -296,10 +296,20 @@ export type NotifyConfig = {
 
 //ie. ctx.config<ViewConfig>('view')
 export type ViewConfig = {
+  //url flag (ie. ?json) used to disable template 
+  //rendering and show the raw json data instead
+  //defaults to `json`
   noview?: string,
+  //used by vite and in development mode
+  //to determine the root of the project
+  //defaults to `/`
   base?: string,
+  //frontend notification display settings
+  //if not provided, defaults will apply
   notify?: NotifyConfig,
   props?: Record<string, unknown>,
+  //reactus settings
+  //if not provided, disables `reactus`
   engine?: Partial<ReactusConfig>
 };
 

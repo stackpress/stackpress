@@ -8,6 +8,7 @@ import FileLoader from '@stackpress/lib/FileLoader';
 import Transformer from '@stackpress/idea-transformer/Transformer';
 //root
 import type { IdeaProjectProps } from '../types/index.js';
+import Exception from '../Exception.js';
 
 export default class InceptTerminal extends Terminal {
   // brand to prefix in all logs
@@ -36,8 +37,20 @@ export default class InceptTerminal extends Terminal {
     this.transformer = new Transformer<IdeaProjectProps>(input, loader);
     this.server = server;
     this.server.on('transform', async (req, res, server) => {
+      //if client config is not set, dont generate client
+      if (!server.config.has('client')) return;
       const build = server.config.path<string>('client.build');
+      //if no build path,
+      if (!build) {
+        //stop the build
+        throw Exception.for('Missing build path');
+      }
       const tsconfig = server.config.path<string>('client.tsconfig');
+      //if no tsconfig path,
+      if (!tsconfig) {
+        //stop the build
+        throw Exception.for('Missing tsconfig path');
+      }
       //make a new project
       const project = this.project(build, tsconfig);
       //create the directory
