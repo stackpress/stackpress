@@ -1,4 +1,4 @@
-import type { LayoutRightProps } from '../../types'
+import type { LayoutRightProps } from '../../types.js'
 
 export default function LayoutRight({ open, children }: LayoutRightProps) {
   const right = open ? 'px-r-0' : 'px-r--220';

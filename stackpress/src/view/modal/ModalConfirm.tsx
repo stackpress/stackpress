@@ -3,7 +3,7 @@ import { useLanguage } from 'r22n';
 //components
 import Button from 'frui/form/Button';
 //views
-import type { ModalConfirmProps } from '../types';
+import type { ModalConfirmProps } from '../types.js';
 
 const ModalConfirm = ({ open, message, confirmed }: ModalConfirmProps) => {
   const { _ } = useLanguage();

@@ -1,7 +1,7 @@
 //stackpress
 import type Request from '@stackpress/ingest/Request';
 //language
-import type SessionLanguage from './Language';
+import type SessionLanguage from './Language.js';
 
 export type Language = {
   label: string,

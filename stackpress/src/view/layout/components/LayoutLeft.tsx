@@ -1,4 +1,4 @@
-import type { LayoutLeftProps } from '../../types';
+import type { LayoutLeftProps } from '../../types.js';
 
 export default function LayoutLeft(props: LayoutLeftProps) {
   const { brand, base, logo, open, toggle, children } = props;

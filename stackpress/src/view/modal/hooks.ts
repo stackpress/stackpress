@@ -4,10 +4,10 @@ import type { ReactNode } from 'react';
 import React from 'react';
 import { useContext } from 'react';
 //notify
-import { useNotify } from '../notify/hooks';
+import { useNotify } from '../notify/hooks.js';
 //modal
-import ModalContext from './ModalContext';
-import Confirm from './ModalConfirm';
+import ModalContext from './ModalContext.js';
+import Confirm from './ModalConfirm.js';
 
 export function useModal() {
   const { className, title, body, open } = useContext(ModalContext);

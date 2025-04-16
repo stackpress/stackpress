@@ -5,8 +5,8 @@ import type {
 } from '@stackpress/idea-parser/types';
 import { isObject } from '@stackpress/ingest/helpers';
 //spec
-import Fieldset from './spec/Fieldset';
-import Model from './spec/Model';
+import Fieldset from './spec/Fieldset.js';
+import Model from './spec/Model.js';
 
 export default class Registry {
   /**

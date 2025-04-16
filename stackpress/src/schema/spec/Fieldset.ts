@@ -3,18 +3,21 @@ import Mustache from 'mustache';
 //stackpress
 import type { NestedObject } from '@stackpress/lib';
 //schema
-import type { SchemaColumnInfo, SchemaSerialOptions } from '../types';
-import type Registry from '../Registry';
+import type { 
+  SchemaColumnInfo, 
+  SchemaSerialOptions 
+} from '../types.js';
+import type Registry from '../Registry.js';
 import { 
   camelize, 
   capitalize, 
   dasherize, 
   generators,
   snakerize
-} from '../helpers';
+} from '../helpers.js';
 //local
-import Attributes from './Attributes';
-import Column from './Column';
+import Attributes from './Attributes.js';
+import Column from './Column.js';
 
 export default class Fieldset {
   //stores the registry

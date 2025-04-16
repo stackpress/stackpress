@@ -118,4 +118,4 @@ export {
   lowerize,
   snakerize,
   render
-} from './schema/helpers';
+} from './schema/helpers.js';

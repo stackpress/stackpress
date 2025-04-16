@@ -2,11 +2,11 @@
 import type { Method, UnknownNest } from '@stackpress/lib/types';
 import type { Data } from '@stackpress/idea-parser/types';
 //language
-import type { LanguageConfig } from '../language/types';
+import type { LanguageConfig } from '../language/types.js';
 //views
-import type { ViewConfig, BrandConfig } from '../view/types';
+import type { ViewConfig, BrandConfig } from '../view/types.js';
 //session
-import type { Profile } from '../session/types';
+import type { Profile } from '../session/types.js';
 
 export type ApiConfigProps = {
   language: LanguageConfig,

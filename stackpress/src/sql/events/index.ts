@@ -1,18 +1,18 @@
 //stackpress
 import { server } from '@stackpress/ingest/Server';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //local
-import batch from './batch';
-import create from './create';
-import detail from './detail';
-import get from './get';
-import purge from './purge';
-import remove from './remove';
-import restore from './restore';
-import search from './search';
-import update from './update';
-import upsert from './upsert';
+import batch from './batch.js';
+import create from './create.js';
+import detail from './detail.js';
+import get from './get.js';
+import purge from './purge.js';
+import remove from './remove.js';
+import restore from './restore.js';
+import search from './search.js';
+import update from './update.js';
+import upsert from './upsert.js';
 
 export {
   batch,

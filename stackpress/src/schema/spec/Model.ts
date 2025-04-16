@@ -1,6 +1,6 @@
 //local
-import type Column from './Column';
-import Fieldset from './Fieldset';
+import type Column from './Column.js';
+import Fieldset from './Fieldset.js';
 
 export default class Model extends Fieldset {
   /**

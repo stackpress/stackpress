@@ -2,13 +2,13 @@
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 //root
-import Exception from '../../Exception';
+import Exception from '../../Exception.js';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //sql
-import { toErrorResponse } from '../helpers';
+import { toErrorResponse } from '../helpers.js';
 //local
-import search from './search';
+import search from './search.js';
 
 /**
  * Returns a database table row

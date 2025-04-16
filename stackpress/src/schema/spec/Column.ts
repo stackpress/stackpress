@@ -4,11 +4,14 @@ import { nanoid } from 'nanoid';
 //stackpress
 import type { EnumConfig } from '@stackpress/idea-parser/types';
 //root
-import type { SchemaColumnInfo, SchemaSerialOptions } from '../types';
+import type { 
+  SchemaColumnInfo, 
+  SchemaSerialOptions 
+} from '../types.js';
 //config
-import * as typemap from '../config/typemaps';
+import * as typemap from '../config/typemaps.js';
 //schema
-import assert from '../assert';
+import assert from '../assert.js';
 import { 
   capitalize, 
   camelize, 
@@ -17,10 +20,10 @@ import {
   encrypt, 
   hash, 
   snakerize 
-} from '../helpers';
+} from '../helpers.js';
 //local
-import type Fieldset from './Fieldset';
-import Attributes from './Attributes';
+import type Fieldset from './Fieldset.js';
+import Attributes from './Attributes.js';
 
 export default class Column {
   //ex. String, Number, Date, etc.

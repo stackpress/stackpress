@@ -2,8 +2,8 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //schema
-import type Registry from '../../../schema/Registry';
-import type Model from '../../../schema/spec/Model';
+import type Registry from '../../../schema/Registry.js';
+import type Model from '../../../schema/spec/Model.js';
 
 export default function removePage(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/restore.tsx`;
@@ -33,10 +33,10 @@ export default function removePage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/sql',
     namedImports: [ 'SearchParams' ]
   });
-  //import type { ProfileExtended } from '../../types';
+  //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../../types',
+    moduleSpecifier: '../../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import { useLanguage } from 'r22n';

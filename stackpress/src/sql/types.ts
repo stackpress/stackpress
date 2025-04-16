@@ -1,8 +1,8 @@
 //stackpress
 import type Engine from '@stackpress/inquire/Engine';
 //schema
-import type Model from '../schema/spec/Model';
-import type Column from '../schema/spec/Column';
+import type Model from '../schema/spec/Model.js';
+import type Column from '../schema/spec/Column.js';
 
 export type SearchParams = {
   q?: string,

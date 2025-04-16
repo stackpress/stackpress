@@ -1,12 +1,12 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import Registry from '../../../schema/Registry';
+import Registry from '../../../schema/Registry.js';
 //sql
-import { sequence } from '../../helpers';
+import { sequence } from '../../helpers.js';
 //local
-import generateActions from './actions';
-import generateEvents from './events';
+import generateActions from './actions.js';
+import generateEvents from './events.js';
 
 /**
  * Client File Structure
@@ -43,14 +43,14 @@ export default function generate(directory: Directory, registry: Registry) {
       moduleSpecifier: '@stackpress/ingest',
       namedImports: [ 'HttpServer' ]
     });
-    //import actions from './actions';
+    //import actions from './actions.js';
     source.addImportDeclaration({
-      moduleSpecifier: './actions',
+      moduleSpecifier: './actions.js',
       defaultImport: 'actions'
     });
-    //import events from './events';
+    //import events from './events.js';
     source.addImportDeclaration({
-      moduleSpecifier: './events',
+      moduleSpecifier: './events.js',
       defaultImport: 'events'
     });
     //export default function tests(server: HttpServer) {}
@@ -79,10 +79,10 @@ export default function generate(directory: Directory, registry: Registry) {
     moduleSpecifier: '@stackpress/ingest',
     namedImports: [ 'HttpServer' ]
   });
-  //import profileTests from './profile/tests';
+  //import profileTests from './Profile/tests/index.js';
   for (const model of registry.model.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: `./${model.name}/tests`,
+      moduleSpecifier: `./${model.name}/tests/index.js`,
       defaultImport: `${model.camel}Tests`
     });
   }

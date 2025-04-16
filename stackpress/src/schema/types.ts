@@ -1,8 +1,8 @@
 //stackpress
 import type { Data } from '@stackpress/idea-parser/types';
 //spec
-import type Column from './spec/Column';
-import type Model from './spec/Model';
+import type Column from './spec/Column.js';
+import type Model from './spec/Model.js';
 
 export type { 
   EnumConfig,

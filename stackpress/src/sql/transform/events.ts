@@ -1,8 +1,8 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Model from '../../schema/spec/Model';
-import Registry from '../../schema/Registry';
+import type Model from '../../schema/spec/Model.js';
+import Registry from '../../schema/Registry.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   //loop through models
@@ -38,54 +38,54 @@ export default function generate(directory: Directory, registry: Registry) {
       moduleSpecifier: '@stackpress/ingest/Server',
       namedImports: [ 'server' ]
     });
-    //import batch from './batch';
+    //import batch from './batch.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./batch`,
+      moduleSpecifier: './batch.js',
       defaultImport: 'batch'
     });
-    //import create from './create';
+    //import create from './create.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./create`,
+      moduleSpecifier: './create.js',
       defaultImport: 'create'
     });
-    //import detail from './detail';
+    //import detail from './detail.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./detail`,
+      moduleSpecifier: './detail.js',
       defaultImport: 'detail'
     });
-    //import get from './get';
+    //import get from './get.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./get`,
+      moduleSpecifier: './get.js',
       defaultImport: 'get'
     });
-    //import purge from './purge';
+    //import purge from './purge.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./purge`,
+      moduleSpecifier: './purge.js',
       defaultImport: 'purge'
     });
-    //import remove from './remove';
+    //import remove from './remove.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./remove`,
+      moduleSpecifier: './remove.js',
       defaultImport: 'remove'
     });
-    //import restore from './restore';
+    //import restore from './restore.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./restore`,
+      moduleSpecifier: './restore.js',
       defaultImport: 'restore'
     });
-    //import search from './search';
+    //import search from './search.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./search`,
+      moduleSpecifier: './search.js',
       defaultImport: 'search'
     });
-    //import update from './update';
+    //import update from './update.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./update`,
+      moduleSpecifier: './update.js',
       defaultImport: 'update'
     });
-    //import upsert from './upsert';
+    //import upsert from './upsert.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./upsert`,
+      moduleSpecifier: './upsert.js',
       defaultImport: 'upsert'
     });
     //const router = server();
@@ -140,9 +140,9 @@ export function event(action: string, model: Model, directory: Directory) {
     moduleSpecifier: `stackpress/sql/events/${lower}`,
     defaultImport: lower
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileCreateEvent(req: Request, res: Response)

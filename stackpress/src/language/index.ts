@@ -1,4 +1,4 @@
-import Language from './Language';
+import Language from './Language.js';
 
 export type {
   Language as LanguageData,
@@ -6,6 +6,6 @@ export type {
   LanguageConstructor,
   LanguageConfig,
   LanguagePlugin
-} from './types';
+} from './types.js';
 
 export { Language };

@@ -1,11 +1,11 @@
 //modules
 import { VariableDeclarationKind } from 'ts-morph';
 //root
-import type { IdeaPluginWithProject } from '../../types';
+import type { IdeaPluginWithProject } from '../../types/index.js';
 //schema
-import Registry from '../../schema/Registry';
+import Registry from '../../schema/Registry.js';
 //local
-import generateConfig from './config';
+import generateConfig from './config.js';
 
 /**
  * Client File Structure
@@ -112,9 +112,9 @@ export default function generate(props: IdeaPluginWithProject) {
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
-    //import config from './config';
+    //import config from './config.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./config`,
+      moduleSpecifier: './config.js',
       defaultImport: 'config'
     });
     //export { config };
@@ -128,9 +128,9 @@ export default function generate(props: IdeaPluginWithProject) {
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
-    //import config from './config';
+    //import config from './config.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./config`,
+      moduleSpecifier: './config.js',
       defaultImport: 'config'
     });
     //export { config };
@@ -142,23 +142,23 @@ export default function generate(props: IdeaPluginWithProject) {
   //load index.ts if it exists, if not create it
   const source = project.getSourceFile('index.ts') 
     || project.createSourceFile('index.ts', '', { overwrite: true });
-  //import config from './config';
+  //import config from './config.js';
   source.addImportDeclaration({ 
-    moduleSpecifier: './config', 
+    moduleSpecifier: './config.js', 
     defaultImport: 'registry',
     namedImports: [ 'config' ] 
   });
-  //import * as modelProfile from './profile';
+  //import * as modelProfile from './Profile/index.js';
   for (const model of registry.model.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: `./${model.name}`,
+      moduleSpecifier: `./${model.name}/index.js`,
       defaultImport: `* as model${model.title}`
     });
   }
-  //import * as fieldsetAddress from './profile';
+  //import * as fieldsetAddress from './Profile/index.js';
   for (const fieldset of registry.fieldset.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: `./${fieldset.name}`,
+      moduleSpecifier: `./${fieldset.name}/index.js`,
       defaultImport: `* as fieldset${fieldset.title}`
     });
   }

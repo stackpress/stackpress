@@ -1,4 +1,4 @@
-import type { LayoutHeadProps } from '../../types';
+import type { LayoutHeadProps } from '../../types.js';
 
 export default function LayoutHead(props: LayoutHeadProps) {
   const { 

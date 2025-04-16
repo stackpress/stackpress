@@ -1,1 +1,1 @@
-export type { EmailConfig } from './types';
+export type { EmailConfig } from './types.js';

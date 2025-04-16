@@ -36,7 +36,7 @@ export type {
   WhatwgAction
 } from '@stackpress/ingest/types';
 
-export type { ServerConfig } from './types';
+export type { ServerConfig } from './types.js';
 
 export {
   isObject,

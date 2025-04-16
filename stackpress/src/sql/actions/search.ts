@@ -3,9 +3,9 @@ import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 import Nest from '@stackpress/lib/Nest';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //sql
-import type { SearchParams, SearchJoinMap } from '../types';
+import type { SearchParams, SearchJoinMap } from '../types.js';
 import { 
   toSqlString,
   toSqlFloat,
@@ -21,7 +21,7 @@ import {
   dateable,
   boolable,
   intable
-} from '../helpers';
+} from '../helpers.js';
 
 /**
  * Searches the database table

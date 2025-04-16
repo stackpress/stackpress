@@ -1,11 +1,10 @@
 //root
-import type { IdeaPluginWithProject } from '../../types';
+import type { IdeaPluginWithProject } from '../../types/index.js';
 //schema
-import Registry from '../../schema/Registry';
+import Registry from '../../schema/Registry.js';
 //types
-import enumGenerator from './enums';
-import typeGenerator from './types';
-
+import enumGenerator from './enums.js';
+import typeGenerator from './types.js';
 
 /**
  * Client File Structure
@@ -45,8 +44,8 @@ export default function generate(props: IdeaPluginWithProject) {
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
-    //export type * from './module/[name]/types';
-    source.addExportDeclaration({ moduleSpecifier: `./types` });
+    //export type * from './module/[name]/types.js';
+    source.addExportDeclaration({ moduleSpecifier: './types.js' });
   }
 
   //-----------------------------//
@@ -57,8 +56,8 @@ export default function generate(props: IdeaPluginWithProject) {
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
-    //export type * from './module/[name]/types';
-    source.addExportDeclaration({ moduleSpecifier: `./types` });
+    //export type * from './module/[name]/types.js';
+    source.addExportDeclaration({ moduleSpecifier: './types.js' });
   }
 
   //-----------------------------//
@@ -66,9 +65,9 @@ export default function generate(props: IdeaPluginWithProject) {
   //load index.ts if it exists, if not create it
   const source = project.getSourceFile('index.ts') 
     || project.createSourceFile('index.ts', '', { overwrite: true });
-  //export type * from './types';
+  //export type * from './types.js';
   source.addExportDeclaration({ 
     isTypeOnly: true,
-    moduleSpecifier: './types'
+    moduleSpecifier: './types.js'
   });
 };

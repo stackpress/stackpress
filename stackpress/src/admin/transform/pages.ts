@@ -1,7 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '../../schema/Registry';
+import type Registry from '../../schema/Registry.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   page('create', directory, registry);
@@ -45,9 +45,9 @@ export function page(action: string, directory: Directory, registry: Registry) {
       //consider import/export keywords
       defaultImport: `${lower}Page`
     });
-    // import config from '../../config';
+    // import config from '../../config.js';
     source.addImportDeclaration({
-      moduleSpecifier: `../../config`,
+      moduleSpecifier: '../../config.js',
       defaultImport: 'config'
     });
     // export default function AdminProfileCreatePage(req, res) {} 

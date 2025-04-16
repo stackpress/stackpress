@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 //stackpress
 import { server } from '@stackpress/ingest/Server';
 //email
-import type { EmailConfig } from './types';
+import type { EmailConfig } from './types.js';
 
 const emitter = server();
 

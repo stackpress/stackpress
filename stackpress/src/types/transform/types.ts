@@ -1,10 +1,10 @@
 //modules
 import type { Directory, SourceFile } from 'ts-morph';
 //schema
-import type Model from '../../schema/spec/Model';
-import type Fieldset from '../../schema/spec/Fieldset';
-import type Registry from '../../schema/Registry';
-import * as typemap from '../../schema/config/typemaps';
+import type Model from '../../schema/spec/Model.js';
+import type Fieldset from '../../schema/spec/Fieldset.js';
+import type Registry from '../../schema/Registry.js';
+import * as typemap from '../../schema/config/typemaps.js';
 
 /**
  * This is the The params comes form the cli
@@ -34,19 +34,19 @@ export default function generate(directory: Directory, registry: Registry) {
   // 3. types.ts
   const source = directory.createSourceFile('types.ts', '', { overwrite: true });
 
-  //export type * from './module/profile';
+  //export type * from './module/Profile/types.js';
   for (const model of registry.model.values()) {
     source.addExportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: `./${model.name}/types`,
+      moduleSpecifier: `./${model.name}/types.js`,
       namedExports: [ model.title, `${model.title}Input`, `${model.title}Extended` ]
     });
   }
-  //export type * from './module/profile';
+  //export type * from './module/Profile/types.js';
   for (const fieldset of registry.fieldset.values()) {
     source.addExportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: `./${fieldset.name}/types`,
+      moduleSpecifier: `./${fieldset.name}/types.js`,
       namedExports: [ fieldset.title, `${fieldset.title}Input` ]
     });
   }
@@ -58,10 +58,10 @@ export default function generate(directory: Directory, registry: Registry) {
 export function generateModel(source: SourceFile, model: Model) {
   const columns = Array.from(model.columns.values());
   const enums = Array.from(model.enums.values()).map(column => column.type);
-  //import {} from '../enums'
+  //import {} from '../enums.js'
   if (enums.length > 0) {
     source.addImportDeclaration({
-      moduleSpecifier: '../enums',
+      moduleSpecifier: '../enums.js',
       namedImports: enums
     });
   }
@@ -69,16 +69,16 @@ export function generateModel(source: SourceFile, model: Model) {
     const relation = column.relation;
     if (!relation) continue;
     const model = relation?.parent.model;
-    //import type { Profile } from '../Profile/types'
+    //import type { Profile } from '../Profile/types.js'
     source.addImportDeclaration({
-      moduleSpecifier: `../${model.name}/types`,
+      moduleSpecifier: `../${model.name}/types.js`,
       namedImports: [ model.title ]
     });
   }
   for (const column of model.fieldsets.values()) {
-    //import {} from '../Address/types'
+    //import {} from '../Address/types.js'
     source.addImportDeclaration({
-      moduleSpecifier: `../${column.type}/types`,
+      moduleSpecifier: `../${column.type}/types.js`,
       namedImports: [ column.type ]
     });
   }
@@ -157,17 +157,17 @@ export function generateModel(source: SourceFile, model: Model) {
 export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
   const columns = Array.from(fieldset.columns.values());
   const enums = Array.from(fieldset.enums.values()).map(column => column.type);
-  //import {} from '../enums'
+  //import {} from '../enums.js'
   if (enums.length > 0) {
     source.addImportDeclaration({
-      moduleSpecifier: '../enums',
+      moduleSpecifier: '../enums.js',
       namedImports: enums
     });
   }
   for (const column of fieldset.fieldsets.values()) {
-    //import {} from '../Address/types'
+    //import {} from '../Address/types.js'
     source.addImportDeclaration({
-      moduleSpecifier: `../${column.type}/types`,
+      moduleSpecifier: `../${column.type}/types.js`,
       namedImports: [ column.type ]
     });
   }

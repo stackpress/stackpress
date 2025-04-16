@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 //views
-import type { ModalContextProps } from '../types';
+import type { ModalContextProps } from '../types.js';
 
 const ModalContext = createContext<ModalContextProps>({ 
   _title: '', 

@@ -1,7 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '../../schema/Registry';
+import type Registry from '../../schema/Registry.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   //loop through models
@@ -100,10 +100,10 @@ export default function generate(directory: Directory, registry: Registry) {
     moduleSpecifier: '@stackpress/ingest/Server',
     defaultImport: 'Server'
   });
-  //import profileRoutes from './profile/admin/routes';
+  //import profileRoutes from './profile/admin/routes.js';
   for (const model of registry.model.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: `./${model.name}/admin/routes`,
+      moduleSpecifier: `./${model.name}/admin/routes.js`,
       defaultImport: `${model.camel}Routes`
     });
   }

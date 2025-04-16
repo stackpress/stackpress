@@ -2,11 +2,11 @@
 import type { UnknownNest, NestedObject } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //local
-import create from './create';
-import detail from './detail';
-import update from './update';
+import create from './create.js';
+import detail from './detail.js';
+import update from './update.js';
 
 /**
  * Updates or inserts into a database table row

@@ -4,7 +4,7 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 
 export default function AdminExportPageFactory(model: Model) {
   return async function AdminSearchPage(

@@ -1,11 +1,11 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Column from '../../../schema/spec/Column';
-import type Model from '../../../schema/spec/Model';
-import Registry from '../../../schema/Registry';
+import type Column from '../../../schema/spec/Column.js';
+import type Model from '../../../schema/spec/Model.js';
+import Registry from '../../../schema/Registry.js';
 //sql
-import { sequence } from '../../helpers';
+import { sequence } from '../../helpers.js';
 
 const samples = [
   {

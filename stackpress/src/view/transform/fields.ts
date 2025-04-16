@@ -2,10 +2,10 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //registry
-import type Registry from '../../schema/Registry';
-import type Fieldset from '../../schema/spec/Fieldset';
-import type Column from '../../schema/spec/Column';
-import type Model from '../../schema/spec/Model';
+import type Registry from '../../schema/Registry.js';
+import type Fieldset from '../../schema/spec/Fieldset.js';
+import type Column from '../../schema/spec/Column.js';
+import type Model from '../../schema/spec/Model.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   //for each model
@@ -170,10 +170,10 @@ export function generateFieldset(
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'ControlProps' ]
   });
-  //import type { AddressInput } from '../../../Address/types';
+  //import type { AddressInput } from '../../../Address/types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: `../../../${fieldset.name}/types`,
+    moduleSpecifier: `../../../${fieldset.name}/types.js`,
     namedImports: [ `${column.title}Input` ]
   });
   //import { useLanguage } from 'r22n';
@@ -191,20 +191,20 @@ export function generateFieldset(
     moduleSpecifier: 'frui/form/Fieldset',
     defaultImport: 'make'
   });
-  //import LabelFieldControl from '../../../Address/components/fields/LabelField';
+  //import LabelFieldControl from '../../../Address/components/fields/LabelField.js';
   fieldset.fields.forEach(column => {
     //skip if no component
     if (typeof column.field.component !== 'string') return;
     if (column.field.method === 'fieldset') {
-      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField';
+      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
       source.addImportDeclaration({
-        moduleSpecifier: `../../../${fieldset.name}/components/fields/${column.title}Field`,
+        moduleSpecifier: `../../../${fieldset.name}/components/fields/${column.title}Field.js`,
         namedImports: [ `${column.title}FieldsetControl` ]
       });
       return;
     }
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${fieldset.name}/components/fields/${column.title}Field`,
+      moduleSpecifier: `../../../${fieldset.name}/components/fields/${column.title}Field.js`,
       namedImports: [ `${column.title}FieldControl` ]
     });
   });

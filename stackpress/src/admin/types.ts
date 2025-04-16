@@ -1,5 +1,5 @@
-import { LanguageConfig } from '../language/types';
-import { ViewConfig, BrandConfig } from '../view/types';
+import { LanguageConfig } from '../language/types.js';
+import { ViewConfig, BrandConfig } from '../view/types.js';
 
 export type AdminConfigProps = {
   language: LanguageConfig,

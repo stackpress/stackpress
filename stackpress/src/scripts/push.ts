@@ -3,13 +3,13 @@ import type { QueryObject } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 import type Server from '@stackpress/ingest/Server';
 //client
-import type { ClientConfig } from '../client/types';
+import type { ClientConfig } from '../client/types.js';
 //schema
-import Revisions from '../client/Revisions';
+import Revisions from '../client/Revisions.js';
 //sql
-import { sequence } from '../sql/helpers';
+import { sequence } from '../sql/helpers.js';
 //plugins
-import create from '../sql/schema';
+import create from '../sql/schema.js';
 
 export default async function push(server: Server<any, any, any>, database: Engine) {
   //get config

@@ -1,12 +1,12 @@
 //schema
-import Registry from '../../schema/Registry';
+import Registry from '../../schema/Registry.js';
 //root
-import type { IdeaPluginWithProject } from '../../types';
+import type { IdeaPluginWithProject } from '../../types/index.js';
 //local
-import generateSchema from './schema';
-import generateActions from './actions';
-import generateEvents from './events';
-import generateTests from './tests';
+import generateSchema from './schema.js';
+import generateActions from './actions.js';
+import generateEvents from './events.js';
+import generateTests from './tests/index.js';
 
 /**
  * Client File Structure
@@ -64,26 +64,26 @@ export default async function generate(props: IdeaPluginWithProject) {
   generateTests(project, registry);
 
   //-----------------------------//
-  // 3. profile/index.ts
+  // 3. Profile/index.ts
 
   for (const model of registry.model.values()) {
     const filepath = `${model.name}/index.ts`;
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
-    //import action from './actions';
+    //import action from './actions/index.js';
     source.addImportDeclaration({
-      moduleSpecifier: './actions',
+      moduleSpecifier: './actions/index.js',
       defaultImport: 'actions'
     });
-    //import events from './events';
+    //import events from './events/index.js';
     source.addImportDeclaration({
-      moduleSpecifier: './events',
+      moduleSpecifier: './events/index.js',
       defaultImport: 'events'
     });
-    //import schema from './schema';
+    //import schema from './schema.js';
     source.addImportDeclaration({
-      moduleSpecifier: './schema',
+      moduleSpecifier: './schema.js',
       defaultImport: 'schema'
     });
     //export { actions, schema, events };

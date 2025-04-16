@@ -5,23 +5,23 @@ import type {
   ServerConfigProps, 
   PanelAppProps, 
   LayoutPanelProps 
-} from '../types';
+} from '../types.js';
 //notify
-import NotifyContainer from '../notify/NotifyContainer';
-import { unload } from '../notify/hooks';
+import NotifyContainer from '../notify/NotifyContainer.js';
+import { unload } from '../notify/hooks.js';
 //theme
-import { useTheme } from '../theme/hooks';
+import { useTheme } from '../theme/hooks.js';
 //client
-import { useConfig, useRequest } from '../server/hooks';
+import { useConfig, useRequest } from '../server/hooks.js';
 //components
-import LayoutHead from './components/LayoutHead';
-import LayoutLeft from './components/LayoutLeft';
-import LayoutMain from './components/LayoutMain';
-import LayoutMenu from './components/LayoutMenu';
-import LayoutRight from './components/LayoutRight';
+import LayoutHead from './components/LayoutHead.js';
+import LayoutLeft from './components/LayoutLeft.js';
+import LayoutMain from './components/LayoutMain.js';
+import LayoutMenu from './components/LayoutMenu.js';
+import LayoutRight from './components/LayoutRight.js';
 //layout
-import LayoutProvider from './LayoutProvider';
-import { useToggle } from './hooks';
+import LayoutProvider from './LayoutProvider.js';
+import { useToggle } from './hooks.js';
 
 export function PanelApp(props: PanelAppProps) {
   const { menu, children } = props;

@@ -1,7 +1,7 @@
 export type {
   ClientConfig,
   ClientPlugin
-} from './types';
+} from './types.js';
 
-import Revisions from './Revisions';
+import Revisions from './Revisions.js';
 export { Revisions };

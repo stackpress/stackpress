@@ -2,9 +2,9 @@
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //local
-import search from './search';
+import search from './search.js';
 
 /**
  * Returns a database table row

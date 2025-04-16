@@ -1,5 +1,5 @@
 //session
-import type { SessionRoute } from '../types';
+import type { SessionRoute } from '../types.js';
 
 export const isRegExp = /^\/.+\/[igmsuy]*$/;
 

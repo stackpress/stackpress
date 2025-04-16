@@ -1,4 +1,4 @@
-import actions, { Actions } from './actions';
+import actions, { Actions } from './actions/index.js';
 
 export type {
   SearchParams,
@@ -7,7 +7,7 @@ export type {
   SearchPath,
   DatabaseConfig,
   DatabasePlugin
-} from './types';
+} from './types.js';
 
 export {
   Alter,
@@ -43,7 +43,6 @@ export {
   getColumnPath,
   getColumnJoins,
   getAlias
-} from './helpers';
+} from './helpers.js';
 
 export { actions, Actions };
-

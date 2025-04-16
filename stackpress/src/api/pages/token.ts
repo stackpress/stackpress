@@ -3,11 +3,11 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //root
-import type { SessionExtended } from '../../types';
+import type { SessionExtended } from '../../types/index.js';
 //sql
-import { toResponse } from '../../sql/helpers';
+import { toResponse } from '../../sql/helpers.js';
 //api
-import { authorize, unauthorized } from '../helpers';
+import { authorize, unauthorized } from '../helpers.js';
 
 export default async function APIToken(
   req: Request, 

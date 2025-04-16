@@ -1,4 +1,4 @@
-import type { PaginationProps } from '../types';
+import type { PaginationProps } from '../types.js';
 
 /**
  * Paginataion Components

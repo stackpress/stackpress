@@ -5,18 +5,18 @@ import type { PluginProps } from '@stackpress/idea-transformer/types';
 import type { UnknownNest } from '@stackpress/lib/types';
 import type { CookieOptions } from '@stackpress/ingest/types';
 //plugins
-import type { ClientConfig } from '../client/types';
-import type { ServerConfig } from '../server/types';
-import type { ApiConfig } from '../api/types';
-import type { AdminConfig } from '../admin/types';
-import type { EmailConfig } from '../email/types';
-import type { LanguageConfig } from '../language/types';
-import type { DatabaseConfig } from '../sql/types';
-import type { ViewConfig, BrandConfig } from '../view/types';
-import type { AuthConfig, SessionConfig } from '../session/types';
-import type InceptTerminal from '../terminal/Terminal';
+import type { ClientConfig } from '../client/types.js';
+import type { ServerConfig } from '../server/types.js';
+import type { ApiConfig } from '../api/types.js';
+import type { AdminConfig } from '../admin/types.js';
+import type { EmailConfig } from '../email/types.js';
+import type { LanguageConfig } from '../language/types.js';
+import type { DatabaseConfig } from '../sql/types.js';
+import type { ViewConfig, BrandConfig } from '../view/types.js';
+import type { AuthConfig, SessionConfig } from '../session/types.js';
+import type InceptTerminal from '../terminal/Terminal.js';
 
-export type { AdminConfig } from '../admin/types';
+export type { AdminConfig } from '../admin/types.js';
 
 export type {
   ApiOauthInputProps,
@@ -32,12 +32,12 @@ export type {
   Session,
   SessionExtended,
   SessionInput
-} from '../api/types';
+} from '../api/types.js';
 
 export type {
   ClientConfig,
   ClientPlugin
-} from '../client/types';
+} from '../client/types.js';
 
 export type {
   Language as LanguageData,
@@ -45,7 +45,7 @@ export type {
   LanguageConstructor,
   LanguageConfig,
   LanguagePlugin
-} from '../language/types';
+} from '../language/types.js';
 
 export type {
   SchemaAssertion,
@@ -56,9 +56,9 @@ export type {
   SchemaColumnRelationLink,
   SchemaSerialOptions,
   ColumnOption
-} from '../schema/types';
+} from '../schema/types.js';
 
-export type { ServerConfig } from '../server/types';
+export type { ServerConfig } from '../server/types.js';
 
 export type {
   SessionServerConstructor,
@@ -75,7 +75,7 @@ export type {
   AuthExtended,
   AuthInput,
   ProfileAuth
-} from '../session/types';
+} from '../session/types.js';
 
 export type {
   SearchParams,
@@ -84,7 +84,7 @@ export type {
   SearchPath,
   DatabaseConfig,
   DatabasePlugin
-} from '../sql/types';
+} from '../sql/types.js';
 
 export type {
   ServerUrlProps,
@@ -136,7 +136,7 @@ export type {
   BrandConfig,
   ViewPlugin,
   PreviewPlugin
-} from '../view/types';
+} from '../view/types.js';
 
 export type {
   TypeOf,
@@ -171,7 +171,7 @@ export type {
   FileStream,
   FileSystem,
   CallSite
-} from '../lib';
+} from '../lib.js';
 
 export type { 
   EnumConfig,

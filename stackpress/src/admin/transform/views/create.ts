@@ -2,8 +2,8 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //schema
-import type Registry from '../../../schema/Registry';
-import type Model from '../../../schema/spec/Model';
+import type Registry from '../../../schema/Registry.js';
+import type Model from '../../../schema/spec/Model.js';
 
 export default function createPage(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/create.tsx`;
@@ -23,10 +23,10 @@ export default function createPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
-  //import type { ProfileInput, Profile } from '../../types';
+  //import type { ProfileInput, Profile } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../../types',
+    moduleSpecifier: '../../types.js',
     namedImports: [ `${model.title}Input`, model.title ]
   });
   //import { useLanguage } from 'r22n';
@@ -44,20 +44,20 @@ export default function createPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
   });
-  //import { ActiveFieldControl } from '../../components/fields/ActiveField';
+  //import { ActiveFieldControl } from '../../components/fields/ActiveField.js';
   model.fields.forEach(column => {
     //skip if no component
     if (typeof column.field.component !== 'string') return;
     if (column.field.method === 'fieldset') {
-      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField';
+      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
       source.addImportDeclaration({
-        moduleSpecifier: `../../components/fields/${column.title}Field`,
+        moduleSpecifier: `../../components/fields/${column.title}Field.js`,
         namedImports: [ `${column.title}FieldsetControl` ]
       });
       return;
     }
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/fields/${column.title}Field`,
+      moduleSpecifier: `../../components/fields/${column.title}Field.js`,
       namedImports: [ `${column.title}FieldControl` ]
     });
   });

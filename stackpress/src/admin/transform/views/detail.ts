@@ -2,8 +2,8 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //schema
-import type Registry from '../../../schema/Registry';
-import type Model from '../../../schema/spec/Model';
+import type Registry from '../../../schema/Registry.js';
+import type Model from '../../../schema/spec/Model.js';
 
 export default function detailPage(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/detail.tsx`;
@@ -36,10 +36,10 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/sql',
     namedImports: [ 'SearchParams' ]
   });
-  //import type { ProfileExtended } from '../../types';
+  //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../../types',
+    moduleSpecifier: '../../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import { useLanguage } from 'r22n';
@@ -57,12 +57,12 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useServer', 'useStripe', 'Crumbs', 'LayoutAdmin' ]
   });
-  //import CreatedViewFormat from '../../components/views/CreatedViewFormat';
+  //import CreatedViewFormat from '../../components/views/CreatedViewFormat.js';
   model.views.forEach(column => {
     //skip if no component
     if (typeof column.view.component !== 'string') return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/views/${column.title}ViewFormat`,
+      moduleSpecifier: `../../components/views/${column.title}ViewFormat.js`,
       defaultImport: `${column.title}ViewFormat`
     });
   });

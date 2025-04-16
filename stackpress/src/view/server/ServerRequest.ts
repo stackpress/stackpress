@@ -8,7 +8,7 @@ import type {
 import map from '@stackpress/lib/map';
 import { nest } from '@stackpress/lib/Nest';
 //views
-import type { ServerRequestProps } from '../types';
+import type { ServerRequestProps } from '../types.js';
 
 /**
  * Client version of request. Readonly.

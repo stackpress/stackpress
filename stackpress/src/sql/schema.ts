@@ -1,8 +1,8 @@
 //stackpress
 import Create from '@stackpress/inquire/Create';
 //schema
-import type Column from '../schema/spec/Column';
-import type Model from '../schema/spec/Model';
+import type Column from '../schema/spec/Column.js';
+import type Model from '../schema/spec/Model.js';
 
 //map from column types to sql types and helpers
 export const typemap: Record<string, string> = {

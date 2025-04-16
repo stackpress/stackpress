@@ -3,9 +3,9 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //view
-import type { ViewConfig, BrandConfig } from '../../view/types';
+import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //session
-import type { AuthConfig, SigninType, SessionPlugin } from '../types';
+import type { AuthConfig, SigninType, SessionPlugin } from '../types.js';
 
 export default async function SignInPage(
   req: Request, 

@@ -1,11 +1,11 @@
 //root
-import type { IdeaPluginWithProject } from '../../types';
+import type { IdeaPluginWithProject } from '../../types/index.js';
 //schema
-import Registry from '../../schema/Registry';
+import Registry from '../../schema/Registry.js';
 //local
-import generatePages from './pages';
-import generateViews from './views';
-import generateRoutes from './routes';
+import generatePages from './pages.js';
+import generateViews from './views/index.js';
+import generateRoutes from './routes.js';
 
 /**
  * Client File Structure
@@ -66,9 +66,9 @@ export default function generate(props: IdeaPluginWithProject) {
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
-    //import admin from './admin/routes';
+    //import admin from './admin/routes.js';
     source.addImportDeclaration({
-      moduleSpecifier: `./admin/routes`,
+      moduleSpecifier: './admin/routes.js',
       defaultImport: 'admin'
     });
     //export { admin };

@@ -4,11 +4,11 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //sql
-import type { DatabasePlugin } from '../types';
+import type { DatabasePlugin } from '../types.js';
 //actions
-import batch from '../actions/batch';
+import batch from '../actions/batch.js';
 
 /**
  * This is a factory function that creates an event 

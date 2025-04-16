@@ -1,14 +1,13 @@
 //root
-import type { IdeaPluginWithProject } from '../../types';
+import type { IdeaPluginWithProject } from '../../types/index.js';
 //schema
-import Registry from '../../schema/Registry';
+import Registry from '../../schema/Registry.js';
 //local
-import generateViews from './views';
-import generateFields from './fields';
-import generateFilters from './filters';
-import generateLists from './lists';
-import generateSpans from './spans';
-
+import generateViews from './views.js';
+import generateFields from './fields.js';
+import generateFilters from './filters.js';
+import generateLists from './lists.js';
+import generateSpans from './spans.js';
 
 /**
  * Client File Structure

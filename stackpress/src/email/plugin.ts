@@ -1,7 +1,7 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
 //email
-import emitter from './events';
+import emitter from './events.js';
 
 /**
  * This interface is intended for the Incept library.

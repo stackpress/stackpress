@@ -36,7 +36,7 @@ export type {
   WhatwgAction
 } from '@stackpress/ingest/types';
 
-export type { ServerConfig } from './types';
+export type { ServerConfig } from './types.js';
 
 import type { UnknownNest } from '@stackpress/lib/types';
 import type { IM, SR } from '@stackpress/ingest/types';

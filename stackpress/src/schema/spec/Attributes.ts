@@ -1,14 +1,14 @@
 //stackpress
 import type { Data } from '@stackpress/idea-parser';
 //config
-import fields from '../config/fields';
-import formats from '../config/formats';
+import fields from '../config/fields.js';
+import formats from '../config/formats.js';
 //schema
 import type { 
   SchemaAssertion, 
   SchemaComponent, 
   SchemaRelation 
-} from '../types';
+} from '../types.js';
 
 export default class Attributes extends Map<string, unknown> {
   /**

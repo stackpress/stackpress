@@ -2,14 +2,14 @@
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 //root
-import Exception from '../../Exception';
+import Exception from '../../Exception.js';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //sql
-import { toResponse } from '../helpers';
+import { toResponse } from '../helpers.js';
 //local
-import create from './create';
-import update from './update';
+import create from './create.js';
+import update from './update.js';
 
 export type Action = 'check' | 'create' | 'update';
 

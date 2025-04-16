@@ -56,7 +56,7 @@ export type {
   BrandConfig,
   ViewPlugin,
   PreviewPlugin
-} from './client';
+} from './client.js';
 
 export {
   VFS_PROTOCOL,
@@ -136,4 +136,4 @@ export {
   defaultServerConfig,
   defaultNotifyConfig,
   unknownHost
-} from './client';
+} from './client.js';

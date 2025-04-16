@@ -1,7 +1,7 @@
 //modules
 import { createContext } from 'react';
 //views
-import type { NotifyContextProps } from '../types';
+import type { NotifyContextProps } from '../types.js';
 
 export const config = {
   position: 'bottom-center',

@@ -3,14 +3,20 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //root
-import type { Session } from '../../types';
+import type { Session } from '../../types/index.js';
 //session
-import type { SessionData, SessionTokenData } from '../../session/types';
+import type { 
+  SessionData, 
+  SessionTokenData 
+} from '../../session/types.js';
 //view
-import type { ViewConfig, BrandConfig } from '../../view/types';
+import type { 
+  ViewConfig, 
+  BrandConfig 
+} from '../../view/types.js';
 //api
-import type { ApiConfig } from '../types';
-import { unauthorized } from '../helpers';
+import type { ApiConfig } from '../types.js';
+import { unauthorized } from '../helpers.js';
 
 export default async function OAuth(
   req: Request, 

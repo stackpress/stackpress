@@ -7,11 +7,11 @@ import { nest } from '@stackpress/lib/Nest';
 import type { 
   ServerRequestProps, 
   ServerResponseProps 
-} from '../types';
-import Request from './ServerRequest';
-import Response from './ServerResponse';
-import Session from './ServerSession';
-import ClientContext from './ServerContext';
+} from '../types.js';
+import Request from './ServerRequest.js';
+import Response from './ServerResponse.js';
+import Session from './ServerSession.js';
+import ClientContext from './ServerContext.js';
 
 export function useRequest<I extends UnknownNest = UnknownNest>() {
   const { request } = useContext(ClientContext);

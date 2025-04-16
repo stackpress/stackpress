@@ -1,12 +1,12 @@
 //modules
 import { R22nProvider } from 'r22n';
 //views
-import type { LayoutProviderProps } from '../types';
+import type { LayoutProviderProps } from '../types.js';
 //providers
-import ServerProvider from '../server/ServerProvider';
-import ModalProvider from '../modal/ModalProvider';
-import NotifyProvider from '../notify/NotifyProvider';
-import ThemeProvider from '../theme/ThemeProvider';
+import ServerProvider from '../server/ServerProvider.js';
+import ModalProvider from '../modal/ModalProvider.js';
+import NotifyProvider from '../notify/NotifyProvider.js';
+import ThemeProvider from '../theme/ThemeProvider.js';
 
 export default function LayoutProvider(props: LayoutProviderProps) {
   const { 

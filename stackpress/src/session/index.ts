@@ -1,6 +1,6 @@
 //local
-import Session from './Session';
-import * as actions from './actions';
+import Session from './Session.js';
+import * as actions from './actions.js';
 
 export type {
   SessionRoute,
@@ -23,7 +23,7 @@ export type {
   AuthExtended,
   AuthInput,
   ProfileAuth
-} from './types';
+} from './types.js';
 
 export {
   matchAnyEvent,
@@ -31,6 +31,6 @@ export {
   matchEvent,
   matchRoute,
   isRegExp
-} from './helpers';
+} from './helpers.js';
 
 export { actions, Session };

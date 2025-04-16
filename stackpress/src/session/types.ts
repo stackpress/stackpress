@@ -2,11 +2,11 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 //language
-import { LanguageConfig } from '../language/types';
+import { LanguageConfig } from '../language/types.js';
 //view
-import { ViewConfig, BrandConfig } from '../view/types';
+import { ViewConfig, BrandConfig } from '../view/types.js';
 //session
-import type SessionServer from './Session';
+import type SessionServer from './Session.js';
 
 export type SessionRoute = { method: string, route: string };
 export type SessionPermission = string | SessionRoute;

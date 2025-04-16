@@ -4,13 +4,13 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //language
-import type { LanguageConfig } from '../../language/types';
+import type { LanguageConfig } from '../../language/types.js';
 //view
-import type { ViewConfig, BrandConfig } from '../../view/types';
+import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //admin
-import type { AdminConfig } from '../types';
+import type { AdminConfig } from '../types.js';
 
 export default function AdminDetailPageFactory(model: Model) {
   return async function AdminDetailPage(

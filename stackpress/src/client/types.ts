@@ -4,11 +4,11 @@ import type Server from '@stackpress/ingest/Server';
 import type Engine from '@stackpress/inquire/Engine';
 import type Create from '@stackpress/inquire/Create';
 //spec
-import type Fieldset from '../schema/spec/Fieldset';
-import type Model from '../schema/spec/Model';
-import type Registry from '../schema/Registry';
+import type Fieldset from '../schema/spec/Fieldset.js';
+import type Model from '../schema/spec/Model.js';
+import type Registry from '../schema/Registry.js';
 //sql
-import type { Actions } from '../sql/actions';
+import type { Actions } from '../sql/actions/index.js';
 
 //ie. ctx.config<ClientConfig>('client');
 export type ClientConfig = {

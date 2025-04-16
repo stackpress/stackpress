@@ -1,8 +1,8 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
 //session
-import type { SessionPermissionList } from './types';
-import Session from './Session';
+import type { SessionPermissionList } from './types.js';
+import Session from './Session.js';
 
 /**
  * This interface is intended for the Incept library.

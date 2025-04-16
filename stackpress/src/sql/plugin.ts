@@ -3,7 +3,7 @@ import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
 //client
-import type { ClientPlugin } from '../client/types';
+import type { ClientPlugin } from '../client/types.js';
 
 /**
  * This interface is intended for the Incept library.

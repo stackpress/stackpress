@@ -24,9 +24,9 @@ import type ReactusPreview from 'reactus/server/Server';
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type { IM, SR, Method } from '@stackpress/ingest/types';
 //language
-import { LanguageConfig } from '../language/types';
+import { LanguageConfig } from '../language/types.js';
 //session
-import type { SessionTokenData } from '../session/types';
+import type { SessionTokenData } from '../session/types.js';
 
 //--------------------------------------------------------------------//
 // Server Prop Types
@@ -407,14 +407,14 @@ export type {
   SessionTokenData,
   SessionPermission,
   SessionPermissionList
-} from '../session/types';
+} from '../session/types.js';
 
 export type {
   CSVParseError,
   CSVParseResults,
   BatchSendResults,
   BatchSendResponse
-} from './import';
+} from './import.js';
 
 export type RollupResults = [ 
   OutputChunk, 

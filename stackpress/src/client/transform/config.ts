@@ -5,8 +5,8 @@ import { VariableDeclarationKind } from 'ts-morph';
 import type { SchemaConfig } from '@stackpress/idea-parser';
 import type Server from '@stackpress/ingest/Server';
 //schema
-import type Registry from '../../schema/Registry';
-import Revisions from '../Revisions';
+import type Registry from '../../schema/Registry.js';
+import Revisions from '../Revisions.js';
 
 /**
  * This is the The params comes form the cli
@@ -28,9 +28,9 @@ export default async function generate(
       moduleSpecifier: 'stackpress/Model',
       defaultImport: 'Model'
     });
-    //import 'registry' from '../config';
+    //import 'registry' from '../config.js';
     source.addImportDeclaration({
-      moduleSpecifier: `../config`,
+      moduleSpecifier: '../config.js',
       defaultImport: 'registry'
     });
     //const config = registry.model.get('profile');
@@ -50,9 +50,9 @@ export default async function generate(
       moduleSpecifier: 'stackpress/Fieldset',
       defaultImport: 'Fieldset'
     });
-    //import 'registry' from '../config';
+    //import 'registry' from '../config.js';
     source.addImportDeclaration({
-      moduleSpecifier: `../config`,
+      moduleSpecifier: '../config.js',
       defaultImport: 'registry'
     });
     //const config = registry.fieldset.get('profile');

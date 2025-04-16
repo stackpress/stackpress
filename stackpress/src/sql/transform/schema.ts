@@ -1,10 +1,10 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Column from '../../schema/spec/Column';
-import type Registry from '../../schema/Registry';
+import type Column from '../../schema/spec/Column.js';
+import type Registry from '../../schema/Registry.js';
 //sql
-import { clen, numdata } from '../schema';
+import { clen, numdata } from '../schema.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   //loop through models

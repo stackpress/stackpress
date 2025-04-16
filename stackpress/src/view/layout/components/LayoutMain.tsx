@@ -1,4 +1,4 @@
-import type { LayoutMainProps } from '../../types';
+import type { LayoutMainProps } from '../../types.js';
 
 export default function LayoutMain(props: LayoutMainProps) {
   const { head = true, open, children } = props;

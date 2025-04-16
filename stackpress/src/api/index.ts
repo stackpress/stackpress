@@ -13,4 +13,4 @@ export type {
   Session,
   SessionExtended,
   SessionInput
-} from './types';
+} from './types.js';

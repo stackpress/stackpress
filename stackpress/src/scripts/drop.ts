@@ -3,9 +3,9 @@ import type { QueryObject } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 import type Server from '@stackpress/ingest/Server';
 //client
-import type { ClientPlugin } from '../client/types';
+import type { ClientPlugin } from '../client/types.js';
 //sql
-import { sequence } from '../sql/helpers';
+import { sequence } from '../sql/helpers.js';
 
 export default async function drop(
   server: Server<any, any, any>, 

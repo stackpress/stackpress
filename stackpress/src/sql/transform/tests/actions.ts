@@ -1,11 +1,11 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Column from '../../../schema/spec/Column';
-import type Model from '../../../schema/spec/Model';
-import Registry from '../../../schema/Registry';
+import type Column from '../../../schema/spec/Column.js';
+import type Model from '../../../schema/spec/Model.js';
+import Registry from '../../../schema/Registry.js';
 //sql
-import { sequence } from '../../helpers';
+import { sequence } from '../../helpers.js';
 
 const samples = [
   {
@@ -103,15 +103,15 @@ export default function generate(directory: Directory, registry: Registry) {
       defaultImport: 'Engine'
     });
     for (const dependent of dependents) {
-      //import * as profileActions from '../../profile/actions';
+      //import * as profileActions from '../../Profile/actions/index.js';
       source.addImportDeclaration({
-        moduleSpecifier: `../../${dependent.model.name}/actions`,
+        moduleSpecifier: `../../${dependent.model.name}/actions/index.js`,
         namespaceImport: `${dependent.model.camel}Actions`
       });
     }
-    //import { create, detail, ... } from '../actions';
+    //import { create, detail, ... } from '../actions/index.js';
     source.addImportDeclaration({
-      moduleSpecifier: '../actions',
+      moduleSpecifier: '../actions/index.js',
       namedImports: [
         'batch',
         'create',

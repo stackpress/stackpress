@@ -1,4 +1,4 @@
-import type { ColumnOption } from '../types';
+import type { ColumnOption } from '../types.js';
 
 export default {
   "none": {

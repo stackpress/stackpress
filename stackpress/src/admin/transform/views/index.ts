@@ -1,14 +1,14 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '../../../schema/Registry';
+import type Registry from '../../../schema/Registry.js';
 
-import createPage from './create';
-import detailPage from './detail';
-import removePage from './remove';
-import restorePage from './restore';
-import searchPage from './search';
-import updatePage from './update';
+import createPage from './create.js';
+import detailPage from './detail.js';
+import removePage from './remove.js';
+import restorePage from './restore.js';
+import searchPage from './search.js';
+import updatePage from './update.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   for (const model of registry.model.values()) {

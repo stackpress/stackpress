@@ -1,9 +1,9 @@
 //root
-import Exception from '../Exception';
+import Exception from '../Exception.js';
 //schema
-import type Model from '../schema/spec/Model';
+import type Model from '../schema/spec/Model.js';
 //sql
-import type { SearchJoinMap, SearchPath } from './types';
+import type { SearchJoinMap, SearchPath } from './types.js';
 
 //these are possible column types to map what formatter (below) to use
 export const stringable = [ 'String', 'Text', 'Json', 'Object', 'Hash' ];

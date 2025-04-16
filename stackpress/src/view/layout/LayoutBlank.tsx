@@ -1,22 +1,22 @@
 //modules
 import { useEffect } from 'react';
 //notify
-import NotifyContainer from '../notify/NotifyContainer';
-import { unload } from '../notify/hooks';
+import NotifyContainer from '../notify/NotifyContainer.js';
+import { unload } from '../notify/hooks.js';
 //theme
-import { useTheme } from '../theme/hooks';
+import { useTheme } from '../theme/hooks.js';
 //client
 import type { 
   ServerConfigProps, 
   BlankAppProps, 
   LayoutBlankProps 
-} from '../types';
-import { useConfig } from '../server/hooks';
+} from '../types.js';
+import { useConfig } from '../server/hooks.js';
 //components
-import LayoutHead from './components/LayoutHead';
-import LayoutMain from './components/LayoutMain';
+import LayoutHead from './components/LayoutHead.js';
+import LayoutMain from './components/LayoutMain.js';
 //layout
-import LayoutProvider from './LayoutProvider';
+import LayoutProvider from './LayoutProvider.js';
 
 export function BlankApp({ head = true, children }: BlankAppProps) {
   const config = useConfig<ServerConfigProps>();

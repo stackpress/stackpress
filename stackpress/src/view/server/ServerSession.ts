@@ -1,6 +1,6 @@
 //session
-import type { ServerSessionProps, SessionPermission } from '../types';
-import { matchAnyEvent, matchAnyRoute } from './helpers';
+import type { ServerSessionProps, SessionPermission } from '../types.js';
+import { matchAnyEvent, matchAnyRoute } from './helpers.js';
 
 /**
  * Client side session interface

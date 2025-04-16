@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react';
 import UniversalCookie from 'universal-cookie';
 //views
-import type { ThemeProviderProps } from '../types';
+import type { ThemeProviderProps } from '../types.js';
 //theme
-import ThemeContext from './ThemeContext';
+import ThemeContext from './ThemeContext.js';
 
 const cookie = new UniversalCookie();
 

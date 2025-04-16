@@ -13,14 +13,14 @@ export type {
   SchemaColumnRelationLink,
   SchemaSerialOptions,
   ColumnOption
-} from './types';
+} from './types.js';
 
-import Attributes from './spec/Attributes';
-import Column from './spec/Column';
-import Fieldset from './spec/Fieldset';
-import Model from './spec/Model';
-import assert from './assert';
-import Registry from './Registry';
+import Attributes from './spec/Attributes.js';
+import Column from './spec/Column.js';
+import Fieldset from './spec/Fieldset.js';
+import Model from './spec/Model.js';
+import assert from './assert.js';
+import Registry from './Registry.js';
 
 export {
   generators,
@@ -34,7 +34,7 @@ export {
   snakerize,
   render,
   objectToAttributeString
-} from './helpers';
+} from './helpers.js';
 
 export { 
   Attributes,

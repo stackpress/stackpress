@@ -6,7 +6,7 @@ import glob from 'fast-glob';
 import type { SchemaConfig } from '@stackpress/idea-parser/types';
 import FileLoader from '@stackpress/lib/FileLoader';
 //schema
-import Registry from '../schema/Registry';
+import Registry from '../schema/Registry.js';
 
 export default class Revisions {
   /**

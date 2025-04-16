@@ -5,15 +5,15 @@ import Button from 'frui/form/Button';
 import Input from 'frui/field/Input';
 import Password from 'frui/field/Password';
 //views
-import type { NestedObject, ServerPageProps } from '../../view/types';
-import LayoutBlank from '../../view/layout/LayoutBlank';
-import { useServer } from '../../view/server/hooks';
+import type { NestedObject, ServerPageProps } from '../../view/types.js';
+import LayoutBlank from '../../view/layout/LayoutBlank.js';
+import { useServer } from '../../view/server/hooks.js';
 //session
 import type { 
   SigninInput, 
   AuthConfigProps,
   AuthExtended
-} from '../types';
+} from '../types.js';
 
 export type AuthSigninFormProps = {
   input: Partial<SigninInput>;

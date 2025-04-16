@@ -4,7 +4,7 @@ import React, { useContext } from 'react';
 import UniversalCookie from 'universal-cookie';
 import { toast } from 'react-toastify';
 //notify
-import NotifyContext, { config } from './NotifyContext';
+import NotifyContext, { config } from './NotifyContext.js';
 
 const cookieConfig = { path: '/' };
 const cookie = new UniversalCookie();

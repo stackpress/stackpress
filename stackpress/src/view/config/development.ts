@@ -9,7 +9,7 @@ import type { IM, SR } from '@stackpress/ingest/types';
 import type Server from '@stackpress/ingest/Server';
 import Status from '@stackpress/lib/Status';
 //view
-import type { ViewPlugin } from '../types';
+import type { ViewPlugin } from '../types.js';
 
 export function config(server: Server) {
   //get current working directory

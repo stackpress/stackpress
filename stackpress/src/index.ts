@@ -145,13 +145,13 @@ export type {
   IdeaProjectProps,
   IdeaPluginWithProject,
   Config
-} from './types';
+} from './types/index.js';
 
-import Session from './session/Session';
-import I18N from './language/Language';
-import Exception from './Exception';
+import Session from './session/Session.js';
+import I18N from './language/Language.js';
+import Exception from './Exception.js';
 
-export { Revisions } from './client';
+export { Revisions } from './client/index.js';
 export {
   generators,
   objectToAttributeString,
@@ -161,7 +161,7 @@ export {
   Model,
   assert, 
   Registry
-} from './schema';
+} from './schema/index.js';
 
 export {
   VFS_PROTOCOL,
@@ -199,7 +199,7 @@ export {
   lowerize,
   snakerize,
   render
-} from './schema/helpers';
+} from './schema/helpers.js';
 
 export {
   ArgString,
@@ -229,7 +229,7 @@ export {
   makeArray,
   makeObject,
   shouldBeAnArray
-} from './lib';
+} from './lib.js';
 
 export { formDataToObject } from '@stackpress/ingest/helpers';
 
@@ -245,9 +245,9 @@ export {
   readableToReadableStream
 } from '@stackpress/ingest/whatwg/helpers';
 
-import * as sql from './sql';
-import * as scripts from './scripts';
-import * as terminal from './terminal';
+import * as sql from './sql/index.js';
+import * as scripts from './scripts/index.js';
+import * as terminal from './terminal/index.js';
 
 export { 
   Session, 

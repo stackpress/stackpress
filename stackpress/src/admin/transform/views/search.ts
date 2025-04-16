@@ -2,8 +2,8 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //schema
-import type Registry from '../../../schema/Registry';
-import type Model from '../../../schema/spec/Model';
+import type Registry from '../../../schema/Registry.js';
+import type Model from '../../../schema/spec/Model.js';
 
 export default function searchPage(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/search.tsx`;
@@ -37,10 +37,10 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
-  //import type { ProfileExtended } from '../../types';
+  //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../../types',
+    moduleSpecifier: '../../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import { useState } from 'react';
@@ -87,30 +87,30 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/view/import',
     namedImports: [ 'batchAndSend' ]
   });
-  //import CreatedListFormat from '../../components/lists/CreatedListFormat';
+  //import CreatedListFormat from '../../components/lists/CreatedListFormat.js';
   model.lists.forEach(column => {
     //skip if no component
     if (typeof column.list.component !== 'string') return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/lists/${column.title}ListFormat`,
+      moduleSpecifier: `../../components/lists/${column.title}ListFormat.js`,
       defaultImport: `${column.title}ListFormat`
     });
   });
-  //import { ActiveFilterControl } from '../../components/filters/ActiveFilter';
+  //import { ActiveFilterControl } from '../../components/filters/ActiveFilter.js';
   model.filters.forEach(column => {
     //skip if no component
     if (typeof column.filter.component !== 'string') return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/filters/${column.title}Filter`,
+      moduleSpecifier: `../../components/filters/${column.title}Filter.js`,
       namedImports: [ `${column.title}FilterControl` ]
     });
   });
-  //import { ActiveSpanControl } from '../../components/spans/ActiveSpan';
+  //import { ActiveSpanControl } from '../../components/spans/ActiveSpan.js';
   model.spans.forEach(column => {
     //skip if no component
     if (typeof column.span.component !== 'string') return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/spans/${column.title}Span`,
+      moduleSpecifier: `../../components/spans/${column.title}Span.js`,
       namedImports: [ `${column.title}SpanControl` ]
     });
   });

@@ -1,12 +1,12 @@
-import build from './build';
-import drop from './drop';
-import emit from './emit';
-import generate from './generate';
-import install from './install';
-import migrate from './migrate';
-import purge from './purge';
-import push from './push';
-import serve from './serve';
+import build from './build.js';
+import drop from './drop.js';
+import emit from './emit.js';
+import generate from './generate.js';
+import install from './install.js';
+import migrate from './migrate.js';
+import purge from './purge.js';
+import push from './push.js';
+import serve from './serve.js';
 
 export {
   build,

@@ -7,7 +7,7 @@ import Terminal from '@stackpress/lib/Terminal';
 import FileLoader from '@stackpress/lib/FileLoader';
 import Transformer from '@stackpress/idea-transformer/Transformer';
 //root
-import type { IdeaProjectProps } from '../types';
+import type { IdeaProjectProps } from '../types/index.js';
 
 export default class InceptTerminal extends Terminal {
   // brand to prefix in all logs

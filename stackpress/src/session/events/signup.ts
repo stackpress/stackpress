@@ -3,11 +3,11 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //client
-import type { ClientPlugin } from '../../client/types';
+import type { ClientPlugin } from '../../client/types.js';
 //sql
-import type { DatabasePlugin } from '../../sql/types';
+import type { DatabasePlugin } from '../../sql/types.js';
 //session
-import { signup } from '../actions';
+import { signup } from '../actions.js';
 
 export default async function AuthSignup(
   req: Request, 

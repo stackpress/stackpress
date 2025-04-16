@@ -1,7 +1,7 @@
 //views
-import type { NotifyProviderProps } from '../types';
+import type { NotifyProviderProps } from '../types.js';
 //notify
-import NotifyContext from './NotifyContext';
+import NotifyContext from './NotifyContext.js';
 
 // (this is what to put in app.tsx)
 export default function NotifyProvider(props: NotifyProviderProps) {

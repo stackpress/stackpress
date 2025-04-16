@@ -6,11 +6,11 @@ import type {
 } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 //root
-import Exception from '../../Exception';
+import Exception from '../../Exception.js';
 //schema
-import type Model from '../../schema/spec/Model';
+import type Model from '../../schema/spec/Model.js';
 //sql
-import { toResponse, toErrorResponse } from '../helpers';
+import { toResponse, toErrorResponse } from '../helpers.js';
 
 /**
  * Creates a database table row

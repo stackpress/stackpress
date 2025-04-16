@@ -1,9 +1,9 @@
 //modules
 import type { Directory } from 'ts-morph';
 //registry
-import type Registry from '../../schema/Registry';
-import type Fieldset from '../../schema/spec/Fieldset';
-import type Column from '../../schema/spec/Column';
+import type Registry from '../../schema/Registry.js';
+import type Fieldset from '../../schema/spec/Fieldset.js';
+import type Column from '../../schema/spec/Column.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   //for each model
@@ -65,7 +65,7 @@ export function generateFieldsetTable(
     //skip if no component
     if (typeof column.view.component !== 'string') return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${columnFieldset.name}/components/views/${column.title}ViewFormat`,
+      moduleSpecifier: `../../../${columnFieldset.name}/components/views/${column.title}ViewFormat.js`,
       defaultImport: `${column.title}ViewFormat`
     });
   });
@@ -151,7 +151,7 @@ export function generateFieldsetInfo(
     //skip if no component
     if (typeof column.view.component !== 'string') return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${columnFieldset.name}/components/views/${column.title}ViewFormat`,
+      moduleSpecifier: `../../../${columnFieldset.name}/components/views/${column.title}ViewFormat.js`,
       defaultImport: `${column.title}ViewFormat`
     });
   });
@@ -226,10 +226,10 @@ export function generateFormat(
       moduleSpecifier: 'mustache',
       defaultImport: 'mustache'
     });
-    //import type { ProfileExtended } from '../../types';
+    //import type { ProfileExtended } from '../../types.js';
     source.addImportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: '../../types',
+      moduleSpecifier: '../../types.js',
       namedImports: [ `${fieldset.title}Extended` ]
     });
     //export function NameFormat() {

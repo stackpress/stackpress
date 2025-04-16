@@ -5,14 +5,14 @@ import type {
 } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 //schema
-import { email } from '../schema/assert';
-import { hash, encrypt } from '../schema/helpers';
+import { email } from '../schema/assert.js';
+import { hash, encrypt } from '../schema/helpers.js';
 //root
-import type { Auth, AuthExtended, Profile, ProfileAuth } from '../types';
+import type { Auth, AuthExtended, Profile, ProfileAuth } from '../types/index.js';
 //client
-import { ClientPlugin } from '../client/types';
+import { ClientPlugin } from '../client/types.js';
 //local
-import type { SignupInput, SigninType, SigninInput } from './types';
+import type { SignupInput, SigninType, SigninInput } from './types.js';
 
 /**
  * Signup action

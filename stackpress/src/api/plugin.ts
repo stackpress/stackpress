@@ -1,10 +1,10 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
 //root
-import type { Application, Session } from '../types';
+import type { Application, Session } from '../types/index.js';
 //api
-import type { ApiConfig, ApiEndpoint } from './types';
-import { authorize, unauthorized, validData } from './helpers';
+import type { ApiConfig, ApiEndpoint } from './types.js';
+import { authorize, unauthorized, validData } from './helpers.js';
 
 /**
  * This interface is intended for the Incept library.

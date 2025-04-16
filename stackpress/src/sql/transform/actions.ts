@@ -1,8 +1,8 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Model from '../../schema/spec/Model';
-import Registry from '../../schema/Registry';
+import type Model from '../../schema/spec/Model.js';
+import Registry from '../../schema/Registry.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   //loop through models
@@ -31,10 +31,10 @@ export default function generate(directory: Directory, registry: Registry) {
       '', 
       { overwrite: true }
     );
-    //import type { ProfileExtended } from '../types';
+    //import type { ProfileExtended } from '../types.js';
     source.addImportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: '../types',
+      moduleSpecifier: '../types.js',
       namedImports: [ 
         `${model.title}Extended`
       ]
@@ -49,9 +49,9 @@ export default function generate(directory: Directory, registry: Registry) {
       moduleSpecifier: 'stackpress/sql/actions',
       namedImports: [ 'Actions' ]
     });
-    //import config from '../config';
+    //import config from '../config.js';
     source.addImportDeclaration({
-      moduleSpecifier: `../config`,
+      moduleSpecifier: '../config.js',
       defaultImport: 'config'
     });
     //export default function actions(engine: Engine, seed?: string) {}
@@ -65,29 +65,29 @@ export default function generate(directory: Directory, registry: Registry) {
       ],
       statements: `return new Actions<${model.title}Extended>(config, engine, seed);`
     });
-    //import batch from './batch';
+    //import batch from './batch.js';
     source.addImportDeclaration({
-      moduleSpecifier: './batch',
+      moduleSpecifier: './batch.js',
       defaultImport: 'batch'
     });
-    //import create from './create';
+    //import create from './create.js';
     source.addImportDeclaration({
-      moduleSpecifier: './create',
+      moduleSpecifier: './create.js',
       defaultImport: 'create'
     });
-    //import detail from './detail';
+    //import detail from './detail.js';
     source.addImportDeclaration({
-      moduleSpecifier: './detail',
+      moduleSpecifier: './detail.js',
       defaultImport: 'detail'
     });
-    //import get from './get';
+    //import get from './get.js';
     source.addImportDeclaration({
-      moduleSpecifier: './get',
+      moduleSpecifier: './get.js',
       defaultImport: 'get'
     });
-    //import remove from './remove';
+    //import remove from './remove.js';
     source.addImportDeclaration({
-      moduleSpecifier: './remove',
+      moduleSpecifier: './remove.js',
       defaultImport: 'remove'
     });
     //import restore from './restore';
@@ -95,19 +95,19 @@ export default function generate(directory: Directory, registry: Registry) {
       moduleSpecifier: './restore',
       defaultImport: 'restore'
     });
-    //import search from './search';
+    //import search from './search.js';
     source.addImportDeclaration({
-      moduleSpecifier: './search',
+      moduleSpecifier: './search.js',
       defaultImport: 'search'
     });
-    //import update from './update';
+    //import update from './update.js';
     source.addImportDeclaration({
-      moduleSpecifier: './update',
+      moduleSpecifier: './update.js',
       defaultImport: 'update'
     });
-    //import upsert from './upsert';
+    //import upsert from './upsert.js';
     source.addImportDeclaration({
-      moduleSpecifier: './upsert',
+      moduleSpecifier: './upsert.js',
       defaultImport: 'upsert'
     });
     //export { create, detail, ... }
@@ -139,10 +139,10 @@ export function batch(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { Profile } from '../types';
+  //import type { Profile } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ model.title ]
   });
   //import batch from 'stackpress/sql/actions/batch';
@@ -150,9 +150,9 @@ export function batch(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/batch',
     defaultImport: 'batch'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileBatchAction(engine, rows)
@@ -189,10 +189,10 @@ export function create(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { Profile } from '../types';
+  //import type { Profile } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ model.title ]
   });
   //import create from 'stackpress/sql/actions/create';
@@ -200,9 +200,9 @@ export function create(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/create',
     defaultImport: 'create'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileCreateAction(engine, input)
@@ -233,10 +233,10 @@ export function detail(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { ProfileExtended } from '../types';
+  //import type { ProfileExtended } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import detail from 'stackpress/sql/actions/detail';
@@ -244,9 +244,9 @@ export function detail(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/detail',
     defaultImport: 'detail'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileDetailAction(engine, ids)
@@ -279,10 +279,10 @@ export function get(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { ProfileExtended } from '../types';
+  //import type { ProfileExtended } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import get from 'stackpress/sql/actions/get';
@@ -290,9 +290,9 @@ export function get(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/get',
     defaultImport: 'get'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileGetAction(engine, key, value)
@@ -327,10 +327,10 @@ export function remove(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { ProfileExtended } from '../types';
+  //import type { ProfileExtended } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import remove from 'stackpress/sql/actions/remove';
@@ -338,9 +338,9 @@ export function remove(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/remove',
     defaultImport: 'remove'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileRemoveAction(engine, ids)
@@ -369,10 +369,10 @@ export function restore(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { ProfileExtended } from '../types';
+  //import type { ProfileExtended } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import restore from 'stackpress/sql/actions/restore';
@@ -380,9 +380,9 @@ export function restore(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/restore',
     defaultImport: 'restore'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileRestoreAction(engine, ids)
@@ -417,10 +417,10 @@ export function search(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { ProfileExtended } from '../types';
+  //import type { ProfileExtended } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import search from 'stackpress/sql/actions/search';
@@ -428,9 +428,9 @@ export function search(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/search',
     defaultImport: 'search'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileSearchAction(engine, params)
@@ -467,10 +467,10 @@ export function update(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { ProfileExtended } from '../types';
+  //import type { ProfileExtended } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import update from 'stackpress/sql/actions/update';
@@ -478,9 +478,9 @@ export function update(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/update',
     defaultImport: 'update'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileUpdateAction(engine, ids, input)
@@ -519,10 +519,10 @@ export function upsert(model: Model, directory: Directory) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { ProfileExtended } from '../types';
+  //import type { ProfileExtended } from '../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types',
+    moduleSpecifier: '../types.js',
     namedImports: [ `${model.title}Extended` ]
   });
   //import upsert from 'stackpress/sql/actions/upsert';
@@ -530,9 +530,9 @@ export function upsert(model: Model, directory: Directory) {
     moduleSpecifier: 'stackpress/sql/actions/upsert',
     defaultImport: 'upsert'
   });
-  //import config from '../config';
+  //import config from '../config.js';
   source.addImportDeclaration({
-    moduleSpecifier: `../config`,
+    moduleSpecifier: '../config.js',
     defaultImport: 'config'
   });
   //export default function ProfileCreateAction(engine, input)

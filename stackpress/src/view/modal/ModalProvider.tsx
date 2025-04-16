@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react';
 import Modal from 'frui/element/Modal';
 //views
-import type { ModalProviderProps } from '../types';
+import type { ModalProviderProps } from '../types.js';
 //modal
-import ModalContext from './ModalContext';
+import ModalContext from './ModalContext.js';
 
 // (this is what to put in app.tsx)
 const ModalProvider = ({ children, ...config }: ModalProviderProps) => {

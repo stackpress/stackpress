@@ -1,4 +1,4 @@
-import type { Crumb, CrumbsProps } from '../types';
+import type { Crumb, CrumbsProps } from '../types.js';
 
 const Item = ({ href, label, icon, last }: Crumb & { last?: boolean }) => {
   const item = href

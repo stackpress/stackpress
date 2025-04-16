@@ -3,9 +3,9 @@ import { useLanguage } from 'r22n';
 import Button from 'frui/form/Button';
 import Switch from 'frui/field/Switch';
 //views
-import type { ServerPageProps } from '../../view/types';
-import LayoutBlank from '../../view/layout/LayoutBlank';
-import { useServer } from '../../view/server/hooks';
+import type { ServerPageProps } from '../../view/types.js';
+import LayoutBlank from '../../view/layout/LayoutBlank.js';
+import { useServer } from '../../view/server/hooks.js';
 //api
 import type { 
   Scopes,
@@ -13,7 +13,7 @@ import type {
   ApiOauthFormProps,
   ApiConfigProps, 
   ApplicationExtended 
-} from '../types';
+} from '../types.js';
 
 export function ApiOauthForm(props: ApiOauthFormProps) {
   const { appName, revert, items } = props;

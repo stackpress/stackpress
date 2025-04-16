@@ -4,14 +4,14 @@ import jwt from 'jsonwebtoken';
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 //root
-import Exception from '../Exception';
+import Exception from '../Exception.js';
 //session
 import type { 
   SessionData, 
   SessionPermission,
   SessionPermissionList
-} from './types';
-import { matchAnyEvent, matchAnyRoute } from './helpers';
+} from './types.js';
+import { matchAnyEvent, matchAnyRoute } from './helpers.js';
 
 /**
  * Used to get session data from tokens and check permissions
