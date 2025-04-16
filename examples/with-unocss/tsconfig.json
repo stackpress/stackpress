@@ -1,6 +1,7 @@
 {
-  "extends": "stackpress/tsconfig/cjs",
+  "extends": "stackpress/tsconfig/esm",
   "compilerOptions": {
+    "moduleResolution": "bundler",
     "outDir": ".build",
   },
   "include": [ 

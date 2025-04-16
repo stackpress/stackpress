@@ -1,6 +1,0 @@
-{
-  "extends": "@stackpress/lib/tsconfig/esm",
-  "compilerOptions": {
-    "jsx": "react-jsx"
-  }
-}

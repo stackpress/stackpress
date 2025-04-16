@@ -1,5 +1,5 @@
 {
-  "extends": "stackpress/tsconfig/client",
+  "extends": "stackpress/tsconfig/esm",
   "compilerOptions": {
     "moduleResolution": "bundler",
     "outDir": ".build",

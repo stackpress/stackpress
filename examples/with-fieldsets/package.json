@@ -25,11 +25,11 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.2.17",
-    "@stackpress/inquire-pglite": "0.5.10",
+    "@stackpress/inquire-pglite": "0.5.12",
     "frui": "0.1.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "stackpress": "0.1.32"
+    "stackpress": "0.1.34"
   },
   "devDependencies": {
     "@types/chai": "4.3.20",
