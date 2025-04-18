@@ -16,8 +16,14 @@ nuances of the project.
      to be ESM).
    - If you point the tsconfig filepath setting in Stackpress to ESM,
      you will get an error if you use the `client` in a CJS environment.
- - In either CJS/ESM, you need to bundle `react` and `react-dom` in ESM
+ - In either CJS/ESM, you need to bundle the following in ESM
    **(somehow)**.
+   - `react`
+   - `react/jsx-runtime`
+   - `react-dom`
+   - `react-dom/client`
+   - `react-dom/server`
+   - `jsonwebtoken`
 
 ## Configuration
 

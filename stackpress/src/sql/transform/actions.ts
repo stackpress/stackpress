@@ -92,7 +92,7 @@ export default function generate(directory: Directory, registry: Registry) {
     });
     //import restore from './restore';
     source.addImportDeclaration({
-      moduleSpecifier: './restore',
+      moduleSpecifier: './restore.js',
       defaultImport: 'restore'
     });
     //import search from './search.js';
