@@ -10,6 +10,6 @@ export default async function Authorize(
   res: Response,
   ctx: Server
 ) {
-  const registry = ctx.plugin<SessionPlugin>('session');
-  registry.authorize(req, res);
+  const session = ctx.plugin<SessionPlugin>('session');
+  await session.authorize(req, res);
 };

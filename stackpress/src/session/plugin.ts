@@ -12,8 +12,6 @@ export default function plugin(ctx: Server) {
   if (!ctx.config.get('session')) return;
   //on config, register session plugin
   ctx.on('config', (_req, _res, ctx) => {
-    //if no session config, return
-    if (!ctx.config.get('session')) return;
     const key = ctx.config.path('session.key', 'session');
     const seed = ctx.config.path('session.seed', 'abc123');
     const access = ctx.config.path<SessionPermissionList>('session.access', {});
@@ -22,14 +20,15 @@ export default function plugin(ctx: Server) {
   });
   //on listen, add user events
   ctx.on('listen', (_req, _res, ctx) => {
-    //if no auth config, disable auth routes
-    if (!ctx.config.get('auth')) return;
-    ctx.import.on('auth-signup', () => import('./events/signup'));
-    ctx.import.on('auth-signin', () => import('./events/signin'));
-    ctx.import.on('auth-signout', () => import('./events/signout'));
-    ctx.import.on('authorize', () => import('./events/authorize'));
-    ctx.import.on('request', () => import('./pages/authorize'));
     ctx.import.on('me', () => import('./events/session'));
+    //if auth config, add auth routes
+    if (ctx.config.get('auth')) {
+      ctx.import.on('auth-signup', () => import('./events/signup'));
+      ctx.import.on('auth-signin', () => import('./events/signin'));
+      ctx.import.on('auth-signout', () => import('./events/signout'));
+      ctx.import.on('authorize', () => import('./events/authorize'));
+      ctx.import.on('request', () => import('./pages/authorize'));
+    }
   });
   //on route, add user routes
   ctx.on('route', (_req, _res, ctx) => {

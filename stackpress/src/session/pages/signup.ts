@@ -42,7 +42,8 @@ export default async function SignupPage(
   const redirect = req.data<string>('redirect') || '/auth/signin';
   //get the session
   const session = ctx.plugin<SessionPlugin>('session');
-  const { guest } = session.load(req);
+  const me = session.load(req);
+  const guest = await me.guest();
   //form submission
   if (req.method === 'POST') {
     await ctx.emit('auth-signup', req, res);

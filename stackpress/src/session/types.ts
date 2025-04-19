@@ -23,15 +23,23 @@ export type SessionTokenData = SessionData & {
 };
 
 export type SessionServerConstructor = { 
-  get access(): SessionPermissionList;
-  get seed(): string;
-  get key(): string;
-  set expires(value: number);
-  configure(key: string, seed: string, access: SessionPermissionList): void;
-  authorize(req: Request, res: Response, permits?: SessionPermission[]): boolean;
-  create(data: SessionData): string;
-  token(req: Request): string | null;
-  load(token: string | Request): SessionServer;
+  get access(): SessionPermissionList,
+  get seed(): string,
+  get key(): string,
+  set expires(value: number),
+  configure(
+    key: string, 
+    seed: string, 
+    access: SessionPermissionList
+  ): void,
+  authorize(
+    req: Request, 
+    res: Response, 
+    permits?: SessionPermission[]
+  ): Promise<boolean>,
+  create(data: SessionData): Promise<string>,
+  token(req: Request): string | null,
+  load(token: string | Request): SessionServer,
   new (): SessionServer
 };
 

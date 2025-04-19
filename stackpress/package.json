@@ -467,12 +467,11 @@
     "@stackpress/ingest": "0.5.14",
     "@stackpress/inquire": "0.5.14",
     "@stackpress/lib": "0.5.14",
-    "jsonwebtoken": "9.0.2",
+    "jose": "6.0.10",
     "mustache": "4.2.0",
     "nanoid": "3.3.8",
     "nodemailer": "6.9.16",
     "papaparse": "5.5.1",
-    "prettier": "3.5.3",
     "r22n": "1.0.8",
     "react-toastify": "11.0.5",
     "reactus": "0.1.37",
@@ -480,7 +479,6 @@
   },
   "devDependencies": {
     "@stackpress/idea-transformer": "0.5.14",
-    "@types/jsonwebtoken": "9.0.9",
     "@types/mustache": "4.2.5",
     "@types/nodemailer": "6.4.17",
     "@types/node": "22.9.3",
@@ -489,6 +487,7 @@
     "@types/react-dom": "19.1.1",
     "fast-glob": "3.3.2",
     "frui": "0.1.5",
+    "prettier": "3.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "ts-node": "10.9.2",
@@ -499,6 +498,7 @@
   "peerDevDependencies": {
     "@stackpress/idea-transformer": "0.5.14",
     "fast-glob": "3.3.2",
+    "prettier": "3.5.3",
     "ts-morph": "24.0.0",
     "unocss": "66.0.0"
   },

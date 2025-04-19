@@ -14,6 +14,6 @@ export default async function Session(
 ) {
   const session = ctx.plugin<SessionPlugin>('session');
   const me = session.load(req);
-  const response = toResponse(me.authorization);
+  const response = toResponse(await me.authorization());
   res.fromStatusResponse(response);
 }

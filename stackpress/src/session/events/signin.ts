@@ -41,11 +41,11 @@ export default async function AuthSignin(
     return;
   }
   //get the session
-  const registry = ctx.plugin<SessionPlugin>('session');
+  const session = ctx.plugin<SessionPlugin>('session');
   //get the results from the response object
   const results = response.results as AuthExtended;
   //set the cookie session in the response
-  res.session.set(registry.key, registry.create({
+  res.session.set(session.key, await session.create({
     id: results.profile.id, 
     name: results.profile.name,
     image: results.profile.image,

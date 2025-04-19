@@ -1,5 +1,5 @@
 //modules
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from 'jose';
 //stackpress
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
@@ -55,24 +55,10 @@ export default class SessionServer {
   }
 
   /**
-   * Need seed to verify tokens and access for roles 
-   */
-  public static configure(
-    key: string, 
-    seed: string, 
-    access: SessionPermissionList
-  ) {
-    this._key = key;
-    this._seed = seed;
-    this._access = access;
-    return this;
-  }
-
-  /**
    * Authorizes a request, to be used with api handlers
    * Usage: if (!registry.authorize(req, res)) return;
    */
-  public static authorize(
+  public static async authorize(
     req: Request, 
     res: Response, 
     permits: SessionPermission[] = []
@@ -95,20 +81,36 @@ export default class SessionServer {
       return false;
     }
 
-    res.setResults(session.authorization);
+    res.setResults(await session.authorization());
     return true;
+  }
+
+  /**
+   * Need seed to verify tokens and access for roles 
+   */
+  public static configure(
+    key: string, 
+    seed: string, 
+    access: SessionPermissionList
+  ) {
+    this._key = key;
+    this._seed = seed;
+    this._access = access;
+    return this;
   }
 
   /**
    * Creates a new session token
    */
-  public static create(data: SessionData) {
+  public static async create(data: SessionData) {
+    const seed = new TextEncoder().encode(this.seed);
+    const signer = new SignJWT(data)
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt();
     if (!this._expires) {
-      return jwt.sign(data, this.seed);  
+      return await signer.sign(seed);  
     }
-    return jwt.sign(data, this.seed, {
-      expiresIn: this._expires
-    });
+    return await signer.setExpirationTime(this._expires).sign(seed);
   }
 
   /**
@@ -135,32 +137,38 @@ export default class SessionServer {
   public readonly token: string;
   //Session data cache
   protected _data?: SessionData|null;
+  
+  /**
+   * Need seed to verify tokens and access for roles 
+   */
+  public constructor(token: string) {
+    this.token = token;
+  }
 
-  public get authorization() {
+  public async authorization() {
+    const data = await this.data();
     return { 
       id: 0, 
       roles: [ 'GUEST' ], 
-      ...(this.data || {}),
+      ...(data || {}),
       token: this.token, 
-      permits: this.permits()
+      permits: await this.permits()
     };
   }
 
   /**
    * Returns the session data from jwt token
    */
-  public get data() {
+  public async data() {
     if (typeof this._data === 'undefined') {
       this._data = null;
       if (this.token.length) {
+        const seed = new TextEncoder().encode(SessionServer.seed);
         try {
-          const response = jwt.verify(
-            this.token, 
-            SessionServer.seed
-          );
-          this._data = typeof response === 'string' 
-            ? JSON.parse(response) as SessionData
-            : response as SessionData;
+          const { payload } = await jwtVerify(this.token, seed);
+          this._data = typeof payload === 'string' 
+            ? JSON.parse(payload) as SessionData
+            : payload as SessionData;
         } catch (e) {}
       }
     }
@@ -170,27 +178,21 @@ export default class SessionServer {
   /**
    * Returns true if the session is a guest
    */
-  public get guest() {
-    return this.data === null;
-  }
-
-  /**
-   * Need seed to verify tokens and access for roles 
-   */
-  public constructor(token: string) {
-    this.token = token;
+  public async guest() {
+    const data = await this.data();
+    return data === null;
   }
 
   /**
    * Returns true if a token has the required permissions
    */
-  public can(...permits: SessionPermission[]) {
+  public async can(...permits: SessionPermission[]) {
     //if there are no permits, then we are good
     if (permits.length === 0) {
       return true;
     }
     //get the permissions of the token
-    const permissions = this.permits();
+    const permissions = await this.permits();
     //string permissions are events
     const events = permissions.filter(
       permission => typeof permission === 'string'
@@ -210,8 +212,9 @@ export default class SessionServer {
   /**
    * Returns a list of permissions for a token
    */
-  public permits() {
-    const roles: string[] = this.data?.roles || [ 'GUEST' ];
+  public async permits() {
+    const data = await this.data();
+    const roles: string[] = data?.roles || [ 'GUEST' ];
     return roles.map(
       //ie. [ ['GUEST', 'USER'], ['USER', 'ADMIN'] ]
       role => SessionServer.access[role] || []
