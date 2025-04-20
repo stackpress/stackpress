@@ -29,7 +29,7 @@
     "frui": "0.1.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "stackpress": "0.2.3"
+    "stackpress": "0.2.4"
   },
   "devDependencies": {
     "@types/chai": "4.3.20",
