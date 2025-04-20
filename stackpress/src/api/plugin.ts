@@ -40,8 +40,8 @@ export default function plugin(ctx: Server) {
     const { endpoints = [] } = ctx.config<ApiConfig>('api') || {};
     //if no endpoints, return
     if (!Array.isArray(endpoints) || endpoints.length === 0) return;
-    ctx.import.all('/auth/oauth/token', () => import('./pages/token'));
-    ctx.import.all('/auth/oauth', () => import('./pages/oauth'));
+    ctx.import.all('/auth/oauth/token', () => import('./pages/token.js'));
+    ctx.import.all('/auth/oauth', () => import('./pages/oauth.js'));
     ctx.view.all('/auth/oauth', 'stackpress/esm/api/views/oauth', -100);
     for (const endpoint of endpoints) {
       if (endpoint.type === 'session') {

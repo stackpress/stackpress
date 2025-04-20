@@ -26,35 +26,35 @@ export default function generate(directory: Directory, registry: Registry) {
         const root = server.config.path('admin.root', '/admin');
         server.import.all(
           \`\${root}/${model.dash}/create\`, 
-          () => import('./pages/create')
+          () => import('./pages/create.js')
         );
         server.import.all(
           \`\${root}/${model.dash}/detail/${ids}\`, 
-          () => import('./pages/detail')
+          () => import('./pages/detail.js')
         );
         server.import.all(
           \`\${root}/${model.dash}/export\`, 
-          () => import('./pages/export')
+          () => import('./pages/export.js')
         );
         server.import.all(
           \`\${root}/${model.dash}/import\`, 
-          () => import('./pages/import')
+          () => import('./pages/import.js')
         );
         server.import.all(
           \`\${root}/${model.dash}/remove/${ids}\`, 
-          () => import('./pages/remove')
+          () => import('./pages/remove.js')
         );
         server.import.all(
           \`\${root}/${model.dash}/restore/${ids}\`, 
-          () => import('./pages/restore')
+          () => import('./pages/restore.js')
         );
         server.import.all(
           \`\${root}/${model.dash}/search\`, 
-          () => import('./pages/search')
+          () => import('./pages/search.js')
         );
         server.import.all(
           \`\${root}/${model.dash}/update/${ids}\`, 
-          () => import('./pages/update')
+          () => import('./pages/update.js')
         );
 
         const module = server.config.path<string>('client.module');
