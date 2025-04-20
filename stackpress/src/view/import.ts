@@ -1,5 +1,3 @@
-//modules
-import papaparse from 'papaparse';
 //stackpress
 import type { StatusResponse, UnknownNest } from '@stackpress/lib/types';
 //view
@@ -24,8 +22,10 @@ export type BatchSendResponse<
   M extends UnknownNest = UnknownNest
 > = StatusResponse<BatchSendResults<M>>;
 
-export function csvToFormData(file: File): Promise<FormData> {
-  return new Promise((resolve, reject) => {
+export async function csvToFormData(file: File): Promise<FormData> {
+  //cjs import
+  const papaparse = await import('papaparse').then(m => m.default);
+  return await new Promise((resolve, reject) => {
     //@ts-ignore - type 'File' is not assignable to parameter 
     //of type 'unique symbol', but it still works...
     papaparse.parse(file, {
