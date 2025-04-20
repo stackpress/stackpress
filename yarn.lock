@@ -2326,6 +2326,16 @@ frui@0.1.5:
     markdown-to-jsx "7.7.4"
     moment "2.30.1"
 
+frui@0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/frui/-/frui-0.1.6.tgz#6ca919ba36c7cae8455cdb1f0485df851588289a"
+  integrity sha512-yHYdGzdshIUnDRKeznX5d99RptqY08xb0Lm/4v+udUsKyBer8h5MVY3xLLmyG4GJbC2OYNcXZkTduQ7ND4vwmw==
+  dependencies:
+    codemirror "6.0.1"
+    inputmask "5.0.9"
+    markdown-to-jsx "7.7.4"
+    moment "2.30.1"
+
 fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
@@ -3535,10 +3545,10 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-r22n@1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/r22n/-/r22n-1.0.8.tgz#d5eb32fbad40ad1b25aaba8ef094abc1302227c3"
-  integrity sha512-VyBfes+7VF6ogJ2McvG/mvJQ12eVFjNh7cIx6X+aHiX6G++aPhO1gQpBBdp7ssH/hQUG34Z1mFLj6TpSCBDA5g==
+r22n@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/r22n/-/r22n-1.0.9.tgz#0807dd6eac2fcc80b722bd3b68320f58aa35b30b"
+  integrity sha512-Z08r1gSVCiE2yCGXLkcvAYkvmO3cD8E3UQbM7EZZYbzVKDGLh0d7i8p1GJMgpj5J0pmqh45aVKuDBo+PO7gi0Q==
 
 randombytes@^2.1.0:
   version "2.1.0"
@@ -3571,10 +3581,10 @@ react@19.1.0:
   resolved "https://registry.yarnpkg.com/react/-/react-19.1.0.tgz#926864b6c48da7627f004795d6cce50e90793b75"
   integrity sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==
 
-reactus@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.2.1.tgz#6671931fdb062249fb0be29e973108b699a5b20b"
-  integrity sha512-VntHtFDm13J0pytWj63S/082f0nhrWr2xiawVpEhUj+Xl9Ob45BKmvZnq5uTJVqcPmq+NjjgjMjL0qD5/717og==
+reactus@0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.2.2.tgz#528d0f09511346f127dd2d201e70ca8da9ef4ed7"
+  integrity sha512-vqIXvVKm1kK2UdipiS1kmCve/MqpXcDCDYxVqZThQP7K/J+4bHBJrghr2R1xQD6mPtuvXVu/Rw6ImB4tGW4yUQ==
   dependencies:
     "@stackpress/lib" "0.5.15"
 
