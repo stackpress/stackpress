@@ -17,10 +17,10 @@ export default function plugin(ctx: Server) {
     //get server mode
     const mode = ctx.config.path('server.mode', 'production');
     if (mode === 'production') {
-      const { config } = await import('./config/production');
+      const { config } = await import('./config/production.js');
       config(ctx);
     } else {
-      const { config } = await import('./config/development');
+      const { config } = await import('./config/development.js');
       config(ctx);
     }
   });
@@ -29,7 +29,7 @@ export default function plugin(ctx: Server) {
     //get server mode
     const mode = ctx.config.path('server.mode', 'production');
     if (mode !== 'production') {
-      const { route } = await import('./config/development');
+      const { route } = await import('./config/development.js');
       route(ctx);
     }
   });
