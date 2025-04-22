@@ -61,7 +61,7 @@ export function AdminUserMenu() {
               <i className="icon fas fa-lock" />
               <a href="/auth/signin">Sign In</a>
             </nav>
-            <nav className="manu-item">
+            <nav className="menu-item">
               <i className="icon fas fa-trophy" />
               <a href="/auth/signup">Sign Up</a>
             </nav>
