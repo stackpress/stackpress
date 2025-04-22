@@ -898,6 +898,12 @@ a.crumbs-header {
   display: flex;
 }
 
+.admin-search-page .admin-search-form .search .filter {
+  background-color: var(--bg2);
+  border: 1px solid var(--bd2);
+  padding: 8px 14px !important;
+}
+
 .admin-search-page .admin-search-form .search .icon {
   font-size: 14px;
 }

@@ -214,7 +214,7 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
       return (
         <div className="search">
           <Button 
-            className="border theme-bc-bd2 theme-bg-bg2 !px-px-14 !px-py-8" 
+            className="filter" 
             type="button" 
             onClick={() => open((opened: boolean) => !opened)}
           >
