@@ -9,20 +9,20 @@ const ModalConfirm = ({ open, message, confirmed }: ModalConfirmProps) => {
   const { _ } = useLanguage();
   
   return (
-    <div className="p-4 mt-2 border-t border-[#1F2937]">
-      <p className="text-lg">{message}</p>
-      <p className="text-[#666666] dark:text-[#DDDDDD]">
+    <div className="modal-confirm">
+      <p className="message">{message}</p>
+      <p className="alert">
         {_('This action cannot be undone.')}
       </p>
-      <Button success className="mt-4 rounded-lg uppercase font-semibold px-mr-10" onClick={() => {
+      <Button success className="confirm" onClick={() => {
         open(false);
-        confirmed();;
+        confirmed();
       }}>
-        <i className="fas fa-fw fa-check px-mr-5"></i>
+        <i className="icon fas fa-fw fa-check"></i>
         {_('Confirm')}
       </Button>
-      <Button error className="mt-4 rounded-lg uppercase font-semibold" onClick={() => open(false)}>
-        <i className="fas fa-fw fa-ban px-mr-5"></i>
+      <Button error className="cancel" onClick={() => open(false)}>
+        <i className="icon fas fa-fw fa-ban"></i>
         {_('Cancel')}
       </Button>
     </div>

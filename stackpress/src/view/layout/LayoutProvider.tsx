@@ -20,10 +20,6 @@ export default function LayoutProvider(props: LayoutProviderProps) {
   const { label = 'EN', translations = {} } = languages[locale] || {};
   const notify = data?.view?.notify;
   const theme = request?.session?.theme as string || 'light';
-  const modal = [
-    'border-2 p-4 bg-[#EBF0F6] border-[#C8D5E0] text-[#222222]',
-    'dark:bg-[#090D14] dark:border-[#1F2937] dark:text-[#DDDDDD]'
-  ];
   return (
     <ServerProvider
       data={data}
@@ -34,7 +30,7 @@ export default function LayoutProvider(props: LayoutProviderProps) {
       <R22nProvider language={label} translations={translations}>
         <ThemeProvider theme={theme}>
           <NotifyProvider config={notify}>
-            <ModalProvider className={modal.join(' ')}>
+            <ModalProvider className="layout-modal">
               {children}
             </ModalProvider>
           </NotifyProvider>

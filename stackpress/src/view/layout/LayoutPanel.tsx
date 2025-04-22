@@ -32,9 +32,9 @@ export function PanelApp(props: PanelAppProps) {
   const { theme, toggle: toggleTheme } = useTheme();
   const pathname = request.url.pathname;
   return (
-    <div className={`${theme} relative overflow-hidden px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
+    <div className={`${theme} layout-panel`}>
       <LayoutHead 
-        open={left} 
+        open={{ left, right }} 
         theme={theme}
         toggleLeft={toggleLeft} 
         toggleRight={toggleRight} 
@@ -52,7 +52,7 @@ export function PanelApp(props: PanelAppProps) {
         ) : props.left}
       </LayoutLeft>
       <LayoutRight open={right}>{props.right}</LayoutRight>
-      <LayoutMain open={left}>{children}</LayoutMain>
+      <LayoutMain open={{ left, right }}>{children}</LayoutMain>
     </div>
   );
 }

@@ -28,15 +28,15 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
   const { _ } = useLanguage();
   
   return (
-    <form className="px-px-10" method="post">
+    <form className="auth-form" method="post">
       <Control 
         label={`${_('Name')}*`} 
         error={errors.email as string|undefined} 
-        className="px-pt-20"
+        className="control"
       >
         <Input
           name="name"
-          className="block"
+          className="field"
           error={!!errors.email}
           defaultValue={input.email}
           required
@@ -45,11 +45,11 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
       <Control 
         label={_('Email Address')} 
         error={errors.email as string|undefined} 
-        className="px-pt-20"
+        className="control"
       >
         <Input
           name="email"
-          className="block"
+          className="field"
           error={!!errors.email}
           defaultValue={input.email}
         />
@@ -57,11 +57,11 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
       <Control 
         label={_('Phone Number')} 
         error={errors.phone as string|undefined} 
-        className="px-pt-20"
+        className="control"
       >
         <Input
           name="phone"
-          className="block"
+          className="field"
           error={!!errors.phone}
           defaultValue={input.phone}
         />
@@ -69,11 +69,11 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
       <Control 
         label={_('Username')} 
         error={errors.username as string|undefined} 
-        className="px-pt-20"
+        className="control"
       >
         <Input
           name="username"
-          className="block"
+          className="field"
           error={!!errors.username}
           defaultValue={input.username}
         />
@@ -81,7 +81,7 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
       <Control 
         label={`${_('Password')}*`} 
         error={errors.secret as string|undefined} 
-        className="px-pt-20"
+        className="control"
       >
         <Password
           name="secret"
@@ -90,11 +90,8 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           required
         />
       </Control>
-      <div className="px-py-20">
-        <Button
-          className="theme-bc-primary theme-bg-primary border px-w-100-0 !px-px-14 !px-py-8"
-          type="submit"
-        >
+      <div className="action">
+        <Button className="submit" type="submit">
           {_('Sign Up')}
         </Button>
       </div>
@@ -112,34 +109,35 @@ export function AuthSignupBody() {
     ...response.results, 
     ...request.data() 
   } as SignupInput;
+  const base = config.path('auth.base', '/auth');
   const errors = response.errors();
   const { _ } = useLanguage();
   //render
   return (
-    <main className="theme-bg-bg0 px-w-100-0 px-h-100-0 overflow-auto">
-      <div className="flex flex-col mx-auto items-center px-w-360">
+    <main className="auth-signup-page auth-page">
+      <div className="container">
         {config.has('brand', 'logo') ? (
           <img 
             height="50" 
             alt={config.path('brand.name')} 
             src={config.path('brand.logo')} 
-            className="block mx-auto px-mt-20 px-mb-10" 
+            className="logo" 
           />
         ): (
-          <h2 className="px-mb-10 px-fs-20 text-center">
-            {config.path('brand.name')}
-          </h2>
+          <h2 className="brand">{config.path('brand.name')}</h2>
         )}
-        <section className="theme-bg-bg1 theme-bc-bd3 border px-w-100-0">
-          <header className="theme-bg-bg2 flex items-center px-p-10">
+        <section className="auth-modal">
+          <header>
             <i className="fas fa-fw fa-user"></i>
-            <h3 className="px-ml-5 uppercase font-normal px-fs-16">
-              {_('Sign Up')}
-            </h3>
+            <h3 className="label">{_('Sign Up')}</h3>
           </header>
           <AuthSignupForm errors={errors} input={input} />
+          <footer>
+            <a href={`${base}/signin`}>
+              {_('Have an Account?')}
+            </a>
+          </footer>
         </section>
-        <footer className="px-py-10"></footer>
       </div>
     </main>
   );

@@ -24,16 +24,16 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
   const { input, errors } = props;
   const { _ } = useLanguage();
   return (
-    <form className="px-px-10" method="post">
+    <form className="auth-form" method="post">
       {input.type === 'phone' ? (
         <Control 
           label={`${_('Phone Number')}*`} 
           error={errors.phone as string|undefined} 
-          className="px-pt-20"
+          className="control"
         >
           <Input
             name="phone"
-            className="block"
+            className="field"
             error={!!errors.phone}
             defaultValue={input.phone}
             required
@@ -43,11 +43,11 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
         <Control 
           label={`${_('Email Address')}*`} 
           error={errors.email as string|undefined} 
-          className="px-pt-20"
+          className="control"
         >
           <Input
             name="email"
-            className="block"
+            className="field"
             error={!!errors.email}
             defaultValue={input.email}
             required
@@ -57,11 +57,11 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
         <Control 
           label={`${_('Username')}*`} 
           error={errors.username as string|undefined} 
-          className="px-pt-20"
+          className="control"
         >
           <Input
             name="username"
-            className="block"
+            className="field"
             error={!!errors.username}
             defaultValue={input.username}
             required
@@ -71,7 +71,7 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
       <Control 
         label={`${_('Password')}*`} 
         error={errors.secret as string|undefined} 
-        className="px-pt-20"
+        className="control"
       >
         <Password
           name="secret"
@@ -80,11 +80,8 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
           required
         />
       </Control>
-      <div className="px-py-20">
-        <Button
-          className="theme-bc-primary theme-bg-primary border px-w-100-0 !px-px-14 !px-py-8"
-          type="submit"
-        >
+      <div className="action">
+        <Button className="submit" type="submit">
           {_('Sign In')}
         </Button>
       </div>
@@ -121,46 +118,48 @@ export function AuthSigninBody() {
       ? _('Email') 
       : _('Username'),
     class: input.type === option 
-      ? 'theme-tx1 theme-bg-bg1 relative px-ml-2 px-p-10 inline-flex items-center'
-      : 'theme-tx1 theme-bc-bd1 relative px-ml-2 px-p-10 border px-bx-1 px-bt-1 px-bb-0 inline-flex items-center',
+      ? 'auth-tab active'
+      : 'auth-tab',
     url: `${base}/signin/${option}`
   })): [];
   //render
   return (
-    <main className="theme-bg-bg0 px-w-100-0 px-h-100-0 overflow-auto">
-      <div className="flex flex-col mx-auto items-center px-w-360">
+    <main className="auth-signin-page auth-page">
+      <div className="container">
         {config.has('brand', 'logo') ? (
           <img 
             height="50" 
             alt={config.path('brand.name')} 
             src={config.path('brand.logo')} 
-            className="block mx-auto px-mt-20 px-mb-10" 
+            className="logo" 
           />
         ): (
-          <h2 className="px-mb-10 px-fs-20 text-center">
-            {config.path('brand.name')}
-          </h2>
+          <h2 className="brand">{config.path('brand.name')}</h2>
         )}
-        <section className="theme-bg-bg1 theme-bc-bd3 border px-w-100-0">
-          <header className="theme-bg-bg2 flex items-center px-p-10">
+        <section className="auth-modal">
+          <header>
             <i className="fas fa-fw fa-lock"></i>
-            <h3 className="px-ml-5 uppercase font-normal px-fs-16">
-              {_('Sign In')}
-            </h3>
+            <h3 className="label">{_('Sign In')}</h3>
           </header>
           {tabs.length > 0 ? (
-            <div className="theme-bg-bg0 flex overflow-x-auto px-pt-5 px-pl-5">
+            <div className="auth-tabs">
               {tabs.map((tab, index) => (
                 <a key={index} href={tab.url} className={tab.class}>
                   <i className={`fas fa-fw fa-${tab.icon}`}></i>
-                  <span className="inline-block px-ml-2">{tab.label}</span>
+                  <span className="label">{tab.label}</span>
                 </a>
               ))}
             </div>
           ) : null}
           <AuthSigninForm errors={response.errors()} input={input} />
+          <footer>
+            <a href={`${base}/signup`}>
+              {_('No Account?')}
+            </a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href={`${base}/forgot`}>
+              {_('Forgot Password?')}
+            </a>
+          </footer>
         </section>
-        <footer className="px-py-10"></footer>
       </div>
     </main>
   );

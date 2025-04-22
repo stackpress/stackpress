@@ -122,7 +122,12 @@ export type PaginationProps = {
 // Layout Types
 
 export type LayoutHeadProps = {
-  open?: boolean,
+  left?: boolean,
+  right?: boolean,
+  open?: {
+    left?: boolean,
+    right?: boolean
+  },
   theme: string,
   base?: string,
   logo?: string,
@@ -133,32 +138,39 @@ export type LayoutHeadProps = {
 };
 
 export type LayoutLeftProps = {
-  brand?: string,
   base?: string,
+  brand?: string,
+  head?: boolean,
   logo?: string,
-  open: boolean,
+  open?: boolean,
   toggle: () => void,
   children: ReactNode
 };
 
 export type LayoutMainProps = {
   head?: boolean,
-  open?: boolean,
+  left?: boolean,
+  right?: boolean,
+  open?: {
+    left?: boolean,
+    right?: boolean
+  },
   children: ReactNode
 };
 
 export type LayoutMenuProps = {
   path?: string,
   menu: {
-    name: string;
-    icon: string;
-    path: string;
-    match: string;
+    name: string,
+    icon: string,
+    path: string,
+    match: string
   }[]
 };
 
 export type LayoutRightProps = {
-  open: boolean
+  open: boolean,
+  head?: boolean,
   children: ReactNode
 };
 

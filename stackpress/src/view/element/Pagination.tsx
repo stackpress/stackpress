@@ -26,12 +26,9 @@ export default function Pagination(props: PaginationProps) {
 
   //render
   return (
-    <div className="flex items-center justify-center bg-b1 px-2 py-3">
+    <div className="pagination">
       {previous && (
-        <button
-          onClick={() => refresh(current - 1)}
-          className="relative border border-gray-300 bg-b2 px-4 py-2 text-sm font-medium text-t1 hover:bg-gray-600"
-        >
+        <button className="prev" onClick={() => refresh(current - 1)}>
           <i className="fas fa-chevron-left"></i>
         </button>
       )}
@@ -39,17 +36,13 @@ export default function Pagination(props: PaginationProps) {
         <button
           key={i}
           onClick={() => refresh(page)}
-          className={`relative px-z-10 inline-flex items-center border border-white px-px-10 px-py-5 text-sm font-semibold 
-            ${page === current ? 'bg-gray-600 text-white border border-white px-z-10 pointer-events-none' : 'theme-tx1 hover:bg-gray-600'}`}
+          className={`page ${page === current ? 'active' : ''}`}
         >
           {page}
         </button>
       ))}
       {next && (
-        <button
-          onClick={() => refresh(current + 1)}
-          className="theme-bg-bg2 relative border border-gray-300 px-px-10 px-py-5 text-sm font-medium text-t1 hover:bg-gray-600"
-        >
+        <button className="next" onClick={() => refresh(current + 1)}>
           <i className="fas fa-chevron-right"></i>
         </button>
       )}

@@ -66,14 +66,14 @@ export default function removePage(directory: Directory, _registry: Registry, mo
       const crumbs = [
         {
           label: (
-            <span className="theme-info">{_('${model.plural}')}</span>
+            <span className="admin-crumb">{_('${model.plural}')}</span>
           ),
           icon: '${model.icon}',
           href: \`\${base}/${model.dash}/search\`
         },
         {
           label: (
-            <span className="theme-info">
+            <span className="admin-crumb">
               {\`${model.transformTemplate('${results?.%s || \'\'}')}\`}
             </span>
           ),
@@ -101,8 +101,8 @@ export default function removePage(directory: Directory, _registry: Registry, mo
       const { _ } = useLanguage();
       return (
         <div>
-          <div className="theme-bg-bg1 px-fs-16 px-p-20">
-            <i className="px-mr-5 inline-block fas fa-fw fa-info-circle"></i>
+          <div className="message">
+            <i className="icon fas fa-fw fa-info-circle"></i>
             <strong className="font-semibold">
               {_(
                 'Are you sure you want to restore %s?', 
@@ -110,19 +110,13 @@ export default function removePage(directory: Directory, _registry: Registry, mo
               )}
             </strong> 
           </div>
-          <div className="px-mt-20">
-            <a 
-              className="theme-bg-muted px-px-14 px-py-10 inline-block rounded" 
-              href={${link('detail')}}
-            >
-              <i className="px-mr-5 inline-block fas fa-fw fa-arrow-left"></i>
+          <div className="actions">
+            <a className="action cancel" href={${link('detail')}}>
+              <i className="icon fas fa-fw fa-arrow-left"></i>
               <span>Nevermind.</span>
             </a>
-            <a 
-              className="theme-bg-success px-px-14 px-py-10 px-ml-10 inline-block rounded" 
-              href="?confirmed=true"
-            >
-              <i className="px-mr-5 inline-block fas fa-fw fa-check-circle"></i>
+            <a className="action restore" href="?confirmed=true">
+              <i className="icon fas fa-fw fa-check-circle"></i>
               <span>{_('Confirmed')}</span>
             </a>
           </div>
@@ -144,11 +138,11 @@ export default function removePage(directory: Directory, _registry: Registry, mo
       const results = response.results as ${model.title}Extended;
       //render
       return (
-        <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
-          <div className="px-px-10 px-py-14 theme-bg-bg2">
+        <main className="admin-page admin-confirm-page">
+          <div className="admin-crumbs">
             <Admin${model.title}RestoreCrumbs base={base} results={results} />
           </div>
-          <div className="px-p-10">
+          <div className="admin-confirm">
             <Admin${model.title}RestoreForm base={base} results={results} />
           </div>
         </main>

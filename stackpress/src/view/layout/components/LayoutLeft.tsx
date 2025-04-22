@@ -1,31 +1,35 @@
 import type { LayoutLeftProps } from '../../types.js';
 
 export default function LayoutLeft(props: LayoutLeftProps) {
-  const { brand, base, logo, open, toggle, children } = props;
-  const left = open ? 'rmd-px-l-0' : 'rmd-px-l--220';
+  const { brand, base, logo, head, open, toggle, children } = props;
+  const classNames = [ 'layout-left' ];
+  if (head) {
+    classNames.push('head');
+  }
+  if (open) {
+    classNames.push('open');
+  }
   return (
-    <aside className={`duration-200 flex flex-col px-h-100-0 px-z-100 absolute px-w-220 px-b-0 px-l-0 px-t-0 ${left}`}>
-      <header className="px-p-10 px-h-60 flex items-center theme-bg-bg0">
-        <h3 className="flex-grow px-m-0">
+    <aside className={classNames.join(' ')}>
+      <header>
+        <h3 className="brand">
           {base ? (
-            <a className="theme-tx1 flex items-center no-underline" href={base}>
-              {logo && <img src={logo} alt={brand} className="px-w-30 px-h-30 px-mr-10" />}
-              {brand && <span className="uppercase px-fs-16">{brand}</span>}
+            <a href={base}>
+              {logo && <img src={logo} alt={brand} className="logo" />}
+              {brand && <span className="label">{brand}</span>}
             </a>
           ): (
-            <span className="flex items-center">
-              {logo && <img src={logo} alt={brand} className="px-w-30 px-h-30 px-mr-10" />}
-              {brand && <span className="uppercase px-fs-16">{brand}</span>}
+            <span>
+              {logo && <img src={logo} alt={brand} className="logo" />}
+              {brand && <span className="label">{brand}</span>}
             </span>
           )}
         </h3>
-        <button className="theme-tx1 md-hidden b-0 p-0 bg-transparent text-xl" onClick={toggle}>
+        <button className="back" onClick={toggle}>
           <i className="fas fa-chevron-left"></i>
         </button>
       </header>
-      <main className="theme-bg-bg1 flex-grow">
-        {children}
-      </main>
+      <main>{children}</main>
     </aside>
   );
 }

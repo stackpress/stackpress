@@ -1,5 +1,6 @@
 import '../styles/page.css';
 import type { Trace, ServerPageProps } from 'stackpress/view/client';
+import Layout from '../Layout.js';
 
 //placeholder for translation
 const _ = (text: string) => text;
@@ -28,45 +29,47 @@ export default function ErrorPage(props: ServerPageProps<Config>) {
   })[];
   const red = theme === 'dark' ? 'bg-red-900' : 'bg-red-100';
   return (
-    <main className={`${theme} px-p-10 px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
-      <h1 className="px-py-20 px-fs-20 font-bold">
-        {title}
-      </h1>
-      <p className={`${red} px-p-10 rounded`}>
-        <i className="text-red-600 px-mr-10 fas fa-fw fa-times-circle"></i>
-        {description}
-      </p>
-      {!production && !notfound && stack.length > 0 && (
-        <div>
-          {stack.map((trace, index) => (
-            <div key={index} className="theme-bc-bd0 px-mt-20 px-pb-20 border-b">
-              <h3 className="font-bold px-m-0">
-                #{stack.length - Number(index)} {trace.method}
-              </h3>
-              <div className="font-italic theme-muted text-sm">
-                {trace.file}:{trace.line}:{trace.char}
-              </div>
-              {trace.snippet && (
-                <div className="bg-black text-gray-300 px-mt-10 px-p-10 rounded">
-                  {trace.snippet.before && (
-                    <pre>{trace.line - 1} | {trace.snippet.before}</pre>
-                  )}
-                  {trace.snippet.main && (
-                    <pre>{trace.line} | {trace.snippet.main}</pre>
-                  )}
-                  {trace.snippet.location && (
-                    <pre>{' '.repeat(String(trace.line).length + 3)}{trace.snippet.location}</pre>
-                  )}
-                  {trace.snippet.after && (
-                    <pre>{trace.line + 1} | {trace.snippet.after}</pre>
-                  )}
+    <Layout>
+      <main className={`${theme} px-p-10 px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
+        <h1 className="px-py-20 px-fs-20 font-bold">
+          {title}
+        </h1>
+        <p className={`${red} px-p-10 rounded`}>
+          <i className="text-red-600 px-mr-10 fas fa-fw fa-times-circle"></i>
+          {description}
+        </p>
+        {!production && !notfound && stack.length > 0 && (
+          <div>
+            {stack.map((trace, index) => (
+              <div key={index} className="theme-bc-bd0 px-mt-20 px-pb-20 border-b">
+                <h3 className="font-bold px-m-0">
+                  #{stack.length - Number(index)} {trace.method}
+                </h3>
+                <div className="font-italic theme-muted text-sm">
+                  {trace.file}:{trace.line}:{trace.char}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </main>
+                {trace.snippet && (
+                  <div className="bg-black text-gray-300 px-mt-10 px-p-10 rounded">
+                    {trace.snippet.before && (
+                      <pre>{trace.line - 1} | {trace.snippet.before}</pre>
+                    )}
+                    {trace.snippet.main && (
+                      <pre>{trace.line} | {trace.snippet.main}</pre>
+                    )}
+                    {trace.snippet.location && (
+                      <pre>{' '.repeat(String(trace.line).length + 3)}{trace.snippet.location}</pre>
+                    )}
+                    {trace.snippet.after && (
+                      <pre>{trace.line + 1} | {trace.snippet.after}</pre>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    </Layout>
   )
 }
 

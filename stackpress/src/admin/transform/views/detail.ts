@@ -83,9 +83,7 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
       //variables
       const crumbs = [
         {
-          label: (
-            <span className="theme-info">{_('${model.plural}')}</span>
-          ),
+          label: (<span className="admin-crumb">{_('${model.plural}')}</span>),
           icon: '${model.icon}',
           href: \`\${base}/${model.dash}/search\`
         },
@@ -127,31 +125,22 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
         },
       };
       return (
-        <div className="text-right px-py-10 px-px-20">
+        <div className="actions">
           {can(routes.update) && (
-            <a
-              className="theme-white theme-bg-warning px-fs-12 px-ml-10 px-px-10 px-py-8 inline-block rounded"
-              href={routes.update.route}
-            >
-              <i className="fas fa-edit px-mr-8"></i>
+            <a className="action update" href={routes.update.route}>
+              <i className="icon fas fa-edit"></i>
               {_('Update')}
             </a>
           )}
           {results.active && can(routes.remove) && (
-            <a
-              className="theme-white theme-bg-error px-fs-12 px-ml-10 px-px-10 px-py-8 inline-block rounded"
-              href={routes.remove.route}
-            >
-              <i className="fas fa-trash px-mr-8"></i>
+            <a className="action remove" href={routes.remove.route}>
+              <i className="icon fas fa-trash"></i>
               {_('Remove')}
             </a>
           )}
           {!results.active && can(routes.restore) && (
-            <a
-              className="theme-white theme-bg-success px-fs-12 px-ml-10 px-px-10 px-py-8 inline-block rounded"
-              href={routes.restore.route}
-            >
-              <i className="fas fa-check-circle px-mr-8"></i>
+            <a className="action restore" href={routes.restore.route}>
+              <i className="icon fas fa-check-circle"></i>
               {_('Restore')}
             </a>
           )}
@@ -170,7 +159,7 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
     statements: (`
       const { results } = props;
       const { _ } = useLanguage();
-      const stripe = useStripe('theme-bg-bg0', 'theme-bg-bg1');
+      const stripe = useStripe('results-row-1', 'results-row-2');
       return (
         <Table>
           ${model.views.filter(
@@ -178,10 +167,10 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
           ).map(column => {
             return (`
               <Trow>
-                <Tcol noWrap className={\`!theme-bc-bd2 font-bold \${stripe(true)}\`}>
+                <Tcol noWrap className={\`results-label \${stripe(true)}\`}>
                   {_('${column.label}')}
                 </Tcol>
-                <Tcol noWrap className={\`!theme-bc-bd2 \${stripe()}\`}>
+                <Tcol noWrap className={\`results-value \${stripe()}\`}>
                   ${column.required && !column.view.component
                     ? `{results.${column.name}.toString()}`
                     : column.required && column.view.component
@@ -214,18 +203,18 @@ export default function detailPage(directory: Directory, _registry: Registry, mo
       const results = response.results as ${model.title}Extended;
       //render
       return (
-        <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
-          <div className="px-px-10 px-py-14 theme-bg-bg2">
+        <main className="admin-detail-page admin-page">
+          <div className="admin-crumbs">
             <Admin${model.title}DetailCrumbs base={base} results={results} />
           </div>
-          <div className="px-w-100-0">
+          <div className="admin-actions">
             <Admin${model.title}DetailActions 
               can={can} 
               base={base} 
               results={results} 
             />
           </div>
-          <div className="flex-grow px-w-100-0 overflow-auto">
+          <div className="admin-results">
             <Admin${model.title}DetailResults results={results} />
           </div>
         </main>

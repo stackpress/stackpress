@@ -22,7 +22,7 @@ export function BlankApp({ head = true, children }: BlankAppProps) {
   const config = useConfig<ServerConfigProps>();
   const { theme, toggle: toggleTheme } = useTheme();
   return (
-    <div className={`${theme} relative px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
+    <div className={`${theme} layout-blank`}>
       {head ? (
         <LayoutHead 
           theme={theme}

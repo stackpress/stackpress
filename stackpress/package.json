@@ -505,7 +505,7 @@
     "vite": "6.1.1"
   },
   "peerProdDependencies": {
-    "frui": "0.1.5",
+    "frui": "0.1.6",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   }

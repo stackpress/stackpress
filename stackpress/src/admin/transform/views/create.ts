@@ -72,7 +72,7 @@ export default function createPage(directory: Directory, _registry: Registry, mo
       //variables
       const crumbs = [
         {
-          label: (<span className="theme-info">{_('${model.plural}')}</span>),
+          label: (<span className="admin-crumb">{_('${model.plural}')}</span>),
           icon: 'user',
           href: 'search'
         },
@@ -102,24 +102,21 @@ export default function createPage(directory: Directory, _registry: Registry, mo
         <form method="post">
           ${model.fields.map(column => column.field.method === 'fieldset' ? (`
             <${column.title}FieldsetControl 
-              className="px-mb-20"
+              className="control"
               name="${column.name}"
               value={input.${column.name}} 
               error={errors.${column.name}?.toString()} 
             />
           `) : (`
             <${column.title}FieldControl 
-              className="px-mb-20"
+              className="control"
               name="${column.name}"
               value={input.${column.name}} 
               error={errors.${column.name}?.toString()} 
             />
           `)).join('\n')}
-          <Button 
-            className="theme-bc-primary theme-bg-primary border !px-px-14 !px-py-8" 
-            type="submit"
-          >
-            <i className="text-sm fas fa-fw fa-save"></i>
+          <Button className="submit" type="submit">
+            <i className="icon fas fa-fw fa-save"></i>
             {_('Save')}
           </Button>
         </form>
@@ -140,11 +137,11 @@ export default function createPage(directory: Directory, _registry: Registry, mo
       const errors = response.errors();
       //render
       return (
-        <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
-          <div className="px-px-10 px-py-14 theme-bg-bg2">
+        <main className="admin-page admin-form-page">
+          <div className="admin-crumbs">
             <Admin${model.title}CreateCrumbs />
           </div>
-          <div className="px-p-10 flex-grow overflow-auto">
+          <div className="admin-form">
             <Admin${model.title}CreateForm errors={errors} input={input} />
           </div>
         </main>

@@ -1,6 +1,7 @@
 import '../styles/page.css';
 import { useState } from 'react';
-import { LayoutBlank, ServerPageProps } from 'stackpress/view/client';
+import { ServerPageProps } from 'stackpress/view/client';
+import Layout from '../Layout.js';
 
 export function Head(props: ServerPageProps) {
   const { styles = [] } = props;
@@ -22,7 +23,7 @@ export default function HomePage(props: ServerPageProps) {
   const [count, setCount] = useState(0)
 
   return (
-    <LayoutBlank
+    <Layout
       session={session}
       request={request}
       response={response}
@@ -35,6 +36,6 @@ export default function HomePage(props: ServerPageProps) {
           </button>
         </div>
       </div>
-    </LayoutBlank>
+    </Layout>
   )
 }

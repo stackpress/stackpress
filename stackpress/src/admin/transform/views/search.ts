@@ -147,35 +147,32 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
       //hooks
       const { _ } = useLanguage();
       return (
-        <aside className="theme-bg-bg2 theme-bc-bd1 flex flex-col px-w-100-0 px-h-100-0 border-r">
-          <header className="theme-bg-bg3 px-px-10 px-py-14 uppercase">
-            <i className="fas fa-chevron-right px-mr-10 cursor-pointer" onClick={close}></i>
+        <aside>
+          <header>
+            <i className="icon fas fa-chevron-right" onClick={close}></i>
             {_('Filters')}
           </header>
-          <form className="flex-grow overflow-auto px-p-10">
+          <form>
             ${Array.from(model.columns.values()).map(column => {
               if (column.filter.component) {
                 return (`
                   <${column.title}FilterControl 
-                    className="px-mb-20"
+                    className="control"
                     value={query.filter?.${column.name}} 
                   />
                 `);
               } else if (column.span.component) {
                 return (`
                   <${column.title}SpanControl 
-                    className="px-mb-20"
+                    className="control"
                     value={query.span?.${column.name}} 
                   />
                 `);
               }
               return '';
             }).join('\n')}
-            <Button 
-              className="theme-bc-primary theme-bg-primary border !px-px-14 !px-py-8" 
-              type="submit"
-            >
-              <i className="text-sm fas fa-fw fa-filter"></i>
+            <Button className="submit" type="submit">
+              <i className="icon fas fa-fw fa-filter"></i>
               {_('Filter')}
             </Button>
           </form>
@@ -215,37 +212,37 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
       };
 
       return (
-        <div className="flex items-center">
+        <div className="search">
           <Button 
             className="border theme-bc-bd2 theme-bg-bg2 !px-px-14 !px-py-8" 
             type="button" 
             onClick={() => open((opened: boolean) => !opened)}
           >
-            <i className="text-sm fas fa-fw fa-filter"></i>
+            <i className="icon fas fa-fw fa-filter"></i>
           </Button>
-          <div className="flex-grow">
+          <div className="form">
             ${model.searchables.length > 0 ? (`
-              <form className="flex items-center">
-                <Input className="!theme-bc-bd2" />
-                <Button className="theme-bc-bd2 theme-bg-bg2 border-r border-l-0 border-y !px-px-14 !px-py-8" type="submit">
-                  <i className="text-sm fas fa-fw fa-search"></i>
+              <form>
+                <Input className="input" />
+                <Button className="submit" type="submit">
+                  <i className="icon fas fa-fw fa-search"></i>
                 </Button>
               </form>
             `): ''}
           </div>
           {can({ method: 'GET', route: \`\${base}/${model.dash}/export\` }) ?(
-            <Button info className="px-px-16 px-py-9" href="export">
+            <Button info className="action" href="export">
               <i className="fas fa-download"></i>
             </Button>
           ): null}
           {can({ method: 'GET', route: \`\${base}/${model.dash}/import\` }) ?(
-            <Button warning type="button" className="relative !px-px-16 !px-py-9">
+            <Button warning type="button" className="action import">
               <i className="cursor-pointer fas fa-upload"></i>
-              <input className="cursor-pointer opacity-0 absolute px-b-0 px-l-0 px-r-0 px-t-0" type="file" onChange={upload} />
+              <input className="input" type="file" onChange={upload} />
             </Button>
           ): null}
           {can({ method: 'GET', route: \`\${base}/${model.dash}/create\` }) ? (
-            <Button success className="px-px-16 px-py-9" href="create">
+            <Button success className="action" href="create">
               <i className="fas fa-plus"></i>
             </Button>
           ): null}
@@ -270,35 +267,32 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
       const { can, base, query, results } = props;
       const { sort = {} } = query;
       const { _ } = useLanguage();
-      const stripe = useStripe('theme-bg-bg0', 'theme-bg-bg1');
+      const stripe = useStripe('results-row-1', 'results-row-2');
       return (
         <Table>
           ${model.lists.filter(
             column => column.list.method !== 'hide'
           ).map(column => column.sortable ? (`
-            <Thead noWrap stickyTop className="theme-info theme-bg-bg2 !theme-bc-bd2 text-right">
-              <span
-                className="cursor-pointer"
-                onClick={() => order('sort[${column.name}]')}
-              >
+            <Thead noWrap stickyTop className="results-label sortable">
+              <span onClick={() => order('sort[${column.name}]')}>
                 {_('${column.label}')}
               </span>
               {!sort.${column.name} ? (
-                <i className="px-ml-2 text-xs fas fa-sort"></i>
+                <i className="icon fas fa-sort"></i>
               ) : null}
               {sort.${column.name} === 'asc' ? (
-                <i className="px-ml-2 text-xs fas fa-sort-up"></i>
+                <i className="icon fas fa-sort-up"></i>
               ) : null}
               {sort.${column.name} === 'desc' ? (
-                <i className="px-ml-2 text-xs fas fa-sort-down"></i>
+                <i className="icon fas fa-sort-down"></i>
               ) : null}
             </Thead>
           `): (`
-            <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 text-left">
+            <Thead noWrap stickyTop className="results-label">
               {_('${column.label}')}
             </Thead>
           `)).join('\n')}
-          <Thead stickyTop stickyRight className="!theme-bc-bd2 theme-bg-bg2" />
+          <Thead stickyTop stickyRight className="results-label" />
           {results.map((row, index) => (
             <Trow key={index}>
               ${model.lists.filter(
@@ -312,25 +306,22 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
                   ? `{row.${column.name} ? row.${column.name}.toString() : ''}`
                   //!column.required && column.list.method !== 'none'
                   : `{row.${column.name} ? (<${column.title}ListFormat data={row} value={row.${column.name}} />) : ''}`;
-                const align = column.sortable ? 'text-right' : 'text-left';
+                const align = column.sortable ? 'right' : 'left';
                 return column.filter.method !== 'none' ? (`
-                  <Tcol noWrap className={\`!theme-bc-bd2 ${align} \${stripe(index)}\`}>
-                    <span
-                      className="cursor-pointer theme-info"
-                      onClick={() => filter('filter[${column.name}]', row.${column.name})}
-                    >
+                  <Tcol noWrap className={\`results-value ${align} filterable \${stripe(index)}\`}>
+                    <span onClick={() => filter('filter[${column.name}]', row.${column.name})}>
                       ${value}
                     </span>
                   </Tcol>
                 `) : (`
-                  <Tcol noWrap className={\`!theme-bc-bd2 ${align} \${stripe(index)}\`}>
+                  <Tcol noWrap className={\`results-value ${align} \${stripe(index)}\`}>
                     ${value}
                   </Tcol>
                 `);
               }).join('\n')}
-              <Tcol stickyRight className={\`!theme-bc-bd2 text-center \${stripe(index)}\`}>
+              <Tcol stickyRight className={\`results-value center \${stripe(index)}\`}>
                 {can({ method: 'GET', route: \`\${base}/${model.dash}/detail/${path}\`}) ? (
-                  <Button info className="px-p-2" href={\`detail/\${row.id}\`}>
+                  <Button info className="detail" href={\`detail/\${row.id}\`}>
                     <i className="fas fa-fw fa-caret-right"></i>
                   </Button>
                 ) : null}
@@ -366,14 +357,14 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
       const page = (skip: number) => paginate('skip', skip);
       //render
       return (
-        <main className="flex flex-col px-h-100-0 theme-bg-bg0 relative">
-          <div className="px-px-10 px-py-14 theme-bg-bg2">
+        <main className="admin-page admin-search-page">
+          <div className="admin-crumbs">
             <Admin${model.title}SearchCrumbs />
           </div>
-          <div className={\`absolute px-t-0 px-b-0 px-w-360 px-z-10 duration-200 \${opened? 'px-r-0': 'px-r--360' }\`}>
+          <div className={\`admin-filters \${opened? 'open': '' }\`}>
             <Admin${model.title}SearchFilters query={query} close={() => open(false)} />
           </div>
-          <div className="px-p-10">
+          <div className="admin-search-form">
             <Admin${model.title}SearchForm 
               base={base} 
               token={session.data.token} 
@@ -382,17 +373,17 @@ export default function searchPage(directory: Directory, _registry: Registry, mo
             />
           </div>
           {!!results?.length && (
-            <h1 className="px-px-10 px-mb-10">{_(
+            <h1 className="admin-search-title">{_(
               'Showing %s - %s of %s',
               (skip + 1).toString(),
               (skip + results.length).toString(),
               total.toString()
             )}</h1>
           )}
-          <div className="flex-grow px-w-100-0 relative bottom-0 overflow-auto">
+          <div className="admin-search-results">
             {!results?.length ? (
               <Alert info>
-                <i className="fas fa-fw fa-info-circle px-mr-5"></i>
+                <i className="no-results-icon fas fa-fw fa-info-circle"></i>
                 {_('No results found.')}
               </Alert>
             ): (
