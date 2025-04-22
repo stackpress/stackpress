@@ -3581,10 +3581,10 @@ react@19.1.0:
   resolved "https://registry.yarnpkg.com/react/-/react-19.1.0.tgz#926864b6c48da7627f004795d6cce50e90793b75"
   integrity sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==
 
-reactus@0.2.7:
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.2.7.tgz#bb8391146fb19b72998736309108fdfee1ac0b29"
-  integrity sha512-1NKyyJZ4kOXadukeg13gqvHzx/8jJBv2HP7OduiuWEQCPWP0GUKlJX2Mgf4MDBABrTYqRqYlE2WHYsfLxuLVXw==
+reactus@0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.2.8.tgz#e2f682239d63586a4332ac6c6ff47772e0a7b078"
+  integrity sha512-tYLG2roN9a03c8sENcjjsHdyjrgazbtp0lTGDPkVrBa6ugrGdJUPRUjn2sYun/zI7tJX/PBNzF6WBE1FVY7bLA==
   dependencies:
     "@stackpress/lib" "0.5.15"
 
