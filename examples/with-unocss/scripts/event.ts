@@ -1,7 +1,7 @@
 //stackpress
 import { Terminal } from 'stackpress/terminal';
 //config
-import { bootstrap } from '../config/develop';
+import { bootstrap } from '../config/develop.js';
 
 async function event() {
   const server = await bootstrap();

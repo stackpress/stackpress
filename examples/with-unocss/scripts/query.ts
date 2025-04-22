@@ -1,7 +1,7 @@
 //stackpress
 import type { Engine } from 'stackpress/sql';
 //config
-import { bootstrap } from '../config/develop';
+import { bootstrap } from '../config/develop.js';
 
 async function query() {
   const server = await bootstrap();

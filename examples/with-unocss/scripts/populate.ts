@@ -1,7 +1,7 @@
 //stackpress
 import type { ProfileAuth } from 'stackpress';
 //config
-import { bootstrap } from '../config/develop';
+import { bootstrap } from '../config/develop.js';
 
 const secret = process.env.ADMIN_PASS || '123';
 

@@ -18,6 +18,7 @@
     "fs:query": "yarn --cwd examples/with-fieldsets query",
     "fs:start": "yarn --cwd examples/with-fieldsets start",
     "fs:test": "yarn --cwd examples/with-fieldsets test",
+    "min:dev": "yarn --cwd examples/with-minimal dev",
     "uno:build": "yarn --cwd examples/with-unocss build",
     "uno:dev": "yarn --cwd examples/with-unocss develop",
     "uno:emit": "yarn --cwd examples/with-unocss emit",

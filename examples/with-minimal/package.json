@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "name": "stackpress-with-minimal",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "stackpress": "0.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "22.9.3",
+    "tsx": "4.19.3",
+    "typescript": "5.7.2"
+  }
+}

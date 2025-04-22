@@ -1,5 +1,5 @@
 //config
-import { bootstrap } from '../config/develop';
+import { bootstrap } from '../config/develop.js';
 
 async function develop() {
   //get server

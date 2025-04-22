@@ -2,7 +2,7 @@
 import type { Engine } from 'stackpress/sql';
 import * as scripts from 'stackpress/scripts';
 //config
-import { bootstrap } from '../config/develop';
+import { bootstrap } from '../config/develop.js';
 
 async function push() {
   const server = await bootstrap();

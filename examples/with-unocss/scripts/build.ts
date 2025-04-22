@@ -5,7 +5,7 @@ import path from 'node:path';
 import { terminalControls } from 'stackpress/terminal';
 import * as scripts from 'stackpress/scripts';
 //config
-import { bootstrap } from '../config/build';
+import { bootstrap } from '../config/build.js';
 
 async function build() {
   const server = await bootstrap();

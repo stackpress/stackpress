@@ -1,5 +1,5 @@
 //config
-import { bootstrap } from '../config/preview';
+import { bootstrap } from '../config/preview.js';
 
 async function serve() {
   //get server
