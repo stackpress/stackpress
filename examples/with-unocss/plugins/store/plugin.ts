@@ -1,7 +1,7 @@
 //stackpress
 import type { Server } from 'stackpress/server';
 //util
-import connect from './connect';
+import connect from './connect.js';
 
 export default function plugin(server: Server) {
   //on config, register the store

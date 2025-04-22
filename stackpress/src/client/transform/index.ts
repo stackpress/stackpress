@@ -6,6 +6,7 @@ import type { IdeaPluginWithProject } from '../../types/index.js';
 import Registry from '../../schema/Registry.js';
 //local
 import generateConfig from './config.js';
+import generatePackage from './package.js';
 
 /**
  * Client File Structure
@@ -104,6 +105,8 @@ export default function generate(props: IdeaPluginWithProject) {
   // - address/config.ts
   // - config.ts
   generateConfig(project, schema, registry, cli.server);
+  // - package.json
+  generatePackage(project, schema, cli.server);
 
   //-----------------------------//
   // 3. profile/index.ts

@@ -126,7 +126,7 @@ export default function FormPage() {
               <File 
                 name="file" 
                 className="bg-white w-[150px]" 
-                onUpload={(_file, next) => {
+                onUpload={(_file: any, next: Function) => {
                   //just a mock call
                   setTimeout(() => {
                     next('https://images.wsj.net/im-580612/8SR')
@@ -150,7 +150,7 @@ export default function FormPage() {
                 defaultValue={[
                   'https://images.wsj.net/8SR.pdf'
                 ]} 
-                onUpload={(files, next) => {
+                onUpload={(files: string[], next: Function) => {
                   //just a mock call
                   setTimeout(() => {
                     next(files.map((_file, _i) => 'https://images.wsj.net/im-580612/8SR'))
@@ -172,7 +172,7 @@ export default function FormPage() {
                 name="image" 
                 className="bg-white w-[150px]" 
                 value="https://images.wsj.net/im-580612/8SR" 
-                onUpload={(_image, next) => {
+                onUpload={(_image: any, next: Function) => {
                   //just a mock call
                   setTimeout(() => {
                     next('https://images.wsj.net/im-580612/8SR')
@@ -196,7 +196,7 @@ export default function FormPage() {
                 defaultValue={[
                   'https://images.wsj.net/im-580612/8SR'
                 ]} 
-                onUpload={(files, next) => {
+                onUpload={(files: string[], next: Function) => {
                   //just a mock call
                   setTimeout(() => {
                     next(files.map((_file, _i) => 'https://images.wsj.net/im-580612/8SR'))

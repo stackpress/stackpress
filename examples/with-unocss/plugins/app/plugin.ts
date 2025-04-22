@@ -4,7 +4,7 @@ import type { Server } from 'stackpress/server';
 export default function plugin(server: Server) {
   server.on('listen', async _ => {
     //on error, show error page
-    server.on('error', () => import('./pages/error'));
+    server.on('error', () => import('./pages/error.js'));
     server.on('error', '@/plugins/app/views/error', -100);
     //on response, check for errors
     server.on('response', async (req, res, ctx) => {  

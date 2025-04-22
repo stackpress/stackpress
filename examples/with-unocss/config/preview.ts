@@ -5,7 +5,7 @@ import type { Server } from 'stackpress/server';
 import { server as http } from 'stackpress/http';
 import { DOCUMENT_TEMPLATE } from 'stackpress/view';
 //plugin
-import assets from '../plugins/assets/plugin';
+import assets from '../plugins/assets/plugin.js';
 //config
 import type { Config } from './common.js';
 import * as common from './common.js';

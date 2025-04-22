@@ -6,8 +6,8 @@ import unocss from 'unocss/vite';
 import { server as http } from 'stackpress/http';
 import { CLIENT_TEMPLATE, DOCUMENT_TEMPLATE } from 'stackpress/view';
 //config
-import type { Config } from './common';
-import * as common from './common';
+import type { Config } from './common.js';
+import * as common from './common.js';
 
 export const config: Config = {
   server: {

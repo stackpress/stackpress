@@ -14,7 +14,7 @@ import type { Actions } from '../sql/actions/index.js';
 export type ClientConfig = {
   //where to store the generated client code
   //used by `stackpress/terminal` (for generating client)
-  build: string,
+  build?: string,
   //whether to compiler client in `js` or `ts`
   //used by client generator
   //defaults to `js`
@@ -22,6 +22,8 @@ export type ClientConfig = {
   //used by `stackpress/client` to `import()` 
   //the generated client code to memory
   module: string,
+  //name of client package. Used in the generated package.json
+  package: string,
   //where to store serialized idea json files for historical 
   //purposes. Revisions are used in conjuction with push and 
   //migrate to determine the changes between each idea change.

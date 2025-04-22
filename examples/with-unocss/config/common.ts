@@ -27,7 +27,8 @@ export const server = {
 
 export const client = { 
   //whether to compiler client in `js` or `ts`
-  lang: 'js'
+  lang: 'js',
+  package: 'app-client'
 };
 
 export const database = {
