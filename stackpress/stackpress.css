@@ -767,7 +767,7 @@ a.crumbs-header {
 }
 
 .admin-detail-page .admin-results .results-row-2 {
-  background-color: var(--bg1);
+  background-color: var(--bg2);
 }
 
 /* Admin Confirm Page */
@@ -800,12 +800,13 @@ a.crumbs-header {
 }
 
 .admin-confirm-page .admin-confirm .actions {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .admin-confirm-page .admin-confirm .actions .action {
   border-radius: 4px;
   display: inline-block;
+  margin-right: 10px;
   padding: 10px 20px;
 }
 
