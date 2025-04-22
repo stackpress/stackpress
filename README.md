@@ -27,7 +27,7 @@ Unlike other frameworks, we have chosen the following philosophies.
  - Unopinionated
  - Event Driven
  - Plugggable Design
- - Code Generator
+ - Client Generator
 
 ## Usage
 
@@ -277,7 +277,23 @@ $ npx stackpress transform
 ```
 
 This will generate a `.client` folder in `node_modules`. You can check 
-the admin by visiting `http://localhost:3000/admin/user/search`.
+the admin by visiting `http://localhost:3000/admin/user/search`. You can 
+also access the ORM like the following.
+
+```js
+import type { ClientPlugin } from 'stackpress'
+
+const client = app.plugin<ClientPlugin>('client')
+const user = await client.model.user.create({ name: 'John Doe' })
+```
+
+New events will be available as well.
+
+```js
+import type { User } from '.client'
+
+await app.resolve<User>('user-create', { name: 'John Doe' })
+```
 
 ## Authentication
 
@@ -356,5 +372,3 @@ app.config.set('session', {
 ```
 
 By default everyone is a `GUEST` and other role names are arbitrary.
-
-> Setting `auth` enables the `/auth` pages.
