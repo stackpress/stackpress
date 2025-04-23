@@ -27,21 +27,16 @@ export const config: Config = {
     //what tsconfig file to base the typescript compiler on
     tsconfig: path.join(common.cwd, 'tsconfig.json')
   },
-  database: {
-    ...common.database,
-    //where to store create and alter table migration files
-    // - This is used in conjunction with `revisions`
-    // - This doesn't update the database, it simply logs the changes
-    migrations: path.join(common.build, 'migrations')
-  },
-  session: common.session,
-  brand: common.brand,
-  email: common.email,
-  auth: common.auth,
-  cookie: common.cookie,
   admin: common.admin,
   api: common.api,
-  language: common.language
+  auth: common.auth,
+  brand: common.brand,
+  cli: common.cli,
+  cookie: common.cookie,
+  database: common.database,
+  email: common.email,
+  language: common.language,
+  session: common.session
 };
 
 export async function bootstrap() {

@@ -27,7 +27,10 @@ export const server = {
 
 export const client = { 
   //whether to compiler client in `js` or `ts`
-  lang: 'js'
+  lang: 'js',
+  package: 'app-client',
+  //what tsconfig file to base the typescript compiler on
+  tsconfig: path.join(cwd, 'tsconfig.json')
 };
 
 export const database = {
@@ -271,4 +274,9 @@ export const language = {
       }
     }
   }
+};
+
+export const cli = {
+  label: '[EXAMPLE]',
+  idea: path.join(cwd, 'schema.idea')
 };

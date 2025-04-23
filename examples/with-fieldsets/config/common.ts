@@ -26,9 +26,21 @@ export const server = {
 };
 
 export const client = { 
+  //whether to compiler client in `js` or `ts`
   lang: 'js',
+  //used by `stackpress/client` to `import()` 
+  //the generated client code to memory
   module: '.client',
-  revisions: path.join(build, 'revisions')
+  //name of the client package used in package.json
+  package: 'app-client',
+  //where to store serialized idea json files for historical 
+  //purposes. Revisions are used in conjuction with push and 
+  //migrate to determine the changes between each idea change.
+  revisions: path.join(build, 'revisions'),
+  //where to store the generated client code
+  build: path.join(cwd, 'node_modules', '.client'),
+  //what tsconfig file to base the typescript compiler on
+  tsconfig: path.join(cwd, 'tsconfig.json')
 };
 
 export const database = {
@@ -291,4 +303,9 @@ export const language = {
       }
     }
   }
+};
+
+export const cli = {
+  label: '[EXAMPLE]',
+  idea: path.join(cwd, 'schema.idea')
 };

@@ -16,23 +16,6 @@ export const config: Config = {
     ...common.server,
     mode: 'production'
   },
-  client: { 
-    ...common.client,
-    //used by `stackpress/client` to `import()` 
-    //the generated client code to memory
-    module: '.client',
-    //where to store serialized idea json files for historical 
-    //purposes. Revisions are used in conjuction with push and 
-    //migrate to determine the changes between each idea change.
-    revisions: path.join(common.build, 'revisions')
-  },
-  database: {
-    ...common.database,
-    //where to store create and alter table migration files
-    // - This is used in conjunction with `revisions`
-    // - This doesn't update the database, it simply logs the changes
-    migrations: path.join(common.build, 'migrations')
-  },
   view: {
     ...common.view,
     //reactus specific settings
@@ -95,12 +78,15 @@ export const config: Config = {
     }
   },
   brand: common.brand,
+  client: common.client,
+  database: common.database,
   email: common.email,
   auth: common.auth,
   cookie: common.cookie,
   admin: common.admin,
   api: common.api,
-  language: common.language
+  language: common.language,
+  cli: common.cli
 };
 
 export async function bootstrap() {
