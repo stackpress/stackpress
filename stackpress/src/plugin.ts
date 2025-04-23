@@ -8,6 +8,7 @@ import view from './view/plugin.js';
 import admin from './admin/plugin.js';
 import language from './language/plugin.js';
 import session from './session/plugin.js';
+import terminal from './terminal/plugin.js';
 import api from './api/plugin.js';
 
 export default async function plugin(server: Server) {
@@ -20,4 +21,5 @@ export default async function plugin(server: Server) {
   language(server);
   session(server);
   api(server);
+  terminal(server);
 };

@@ -43,7 +43,7 @@
     "./cjs/plugin.js"
   ],
   "bin": {
-    "stackpress": "./cjs/terminal/bin.js"
+    "stackpress": "./bin.ts"
   },
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
@@ -264,13 +264,25 @@
       "import": "./esm/sql/index.js"
     },
 
-    "./bin": {
-      "require": "./cjs/terminal/bin.js",
-      "import": "./esm/terminal/bin.js"
+    "./terminal/events/*": {
+      "require": "./cjs/terminal/events/*.js",
+      "import": "./esm/terminal/events/*.js"
+    },
+    "./terminal/events": {
+      "require": "./cjs/terminal/events/index.js",
+      "import": "./esm/terminal/events/index.js"
     },
     "./Terminal": {
       "require": "./cjs/terminal/Terminal.js",
       "import": "./esm/terminal/Terminal.js"
+    },
+    "./terminal/plugin": {
+      "require": "./cjs/terminal/plugin.js",
+      "import": "./esm/terminal/plugin.js"
+    },
+    "./terminal/types": {
+      "require": "./cjs/terminal/types.js",
+      "import": "./esm/terminal/types.js"
     },
     "./terminal": {
       "require": "./cjs/terminal/index.js",
@@ -416,8 +428,11 @@
       "sql/types": [ "./cjs/sql/types.d.ts" ],
       "sql": [ "./cjs/sql/index.d.ts" ],
       
-      "bin": [ "./cjs/terminal/bin.d.ts" ],
+      "terminal/events/*": [ "./cjs/terminal/events/*.d.ts" ],
+      "terminal/events": [ "./cjs/terminal/events/index.d.ts" ],
       "Terminal": [ "./cjs/terminal/Terminal.d.ts" ],
+      "terminal/plugin": [ "./cjs/terminal/plugin.d.ts" ],
+      "terminal/types": [ "./cjs/terminal/types.d.ts" ],
       "terminal": [ "./cjs/terminal/index.d.ts" ],
 
       "types/transform": [ "./cjs/types/transform/index.d.ts" ],
@@ -447,6 +462,7 @@
   "files": [
     "cjs",
     "esm",
+    "bin.ts",
     "tsconfig",
     "LICENSE",
     "README.md",

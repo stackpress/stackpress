@@ -9,7 +9,7 @@ import type Server from '@stackpress/ingest/Server';
 import Exception from '../Exception.js';
 
 /**
- * This interface is intended for the Incept library.
+ * This interface is intended for the Stackpress library.
  */
 export default function plugin(ctx: Server) {
   //on config, register the client as a plugin

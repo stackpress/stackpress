@@ -84,6 +84,8 @@ export type {
   SessionTokenData,
   SessionPermission,
   SessionPermissionList,
+  CLIConfig,
+  CLIPlugin,
   CSVParseError,
   CSVParseResults,
   BatchSendResults,

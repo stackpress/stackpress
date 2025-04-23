@@ -5,7 +5,7 @@ import type { LanguageMap, LanguagePlugin } from './types.js';
 import Language from './Language.js';
 
 /**
- * This interface is intended for the Incept library.
+ * This interface is intended for the Stackpress library.
  */
 export default function plugin(ctx: Server) {
   //if no language config exists, disable the plugin

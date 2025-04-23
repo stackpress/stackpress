@@ -7,7 +7,7 @@ import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
 
 /**
- * This interface is intended for the Incept library.
+ * This interface is intended for the Stackpress library.
  */
 export default function plugin(ctx: Server) {
   //if no view is configured, disable plugin

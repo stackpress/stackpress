@@ -12,9 +12,10 @@ import type { AdminConfig } from '../admin/types.js';
 import type { EmailConfig } from '../email/types.js';
 import type { LanguageConfig } from '../language/types.js';
 import type { DatabaseConfig } from '../sql/types.js';
+import type { CLIConfig } from '../terminal/types.js';
 import type { ViewConfig, BrandConfig } from '../view/types.js';
 import type { AuthConfig, SessionConfig } from '../session/types.js';
-import type InceptTerminal from '../terminal/Terminal.js';
+import type StackpressTerminal from '../terminal/Terminal.js';
 
 export type { AdminConfig } from '../admin/types.js';
 
@@ -57,6 +58,11 @@ export type {
   SchemaSerialOptions,
   ColumnOption
 } from '../schema/types.js';
+
+export type {
+  CLIConfig,
+  CLIPlugin
+} from '../terminal/types.js';
 
 export type { ServerConfig } from '../server/types.js';
 
@@ -202,7 +208,7 @@ export type ExtendsType<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 // Idea Types
 
 export type IdeaProjectProps = {
-  cli: InceptTerminal,
+  cli: StackpressTerminal,
   project: Directory
 };
 
@@ -213,6 +219,7 @@ export type IdeaPluginWithProject = PluginProps<IdeaProjectProps>;
 
 export type Config = UnknownNest & {
   brand?: BrandConfig,
+  cli?: CLIConfig,
   server?: ServerConfig,
   client?: ClientConfig,
   cookie?: CookieOptions,

@@ -7,7 +7,7 @@ import type { ApiConfig, ApiEndpoint } from './types.js';
 import { authorize, unauthorized, validData } from './helpers.js';
 
 /**
- * This interface is intended for the Incept library.
+ * This interface is intended for the Stackpress library.
  */
 export default function plugin(ctx: Server) {
   //if no api config exists, disable the plugin

@@ -7,8 +7,8 @@ export function Head(props: ServerPageProps) {
   const { styles = [] } = props;
   return (
     <>
-      <title>Reactus</title>
-      <meta name="description" content="Reactus" />
+      <title>Stackpress</title>
+      <meta name="description" content="Stackpress" />
       <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (

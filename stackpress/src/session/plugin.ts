@@ -5,7 +5,7 @@ import type { SessionPermissionList } from './types.js';
 import Session from './Session.js';
 
 /**
- * This interface is intended for the Incept library.
+ * This interface is intended for the Stackpress library.
  */
 export default function plugin(ctx: Server) {
   //if no session config, disable session

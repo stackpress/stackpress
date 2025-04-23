@@ -9,7 +9,7 @@ import type Server from '@stackpress/ingest/Server';
 import type { ClientPlugin } from '../client/types.js';
 
 /**
- * This interface is intended for the Incept library.
+ * This interface is intended for the Stackpress library.
  */
 export default function plugin(ctx: Server) {
   //if no admin config exists, disable the plugin
