@@ -252,28 +252,34 @@ model User @label("User" "Users") @template("{{name}}") @icon("user") {
 }
 ```
 
-Next add the following configuration and emit following events.
+Next emit emit following events.
 
 ```js
-app.config.set('client', {
-  //used by `stackpress/client` to `import()` 
-  //the generated client code to memory
-  module: '.client',
-  //where to store the generated client code
-  build: path.join(cwd, 'node_modules', '.client'),
-  //what tsconfig file to base the typescript compiler on
-  tsconfig: path.join(cwd, 'tsconfig.json')
-})
-
 await app.emit('config')
 await app.emit('listen')
 await app.emit('route')
 ```
 
+Next export a `const config` in your project root with the following configuration.
+
+```js
+export const config = {
+  client: {
+    //used by `stackpress/client` to `import()` 
+    //the generated client code to memory
+    module: '.client',
+    //where to store the generated client code
+    build: path.join(cwd, 'node_modules', '.client'),
+    //what tsconfig file to base the typescript compiler on
+    tsconfig: path.join(cwd, 'tsconfig.json')
+  }
+}
+```
+
 Then in terminal you can run the following.
 
 ```bash
-$ npx stackpress transform
+$ npx stackpress index generate
 ```
 
 This will generate a `.client` folder in `node_modules`. You can check 
