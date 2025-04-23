@@ -95,8 +95,6 @@ export type SessionConfig = {
   //defaults
   key?: string,
   //used to generate the session id
-  //also used to encrypt/decrypt data 
-  //in the database
   seed: string,
   //route and event access white list (blacklisted by default)
   //mapped as role -> access entries[]

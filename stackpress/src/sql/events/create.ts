@@ -32,8 +32,8 @@ export default function createEventFactory(model: Model) {
     if (!engine) return;
     //remove values that are not columns
     const input = model.input(req.data(), false);
-    //get the session seed (for encrypting)
-    const seed = ctx.config.path<string|undefined>('session.seed');
+    //get the database seed (for encrypting)
+    const seed = ctx.config.path<string|undefined>('database.seed');
     const response = await create(model, engine, input, seed);
     res.fromStatusResponse(response);
   };

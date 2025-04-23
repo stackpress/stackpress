@@ -30,8 +30,8 @@ export default function searchEventFactory(model: Model) {
     //get the database engine
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
-    //get seed for filter encoding
-    const seed = ctx.config.path('session.seed', 'abc123');
+    //get the database seed (for encrypting)
+    const seed = ctx.config.path<string|undefined>('database.seed');
     const response = await search(model, engine, req.data(), seed);
     res.fromStatusResponse(response);
   };

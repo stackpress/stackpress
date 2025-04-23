@@ -39,8 +39,8 @@ export default function detailEventFactory(model: Model) {
     const selectors = Array.isArray(columns) && columns.every(
       column => typeof column === 'string'
     ) ? columns : [ '*' ];
-    //get the session seed (for decrypting)
-    const seed = ctx.config.path<string|undefined>('session.seed');
+    //get the database seed (for decrypting)
+    const seed = ctx.config.path<string|undefined>('database.seed');
     const response = await detail(model, engine, ids, selectors, seed);
 
     if (response.code === 200 && !response.results) {

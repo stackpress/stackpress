@@ -36,8 +36,8 @@ export default function updateEventFactory(model: Model) {
       .map(column => [ column.name, req.data(column.name) ])
       .filter(entry => Boolean(entry[1]))
     ) as Record<string, string | number>;
-    //get the session seed (for encrypting)
-    const seed = ctx.config.path<string|undefined>('session.seed');
+    //get the database seed (for encrypting)
+    const seed = ctx.config.path<string|undefined>('database.seed');
     const response = await update(model, engine, ids, input, seed);
     res.fromStatusResponse(response);
   };

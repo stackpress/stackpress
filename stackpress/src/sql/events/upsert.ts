@@ -32,8 +32,8 @@ export default function upsertEventFactory(model: Model) {
     if (!engine) return;
     //remove values that are not columns
     const input = model.input(req.data(), false);
-    //get the session seed (for encrypting)
-    const seed = ctx.config.path('session.seed', 'abc123');
+    //get the database seed (for encrypting)
+    const seed = ctx.config.path('database.seed', 'abc123');
     const response = await upsert(model, engine, input, seed);
     res.fromStatusResponse(response);
   };

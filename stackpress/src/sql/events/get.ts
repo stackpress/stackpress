@@ -41,8 +41,8 @@ export default function getEventFactory(model: Model) {
     const selectors = Array.isArray(columns) && columns.every(
       column => typeof column === 'string'
     ) ? columns : [ '*' ];
-    //get the session seed (for encrypting)
-    const seed = ctx.config.path<string|undefined>('session.seed');
+    //get the database seed (for encrypting)
+    const seed = ctx.config.path<string|undefined>('database.seed');
     const response = await get(model, engine, key, value, selectors, seed);
 
     if (response.code === 200 && !response.results) {

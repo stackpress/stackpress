@@ -44,6 +44,8 @@ export const client = {
 };
 
 export const database = {
+  //used to encrypt/decrypt data in the database
+  seed: seed,
   //where to store create and alter table migration files
   // - This is used in conjunction with `revisions`
   // - This doesn't update the database, it simply logs the changes
@@ -116,8 +118,6 @@ export const session = {
   //name of the session cookie
   key: 'session',
   //used to generate the session id
-  //also used to encrypt/decrypt data 
-  //in the database
   seed: seed,
   access: {
     ADMIN: [
