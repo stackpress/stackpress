@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -490,7 +490,7 @@
     "papaparse": "5.5.1",
     "r22n": "1.0.10",
     "react-toastify": "11.0.5",
-    "reactus": "0.2.8",
+    "reactus": "0.2.9",
     "universal-cookie": "8.0.1"
   },
   "devDependencies": {
