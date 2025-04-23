@@ -77,16 +77,16 @@ export const config: Config = {
       ]
     }
   },
-  brand: common.brand,
-  client: common.client,
-  database: common.database,
-  email: common.email,
-  auth: common.auth,
-  cookie: common.cookie,
   admin: common.admin,
   api: common.api,
-  language: common.language,
-  cli: common.cli
+  auth: common.auth,
+  brand: common.brand,
+  cli: common.cli,
+  client: common.client,
+  cookie: common.cookie,
+  database: common.database,
+  email: common.email,
+  language: common.language
 };
 
 export async function bootstrap() {
