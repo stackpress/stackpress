@@ -8,34 +8,42 @@ export default definePreset(() => {
       matcher => matcher.startsWith('r4xl-') ? {
         matcher: matcher.slice(5),
         parent: '@media (max-width: 1920px)',
+        sort: -10
       }: matcher,
       matcher => matcher.startsWith('r3xl-') ? {
         matcher: matcher.slice(5),
         parent: '@media (max-width: 1536px)',
+        sort: -20
       }: matcher,
       matcher => matcher.startsWith('r2xl-') ? {
         matcher: matcher.slice(5),
         parent: '@media (max-width: 1280px)',
+        sort: -30
       }: matcher,
       matcher => matcher.startsWith('rxl-') ? {
         matcher: matcher.slice(4),
         parent: '@media (max-width: 1024px)',
+        sort: -40
       }: matcher,
       matcher => matcher.startsWith('rlg-') ? {
         matcher: matcher.slice(4),
         parent: '@media (max-width: 992px)',
+        sort: -50
       }: matcher,
       matcher => matcher.startsWith('rmd-') ? {
         matcher: matcher.slice(4),
         parent: '@media (max-width: 767px)',
+        sort: -60
       }: matcher,
       matcher => matcher.startsWith('rsm-') ? {
         matcher: matcher.slice(4),
         parent: '@media (max-width: 420px)',
+        sort: -70
       }: matcher,
       matcher => matcher.startsWith('rxs-') ? {
         matcher: matcher.slice(4),
         parent: '@media (max-width: 360px)',
+        sort: -80
       }: matcher,
     ],
     rules: [
