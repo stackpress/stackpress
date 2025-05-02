@@ -8,4 +8,8 @@ export default function plugin(server: Server) {
   server.on('config', async _ => {
     server.register('database', await connect());
   });
+  //on listen, add populate event
+  server.on('listen', async _ => {
+    server.on('populate', () => import('./populate.js'));
+  });
 };
