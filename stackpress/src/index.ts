@@ -228,6 +228,7 @@ export {
   map,
   set,
   nest,
+  session,
   makeArray,
   makeObject,
   shouldBeAnArray

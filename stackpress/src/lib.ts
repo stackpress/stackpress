@@ -97,6 +97,8 @@ export {
   withUnknownHost
 } from '@stackpress/lib';
 
+export { session } from '@stackpress/lib/Session';
+
 export {
   imToURL,
   imQueryToObject,
