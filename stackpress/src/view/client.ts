@@ -60,6 +60,7 @@ export type {
   PreviewPlugin
 } from './types.js';
 
+import type { LayoutProviderProps } from './types.js';
 import ServerContext, { 
   unknownHost,
   config as defaultServerConfig 
@@ -123,6 +124,9 @@ export {
   matchEvent,
   matchRoute
 } from './server/helpers.js';
+
+export type StackpressProviderProps = LayoutProviderProps;
+export const StackpressProvider = LayoutProvider;
 
 export {
   ServerContext,
