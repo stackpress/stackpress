@@ -63,6 +63,10 @@ export default class SessionServer {
     res: Response, 
     permits: SessionPermission[] = []
   ) {
+    //if no access list, then white list all
+    if (Object.keys(this._access).length === 0) {
+      return true;
+    }
     //get session
     const session = this.load(req);
     //add the current request to the permits in question
