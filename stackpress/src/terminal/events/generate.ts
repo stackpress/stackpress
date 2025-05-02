@@ -21,12 +21,12 @@ export default action(async function GenerateScript(req, res, ctx) {
   //if client config is not set, dont generate client
   if (!ctx.config.has('client')) return;
   //get build
-  const build = ctx.config.path<string>('client.build');
+  let build = ctx.config.path<string>('client.build');
   //if no build path,
   if (!build) {
-    verbose && control.error('Missing build path');
-    res.setError('Missing build path');
-    return;
+    const cwd = ctx.config.path('server.cwd', process.cwd());
+    const name = ctx.config.path('client.package', 'stackpress-client');
+    build = path.join(cwd, 'node_modules', name);
   }
   //get tsconfig
   const tsconfig = ctx.config.path<string>('client.tsconfig');
