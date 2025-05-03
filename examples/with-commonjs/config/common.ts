@@ -11,7 +11,10 @@ export const build = path.join(cwd, '.build');
 export const assets = path.join(cwd, 'public');
 export const modules = path.join(cwd, 'node_modules');
 
-export const seed = process.env.SESSION_SEED || 'abc123';
+export const seed = {
+  database: process.env.DATABASE_SEED || 'abc123',
+  session: process.env.SESSION_SEED || 'abc123'
+};
 
 export const brand = {
   name: 'Stackpress',
@@ -35,7 +38,7 @@ export const client = {
 
 export const database = {
   //used to encrypt/decrypt data in the database
-  seed: seed,
+  seed: seed.database,
   //where to store create and alter table migration files
   // - This is used in conjunction with `revisions`
   // - This doesn't update the database, it simply logs the changes
@@ -89,7 +92,7 @@ export const session = {
   //name of the session cookie
   key: 'session',
   //used to generate the session id
-  seed: seed,
+  seed: seed.session,
   access: {
     ADMIN: [
       //page routes
