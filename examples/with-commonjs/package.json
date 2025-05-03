@@ -28,7 +28,7 @@
     "frui": "0.1.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "stackpress": "0.2.10"
+    "stackpress": "0.2.11"
   },
   "devDependencies": {
     "@stackpress/idea-transformer": "0.5.15",
