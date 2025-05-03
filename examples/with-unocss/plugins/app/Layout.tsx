@@ -2,20 +2,18 @@
 import { useEffect } from 'react';
 import { useLanguage } from 'r22n';
 //views
-import type { 
-  PanelAppProps, 
-  LayoutPanelProps 
-} from 'stackpress/view/client';
+import type { LayoutPanelProps } from 'stackpress/view/client';
 import { 
   unload,
-  useSession, 
   useTheme,
+  useConfig,
   useToggle,
-  NotifyContainer,
+  useSession, 
   LayoutHead,
   LayoutRight,
   LayoutMain,
-  LayoutProvider
+  LayoutProvider,
+  NotifyContainer
 } from 'stackpress/view/client';
 
 export function UserMenu() {
@@ -24,7 +22,7 @@ export function UserMenu() {
   return (
     <section className="flex flex-col px-h-100-0">
       <header>
-        {session.data.id ? (
+        {session?.data?.id ? (
           <div className="px-px-10 px-py-14 theme-tx1 flex items-center">
             <i className="px-fs-26 inline-block px-mr-10 fas fa-user-circle" />
             <span>{session.data.name}</span>
@@ -42,7 +40,7 @@ export function UserMenu() {
         </nav>
       </header>
       <main className="flex-grow bg-t-0">
-        {session.data.id ? (
+        {session?.data?.id ? (
           <div className="px-h-100-0">
             {session.data.roles && session.data.roles.includes('ADMIN') && (
               <nav className="theme-bc-bd0 flex items-center px-px-10 px-py-14 border-b" >
@@ -73,13 +71,16 @@ export function UserMenu() {
   );
 }
 
-export function PanelApp(props: PanelAppProps) {
-  const { children } = props;
+export function LayoutApp({ children }: { children: React.ReactNode }) {
   const [ right, toggleRight ] = useToggle();
+  const config = useConfig();
   const { theme, toggle: toggleTheme } = useTheme();
   return (
     <div className={`${theme} relative overflow-hidden px-w-100-0 px-h-100-0 theme-bg-bg0 theme-tx1`}>
       <LayoutHead  
+        base={config.path('brand.base', '/')}
+        logo={config.path('brand.logo', '/icon.png')}
+        brand={config.path('brand.name', 'Stackpress')}
         theme={theme}
         toggleRight={toggleRight} 
         toggleTheme={toggleTheme} 
@@ -96,9 +97,6 @@ export default function LayoutPanel(props: LayoutPanelProps) {
     session,
     request,
     response,
-    menu,
-    left,
-    right,
     children 
   } = props;
   //unload flash message
@@ -110,9 +108,7 @@ export default function LayoutPanel(props: LayoutPanelProps) {
       request={request}
       response={response}
     >
-      <PanelApp left={left} right={right} menu={menu}>
-        {children}
-      </PanelApp>
+      <LayoutApp>{children}</LayoutApp>
       <NotifyContainer />
     </LayoutProvider>
   );

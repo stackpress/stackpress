@@ -41,7 +41,7 @@ export default function LayoutHead(props: LayoutHeadProps) {
               {logo && <img src={logo} alt={brand} className="logo" />}
               {brand && <span className="brand">{brand}</span>}
             </a>
-          ): brand || logo ? (
+          ): (brand || logo) ? (
             <span>
               {logo && <img src={logo} alt={brand} className="logo" />}
               {brand && <span className="brand">{brand}</span>}
