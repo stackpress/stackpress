@@ -132,6 +132,9 @@ dist
 packages/stackpress
 
 .DS_Store
+.env.build
+.env.develop
+.env.preview
 cjs
 esm
 examples/*/.build
