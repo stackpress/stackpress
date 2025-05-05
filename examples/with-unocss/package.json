@@ -14,7 +14,7 @@
     "build:app": "stackpress build -b config/build -v",
     "develop": "dotenv -e .env -- stackpress serve -b config/develop -v",
     "emit": "dotenv -e .env -- stackpress emit",
-    "generate": "stackpress generate -v",
+    "generate": "stackpress generate -b config/develop -v",
     "migrate": "dotenv -e .env -- stackpress migrate -b config/develop -v",
     "populate": "dotenv -e .env -- stackpress populate -b config/develop -v",
     "preview": "dotenv -e .env -- stackpress serve -b config/preview -v",
@@ -25,14 +25,14 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.2.17",
-    "@stackpress/inquire-pglite": "0.5.16",
+    "@stackpress/inquire-pglite": "0.5.17",
     "frui": "0.1.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "stackpress": "0.2.12"
+    "stackpress": "0.2.14"
   },
   "devDependencies": {
-    "@stackpress/idea-transformer": "0.5.16",
+    "@stackpress/idea-transformer": "0.5.17",
     "@types/chai": "5.2.1",
     "@types/mocha": "10.0.10",
     "@types/node": "22.14.1",
