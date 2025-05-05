@@ -15,8 +15,5 @@ export default function plugin(server: Server) {
   });
   server.on('route', async _ => {
     server.all('/', '@/plugins/app/views/home', -100);
-    server.get('/profile', async (req, res, ctx) => {
-      await ctx.emit('profile-search', req, res);
-    })
   });
 };
