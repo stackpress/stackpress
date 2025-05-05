@@ -4,6 +4,29 @@ import type Engine from '@stackpress/inquire/Engine';
 import type Model from '../schema/spec/Model.js';
 import type Column from '../schema/spec/Column.js';
 
+export type {
+  Field,
+  Relation,
+  ForeignKey,
+  AlterFields,
+  AlterKeys,
+  AlterUnqiues,
+  AlterPrimaries,
+  AlterForeignKeys,
+  StrictValue,
+  StrictOptValue,
+  FlatValue,
+  Value,
+  Resolve,
+  Reject,
+  Order,
+  Join,
+  Dialect,
+  QueryObject,
+  Transaction,
+  Connection
+} from '@stackpress/inquire/types';
+
 export type SearchParams = {
   q?: string,
   columns?: string[],

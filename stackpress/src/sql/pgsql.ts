@@ -1,5 +1,8 @@
 import actions, { Actions } from './actions/index.js';
 
+//@ts-ignore
+export type { Results, Resource, Connector } from '@stackpress/inquire-pg';
+
 export type {
   Field,
   Relation,
@@ -20,13 +23,7 @@ export type {
   Dialect,
   QueryObject,
   Transaction,
-  Connection
-} from '@stackpress/inquire';
-
-//@ts-ignore
-export type { Results, Resource, Connector } from '@stackpress/inquire-pg';
-
-export type {
+  Connection,
   SearchParams,
   SearchJoin,
   SearchJoinMap,
