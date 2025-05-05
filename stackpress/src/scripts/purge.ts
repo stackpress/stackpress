@@ -6,8 +6,14 @@ import type Server from '@stackpress/ingest/Server';
 import type { ClientPlugin } from '../client/types.js';
 //sql
 import { sequence } from '../sql/helpers.js';
+//terminal
+import Terminal from '../terminal/Terminal.js';
 
-export default async function purge(server: Server<any, any, any>, database: Engine) {
+export default async function purge(
+  server: Server<any, any, any>, 
+  database: Engine,
+  cli?: Terminal
+) {
   //get client
   const client = server.plugin<ClientPlugin>('client') || {};
   //get models
@@ -25,10 +31,13 @@ export default async function purge(server: Server<any, any, any>, database: Eng
   }
 
   if (queries.length) {
+    cli?.verbose && cli.control.system('Purging database...');
     await database.transaction(async connection => {
       for (const query of queries) {
+        cli?.verbose && cli.control.info(query.query);
         await connection.query(query);
       }
     });
+    cli?.verbose && cli.control.success('Database Purged.');
   }
 };

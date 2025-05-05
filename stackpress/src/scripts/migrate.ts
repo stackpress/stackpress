@@ -12,7 +12,10 @@ import { sequence } from '../sql/helpers.js';
 //plugins
 import create from '../sql/schema.js';
 
-export default async function migrate(server: Server<any, any, any>, database: Engine) {
+export default async function migrate(
+  server: Server<any, any, any>, 
+  database: Engine
+) {
   //get config
   const root = server.config.path<string>('client.revisions');
   const { migrations } = server.config<DatabaseConfig>('database') || {}; 

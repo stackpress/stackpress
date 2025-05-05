@@ -2,7 +2,10 @@
 import type Server from '@stackpress/ingest/Server';
 import Terminal from '@stackpress/lib/Terminal';
 
-export default async function emit(server: Server<any, any, any>, skip = 2) {
+export default async function emit(
+  server: Server<any, any, any>, 
+  skip = 2
+) {
   //from the cli
   const terminal = new Terminal(process.argv.slice(skip));
   //server emit

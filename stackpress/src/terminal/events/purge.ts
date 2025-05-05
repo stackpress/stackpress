@@ -16,9 +16,7 @@ export default action(async function PurgeScript(_req, res, ctx) {
     res.setError('No database found');
     return;
   }
-  cli?.verbose && cli.control.system('Purging database...');
-  await purge(ctx, database);
+  await purge(ctx, database, cli);
   //OK
-  cli?.verbose && cli.control.success('Database Purged.');
   res.setStatus(200);
 });

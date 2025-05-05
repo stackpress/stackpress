@@ -16,9 +16,7 @@ export default action(async function PushScript(_req, res, ctx) {
     res.setError('No database found');
     return;
   }
-  cli?.verbose && cli.control.system('Updating database...');
-  await push(ctx, database);
+  await push(ctx, database, cli);
   //OK
-  cli?.verbose && cli.control.success('Database Updated.');
   res.setStatus(200);
 });

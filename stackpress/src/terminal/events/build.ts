@@ -16,7 +16,7 @@ export default action(async function BuildScript(_req, res, ctx) {
   const build = ctx.config.path('server.build', path.join(cwd, '.build'));
   //make server, client and styles
   cli?.verbose && cli.control.system('Building server, client and styles...');
-  await buildScript(ctx);
+  await buildScript(ctx, cli);
   //make a package.json
   cli?.verbose && cli.control.system('Making package.json...');
   buildPackageJSON(cwd, build, ctx.loader.fs);

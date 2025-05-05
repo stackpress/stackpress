@@ -16,9 +16,7 @@ export default action(async function DropScript(_req, res, ctx) {
     res.setError('No database found');
     return;
   }
-  cli?.verbose && cli.control.system('Dropping database...');
-  await drop(ctx, database);
+  await drop(ctx, database, cli);
   //OK
-  cli?.verbose && cli.control.success('Database Dropped.');
   res.setStatus(200);
 });

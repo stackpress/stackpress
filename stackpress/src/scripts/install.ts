@@ -4,12 +4,17 @@ import type Engine from '@stackpress/inquire/Engine';
 import type Server from '@stackpress/ingest/Server';
 //client
 import type { ClientPlugin, ClientConfig } from '../client/types.js';
-//schema
 import Revisions from '../client/Revisions.js';
 //sql
 import { sequence } from '../sql/helpers.js';
+//terminal
+import Terminal from '../terminal/Terminal.js';
 
-export default async function install(server: Server<any, any, any>, database: Engine) {
+export default async function install(
+  server: Server<any, any, any>, 
+  database: Engine,
+  cli?: Terminal
+) {
   //get config and client
   const config = server.config<ClientConfig>('client') || {};
   const client = server.plugin<ClientPlugin>('client') || {};
@@ -41,14 +46,17 @@ export default async function install(server: Server<any, any, any>, database: E
     }
   }
   if (queries.length) {
+    cli?.verbose && cli.control.system('Installing...');
     //start a new transaction
     await database.transaction(async connection => {
       //loop through all the queries
       for (const query of queries) {
         //execute the query
+        cli?.verbose && cli.control.info(query.query);
         await connection.query(query);
       }
     });
+    cli?.verbose && cli.control.success('Installation Complete.');
   }
 };
 

@@ -16,9 +16,7 @@ export default action(async function InstallScript(_req, res, ctx) {
     res.setError('No database found');
     return;
   }
-  cli?.verbose && cli.control.system('Installing...');
-  await install(ctx, database);
+  await install(ctx, database, cli);
   //OK
-  cli?.verbose && cli.control.success('Installation Complete.');
   res.setStatus(200);
 });

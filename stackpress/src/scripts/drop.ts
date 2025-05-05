@@ -6,10 +6,13 @@ import type Server from '@stackpress/ingest/Server';
 import type { ClientPlugin } from '../client/types.js';
 //sql
 import { sequence } from '../sql/helpers.js';
+//terminal
+import Terminal from '../terminal/Terminal.js';
 
 export default async function drop(
   server: Server<any, any, any>, 
-  database: Engine
+  database: Engine,
+  cli?: Terminal
 ) {
   //get client
   const client = server.plugin<ClientPlugin>('client') || {};
@@ -24,10 +27,13 @@ export default async function drop(
     queries.push(database.dialect.drop(model.snake));
   }
   if (queries.length) {
+    cli?.verbose && cli.control.system('Dropping database...');
     await database.transaction(async connection => {
       for (const query of queries) {
+        cli?.verbose && cli.control.info(query.query);
         await connection.query(query);
       }
     });
+    cli?.verbose && cli.control.success('Database Dropped.');
   }
 };

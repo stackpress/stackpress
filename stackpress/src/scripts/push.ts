@@ -8,10 +8,16 @@ import type { ClientConfig } from '../client/types.js';
 import Revisions from '../client/Revisions.js';
 //sql
 import { sequence } from '../sql/helpers.js';
+//terminal
+import Terminal from '../terminal/Terminal.js';
 //plugins
 import create from '../sql/schema.js';
 
-export default async function push(server: Server<any, any, any>, database: Engine) {
+export default async function push(
+  server: Server<any, any, any>, 
+  database: Engine,
+  cli?: Terminal
+) {
   //get config
   const config = server.config<ClientConfig>('client') || {}; 
   //if there is a revisions folder
@@ -25,8 +31,10 @@ export default async function push(server: Server<any, any, any>, database: Engi
   const from = await revisions.last(-1);
   //get the last revision
   const to = await revisions.last();
+  cli?.verbose && cli.control.system('Updating database...');
   //if no previous revision
   if (!from && to) {
+    cli?.verbose && cli.control.system('  with DROP/CREATE ...');
     //get models
     const models = Array.from(to.registry.model.values());
     //there's an order to creating and dropping tables
@@ -51,11 +59,13 @@ export default async function push(server: Server<any, any, any>, database: Engi
         //loop through all the queries
         for (const query of queries) {
           //execute the query
+          cli?.verbose && cli.control.info(query.query);
           await connection.query(query);
         }
       });
     }
   } else if (from && to) {
+    cli?.verbose && cli.control.system('  with ALTER ...');
     //create a registry from the history
     const previous = Array.from(from.registry.model.values()).map(
       model => create(model)
@@ -103,9 +113,11 @@ export default async function push(server: Server<any, any, any>, database: Engi
         //loop through all the queries
         for (const query of queries) {
           //execute the query
+          cli?.verbose && cli.control.info(query.query);
           await connection.query(query);
         }
       });
     }
   }
+  cli?.verbose && cli.control.success('Database Updated.');
 };

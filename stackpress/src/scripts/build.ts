@@ -1,9 +1,15 @@
 //reactus
+import type { BuildStatus } from 'reactus/types';
 import * as reactus from 'reactus';
 //stackpress
 import type Server from '@stackpress/ingest/Server';
+//terminal
+import Terminal from '../terminal/Terminal.js';
 
-export default async function build(server: Server<any, any, any>) {
+export default async function build(
+  server: Server<any, any, any>,
+  cli?: Terminal
+) {
   //get current working directory
   const cwd = server.config.path('server.cwd', process.cwd());
   //vite plugins
@@ -37,17 +43,28 @@ export default async function build(server: Server<any, any, any>) {
     return [];
   }
 
-  const responses = [
-    ...clientPath ? await engine.buildAllClients(): [],
-    ...assetPath ? await engine.buildAllAssets(): [],
-    ...pagePath ? await engine.buildAllPages(): []
-  ].map(response => {
+  const responses: BuildStatus[] = [];
+  if (clientPath) {
+    cli?.verbose && cli.control.system('Building clients...');
+    responses.push(await engine.buildAllClients() as BuildStatus);
+    cli?.verbose && cli.control.success('Clients built.');
+  }
+  if (assetPath) {
+    cli?.verbose && cli.control.system('Building assets...');
+    responses.push(await engine.buildAllAssets() as BuildStatus);
+    cli?.verbose && cli.control.success('Assets built.');
+  }
+  if (pagePath) {
+    cli?.verbose && cli.control.system('Building pages...');
+    responses.push(await engine.buildAllPages() as BuildStatus);
+    cli?.verbose && cli.control.success('Pages built.');
+  }
+
+  return responses.map(response => {
     const results = response.results;
     if (typeof results?.contents === 'string') {
       results.contents = results.contents.substring(0, 100) + ' ...';
     }
     return results;
   });
-
-  return responses;
 };
