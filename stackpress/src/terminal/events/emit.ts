@@ -9,7 +9,6 @@ export default action(async function EmitScript(req, res, ctx) {
   const label = ctx.config.path('cli.label', '');
   const verbose = req.data.path('verbose', false) || req.data.path('v', false);
   const control = terminalControls(label);
-  console.log(process.argv)
   if (process.argv.length < 4) {
     verbose && control.error('Missing event name');
     res.setError('Missing event name');
