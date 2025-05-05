@@ -4083,10 +4083,10 @@ react@19.1.0:
   resolved "https://registry.yarnpkg.com/react/-/react-19.1.0.tgz#926864b6c48da7627f004795d6cce50e90793b75"
   integrity sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==
 
-reactus@0.2.15:
-  version "0.2.15"
-  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.2.15.tgz#33c359a84664a3580ac2ad2147206d5ef8d477bb"
-  integrity sha512-WCovro+4rRTHy9PJ8BWoPX0hq8uuwlJv6wpAuyCBGLqr+CNR5+Y19SxyCsWroZ7rLjvnUvxfbrLaJXm84iMxOQ==
+reactus@0.2.16:
+  version "0.2.16"
+  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.2.16.tgz#a0313521c025c0de9a453016174f74ab1fb85919"
+  integrity sha512-09/+vgTnGbwc22QBkGZt3gcQNVZ2ZMsD/cStORO4E6woO6HNYSNgi8Djv8BpnmLhTdgYoFcHVV551Qtjl2t09g==
   dependencies:
     "@stackpress/lib" "0.5.17"
 
