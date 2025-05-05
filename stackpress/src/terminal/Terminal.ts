@@ -29,10 +29,15 @@ export default class StackpressTerminal extends Terminal {
    */
   public constructor(args: string[], server: Server<any, any, any>) {
     super(args);
+    //set server
     this.server = server;
+    //set flags
     this.verbose = this.expect<boolean>([ 'verbose', 'v' ], false);
     this.config = this.expect<string|null>([ 'bootstrap', 'b' ], null);
+    //register terminal plugin
     this.server.register('cli', this);
+    //set brand
+    this._control.brand = this.server.config.path('cli.label', '');
   }
 
   /**
@@ -40,8 +45,6 @@ export default class StackpressTerminal extends Terminal {
    * (called in bin.js)
    */
   public async bootstrap() {
-    //set control brand
-    this._control.brand = this.server.config.path('cli.label', '');
     //initialize the plugins
     await this.server.bootstrap();
     //bootstrap by events
