@@ -2,7 +2,8 @@
 import path from 'node:path';
 import { objectFromArgs, isObject } from 'stackpress/lib';
 import { server as http } from 'stackpress/http';
-import Terminal from 'stackpress/Terminal';
+import { Terminal } from 'stackpress/terminal';
+import events from 'stackpress/terminal/events';
 
 /**
  * Determines the bootstrap pathname
@@ -52,6 +53,8 @@ async function getTerminal(args: string[]) {
     //bootstrap and get the server
     //(the bootstrap should already set the config)
     const server = await bootstrap();
+    //add terminal events
+    server.use(events());
     //now create a new terminal interface
     return new Terminal(args, server);
   }
@@ -62,6 +65,8 @@ async function getTerminal(args: string[]) {
   server.config.set(isObject(bootstrap) ? bootstrap : {});
   //now create a new terminal interface
   const terminal = new Terminal(args, server);
+  //add terminal events
+  server.use(events());
   //do the default bootstrap
   return await terminal.bootstrap();
 }
