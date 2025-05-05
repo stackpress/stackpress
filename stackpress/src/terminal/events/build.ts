@@ -2,27 +2,26 @@
 import path from 'node:path';
 //stackpress
 import type { FileSystem } from '@stackpress/lib/types';
-import { terminalControls } from '@stackpress/lib/Terminal';
 import { action } from '@stackpress/ingest/Server';
 //scripts
 import buildScript from '../../scripts/build.js';
+//terminal
+import type { CLIPlugin } from '../types.js';
 
-export default action(async function BuildScript(req, res, ctx) {
-  //cli setup
-  const label = ctx.config.path('cli.label', '');
-  const verbose = req.data.path('verbose', false) || req.data.path('v', false);
-  const control = terminalControls(label);
+export default action(async function BuildScript(_req, res, ctx) {
+  //get terminal
+  const cli = ctx.plugin<CLIPlugin>('cli');
   //get config
   const cwd = ctx.config.path('server.cwd', process.cwd());
   const build = ctx.config.path('server.build', path.join(cwd, '.build'));
   //make server, client and styles
-  verbose && control.system('Building server, client and styles...');
+  cli?.verbose && cli.control.system('Building server, client and styles...');
   await buildScript(ctx);
   //make a package.json
-  verbose && control.system('Making package.json...');
+  cli?.verbose && cli.control.system('Making package.json...');
   buildPackageJSON(cwd, build, ctx.loader.fs);
   //OK
-  verbose && control.success('Build Complete.');
+  cli?.verbose && cli.control.success('Build Complete.');
   res.setStatus(200);
 });
 

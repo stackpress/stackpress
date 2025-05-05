@@ -1,25 +1,24 @@
 //stackpress
 import type Engine from '@stackpress/inquire/Engine';
-import { terminalControls } from '@stackpress/lib/Terminal';
 import { action } from '@stackpress/ingest/Server';
 //scripts
 import migrate from '../../scripts/migrate.js';
+//terminal
+import type { CLIPlugin } from '../types.js';
 
-export default action(async function MigrateScript(req, res, ctx) {
-  //cli setup
-  const label = ctx.config.path('cli.label', '');
-  const verbose = req.data.path('verbose', false) || req.data.path('v', false);
-  const control = terminalControls(label);
+export default action(async function MigrateScript(_req, res, ctx) {
+  //get terminal
+  const cli = ctx.plugin<CLIPlugin>('cli');
   //get database
   const database = ctx.plugin<Engine>('database');
   if (!database) {
-    verbose && control.error('No database found');
+    cli?.verbose && cli.control.error('No database found');
     res.setError('No database found');
     return;
   }
-  verbose && control.system('Creating migration file...');
+  cli?.verbose && cli.control.system('Creating migration file...');
   await migrate(ctx, database);
   //OK
-  verbose && control.success('Migration file created.');
+  cli?.verbose && cli.control.success('Migration file created.');
   res.setStatus(200);
 });

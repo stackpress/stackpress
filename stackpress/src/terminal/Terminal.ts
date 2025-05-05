@@ -1,10 +1,28 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
-import Terminal, { terminalControls } from '@stackpress/lib/Terminal';
+import Terminal from '@stackpress/lib/Terminal';
 
 export default class StackpressTerminal extends Terminal {
   //the server
   public readonly server: Server<any, any, any>;
+  //whether to show output
+  public readonly verbose: boolean;
+  //the config pathname
+  public readonly config: string|null;
+
+  /**
+   * Returns the terminal branding
+   */
+  public get brand() {
+    return this.control.brand;
+  }
+
+  /**
+   * Returns the current working directory
+   */
+  public get cwd() {
+    return this.server.loader.cwd;
+  }
 
   /**
    * Preloads the input and output settings
@@ -12,6 +30,9 @@ export default class StackpressTerminal extends Terminal {
   public constructor(args: string[], server: Server<any, any, any>) {
     super(args);
     this.server = server;
+    this.verbose = this.expect<boolean>([ 'verbose', 'v' ], false);
+    this.config = this.expect<string|null>([ 'bootstrap', 'b' ], null);
+    this.server.register('cli', this);
   }
 
   /**
@@ -19,10 +40,10 @@ export default class StackpressTerminal extends Terminal {
    * (called in bin.js)
    */
   public async bootstrap() {
+    //set control brand
+    this._control.brand = this.server.config.path('cli.label', '');
     //initialize the plugins
     await this.server.bootstrap();
-    //add terminal plugin
-    this.server.register('cli', this);
     //bootstrap by events
     await this.server.resolve('config');
     await this.server.resolve('listen');
@@ -40,9 +61,7 @@ export default class StackpressTerminal extends Terminal {
     const status = await this.server.emit(this.command, request, response);
     const verbose = this.expect<boolean>(['verbose', 'v'], false);
     if (status.code === 404 && this.command !== 'serve' && verbose) {
-      const label = this.server.config.path('cli.label', '');
-      const control = terminalControls(label);
-      control.error(`Command "${this.command}" not found.`);
+      this._control.error(`Command "${this.command}" not found.`);
     }
     return status;
   }

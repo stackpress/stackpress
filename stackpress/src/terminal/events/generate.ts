@@ -5,21 +5,18 @@ import { Project, IndentationText } from 'ts-morph';
 import prettier from 'prettier';
 //stackpress
 import FileLoader from '@stackpress/lib/FileLoader';
-import { terminalControls } from '@stackpress/lib/Terminal';
 import Transformer from '@stackpress/idea-transformer/Transformer';
 import { action } from '@stackpress/ingest/Server';
 //types
 import type { IdeaProjectProps } from '../../types/index.js';
 //terminal
-import type Terminal from '../Terminal.js';
+import type { CLIPlugin } from '../types.js';
 
 export default action(async function GenerateScript(req, res, ctx) {
-  //cli setup
-  const label = ctx.config.path('cli.label', '');
-  const verbose = req.data.path('verbose', false) || req.data.path('v', false);
-  const control = terminalControls(label);
   //if client config is not set, dont generate client
   if (!ctx.config.has('client')) return;
+  //get terminal
+  const cli = ctx.plugin<CLIPlugin>('cli');
   //get build
   let build = ctx.config.path<string>('client.build');
   //if no build path,
@@ -32,18 +29,10 @@ export default action(async function GenerateScript(req, res, ctx) {
   const tsconfig = ctx.config.path<string>('client.tsconfig');
   //if no tsconfig path,
   if (!tsconfig) {
-    verbose && control.error('Missing tsconfig path');
+    cli?.verbose && cli.control.error('Missing tsconfig path');
     res.setError('Missing tsconfig path');
     return;
   }
-  //get terminal
-  const cli = ctx.plugin<Terminal>('cli');
-  if (!cli) {
-    verbose && control.error('Can only generate from the command line.');
-    res.setError('Can only generate from the command line.');
-    return;
-  }
-
   //determine the input schema.idea
   const defaultPath = path.join(ctx.loader.cwd, 'schema.idea');
   //first try to get the idea from the config
@@ -58,20 +47,20 @@ export default action(async function GenerateScript(req, res, ctx) {
   const transformer = new Transformer<IdeaProjectProps>(idea, loader);
   
   //register all the idea plugins first
-  verbose && control.system('Looking up ideas...');
+  cli?.verbose && cli.control.system('Looking up ideas...');
   await ctx.resolve('idea', { transformer });
   //make a new project
   const project = createProject(build, tsconfig);
   //create the directory
   const directory = project.createDirectory(build);
   //transform (generate the code)
-  verbose && control.system('Generating ideas...');
+  cli?.verbose && cli.control.system('Generating ideas...');
   await transformer.transform({ cli, project: directory });
   //get the output language
   const lang = ctx.config.path<string>('client.lang', 'js');
   //if you want ts, tsx files
   if (lang === 'ts') {
-    verbose && control.system('Converting to typescript...');
+    cli?.verbose && cli.control.system('Converting to typescript...');
     //save first
     project.saveSync();
     //get source files
@@ -89,12 +78,12 @@ export default action(async function GenerateScript(req, res, ctx) {
     await ctx.emit('transformed', req, res);
   //if you want js, d.ts files
   } else {
-    verbose && control.system('Converting to javascript...');
+    cli?.verbose && cli.control.system('Converting to javascript...');
     await project.emit();
     await ctx.emit('transformed', req, res);
   }
   //OK
-  verbose && control.success('Ideas were generated.');
+  cli?.verbose && cli.control.success('Ideas were generated.');
   res.setStatus(200);
 });
 

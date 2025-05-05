@@ -1,17 +1,16 @@
 //stackpress
 import type Engine from '@stackpress/inquire/Engine';
-import { terminalControls } from '@stackpress/lib/Terminal';
 import { action } from '@stackpress/ingest/Server';
+//terminal
+import type { CLIPlugin } from '../types.js';
 
-export default action(async function QueryScript(req, res, ctx) {
+export default action(async function QueryScript(_req, res, ctx) {
   //cli setup
-  const label = ctx.config.path('cli.label', '');
-  const verbose = req.data.path('verbose', false) || req.data.path('v', false);
-  const control = terminalControls(label);
+  const cli = ctx.plugin<CLIPlugin>('cli');
   //get database
   const database = ctx.plugin<Engine>('database');
   if (!database) {
-    verbose && control.error('No database found');
+    cli?.verbose && cli.control.error('No database found');
     res.setError('No database found');
     return;
   }
