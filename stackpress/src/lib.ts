@@ -84,6 +84,7 @@ export {
   map,
   set,
   nest,
+  control,
   formDataToObject,
   isObject,
   makeArray,
@@ -93,11 +94,12 @@ export {
   objectFromQuery,
   objectFromFormData,
   shouldBeAnArray,
-  terminalControls,
   withUnknownHost
 } from '@stackpress/lib';
 
 export { session } from '@stackpress/lib/Session';
+
+export { Transformer } from '@stackpress/idea-transformer';
 
 export {
   imToURL,

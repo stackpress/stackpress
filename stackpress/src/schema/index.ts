@@ -22,6 +22,8 @@ import Model from './spec/Model.js';
 import assert from './assert.js';
 import Registry from './Registry.js';
 
+export { Transformer, control } from '@stackpress/idea-transformer';
+
 export {
   generators,
   camelize,
