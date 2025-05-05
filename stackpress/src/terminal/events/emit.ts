@@ -9,13 +9,14 @@ export default action(async function EmitScript(req, res, ctx) {
   const label = ctx.config.path('cli.label', '');
   const verbose = req.data.path('verbose', false) || req.data.path('v', false);
   const control = terminalControls(label);
-  if (process.argv.length < 5) {
+  console.log(process.argv)
+  if (process.argv.length < 4) {
     verbose && control.error('Missing event name');
     res.setError('Missing event name');
     return;
   }
   //emit event
-  verbose && control.system(`Emitting "${process.argv[4]}"...`);
-  await emit(ctx, 4);
+  verbose && control.system(`Emitting "${process.argv[3]}"...`);
+  await emit(ctx, 3);
   res.setStatus(200);
 });
