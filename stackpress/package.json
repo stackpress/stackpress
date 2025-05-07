@@ -480,6 +480,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "2.2.2",
+    "@stackpress/idea-transformer": "0.5.17",
     "@stackpress/ingest": "0.5.17",
     "@stackpress/inquire": "0.5.17",
     "@stackpress/lib": "0.5.17",
@@ -494,7 +495,6 @@
     "universal-cookie": "8.0.1"
   },
   "devDependencies": {
-    "@stackpress/idea-transformer": "0.5.17",
     "@types/mustache": "4.2.5",
     "@types/nodemailer": "6.4.17",
     "@types/node": "22.9.3",

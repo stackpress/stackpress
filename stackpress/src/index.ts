@@ -222,6 +222,7 @@ export {
   ExpressEmitter,
   RouteEmitter,
   Terminal,
+  Transformer,
   Reflection,
   Status,
   codes,

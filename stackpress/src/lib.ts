@@ -99,6 +99,8 @@ export {
 
 export { session } from '@stackpress/lib/Session';
 
+export { Transformer } from '@stackpress/idea-transformer';
+
 export {
   imToURL,
   imQueryToObject,
