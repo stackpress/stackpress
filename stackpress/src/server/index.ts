@@ -33,7 +33,8 @@ export type {
   WhatwgRouter,
   WhatwgServer,
   WhatwgServerOptions,
-  WhatwgAction
+  WhatwgAction,
+  Body
 } from '@stackpress/ingest/types';
 
 export type { ServerConfig } from './types.js';
