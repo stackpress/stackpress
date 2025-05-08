@@ -12,16 +12,18 @@ export function authorize(req: Request, res: Response) {
     return false;
   }
   const [ , token ] = authorization.split(' ');
-  if (!token.trim().length) {
+  if (!token || !token.trim().length) {
     unauthorized(res);
     return false;
   }
   const [ id, secret ] = token.split(':');
-  if (!id.trim().length) {
+  if (!id || !id.trim().length) {
     unauthorized(res);
     return false;
   }
-  if (req.method.toUpperCase() !== 'GET' && !secret?.trim().length) {
+  if (req.method.toUpperCase() !== 'GET' 
+    && (!secret || !secret?.trim().length)
+  ) {
     unauthorized(res);
     return false;
   }
