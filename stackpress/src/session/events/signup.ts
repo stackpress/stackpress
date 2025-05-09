@@ -15,7 +15,7 @@ export default async function AuthSignup(
   ctx: Server
 ) {
   //get the roles from the config
-  const roles = ctx.config<string[]>('session', 'auth', 'roles') || [];
+  const roles = ctx.config.path<string[]>('session.auth.roles', []);
   //get the database engine 
   const engine = ctx.plugin<DatabasePlugin>('database');
   //get the client

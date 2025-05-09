@@ -94,6 +94,8 @@ export const email = {
 export const auth = {
   //base route for signin, signout, signup pages
   base: '/auth',
+  //on signin (or already signed in)
+  redirect: '/',
   //two factor authentication settings
   '2fa': {},
   //captcha settings

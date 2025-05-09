@@ -34,13 +34,14 @@ export default function plugin(ctx: Server) {
   ctx.on('route', (_req, _res, ctx) => {
     //if no auth config, disable auth routes
     if (!ctx.config.get('auth')) return;
-    ctx.import.all('/auth/signin', () => import('./pages/signin.js'));
-    ctx.import.all('/auth/signin/:type', () => import('./pages/signin.js'));
-    ctx.import.all('/auth/signup', () => import('./pages/signup.js'));
-    ctx.import.all('/auth/signout', () => import('./pages/signout.js'));
+    const base = ctx.config.path('auth.base', '/auth');
+    ctx.import.all(`${base}/signin`, () => import('./pages/signin.js'));
+    ctx.import.all(`${base}/signin/:type`, () => import('./pages/signin.js'));
+    ctx.import.all(`${base}/signup`, () => import('./pages/signup.js'));
+    ctx.import.all(`${base}/signout`, () => import('./pages/signout.js'));
     
-    ctx.view.all('/auth/signin', 'stackpress/esm/session/views/signin', -100);
-    ctx.view.all('/auth/signin/:type', 'stackpress/esm/session/views/signin', -100);
-    ctx.view.all('/auth/signup', 'stackpress/esm/session/views/signup', -100);
+    ctx.view.all(`${base}/signin`, 'stackpress/esm/session/views/signin', -100);
+    ctx.view.all(`${base}/signin/:type`, 'stackpress/esm/session/views/signin', -100);
+    ctx.view.all(`${base}/signup`, 'stackpress/esm/session/views/signup', -100);
   });
 };

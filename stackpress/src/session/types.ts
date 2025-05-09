@@ -73,13 +73,14 @@ export type AuthConfigProps = {
 //ie. ctx.config<AuthConfig>('auth')
 export type AuthConfig = {
   base?: string,
-  '2fa': {},
-  captcha: {},
-  roles: string[],
-  username: boolean,
-  email: boolean,
-  phone: boolean,
-  password: {
+  redirect?: string,
+  '2fa'?: {},
+  captcha?: {},
+  roles?: string[],
+  username?: boolean,
+  email?: boolean,
+  phone?: boolean,
+  password?: {
     min: number,
     max: number,
     upper: boolean,

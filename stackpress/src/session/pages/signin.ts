@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/Server';
 //view
 import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //session
-import type { AuthConfig, SigninType, SessionPlugin } from '../types.js';
+import type { AuthConfig, SessionPlugin } from '../types.js';
 
 export default async function SignInPage(
   req: Request, 
@@ -35,16 +35,16 @@ export default async function SignInPage(
   res.data.set('auth', { 
     base: auth.base || '/auth',
     roles: auth.roles || [], 
-    username: auth.username, 
-    email: auth.email, 
-    phone: auth.phone, 
-    password: auth.password
+    username: !!auth.username, 
+    email: !!auth.email, 
+    phone: !!auth.phone, 
+    password: auth.password || {}
   });
   // /auth/signin/:type
-  const { redirect_uri: redirect = '/' } = req.data<{ 
-    type: SigninType, 
-    redirect_uri: string 
-  }>();
+  const redirect = req.data.path(
+    'redirect_uri', 
+    ctx.config.path('auth.redirect', '/')
+  );
   //get the session
   const session = ctx.plugin<SessionPlugin>('session');
   const me = session.load(req);

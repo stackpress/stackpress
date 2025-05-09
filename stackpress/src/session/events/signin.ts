@@ -9,7 +9,7 @@ import type { ClientPlugin } from '../../client/types.js';
 //sql
 import type { DatabasePlugin } from '../../sql/types.js';
 //session
-import type { SessionPlugin } from '../types.js';
+import type { SessionPlugin, SigninType } from '../types.js';
 import { signin } from '../actions.js';
 
 export default async function AuthSignin(
@@ -18,12 +18,13 @@ export default async function AuthSignin(
   ctx: Server
 ) {
   //get the type of signin username, email, phone
-  const type = req.data('type') || 'username';
+  const type = req.data.path('type', 'username') as SigninType;
   //get the database engine 
   const engine = ctx.plugin<DatabasePlugin>('database');
   //get the client
   const client = ctx.plugin<ClientPlugin>('client');
   //get the session seed
+  //Q: Do I want to error if no seed?
   const seed = ctx.config.path('session.seed', 'abc123');
   //get the user from the database
   const response = await signin(type, req.data(), seed, engine, client);

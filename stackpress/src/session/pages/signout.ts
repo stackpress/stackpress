@@ -20,5 +20,8 @@ export default async function SignOutPage(
     return;
   }
   //redirect
-  res.redirect(req.data('redirect') || '/');
+  res.redirect(req.data.path(
+    'redirect_uri', 
+    ctx.config.path('auth.redirect', '/')
+  ));
 };

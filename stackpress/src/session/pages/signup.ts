@@ -33,13 +33,14 @@ export default async function SignupPage(
     favicon: brand.favicon || '/favicon.ico',
   });
   res.data.set('auth', { 
+    base: auth.base || '/auth',
     roles: auth.roles || [], 
-    username: auth.username, 
-    email: auth.email, 
-    phone: auth.phone, 
-    password: auth.password
+    username: !!auth.username, 
+    email: !!auth.email, 
+    phone: !!auth.phone, 
+    password: auth.password || {}
   });
-  const redirect = req.data<string>('redirect') || '/auth/signin';
+  const redirect = req.data.path('redirect_uri', `${auth.base}/signin`);
   //get the session
   const session = ctx.plugin<SessionPlugin>('session');
   const me = session.load(req);
