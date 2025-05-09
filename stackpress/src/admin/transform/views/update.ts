@@ -128,7 +128,7 @@ export default function removePage(directory: Directory, _registry: Registry, mo
           `) : (`
             <${column.title}FieldControl 
               className="control"
-              name="${column.name}"
+              name="${column.name}${column.multiple ? '[]' : ''}"
               value={input.${column.name}} 
               error={errors.${column.name}?.toString()} 
             />

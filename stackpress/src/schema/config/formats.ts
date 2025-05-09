@@ -146,7 +146,7 @@ export default {
     "name": "List",
     "attributes": {}
   },
-  "tags": {
+  "taglist": {
     "name": "Taglist",
     "attributes": {}
   },
