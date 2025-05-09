@@ -363,6 +363,7 @@
     "./tsconfig/cjs": "./tsconfig/cjs.json",
     "./tsconfig/esm": "./tsconfig/esm.json",
     "./assets.d.ts": "./tsconfig/assets.d.ts",
+    "./reset.css": "./reset.css",
     "./stackpress.css": "./stackpress.css"
   },
   "typesVersions": {
@@ -466,6 +467,7 @@
     "tsconfig",
     "LICENSE",
     "README.md",
+    "reset.css",
     "stackpress.css",
     "stackpress.idea"
   ],
