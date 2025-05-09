@@ -61,7 +61,7 @@ export default function AdminSearchPageFactory(model: Model) {
       sort,
       skip,
       take,
-      columns = model.query?.length ? model.query : [ '*' ],
+      columns,
     } = req.data<{
       q?: string;
       filter?: Record<string, string | number | boolean>;

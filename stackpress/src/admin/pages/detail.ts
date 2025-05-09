@@ -56,10 +56,6 @@ export default function AdminDetailPageFactory(model: Model) {
     //get id from url params
     const ids = model.ids.map(column => req.data(column.name)).filter(Boolean);
     if (ids.length === model.ids.length) {
-      //add columns from idea
-      if (model.query?.length) {
-        req.data.set('columns', model.query);
-      }
       //emit detail event
       const response = await ctx.resolve<UnknownNest>(
         `${model.dash}-detail`, 

@@ -27,6 +27,15 @@ export default function searchEventFactory(model: Model) {
       //let the response pass through
       return;
     }
+    //if there are no columns from the request
+    if (!req.data.has('columns')
+      //if there is @query([ "*" ])
+      && Array.isArray(model.query) 
+      && model.query.length
+      && model.query.every(column => typeof column === 'string')
+    ) {
+      req.data.set('columns', model.query)
+    }
     //get the database engine
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
