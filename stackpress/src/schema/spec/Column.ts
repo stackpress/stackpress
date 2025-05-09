@@ -2,6 +2,7 @@
 import { createId as cuid, init } from '@paralleldrive/cuid2';
 import { nanoid } from 'nanoid';
 //stackpress
+import { NestedObject } from '@stackpress/lib/types';
 import type { EnumConfig } from '@stackpress/idea-parser/types';
 //root
 import type { 
@@ -567,6 +568,29 @@ export default class Column {
         return message;
       }
     }
+    //if there was an error it would have been returned
+    //let's check if the column is a fieldset
+    if (this.fieldset && value) {
+      const fieldset = this.fieldset;
+      //is it a fieldset multiple?
+      if (this.multiple) {
+        if (!Array.isArray(value)) {
+          return 'Invalid format';
+        }
+        const errors: NestedObject<string|string[]> = {};
+        value.forEach((value, i) => {
+          const message = fieldset.assert(value, strict);
+          if (message) errors[i] = message;
+        });
+        if (Object.keys(errors).length > 0) {
+          return errors;
+        }
+      //not a multiple
+      } else {
+        const message = fieldset.assert(value, strict);
+        if (message) return message;
+      }
+    }
     return null;
   }
   
@@ -710,7 +734,12 @@ export default class Column {
     }
     //fieldset
     if (this.fieldset) {
-      return this.fieldset.unserialize(value, options, seed);
+      const fieldset = this.fieldset;
+      return !this.multiple 
+        ? this.fieldset.unserialize(value, options, seed)
+        : Array.isArray(value)
+        ? value.map(value => fieldset.unserialize(value, options, seed))
+        : [];
     }
     //unserialize
     if (typeof value === 'string' && this.encrypted && seed) {

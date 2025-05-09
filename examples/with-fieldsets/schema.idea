@@ -24,149 +24,6 @@ model Profile {
                            @field.fieldset 
                            @list.hide
                            @view.fieldset
-  files       File[]       @label("Files")
-  connections Connection[] @label("Connections")
-  memberships Connection[] @label("Memberships")
-}
-
-//--------------------------------------------------------------------//
-// Connection System
-
-//A connection is a list of connections between profiles
-// ie. company, network, group, organization, etc.
-// to do a company setup, make a company profile, then add members to it.
-
-model Connection 
-  @label("Connection" "Connections") 
-  @template("{{owner.name}} - {{member.name}}") 
-  @icon("users") 
-  @query([ "*" "owner.*" "member.*" ])
-{
-  ownerId  String   @label("Owner")
-                    @id
-                    @field.relation({ 
-                      id "id"
-                      search "/admin/profile/search?json"
-                      template "{{name}}" 
-                    }) 
-                    @is.required("Required")
-                    @is.notempty("Cannot be empty")
-                    @filter.relation({
-                      id "id"
-                      search "/admin/profile/search?json"
-                      template "{{name}}" 
-                    }) 
-                    @list.template({ template "{{owner.name}}" }) 
-                    @view.template({ template "{{owner.name}}" })
-  
-  memberId String   @label("Member")
-                    @id
-                    @field.relation({ 
-                      id "id"
-                      search "/admin/profile/search?json"
-                      template "{{name}}" 
-                    }) 
-                    @is.required("Required")
-                    @is.notempty("Cannot be empty")
-                    @filter.relation({
-                      id "id"
-                      search "/admin/profile/search?json"
-                      template "{{name}}" 
-                    }) 
-                    @list.template({ template "{{member.name}}" }) 
-                    @view.template({ template "{{member.name}}" })
-  
-  role     String   @label("Role")
-                    @default("member")
-                    @field.text({ required true })
-                    @filter.text
-  
-  tags     String[] @label("Tags") 
-                    @field.taglist
-                    @list.taglist
-                    @view.taglist
-  
-  active   Boolean  @label("Active") 
-                    @default(true) 
-                    @filter.switch
-                    @list.hide @view.yesno
-  
-  created  Datetime @label("Created") 
-                    @default("now()") @sortable
-                    @list.date("m d, Y h:iA") 
-                    @view.date("m d, Y h:iA")
-  
-  updated  Datetime @label("Updated") 
-                    @default("now()") @timestamp @sortable
-                    @list.date("m d, Y h:iA") 
-                    @view.date("m d, Y h:iA")
-
-  owner    Profile  @relation({ name "memberships" local "ownerId" foreign "id" })
-  member   Profile  @relation({ name "connections" local "memberId" foreign "id" })
-}
-
-//--------------------------------------------------------------------//
-// File System
-
-model File 
-  @label("File" "Files") 
-  @template("{{name}}") 
-  @icon("file") 
-  @query([ "*" "profile.*" ])
-{
-  //FIELDS:
-  id          String   @label("ID") 
-                       @id @default("cuid()")
-                       @list.overflow({ length 10 hellip true })
-  
-  profileId   String   @label("Profile") 
-                       @field.relation({ 
-                         id "id"
-                         search "/admin/profile/search?json"
-                         template "{{name}}" 
-                       }) 
-                       @is.required("Required")
-                       @is.notempty("Cannot be empty")
-                       @filter.relation({
-                         id "id"
-                         search "/admin/profile/search?json"
-                         template "{{name}}" 
-                       }) 
-                       @list.template({ template "{{profile.name}}" }) 
-                       @view.template({ template "{{profile.name}}" })
-
-  name        String   @label("Name") 
-                       @searchable
-                       @field.text
-                       @is.required
-                       @list.text @view.text
-  
-  url         String   @label("URL")
-                       @searchable
-                       @field.url
-                       @is.required
-                       @view.link
-  
-  tags        String[] @label("Tags") 
-                       @field.taglist
-                       @view.taglist
-  
-  active      Boolean  @label("Active") 
-                       @default(true) 
-                       @filter.switch
-                       @list.hide @view.yesno
-  
-  created     Datetime @label("Created") 
-                       @default("now()") @sortable
-                       @list.date("m d, Y h:iA") 
-                       @view.date("m d, Y h:iA")
-  
-  updated     Datetime @label("Updated") 
-                       @default("now()") @timestamp @sortable
-                       @list.date("m d, Y h:iA") 
-                       @view.date("m d, Y h:iA")
-  
-  profile   Profile  @relation({ local "profileId" foreign "id" })
 }
 
 //--------------------------------------------------------------------//
@@ -177,7 +34,7 @@ type Address
   @template("{{label}}") 
   @icon("map-marker") 
 {
-  label       String    @label("Name") 
+  label        String   @label("Name") 
                         @field.text
                         @is.required
                         @list.text @view.text
@@ -228,6 +85,7 @@ type Address
 
   
   contacts     Contact[] @label("Contacts") 
+                         @default("[]")
                          @field.fieldset 
                          @list.hide
                          @view.fieldset

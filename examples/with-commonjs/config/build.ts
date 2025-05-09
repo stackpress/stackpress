@@ -39,7 +39,7 @@ export const config: Config = {
   session: common.session
 };
 
-export async function bootstrap() {
+export default async function bootstrap() {
   //make a server
   const server = http();
   //set config

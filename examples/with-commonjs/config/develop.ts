@@ -97,7 +97,7 @@ export const config: Config = {
   language: common.language
 };
 
-export async function bootstrap() {
+export default async function bootstrap() {
   //make a server
   const server = http();
   //set config
