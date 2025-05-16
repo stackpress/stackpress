@@ -3,20 +3,20 @@ import type { Directory } from 'ts-morph';
 //schema
 import type Registry from '../../../schema/Registry.js';
 
-import createPage from './create.js';
-import detailPage from './detail.js';
-import removePage from './remove.js';
-import restorePage from './restore.js';
-import searchPage from './search.js';
-import updatePage from './update.js';
+import createView from './create.js';
+import detailView from './detail.js';
+import removeView from './remove.js';
+import restoreView from './restore.js';
+import searchView from './search.js';
+import updateView from './update.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   for (const model of registry.model.values()) {
-    createPage(directory, registry, model);
-    detailPage(directory, registry, model);
-    removePage(directory, registry, model);
-    restorePage(directory, registry, model);
-    searchPage(directory, registry, model);
-    updatePage(directory, registry, model);
+    createView(directory, registry, model);
+    detailView(directory, registry, model);
+    removeView(directory, registry, model);
+    restoreView(directory, registry, model);
+    searchView(directory, registry, model);
+    updateView(directory, registry, model);
   }
 };

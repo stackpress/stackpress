@@ -157,18 +157,17 @@ export function generateFieldset(
   const path = `${model.name}/components/fields/${column.title}Field.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   const fieldset = column.fieldset;
-
+  //import type { ReactNode, CSSProperties } from 'react';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'react',
+    namedImports: [ 'ReactNode', 'CSSProperties' ]
+  });
   //import type { FieldsProps, FieldsetProps } from 'frui/element/Fieldset';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'frui/element/Fieldset',
     namedImports: [ 'FieldsProps', 'FieldsetProps' ]
-  });
-  //import type { ControlProps } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'ControlProps' ]
   });
   //import type { AddressInput } from '../../../Address/types.js';
   source.addImportDeclaration({
@@ -180,11 +179,6 @@ export function generateFieldset(
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
-  });
-  //import Control from 'frui/form/Control';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Control',
-    defaultImport: 'Control'
   });
   //import make from 'frui/form/Fieldset';
   source.addImportDeclaration({
@@ -224,7 +218,20 @@ export function generateFieldset(
   source.addTypeAlias({
     isExported: true,
     name: `${column.title}FieldsetProps`,
-    type: `FieldsetProps<${column.title}Input>`
+    type: `FieldsetProps<${column.title}Input> & { errors?: Record<string, any>[] }`
+  });
+  //export type AddressControlProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: `${column.title}ControlProps`,
+    type: `{
+      label?: string,
+      error?: string,
+      value?: ${column.title}Input|${column.title}Input[],
+      errors?: Record<string, any>|Record<string, any>[],
+      style?: CSSProperties,
+      className?: string
+    }`
   });
   //export function useAddressFieldset(config: AddressConfig) {}
   source.addFunction({
@@ -264,12 +271,12 @@ export function generateFieldset(
         name,
         config,
         values, 
-        index, 
-        error,
+        index,
         set,
         limit
       } = props;
       const { _ } = useLanguage();
+      const { errors = [] } = config;
       //handlers
       const { handlers } = use${column.title}Fieldset({ values, index, set });
       //variables
@@ -279,47 +286,48 @@ export function generateFieldset(
         ? \`\${name}\` 
         : undefined;
       const value = values ? values[index]: undefined;
-      const border = error ? 'theme-bc-error' : 'theme-bc-bd2';
+      const error = errors[index] || {};
+      const classNames = [
+        errors[index] && 'field-fieldset-error',
+        !limit && 'field-fieldset-multiple',
+        (limit || !config.required) && 'field-fieldset-optional'
+      ].filter(Boolean).join(' ');
       return (
-        <div className={\`\${border} border relative px-my-10\`}>
+        <div className={\`field-fieldset \${classNames}\`}>
           {!limit ? (
-            <header className="theme-bg-bg1 flex items-center px-p-10">
-              <h6 className="flex-grow">
+            <header>
+              <h6>
                 {_('${fieldset.singular} %s', index + 1)}
               </h6>
-              <a 
-                onClick={handlers.remove}
-                className="theme-error px-fs-20 cursor-pointer"
-              >
+              <a onClick={handlers.remove}>
                 &times;
               </a>
             </header>
           ) : !config.required ? (
-            <header className="absolute px-r-10 px-t-5">
-              <a 
-                onClick={handlers.remove}
-                className="theme-error px-fs-20 cursor-pointer"
-              >
+            <header>
+              <a onClick={handlers.remove}>
                 &times;
               </a>
             </header>
           ) : null}
-          <main className="px-p-10">
+          <main>
             ${fieldset.fields.map(column => {
               return column.field.method === 'fieldset' 
                 ? (`
                   <${column.title}FieldsetControl
-                    className="px-py-10"
+                    className="field-fieldset-control"
                     name={prefix ? \`\${prefix}[${column.name}]\` : undefined}
-                    value={value.${column.name}} 
+                    errors={error['${column.name}']}
+                    value={value['${column.name}']} 
                   />  
                 `)
                 : column.field.component 
                 ? (`
                   <${column.title}FieldControl
-                    className="px-py-10"
+                    className="field-fieldset-control"
                     name={prefix ? \`\${prefix}[${column.name}]\` : undefined}
-                    value={value.${column.name}} 
+                    error={error['${column.name}']}
+                    value={value['${column.name}']} 
                   />  
                 `)
                 : false
@@ -346,14 +354,17 @@ export function generateFieldset(
     ],
     statements: (`
       //config gets passed straight to the fields
-      const config = { required: ${column.required ? 'true' : 'false'} };
+      const config = { 
+        required: ${column.required ? 'true' : 'false'},
+        errors: props.errors || [] 
+      };
       const add = 'Add ${fieldset.singular}';
       const limit = ${column.multiple ? '0' : '1'}; 
       const defaults = ${JSON.stringify(fieldset.defaults)};
       const value = ${column.multiple 
         ? 'props.value || []'
         : column.required
-        ? 'props.value || [defaults]'
+        ? 'props.value || [ defaults ]'
         : 'props.value || []'
       }
       //render
@@ -363,7 +374,7 @@ export function generateFieldset(
           add={add}
           limit={limit} 
           config={config} 
-          value={value}
+          defaultValue={value}
           emptyValue={defaults} 
         />
       );
@@ -374,23 +385,59 @@ export function generateFieldset(
     isExported: true,
     name: `${column.title}FieldsetControl`,
     parameters: [
-      { name: 'props', type: 'ControlProps' }
+      { name: 'props', type: `${column.title}ControlProps` }
     ],
     statements: (`
-      //props
-      const { className, name, value, change, error } = props;
       //hooks
       const { _ } = useLanguage();
-      //determine label
-      const label = ${column.required && !column.multiple 
-        ? `\`\${_('${column.label}')}*\`;` 
-        : `_('${column.label}');`
+      //props
+      let { 
+        label = ${column.required && !column.multiple 
+          ? `\`\${_('${column.label}')}*\`` 
+          : `_('${column.label}')`
+        },
+        error = 'Invalid ${column.label}',
+        className, 
+        name, 
+        value, 
+        errors = [],
+        ...attributes
+      } = props;
+      //format value
+      value = Array.isArray(value)
+        ? value
+        : value && typeof value === 'object'
+        ? [ value ]
+        : undefined;
+      //format errors
+      errors = Array.isArray(errors)
+        ? errors
+        : errors && typeof errors === 'object'
+        ? [ errors ]
+        : [];
+      //determine classnames
+      const classNames = ['frui-control'];
+      if (className) {
+        classNames.push(className);
       }
       //render
       return (
-        <Control label={label} error={error} className={className}>
-          <${column.title}Fieldset error={!!error} name={name} value={value} />
-        </Control>
+        <div className={classNames.join(' ')} {...attributes}>
+          {!!label && (
+            <label className="frui-control-label">{label}</label>
+          )}
+          <div className="frui-control-field">
+            <${column.title}Fieldset 
+              error={errors.length > 0} 
+              errors={errors} 
+              name={name} 
+              value={value} 
+            />
+          </div>
+          {errors.length > 0 && (
+            <div className="frui-control-error">{error || ''}</div>
+          )}
+        </div>
       );
     `)
   });
@@ -468,7 +515,13 @@ export function generateBoolean(
 
     statements: (`
       //props
-      const { className, name, value, change, error } = props;
+      const { 
+        className, 
+        name = '${column.name}${column.multiple ? '[]': ''}', 
+        value${column.default ? ' = ' + JSON.stringify(column.default) : ''}, 
+        change, 
+        error 
+      } = props;
       //hooks
       const { _ } = useLanguage();
       //determine label
@@ -535,7 +588,7 @@ export function generateField(
       const { 
         className, 
         name = '${column.name}${column.multiple ? '[]': ''}', 
-        value, 
+        value${column.default ? ' = ' + JSON.stringify(column.default) : ''}, 
         change, 
         error = false 
       } = props;
@@ -574,7 +627,7 @@ export function generateField(
       return (
         <Control label={label} error={error} className={className}>
           <${column.title}Field
-            error={!!error} 
+            error={typeof error === 'string'} 
             name={name}
             value={value} 
             change={change}

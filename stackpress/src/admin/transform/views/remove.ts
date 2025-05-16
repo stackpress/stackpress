@@ -5,7 +5,7 @@ import { VariableDeclarationKind } from 'ts-morph';
 import type Registry from '../../../schema/Registry.js';
 import type Model from '../../../schema/spec/Model.js';
 
-export default function removePage(directory: Directory, _registry: Registry, model: Model) {
+export default function removeView(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/remove.tsx`;
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.ids.map(column => column.name);

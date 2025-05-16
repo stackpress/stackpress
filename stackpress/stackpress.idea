@@ -32,16 +32,17 @@ model Profile
                         @view.text({ lower true })
   
   roles       String[]  @label("Roles") 
+                        @default([])
                         @field.textlist({ add "Add Role" })
                         @list.hide @view.taglist
   
   tags        String[]  @label("Tags") 
-                        @default("[]")
+                        @default([])
                         @field.taglist
                         @list.hide @view.taglist
   
   references  Hash?     @label("References") 
-                        @default("{}")
+                        @default({})
                         @field.metadata({ add "Add Reference" })
                         @list.hide @view.metadata
   
@@ -190,7 +191,7 @@ model Application
                    @list.hide @view.hide
   
   scopes  String[] @label("Scopes") 
-                   @default("[]")
+                   @default([])
                    @field.taglist
                    @list.hide @view.taglist
 
@@ -267,7 +268,7 @@ model Session
                          @list.hide @view.hide
   
   scopes        String[] @label("Scopes") 
-                         @default("[]")
+                         @default([])
                          @field.taglist
                          @list.hide @view.taglist
 

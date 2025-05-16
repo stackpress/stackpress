@@ -5,7 +5,7 @@ import { VariableDeclarationKind } from 'ts-morph';
 import type Registry from '../../../schema/Registry.js';
 import type Model from '../../../schema/spec/Model.js';
 
-export default function createPage(directory: Directory, _registry: Registry, model: Model) {
+export default function createView(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/create.tsx`;
   const source = directory.createSourceFile(file, '', { overwrite: true });
   //import 'frui/frui.css';
@@ -104,14 +104,14 @@ export default function createPage(directory: Directory, _registry: Registry, mo
             <${column.title}FieldsetControl 
               className="control"
               name="${column.name}"
-              value={input.${column.name}} 
-              error={errors.${column.name}?.toString()} 
+              value={input['${column.name}']} 
+              errors={errors['${column.name}']} 
             />
           `) : (`
             <${column.title}FieldControl 
               className="control"
               name="${column.name}${column.multiple ? '[]' : ''}"
-              value={input.${column.name}} 
+              value={input['${column.name}']} 
               error={errors.${column.name}?.toString()} 
             />
           `)).join('\n')}

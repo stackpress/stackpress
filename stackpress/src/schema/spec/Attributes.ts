@@ -24,7 +24,7 @@ export default class Attributes extends Map<string, unknown> {
   public get admin() {
     const attributes: Record<string, unknown> = {};
     //explicit validators
-    for (const name in this.keys()) {
+    for (const name of this.keys()) {
       if (!name.startsWith('admin.')) {
         continue;
       }
@@ -47,7 +47,7 @@ export default class Attributes extends Map<string, unknown> {
     const assertions: SchemaAssertion[] = [];
 
     //explicit validators
-    for (const name in this.keys()) {
+    for (const name of this.keys()) {
       if (!name.startsWith('is.')) {
         continue;
       }
@@ -56,9 +56,9 @@ export default class Attributes extends Map<string, unknown> {
       //get the method
       const method = name.replace('is.', '');
       //get the arguments
-      const args = Array.isArray(field) ? field as unknown[] : [];
+      const args = Array.isArray(field) ? [ ...(field as unknown[]) ] : [];
       //the last argument is the message
-      const message = typeof args[args.length - 1] !== 'string' 
+      const message = typeof args[args.length - 1] === 'string' 
         ? args.pop() as string
         : null;
         assertions.push({ method, args, message });

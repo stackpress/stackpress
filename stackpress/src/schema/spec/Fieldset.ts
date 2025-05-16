@@ -1,9 +1,8 @@
 //modules
 import Mustache from 'mustache';
-//stackpress
-import type { NestedObject } from '@stackpress/lib';
 //schema
 import type { 
+  ErrorMap,
   SchemaColumnInfo, 
   SchemaSerialOptions 
 } from '../types.js';
@@ -200,7 +199,7 @@ export default class Fieldset {
    * Asserts the values
    */
   public assert(values: Record<string, any> = {}, strict = true) {
-    const errors: NestedObject<string|string[]> = {};
+    const errors: ErrorMap = {};
     for (const column of this.columns.values()) {
       if (column.model) continue;
       const value = column.unserialize(values[column.name]);

@@ -2,10 +2,10 @@
 import { createId as cuid, init } from '@paralleldrive/cuid2';
 import { nanoid } from 'nanoid';
 //stackpress
-import { NestedObject } from '@stackpress/lib/types';
 import type { EnumConfig } from '@stackpress/idea-parser/types';
 //root
 import type { 
+  ErrorList,
   SchemaColumnInfo, 
   SchemaSerialOptions 
 } from '../types.js';
@@ -555,8 +555,8 @@ export default class Column {
       //if assertion method is not 
       //a function ie. unique, etc.
       if (typeof assert[method] !== 'function'
-        //if not strict and required or no value
-        || (!strict && (method === 'required' || hasNoValue))
+        //if not strict and required
+        || (!strict && method === 'required')
         //if strict and no value, but there is a default
         || (strict && hasNoValue && (!this.required || hasDefault))
       ) {
@@ -565,7 +565,8 @@ export default class Column {
       }
       //now we can assert
       if (!assert[method](value, ...args)) {
-        return message;
+        //return message, but if message is null, then return empty string
+        return message || '';
       }
     }
     //if there was an error it would have been returned
@@ -577,12 +578,11 @@ export default class Column {
         if (!Array.isArray(value)) {
           return 'Invalid format';
         }
-        const errors: NestedObject<string|string[]> = {};
-        value.forEach((value, i) => {
-          const message = fieldset.assert(value, strict);
-          if (message) errors[i] = message;
-        });
-        if (Object.keys(errors).length > 0) {
+        const errors: ErrorList = [];
+        value.forEach(
+          value => errors.push(fieldset.assert(value, strict))
+        );
+        if (errors.some(error => error)) {
           return errors;
         }
       //not a multiple

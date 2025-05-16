@@ -5,7 +5,7 @@ import { VariableDeclarationKind } from 'ts-morph';
 import type Registry from '../../../schema/Registry.js';
 import type Model from '../../../schema/spec/Model.js';
 
-export default function removePage(directory: Directory, _registry: Registry, model: Model) {
+export default function updateView(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/update.tsx`;
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.ids.map(column => column.name);
@@ -122,19 +122,19 @@ export default function removePage(directory: Directory, _registry: Registry, mo
             <${column.title}FieldsetControl 
               className="control"
               name="${column.name}"
-              value={input.${column.name}} 
-              error={errors.${column.name}?.toString()} 
+              value={input['${column.name}']} 
+              errors={errors['${column.name}']} 
             />
           `) : (`
             <${column.title}FieldControl 
               className="control"
               name="${column.name}${column.multiple ? '[]' : ''}"
-              value={input.${column.name}} 
+              value={input['${column.name}']} 
               error={errors.${column.name}?.toString()} 
             />
           `)).join('\n')}
           <Button className="submit" type="submit">
-            <i className="fas fa-fw fa-save"></i>
+            <i className="icon fas fa-fw fa-save"></i>
             {_('Save')}
           </Button>
         </form>

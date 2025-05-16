@@ -1,4 +1,5 @@
 //stackpress
+import type { NestedObject } from '@stackpress/lib';
 import type { Data } from '@stackpress/idea-parser/types';
 //spec
 import type Column from './spec/Column.js';
@@ -62,3 +63,6 @@ export type ColumnOption = {
   name: string|false, 
   attributes: Record<string, any>
 };
+
+export type ErrorList = (ErrorMap | null)[];
+export type ErrorMap = NestedObject<string | string[] | ErrorList>;

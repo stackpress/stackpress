@@ -5,7 +5,7 @@ import { VariableDeclarationKind } from 'ts-morph';
 import type Registry from '../../../schema/Registry.js';
 import type Model from '../../../schema/spec/Model.js';
 
-export default function detailPage(directory: Directory, _registry: Registry, model: Model) {
+export default function detailView(directory: Directory, _registry: Registry, model: Model) {
   const file = `${model.name}/admin/views/detail.tsx`;
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.ids.map(column => column.name);
