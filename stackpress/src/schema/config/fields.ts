@@ -62,7 +62,7 @@ export default {
     "attributes": {}
   },
   "wysiwyg": {
-    "name": "Wysiwyg",
+    "name": "WYSIWYG",
     "attributes": {}
   },
   "integer": {
@@ -82,8 +82,10 @@ export default {
     }
   },
   "range": {
-    "name": "Range",
-    "attributes": {}
+    "name": "Input",
+    "attributes": {
+      "type": "range"
+    }
   },
   "rating": {
     "name": "Rating",
