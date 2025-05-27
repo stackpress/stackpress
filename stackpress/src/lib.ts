@@ -55,6 +55,12 @@ export type {
   CallSite
 } from '@stackpress/lib/types';
 
+export type {
+  CLIProps,
+  PluginProps,
+  PluginWithCLIProps
+} from '@stackpress/idea-transformer/types';
+
 export {
   ArgString,
   FileData,
