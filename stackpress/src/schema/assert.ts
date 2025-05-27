@@ -30,6 +30,14 @@ export function option(value: any, options: any[]) {
   return options.includes(value);
 };
 
+export function starting(value: any, start: string) {
+  return safeValue(value).toString().startsWith(start);
+};
+
+export function ending(value: any, start: string) {
+  return safeValue(value).toString().endsWith(start);
+};
+
 export function regex(value: any, regex: string|RegExp) { 
   return new RegExp(regex).test(safeValue(value).toString());
 };
@@ -166,6 +174,9 @@ export function array(values: any[], validator: string, ...args: any[]) {
   );
 }
 
+export const pattern = regex;
+export const oneof = option;
+
 const assert: Record<string, (value: any, ...args: any[]) => boolean> = {
   required, notempty, eq,      ne,
   option,   regex,    date,    future,
@@ -176,7 +187,7 @@ const assert: Record<string, (value: any, ...args: any[]) => boolean> = {
   cc,       color,    email,   hex,
   price,    url,      boolean, string,  
   number,   float,    integer, object,
-  array
+  array,    pattern,  oneof
 };
 
 export default assert;
