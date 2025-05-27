@@ -11,6 +11,8 @@ model Profile
   id          String    @label("ID") 
                         @id @default("cuid()")
                         @list.overflow({ length 10 hellip true })
+                        @description("Unique generated identifier.")
+                        @example("pjfdz7tg8bcf7e2lig3iuej3")
   
   name        String    @label("Name") 
                         @searchable
@@ -18,10 +20,14 @@ model Profile
                         @is.required("Required")
                         @is.notempty("Cannot be empty")
                         @list.text @view.text
+                        @description("Full name (first middle last).")
+                        @example("John Doe")
 
   image       String?   @label("Image") 
                         @field.url
                         @list.image(20 20) @view.image(100 100)
+                        @description("Profile image URL.")
+                        @example("https://example.com/image.jpg")
   
   type        String    @label("Type") 
                         @default("person") 
@@ -30,38 +36,52 @@ model Profile
                         @is.notempty("Cannot be empty")
                         @list.text({ lower true }) 
                         @view.text({ lower true })
+                        @description("Type of profile (ie. person, company, etc.).")
+                        @example("person")
   
   roles       String[]  @label("Roles") 
                         @default([])
                         @field.textlist({ add "Add Role" })
-                        @list.hide @view.taglist
+                        @list.hide @view.taglist({ warning true })
+                        @description("Roles held by the profile. This is used with sessions to determine access levels of the app.")
+                        @example(["admin" "user" "gues"])
   
   tags        String[]  @label("Tags") 
                         @default([])
                         @field.taglist
-                        @list.hide @view.taglist
+                        @list.hide @view.taglist({ warning true })
+                        @description("Abritrary tags for general use.")
+                        @example(["top buyer" "verified" "moderator"])
   
   references  Hash?     @label("References") 
                         @default({})
                         @field.metadata({ add "Add Reference" })
                         @list.hide @view.metadata
+                        @description("Arbitrary key/value references for general use.")
+                        @example({ fbid "abc123" })
   
   active      Boolean   @label("Active") 
                         @default(true) @active
                         @filter.switch
                         @list.hide @view.yesno
+                        @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+                        @example(true)
   
   created     Datetime  @label("Created") 
                         @default("now()") @sortable
                         @span.datetime
                         @list.date("m d, Y h:iA") 
                         @view.date("m d, Y h:iA")
+                        @description("Generated timestamp when row was created.")
+                        @example("2025-10-01T12:00:00Z")
   
   updated     Datetime  @label("Updated") 
                         @default("now()") @timestamp @sortable
                         @span.datetime
                         @list.date("m d, Y h:iA") 
                         @view.date("m d, Y h:iA")
+                        @description("Generated timestamp that is updated whenever the row has changed.")
+                        @example("2025-10-01T12:00:00Z")
   
   auth        Auth?
 
@@ -79,6 +99,8 @@ model Auth
   id        String   @label("ID") 
                      @id @default("cuid()")
                      @list.overflow({ length 10 hellip true })
+                     @description("Unique generated identifier.")
+                     @example("dz7tg8bcf7e2lig3iuej3pjf")
   
   profileId String   @label("Profile") 
                      @field.relation({ 
@@ -95,6 +117,8 @@ model Auth
                      }) 
                      @list.template({ template "{{profile.name}}" }) 
                      @view.template({ template "{{profile.name}}" })
+                     @description("Profile this auth belongs to.")
+                     @example("pjfdz7tg8bcf7e2lig3iuej3")
                      
   type      String   @label("Type") 
                      @default("username") 
@@ -102,6 +126,8 @@ model Auth
                      @is.required("Required")
                      @is.notempty("Cannot be empty")
                      @list.text @view.text
+                     @description("Type of authentication method (username, email, phone).")
+                     @example("username")
   
   token     String   @label("Token")
                      @unique @encrypted
@@ -109,6 +135,8 @@ model Auth
                      @is.required("Required") 
                      @is.cge(5 "Must be at least 5 characters")
                      @list.text @view.text
+                     @description("The actual username, email, or phone (depending on type)")
+                     @example("john@doe.com")
   
   secret    String   @label("Secret") 
                      @hash @secret
@@ -116,31 +144,43 @@ model Auth
                      @is.required("Required")
                      @is.notempty("Cannot be empty")
                      @list.hide @view.hide
+                     @description("Password used to verify.")
+                     @example("s3cr3t P@ssw0rd")
   
   verified  Boolean  @label("Verified") 
                      @default(false) 
                      @field.switch @filter.switch 
                      @list.yesno @view.yesno
+                     @description("Indicates if the type has been verified (email, phone, etc.).")
+                     @example(true)
   
   consumed  Datetime @label("Last Used") 
                      @default("now()") @sortable
                      @list.date("m d, Y h:iA") 
                      @view.date("m d, Y h:iA")
+                     @description("Timestamp when this auth was last used.")
+                     @example("2025-10-01T12:00:00Z")
   
   active    Boolean  @label("Active") 
                      @default(true) @active
                      @filter.switch
                      @list.hide @view.yesno
+                     @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+                     @example(true)
   
   created   Datetime @label("Created") 
                      @default("now()") @sortable
                      @list.date("m d, Y h:iA") 
                      @view.date("m d, Y h:iA")
+                     @description("Generated timestamp when row was created.")
+                     @example("2025-10-01T12:00:00Z")
   
   updated   Datetime @label("Updated") 
                      @default("now()") @timestamp @sortable
                      @list.date("m d, Y h:iA") 
                      @view.date("m d, Y h:iA")
+                     @description("Generated timestamp that is updated whenever the row has changed.")
+                     @example("2025-10-01T12:00:00Z")
   
   profile   Profile  @relation({ local "profileId" foreign "id" })
 }
@@ -153,6 +193,8 @@ model Application
 {
   id        String @label("ID") 
                    @id @default("cuid()")
+                   @description("Unique generated identifier.")
+                   @example("tg8bcf7e2lig3iuej3dz7pjf")
   
   profileId String @label("Profile") 
                    @field.relation({ 
@@ -169,36 +211,49 @@ model Application
                    }) 
                    @list.template({ template "{{profile.name}}" }) 
                    @view.template({ template "{{profile.name}}" })
+                   @description("The profile author of this application.")
+                   @example("pjfdz7tg8bcf7e2lig3iuej3")
 
   name    String   @label("Name") 
                    @searchable
                    @field.text({ required true })
                    @is.required("Required")
                    @list.text @view.text
+                   @description("Arbitrary name of the application. Used in 3-legged OAuth flows.")
+                   @example("My Awesome App")
 
   logo    String?  @label("Image") 
                    @field.url
                    @list.image(20 20) @view.image(100 100)
+                   @description("Logo image URL of the application. Used in 3-legged OAuth flows.")
+                   @example("https://example.com/logo.png")
 
   website String?  @label("Website") 
                    @searchable
                    @field.url
                    @list.link({ target "blank" }) 
                    @view.link({ target "blank" })
+                   @description("Arbitrary website URL of the application. Used in 3-legged OAuth flows.")
 
   secret  String   @label("Secret") 
                    @default("cuid()")
                    @list.hide @view.hide
+                   @description("Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)")
+                   @example("bcf7e2lig3iuej3tg8dz7pjf")
   
   scopes  String[] @label("Scopes") 
                    @default([])
                    @field.taglist
-                   @list.hide @view.taglist
+                   @list.hide @view.taglist({ warning true })
+                   @description("API scopes that this application can request. This is mapped with endpoints.")
+                   @example([ "commerce" "location" "account" ])
 
   active  Boolean  @label("Active") 
                    @default(true) @active
                    @filter.switch
                    @list.hide @view.yesno
+                   @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+                   @example(true)
   
   expires Datetime @label("Expires") 
                    @sortable
@@ -206,16 +261,22 @@ model Application
                    @is.required("Required")
                    @list.date("m d, Y h:iA") 
                    @view.date("m d, Y h:iA")
+                   @description("Expiration date of the application. After this date, the application will not be able to perform any operations.")
+                   @example("2025-12-31T23:59:59Z")
   
   created Datetime @label("Created") 
                    @default("now()") @sortable
                    @list.date("m d, Y h:iA") 
                    @view.date("m d, Y h:iA")
+                   @description("Generated timestamp when row was created.")
+                   @example("2025-10-01T12:00:00Z")
   
   updated Datetime @label("Updated") 
                    @default("now()") @timestamp @sortable
                    @list.date("m d, Y h:iA") 
                    @view.date("m d, Y h:iA")
+                   @description("Generated timestamp that is updated whenever the row has changed.")
+                   @example("2025-10-01T12:00:00Z")
 
   session Session[] @label("Sessions") 
   profile Profile   @relation({ local "profileId" foreign "id" })
@@ -229,6 +290,8 @@ model Session
 {
   id            String   @label("ID") 
                          @id @default("cuid()")
+                         @description("Unique generated identifier.")
+                         @example("7e2lig3iuej3bcftg8dz7pjf")
   
   applicationId String   @label("App") 
                          @field.relation({ 
@@ -245,6 +308,8 @@ model Session
                          }) 
                          @list.template({ template "{{application.name}}" }) 
                          @view.template({ template "{{application.name}}" })
+                         @description("Application this session belongs to.")
+                         @example("tg8bcf7e2lig3iuej3dz7pjf")
   
   profileId     String   @label("Profile") 
                          @field.relation({ 
@@ -261,21 +326,29 @@ model Session
                          }) 
                          @list.template({ template "{{profile.name}}" }) 
                          @view.template({ template "{{profile.name}}" })
+                         @description("Profile this session belongs to.")
+                         @example("pjfdz7tg8bcf7e2lig3iuej3")
 
   secret        String   @label("Secret") 
                          @default("cuid()")
                          @is.notempty("Cannot be empty")
                          @list.hide @view.hide
+                         @description("Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)")
+                         @example("lig3iuej37e2bcftg8dz7pjf")
   
   scopes        String[] @label("Scopes") 
                          @default([])
                          @field.taglist
-                         @list.hide @view.taglist
+                         @list.hide @view.taglist({ warning true })
+                         @description("API scopes that this session can request. This is mapped with endpoints.")
+                         @example([ "commerce" "location" "account" ])
 
   active        Boolean  @label("Active") 
                          @default(true) @active
                          @filter.switch
                          @list.hide @view.yesno
+                         @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+                         @example(true)
   
   expires       Datetime @label("Expires") 
                          @sortable
@@ -284,16 +357,22 @@ model Session
                          @is.notempty("Cannot be empty")
                          @list.date("m d, Y h:iA") 
                          @view.date("m d, Y h:iA")
+                         @description("Expiration date of the session. After this date, the session will not be able to perform any operations.")
+                         @example("2025-12-31T23:59:59Z")
   
   created       Datetime @label("Created") 
                          @default("now()") @sortable
                          @list.date("m d, Y h:iA") 
                          @view.date("m d, Y h:iA")
+                         @description("Generated timestamp when row was created.")
+                         @example("2025-10-01T12:00:00Z")
   
   updated       Datetime @label("Updated") 
                          @default("now()") @timestamp @sortable
                          @list.date("m d, Y h:iA") 
                          @view.date("m d, Y h:iA")
+                         @description("Generated timestamp that is updated whenever the row has changed.")
+                         @example("2025-10-01T12:00:00Z")
   
   application Application  @relation({ local "applicationId" foreign "id" })
   profile     Profile      @relation({ local "profileId" foreign "id" })

@@ -105,10 +105,34 @@ export default class Attributes extends Map<string, unknown> {
   }
 
   /**
+   * Returns the column @description
+   * example: @description("Some description")
+   */
+  public get description() {
+    const description = this.get('description');
+    if (Array.isArray(description)) {
+      return description[0] as string;
+    }
+    return undefined;
+  }
+
+  /**
    * Returns true if column is an @encrypted column
    */
   public get encrypted() {
     return this.get('encrypted') === true;
+  }
+
+  /**
+   * Returns the column @example
+   * example: @example("Some example") @example(true)
+   */
+  public get example() {
+    const example = this.get('example');
+    if (Array.isArray(example)) {
+      return example[0] as any;
+    }
+    return undefined;
   }
 
   /**

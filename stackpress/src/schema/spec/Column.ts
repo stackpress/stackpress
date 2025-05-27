@@ -165,6 +165,14 @@ export default class Column {
   }
 
   /**
+   * Returns the column @description
+   * example: @description("Some description")
+   */
+  public get description() {
+    return this.attributes.description;
+  }
+
+  /**
    * If type is an enum, this returns the enum configuration
    */
   public get enum(): EnumConfig | null {
@@ -176,6 +184,14 @@ export default class Column {
    */
   public get encrypted() {
     return this.attributes.encrypted;
+  }
+
+  /**
+   * Returns the column @example
+   * example: @example("Some example") @example(true)
+   */
+  public get example() {
+    return this.attributes.example;
   }
 
   /**

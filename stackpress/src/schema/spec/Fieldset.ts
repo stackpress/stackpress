@@ -77,12 +77,38 @@ export default class Fieldset {
   }
 
   /**
+   * Returns a collection of descriptions
+   */
+  public get descriptions() {
+    const descriptions: Record<string, string> = {};
+    for (const column of this.columns.values()) {
+      if (column.description) {
+        descriptions[column.name] = column.description;
+      }
+    }
+    return descriptions;
+  }
+
+  /**
    * Returns all the enum columns
    */
   public get enums() {
     return Array.from(this.columns.values()).filter(
       column => column.enum !== null
     );
+  }
+
+  /**
+   * Returns a collection of example values
+   */
+  public get examples() {
+    const examples: Record<string, any> = {};
+    for (const column of this.columns.values()) {
+      if (column.example !== undefined) {
+        examples[column.name] = column.example;
+      }
+    }
+    return examples;
   }
 
   /**
