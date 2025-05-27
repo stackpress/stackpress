@@ -1,5 +1,7 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
 //root
 import type { Application, Session } from '../types/index.js';
 //api
@@ -44,6 +46,8 @@ export default function plugin(ctx: Server) {
     ctx.import.all('/auth/oauth', () => import('./pages/oauth.js'));
     ctx.view.all('/auth/oauth', 'stackpress/esm/api/views/oauth', -100);
     for (const endpoint of endpoints) {
+      //cors check
+      cors(endpoint, ctx);
       if (endpoint.type === 'session') {
         session(endpoint, ctx);
       } else if (endpoint.type === 'app') {
@@ -54,6 +58,40 @@ export default function plugin(ctx: Server) {
     }
   });
 };
+
+export function cors(endpoint: ApiEndpoint, ctx: Server) {
+  let origin = endpoint.cors === true ? '*' : endpoint.cors;
+  //make sure cors can only be an array of strings
+  if (typeof origin === 'string') {
+    origin = [ origin ];
+  }
+  //skip if origin is false or undefined
+  if (!Array.isArray(origin)) return;
+  //create a cors route action 
+  const cors = function CrossOrigin(req: Request, res: Response) {
+    //origin check
+    if (origin.includes('*')) {
+      res.headers.set('Access-Control-Allow-Origin', '*');
+    } else if (origin.includes(req.url.origin)) {
+      res.headers.set('Access-Control-Allow-Origin', req.url.origin);
+    } else {
+      return;
+    }
+    //only allow the methods specified in the endpoint
+    const method = endpoint.method !== 'ALL' ? endpoint.method : '*';
+    res.headers.set('Access-Control-Request-Method', method);
+    res.headers.set('Access-Control-Allow-Methods', 'OPTIONS, GET');
+    res.headers.set('Access-Control-Allow-Headers', '*');
+  };
+  //create a preflight route action
+  const preflight = function PreFlight(req: Request, res: Response) {
+    cors(req, res);
+    res.code = 200;
+  };
+
+  ctx.route('OPTIONS', endpoint.route, preflight, 1000);
+  ctx.route(endpoint.method, endpoint.route, cors, 1000);
+}
 
 export function session(endpoint: ApiEndpoint, ctx: Server) {
   ctx.route(

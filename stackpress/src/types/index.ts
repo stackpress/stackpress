@@ -20,6 +20,8 @@ import type StackpressTerminal from '../terminal/Terminal.js';
 export type { AdminConfig } from '../admin/types.js';
 
 export type {
+  ApiType,
+  APIType,
   ApiOauthInputProps,
   ApiOauthFormProps,
   Scopes,

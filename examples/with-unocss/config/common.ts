@@ -1,10 +1,9 @@
 //node
 import path from 'node:path';
 //types
-import type { Method } from 'stackpress/types';
+import type { Method, APIType } from 'stackpress/types';
 export type { Config } from 'stackpress/types';
 export type Cascade = 'CASCADE'|'RESTRICT'|'SET NULL';
-export type APIType = 'app'|'public'|'session';
 //pathnames
 export const cwd = process.cwd();
 export const build = path.join(cwd, '.build');
@@ -98,6 +97,7 @@ export const api = {
       route: '/api/auth/search',
       type: 'public' as APIType,
       event: 'auth-search',
+      cors: true,
       data: {}
     },
     //Profile Endpoints

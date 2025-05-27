@@ -8,6 +8,9 @@ import type { ViewConfig, BrandConfig } from '../view/types.js';
 //session
 import type { Profile } from '../session/types.js';
 
+export type ApiType = 'public' | 'app' | 'session';
+export type APIType = ApiType;
+
 export type ApiConfigProps = {
   language: LanguageConfig,
   view: ViewConfig,
@@ -45,8 +48,11 @@ export type ApiEndpoint = {
   example?: string,
   method: Method,
   route: string,
-  type: 'public'|'app'|'session',
+  type: ApiType,
+  //NOTE: scopes aren't needed for public types
   scopes?: string[],
+  //ex. true, '*', 'http://example.com'
+  cors?: boolean|string|string[],
   event: string,
   priority?: number,
   data: Record<string, Data>
