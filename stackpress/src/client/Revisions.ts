@@ -1,7 +1,5 @@
 //node
 import path from 'node:path';
-//modules
-import glob from 'fast-glob';
 //stackpress
 import type { SchemaConfig } from '@stackpress/idea-parser/types';
 import FileLoader from '@stackpress/lib/FileLoader';
@@ -95,6 +93,7 @@ export default class Revisions {
     if (!this._epochs.length) {
       //if the root folder exists, read the epochs
       if (await this.loader.fs.exists(this.root)) {
+        const glob = await import('fast-glob');
         //ex. [ '1734693964343.json' ]
         const results = glob.sync('*.json', { cwd: this.root });
         //ex. [ 1734693964343 ]
