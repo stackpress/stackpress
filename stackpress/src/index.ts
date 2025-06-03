@@ -2,6 +2,8 @@ export type {
   ApiOauthInputProps,
   ApiOauthFormProps,
   Scopes,
+  APIType,
+  ApiType,
   ApiEndpoint,
   ApiScope,
   ApiWebhook,
