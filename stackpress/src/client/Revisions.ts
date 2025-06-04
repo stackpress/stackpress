@@ -95,7 +95,7 @@ export default class Revisions {
       if (await this.loader.fs.exists(this.root)) {
         const glob = await import('fast-glob');
         //ex. [ '1734693964343.json' ]
-        const results = glob.sync('*.json', { cwd: this.root });
+        const results = glob.default.sync('*.json', { cwd: this.root });
         //ex. [ 1734693964343 ]
         this._epochs = results.map(
           filename => Number(filename.split('.')[0])
