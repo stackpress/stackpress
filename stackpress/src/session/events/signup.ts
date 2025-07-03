@@ -21,7 +21,7 @@ export default async function AuthSignup(
   //get the client
   const client = ctx.plugin<ClientPlugin>('client');
   //get the session seed
-  const seed = ctx.config.path('session.seed', 'abc123');
+  const seed = ctx.config.path('database.seed', 'abc123');
   //get input
   const input = { roles, ...req.data() };
   const response = await signup(input, seed, engine, client);

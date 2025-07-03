@@ -25,7 +25,7 @@ export default async function AuthSignin(
   const client = ctx.plugin<ClientPlugin>('client');
   //get the session seed
   //Q: Do I want to error if no seed?
-  const seed = ctx.config.path('session.seed', 'abc123');
+  const seed = ctx.config.path('database.seed', 'abc123');
   //get the user from the database
   const response = await signin(type, req.data(), seed, engine, client);
   //if there are results
