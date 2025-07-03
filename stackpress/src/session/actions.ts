@@ -100,32 +100,39 @@ export async function signin(
   input: Partial<SigninInput>,
   seed: string,
   engine: Engine,
-  client: ClientPlugin
+  client: ClientPlugin,
+  password = true
 ): Promise<Partial<StatusResponse<AuthExtended>>> {
   const actions = client.model.auth.actions(engine);
   const token = encrypt(String(input[type]), seed);
   //get form body
   const response = await actions.search({
-    columns: ['*', 'profile.*'],
+    columns: [ '*', 'profile.*' ],
     filter: { type, token }
   });
+  //get the first result
   const results = response.results?.[0] as AuthExtended;
+  //if there is an error
   if (response.code !== 200) {
     return { ...response, results };
+  //if no results
   } else if (!results) {
     return { 
       code: 404, 
       status: 'Not Found', 
       error: 'User Not Found' 
     };
-  } 
-  const secret = hash(String(input.secret));
-  if (secret !== String(results.secret)) {
-    return { 
-      code: 401, 
-      status: 'Unauthorized', 
-      error: 'Invalid Password' 
-    };
+  //if use password
+  //NOTE: passwordless can occur if OTP or magic link is used
+  } else if (password) {
+    const secret = hash(String(input.secret));
+    if (secret !== String(results.secret)) {
+      return { 
+        code: 401, 
+        status: 'Unauthorized', 
+        error: 'Invalid Password' 
+      };
+    }
   }
   //update consumed
   await actions.update({ id: results.id }, {

@@ -19,6 +19,8 @@ export default async function AuthSignin(
 ) {
   //get the type of signin username, email, phone
   const type = req.data.path('type', 'username') as SigninType;
+  //get password
+  const password = req.data.path('password', true);
   //get the database engine 
   const engine = ctx.plugin<DatabasePlugin>('database');
   //get the client
@@ -27,7 +29,14 @@ export default async function AuthSignin(
   //Q: Do I want to error if no seed?
   const seed = ctx.config.path('database.seed', 'abc123');
   //get the user from the database
-  const response = await signin(type, req.data(), seed, engine, client);
+  const response = await signin(
+    type, 
+    req.data(), 
+    seed, 
+    engine, 
+    client, 
+    Boolean(password)
+  );
   //if there are results
   if (response.results) {
     //remove sensitive data
