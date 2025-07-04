@@ -573,6 +573,8 @@ export default class Column {
       if (typeof assert[method] !== 'function'
         //if not strict and required
         || (!strict && method === 'required')
+        //if not strict and has no value
+        || (!strict && hasNoValue)
         //if strict and no value, but there is a default
         || (strict && hasNoValue && (!this.required || hasDefault))
       ) {
