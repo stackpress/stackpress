@@ -43,7 +43,9 @@ export function unload() {
   const value = cookie.get('flash');
   if (value) {
     cookie.remove('flash', cookieConfig);
-    const args: Record<string, any> = JSON.parse(value as string);
+    const args: Record<string, any> = typeof value === 'string' 
+      ? JSON.parse(value) 
+      : value;
     notify(args.type, args.message, args.close);
   }
 };
