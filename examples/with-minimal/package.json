@@ -7,7 +7,7 @@
     "dev": "tsx src/index.ts"
   },
   "dependencies": {
-    "stackpress": "0.2.28"
+    "stackpress": "0.2.29"
   },
   "devDependencies": {
     "@types/node": "22.9.3",
