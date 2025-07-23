@@ -19,8 +19,7 @@ export default function ThemeProvider(props: ThemeProviderProps) {
   };
   const value = { theme, toggle };
   useEffect(() => {
-    setTheme(cookie.get('theme') as string || 'light');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setTheme(cookie.get('theme') as string || init);
   }, []);
   return (
     <ThemeContext.Provider value={value}>
