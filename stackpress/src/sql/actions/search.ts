@@ -254,7 +254,11 @@ export default async function search<M extends UnknownNest = UnknownNest>(
       });
       rows.push(nest.get<M>());
     });
-    return toResponse(rows, total[0].total) as StatusResponse<M[]>;
+    //NOTE: In databases like CRDB the total is returned as a string
+    return toResponse(
+      rows, 
+      Number(total[0].total) || undefined
+    ) as StatusResponse<M[]>;
   } catch (e) {
     return toErrorResponse(e as Error) as StatusResponse<M[]>;
   }
