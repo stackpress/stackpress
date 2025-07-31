@@ -74,8 +74,9 @@ export default class SessionServer {
       method: req.method.toUpperCase(), 
       route: req.url.pathname 
     });
-
-    if (!session.can(...permits)) {
+    //check if the session is permitted
+    const permitted = await session.can(...permits);
+    if (!permitted) {
       res.setError(
         Exception
           .for('Unauthorized')
