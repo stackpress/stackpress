@@ -11,8 +11,8 @@ import type SessionServer from './Session.js';
 export type SessionRoute = { method: string, route: string };
 export type SessionPermission = string | SessionRoute;
 export type SessionPermissionList = Record<string, SessionPermission[]>;
-export type SessionData = Record<string, any> & { 
-  id: string, 
+export type SessionData = Record<string, any> & {
+  id: string,
   name: string,
   image?: string,
   roles: string[]
@@ -22,25 +22,25 @@ export type SessionTokenData = SessionData & {
   permits: SessionPermission[]
 };
 
-export type SessionServerConstructor = { 
+export type SessionServerConstructor = {
   get access(): SessionPermissionList,
   get seed(): string,
   get key(): string,
   set expires(value: number),
   configure(
-    key: string, 
-    seed: string, 
+    key: string,
+    seed: string,
     access: SessionPermissionList
   ): void,
   authorize(
-    req: Request, 
-    res: Response, 
+    req: Request,
+    res: Response,
     permits?: SessionPermission[]
   ): Promise<boolean>,
   create(data: SessionData): Promise<string>,
   token(req: Request): string | null,
   load(token: string | Request): SessionServer,
-  new (): SessionServer
+  new(): SessionServer
 };
 
 export type SignupInput = {
