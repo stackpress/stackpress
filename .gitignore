@@ -141,3 +141,5 @@ examples/*/.build
 examples/*/public/assets
 examples/*/public/client
 archives
+
+.clinerules
