@@ -21,40 +21,43 @@ import type {
 
 //@ts-ignore
 import ReCAPTCHA from 'react-google-recaptcha';
-import { GoogleReCaptchaProvider, GoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { 
+  GoogleReCaptchaProvider, 
+  GoogleReCaptcha 
+} from 'react-google-recaptcha-v3';
 
-// Public keys for Google reCAPTCHA (these are safe to show in frontend code)
-const INVISIBLE_CAPTCHA_KEY = '6Lcb0cIrAAAAAOVFB2R7yXHEv59KB7U_ofxktXmG'; // v3 - invisible
-const VISIBLE_CAPTCHA_KEY = '6LcfjsArAAAAAMPsVYoAb2qcC8uA4y50lgDxS7zA';   // v2 - visible checkbox
+/**
+ * Public keys for Google reCAPTCHA
+ * These are safe to show in frontend code
+ */
+//@ts-ignore
+const INVISIBLE_CAPTCHA_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY_V3 || '';
+//@ts-ignore
+const VISIBLE_CAPTCHA_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY_V2 || '';
 
 export type AuthSignupFormProps = {
   input: Partial<SignupInput>;
   errors: NestedObject<string | string[]>;
 }
 
-export function AuthSignupForm(props: AuthSignupFormProps) {
-  const { input, errors } = props;
-  const { _ } = useLanguage();
-
-  // State for storing reCAPTCHA tokens
-  const [captchaTokenV2, setCaptchaTokenV2] = useState<string>('');
-  const [captchaTokenV3, setCaptchaTokenV3] = useState<string>('');
-
-  // State to control which captcha to show (v3 is invisible, v2 is visible checkbox)
-  const [showVisibleCaptcha, setShowVisibleCaptcha] = useState(false);
-
-  // Reference to the v2 captcha component for resetting
+/**
+ * Custom hook for managing reCAPTCHA functionality
+ */
+function useRecaptcha() {
+  //hooks
+  const [ captchaTokenV2, setCaptchaTokenV2 ] = useState<string>('');
+  const [ captchaTokenV3, setCaptchaTokenV3 ] = useState<string>('');
+  const [ showVisibleCaptcha, setShowVisibleCaptcha ] = useState(false);
   const captchaRef = useRef<ReCAPTCHA>(null);
 
-  // Handler when user completes the visible v2 captcha
+  //handlers
   const handleV2CaptchaComplete = (token: string | null) => {
     if (token) {
       setCaptchaTokenV2(token);
       console.log('Visible captcha completed:', token);
     }
-  }
+  };
 
-  // Handler when invisible v3 captcha completes automatically  
   const handleV3CaptchaComplete = useCallback((token: string) => {
     setCaptchaTokenV3(token);
     console.log('Invisible captcha completed:', token);
@@ -63,7 +66,7 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
     }
   }, []);
 
-  // Check URL parameters to see if we need to show visible captcha
+  //effects
   React.useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const needsVisibleCaptcha = urlParams.get('fallback');
@@ -73,14 +76,18 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
     if (needsVisibleCaptcha === 'v2') {
       setShowVisibleCaptcha(true);
 
-      // Log why we're showing visible captcha
+      //log why we're showing visible captcha
       if (securityScore) {
-        console.log(`Security score too low (${securityScore}), showing visible captcha`);
+        console.log(
+          `Security score too low (${securityScore}), showing visible captcha`
+        );
       } else if (errorMessage) {
-        console.log(`Security check failed (${errorMessage}), showing visible captcha`);
+        console.log(
+          `Security check failed (${errorMessage}), showing visible captcha`
+        );
       }
 
-      // Clean up the URL after reading parameters
+      //clean up the URL after reading parameters
       if (window.history && window.history.replaceState) {
         const cleanUrl = window.location.pathname + window.location.hash;
         window.history.replaceState({}, document.title, cleanUrl);
@@ -88,13 +95,46 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
     }
   }, []);
 
-  // Determine which captcha token to send and which type
-  const currentCaptchaToken = showVisibleCaptcha ? captchaTokenV2 : captchaTokenV3;
-  const currentCaptchaType = showVisibleCaptcha ? "v2" : "v3";
+  //variables
+  const currentCaptchaToken = showVisibleCaptcha 
+    ? captchaTokenV2 
+    : captchaTokenV3;
+  const currentCaptchaType = showVisibleCaptcha ? 'v2' : 'v3';
+  const canSubmit = showVisibleCaptcha 
+    ? captchaTokenV2.length > 0 
+    : captchaTokenV3.length > 0;
 
-  // Check if user can submit (must complete captcha first)
-  const canSubmit = showVisibleCaptcha ? captchaTokenV2.length > 0 : captchaTokenV3.length > 0;
+  return {
+    showVisibleCaptcha,
+    captchaRef,
+    handleV2CaptchaComplete,
+    handleV3CaptchaComplete,
+    currentCaptchaToken,
+    currentCaptchaType,
+    canSubmit
+  };
+}
 
+/**
+ * Authentication signup form component
+ */
+export function AuthSignupForm(props: AuthSignupFormProps) {
+  //props
+  const { input, errors } = props;
+  const { _ } = useLanguage();
+
+  //hooks
+  const {
+    showVisibleCaptcha,
+    captchaRef,
+    handleV2CaptchaComplete,
+    handleV3CaptchaComplete,
+    currentCaptchaToken,
+    currentCaptchaType,
+    canSubmit
+  } = useRecaptcha();
+
+  //render
   return (
     <form className="auth-form" method="post">
       {/* Hidden fields that tell the server which captcha we're using */}
@@ -110,14 +150,14 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
       />
       <Control
         label={`${_('Name')}*`}
-        error={errors.email as string | undefined}
+        error={errors.name as string | undefined}
         className="control"
       >
         <Input
           name="name"
           className="field"
-          error={!!errors.email}
-          defaultValue={input.email}
+          error={!!errors.name}
+          defaultValue={input.name}
           required
         />
       </Control>
@@ -171,14 +211,32 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
       </Control>
 
       {/* Invisible captcha (v3) - shows by default */}
-      {!showVisibleCaptcha && <GoogleReCaptcha onVerify={handleV3CaptchaComplete} />}
+      {!showVisibleCaptcha && (
+        <GoogleReCaptcha onVerify={handleV3CaptchaComplete} />
+      )}
 
       {/* Visible captcha (v2) - shows when security check fails */}
       {showVisibleCaptcha && (
-        <div style={{ margin: '10px 0', padding: '12px', backgroundColor: '#fff3cd', border: '1px solid #ffeaa7', borderRadius: '4px' }}>
-          <p style={{ color: '#856404', marginBottom: '10px', fontSize: '14px' }}>
-            <i className="fas fa-shield-alt" style={{ marginRight: '8px' }}></i>
-            {_('Additional security verification required. Please complete the challenge below:')}
+        <div style={{ 
+          margin: '10px 0', 
+          padding: '12px', 
+          backgroundColor: '#fff3cd', 
+          border: '1px solid #ffeaa7', 
+          borderRadius: '4px' 
+        }}>
+          <p style={{ 
+            color: '#856404', 
+            marginBottom: '10px', 
+            fontSize: '14px' 
+          }}>
+            <i 
+              className="fas fa-shield-alt" 
+              style={{ marginRight: '8px' }}
+            ></i>
+            {_(
+              'Additional security verification required. ' +
+              'Please complete the challenge below:'
+            )}
           </p>
           <ReCAPTCHA
             ref={captchaRef}
@@ -188,33 +246,38 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
         </div>
       )}
 
-
       <div className="action">
         <Button
           className="submit"
           type="submit"
           disabled={!canSubmit}
         >
-          {_('Sign In')}
+          {_('Sign Up')}
         </Button>
       </div>
     </form>
   );
 }
 
+/**
+ * Authentication signup body component
+ */
 export function AuthSignupBody() {
+  //hooks
   const { config, request, response } = useServer<
     AuthConfigProps,
     Partial<SignupInput>,
     Auth
   >();
+  const { _ } = useLanguage();
+
+  //variables
   const input = {
     ...response.results,
     ...request.data()
   } as SignupInput;
   const base = config.path('auth.base', '/auth');
   const errors = response.errors();
-  const { _ } = useLanguage();
   //render
   return (
     <main className="auth-signup-page auth-page">
@@ -246,15 +309,23 @@ export function AuthSignupBody() {
   );
 }
 
+/**
+ * Authentication signup head component
+ */
 export function AuthSignupHead(props: ServerPageProps<AuthConfigProps>) {
+  //props
   const { data, styles = [] } = props;
   const { favicon = '/favicon.ico' } = data?.brand || {};
   const { _ } = useLanguage();
+
+  //variables
   const mimetype = favicon.endsWith('.png')
     ? 'image/png'
     : favicon.endsWith('.svg')
       ? 'image/svg+xml'
       : 'image/x-icon';
+
+  //render
   return (
     <>
       <title>{_('Signup')}</title>
@@ -267,7 +338,11 @@ export function AuthSignupHead(props: ServerPageProps<AuthConfigProps>) {
   );
 }
 
+/**
+ * Main authentication signup page component
+ */
 export function AuthSignupPage(props: ServerPageProps<AuthConfigProps>) {
+  //render
   return (
     <LayoutBlank head={false} {...props}>
       <GoogleReCaptchaProvider reCaptchaKey={INVISIBLE_CAPTCHA_KEY}>

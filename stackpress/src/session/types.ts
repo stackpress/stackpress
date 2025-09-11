@@ -107,7 +107,6 @@ export type SessionPlugin = SessionServerConstructor;
 
 //--------------------------------------------------------------------//
 // Model Types
-
 export type Profile = {
   id: string;
   name: string;

@@ -123,8 +123,8 @@ export default async function SignInPage(
         return;
       }
 
-      // Check if the user's behavior score is too low (likely a bot)
-      if (verificationResult.score && verificationResult.score < 1) {
+      // Check if the user's behavior score is too low (likely a bot),
+      if (verificationResult.score && verificationResult.score < 0.5) {
         console.log('User behavior score too low:', verificationResult.score);
         // Redirect back to form but show visible captcha instead
         const host = req.headers.get('host') || 'localhost';
