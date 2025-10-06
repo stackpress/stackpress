@@ -7,6 +7,7 @@ import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //session
 import type { SessionPlugin, AuthConfig } from '../types.js';
 
+
 export default async function SignupPage(
   req: Request, 
   res: Response,
@@ -47,6 +48,31 @@ export default async function SignupPage(
   const guest = await me.guest();
   //form submission
   if (req.method === 'POST') {
+
+    //get the recaptcha token from the form
+    const token = req.data.path('recaptcha_token', '');
+
+    //verify the token
+    const verifyToken = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        secret: process.env.RECAPTCHAV3_SECRETKEY || '',
+        response: token,
+      }),
+    })
+
+    //result of the verification request
+    const tokenResult = await verifyToken.json();
+
+    //if the token is invalid or the score is less than 0.4, do nothing
+    if (!tokenResult.success || tokenResult.score < 0.4) {
+      res.setHTML('Are you a robot? If not, please try signing up again.');
+      return;
+    }
+
     await ctx.emit('auth-signup', req, res);
     //if signup successful, redirect
     if (res.code === 200) {

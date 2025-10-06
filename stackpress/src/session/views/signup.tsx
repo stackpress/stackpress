@@ -4,16 +4,18 @@ import Control from 'frui/form/Control';
 import Button from 'frui/form/Button';
 import Input from 'frui/field/Input';
 import Password from 'frui/field/Password';
+import { GoogleReCaptchaProvider, GoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { useState } from 'react';
 //views
-import type { 
-  NestedObject, 
-  ServerPageProps 
+import type {
+  NestedObject,
+  ServerPageProps
 } from '../../types/index.js';
 import LayoutBlank from '../../view/layout/LayoutBlank.js';
 import { useServer } from '../../view/server/hooks.js';
 //session
-import type { 
-  SignupInput, 
+import type {
+  SignupInput,
   AuthConfigProps,
   Auth
 } from '../types.js';
@@ -23,15 +25,30 @@ export type AuthSignupFormProps = {
   errors: NestedObject<string | string[]>;
 }
 
+//@ts-ignore
+const RECAPTCHAV3 = import.meta.env.VITE_RECAPTCHAV3_SITEKEY;
+
 export function AuthSignupForm(props: AuthSignupFormProps) {
+  //props
   const { input, errors } = props;
+  //hooks
   const { _ } = useLanguage();
-  
+  const [token, setToken] = useState<string>('');
+
   return (
     <form className="auth-form" method="post">
-      <Control 
-        label={`${_('Name')}*`} 
-        error={errors.email as string|undefined} 
+      {/* Google reCAPTCHA to verify user */}
+      <GoogleReCaptcha onVerify={token => {
+        setToken(token);
+      }}
+      />
+
+      {/* Hidden input for reCAPTCHA token */}
+      <Input type="hidden" name="recaptcha_token" value={token}/>
+      
+      <Control
+        label={`${_('Name')}*`}
+        error={errors.email as string | undefined}
         className="control"
       >
         <Input
@@ -42,9 +59,9 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           required
         />
       </Control>
-      <Control 
-        label={_('Email Address')} 
-        error={errors.email as string|undefined} 
+      <Control
+        label={_('Email Address')}
+        error={errors.email as string | undefined}
         className="control"
       >
         <Input
@@ -54,9 +71,9 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           defaultValue={input.email}
         />
       </Control>
-      <Control 
-        label={_('Phone Number')} 
-        error={errors.phone as string|undefined} 
+      <Control
+        label={_('Phone Number')}
+        error={errors.phone as string | undefined}
         className="control"
       >
         <Input
@@ -66,9 +83,9 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           defaultValue={input.phone}
         />
       </Control>
-      <Control 
-        label={_('Username')} 
-        error={errors.username as string|undefined} 
+      <Control
+        label={_('Username')}
+        error={errors.username as string | undefined}
         className="control"
       >
         <Input
@@ -78,9 +95,9 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           defaultValue={input.username}
         />
       </Control>
-      <Control 
-        label={`${_('Password')}*`} 
-        error={errors.secret as string|undefined} 
+      <Control
+        label={`${_('Password')}*`}
+        error={errors.secret as string | undefined}
         className="control"
       >
         <Password
@@ -101,13 +118,13 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
 
 export function AuthSignupBody() {
   const { config, request, response } = useServer<
-      AuthConfigProps, 
-      Partial<SignupInput>, 
-      Auth
-    >();
-  const input = { 
-    ...response.results, 
-    ...request.data() 
+    AuthConfigProps,
+    Partial<SignupInput>,
+    Auth
+  >();
+  const input = {
+    ...response.results,
+    ...request.data()
   } as SignupInput;
   const base = config.path('auth.base', '/auth');
   const errors = response.errors();
@@ -117,13 +134,13 @@ export function AuthSignupBody() {
     <main className="auth-signup-page auth-page">
       <div className="container">
         {config.has('brand', 'logo') ? (
-          <img 
-            height="50" 
-            alt={config.path('brand.name')} 
-            src={config.path('brand.logo')} 
-            className="logo" 
+          <img
+            height="50"
+            alt={config.path('brand.name')}
+            src={config.path('brand.logo')}
+            className="logo"
           />
-        ): (
+        ) : (
           <h2 className="brand">{config.path('brand.name')}</h2>
         )}
         <section className="auth-modal">
@@ -150,8 +167,8 @@ export function AuthSignupHead(props: ServerPageProps<AuthConfigProps>) {
   const mimetype = favicon.endsWith('.png')
     ? 'image/png'
     : favicon.endsWith('.svg')
-    ? 'image/svg+xml'
-    : 'image/x-icon';
+      ? 'image/svg+xml'
+      : 'image/x-icon';
   return (
     <>
       <title>{_('Signup')}</title>
@@ -167,7 +184,9 @@ export function AuthSignupHead(props: ServerPageProps<AuthConfigProps>) {
 export function AuthSignupPage(props: ServerPageProps<AuthConfigProps>) {
   return (
     <LayoutBlank head={false} {...props}>
-      <AuthSignupBody />
+      <GoogleReCaptchaProvider reCaptchaKey={RECAPTCHAV3}>
+        <AuthSignupBody />
+      </GoogleReCaptchaProvider>
     </LayoutBlank>
   );
 }

@@ -73,7 +73,6 @@
       "require": "./cjs/admin/index.js",
       "import": "./esm/admin/index.js"
     },
-
     "./api/plugin": {
       "require": "./cjs/api/plugin.js",
       "import": "./esm/api/plugin.js"
@@ -86,7 +85,6 @@
       "require": "./cjs/api/index.js",
       "import": "./esm/api/index.js"
     },
-
     "./Revisions": {
       "require": "./cjs/client/Revisions.js",
       "import": "./esm/client/Revisions.js"
@@ -107,7 +105,6 @@
       "require": "./cjs/client/index.js",
       "import": "./esm/client/index.js"
     },
-
     "./email/plugin": {
       "require": "./cjs/email/plugin.js",
       "import": "./esm/email/plugin.js"
@@ -120,7 +117,6 @@
       "require": "./cjs/email/index.js",
       "import": "./esm/email/index.js"
     },
-    
     "./Language": {
       "require": "./cjs/language/Language.js",
       "import": "./esm/language/Language.js"
@@ -137,7 +133,6 @@
       "require": "./cjs/language/index.js",
       "import": "./esm/language/index.js"
     },
-
     "./Attribute": {
       "require": "./cjs/schema/spec/Attribute.js",
       "import": "./esm/schema/spec/Attribute.js"
@@ -170,7 +165,6 @@
       "require": "./cjs/schema/index.js",
       "import": "./esm/schema/index.js"
     },
-
     "./scripts/*": {
       "require": "./cjs/scripts/*.js",
       "import": "./esm/scripts/*.js"
@@ -179,7 +173,6 @@
       "require": "./cjs/scripts/index.js",
       "import": "./esm/scripts/index.js"
     },
-
     "./http": {
       "require": "./cjs/server/http.js",
       "import": "./esm/server/http.js"
@@ -188,7 +181,6 @@
       "require": "./cjs/server/whatwg.js",
       "import": "./esm/server/whatwg.js"
     },
-
     "./server/types": {
       "require": "./cjs/server/types.js",
       "import": "./esm/server/types.js"
@@ -197,7 +189,6 @@
       "require": "./cjs/server/index.js",
       "import": "./esm/server/index.js"
     },
-
     "./Session": {
       "require": "./cjs/session/Session.js",
       "import": "./esm/session/Session.js"
@@ -214,7 +205,6 @@
       "require": "./cjs/session/index.js",
       "import": "./esm/session/index.js"
     },
-    
     "./sql/actions/*": {
       "require": "./cjs/sql/actions/*.js",
       "import": "./esm/sql/actions/*.js"
@@ -263,7 +253,6 @@
       "require": "./cjs/sql/index.js",
       "import": "./esm/sql/index.js"
     },
-
     "./terminal/events/*": {
       "require": "./cjs/terminal/events/*.js",
       "import": "./esm/terminal/events/*.js"
@@ -288,7 +277,6 @@
       "require": "./cjs/terminal/index.js",
       "import": "./esm/terminal/index.js"
     },
-
     "./types/transform": {
       "require": "./cjs/types/transform/index.js",
       "import": "./esm/types/transform/index.js"
@@ -301,7 +289,6 @@
       "require": "./cjs/types/index.js",
       "import": "./esm/types/index.js"
     },
-    
     "./view/import": {
       "require": "./cjs/view/import.js",
       "import": "./esm/view/import.js"
@@ -338,7 +325,6 @@
     "./esm/session/views/*": "./esm/session/views/*.js",
     "./cjs/api/views/*": "./cjs/api/views/*.js",
     "./cjs/session/views/*": "./cjs/session/views/*.js",
-
     "./Exception": {
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
@@ -359,7 +345,6 @@
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
     },
-
     "./tsconfig/cjs": "./tsconfig/cjs.json",
     "./tsconfig/esm": "./tsconfig/esm.json",
     "./assets.d.ts": "./tsconfig/assets.d.ts",
@@ -368,96 +353,237 @@
   },
   "typesVersions": {
     "*": {
-      "admin/pages/detail/*": [ "./cjs/admin/pages/detail/*.d.ts" ],
-      "admin/pages/*": [ "./cjs/admin/pages/*.d.ts" ],
-      "admin/transform": [ "./cjs/admin/transform/index.d.ts" ],
-      "admin/plugin": [ "./cjs/admin/plugin.d.ts" ],
-      "admin/types": [ "./cjs/admin/types.d.ts" ],
-      "admin": [ "./cjs/admin/index.d.ts" ],
-
-      "api/plugin": [ "./cjs/api/plugin.d.ts" ],
-      "api/types": [ "./cjs/api/types.d.ts" ],
-      "api": [ "./cjs/api/index.d.ts" ],
-
-      "Revisions": [ "./cjs/client/Revisions.d.ts" ],
-      "client/transform": [ "./cjs/client/transform/index.d.ts" ],
-      "client/plugin": [ "./cjs/client/plugin.d.ts" ],
-      "client/types": [ "./cjs/client/types.d.ts" ],
-      "client": [ "./cjs/client/index.d.ts" ],
-      
-      "email/plugin": [ "./cjs/email/plugin.d.ts" ],
-      "email/types": [ "./cjs/email/types.d.ts" ],
-      "email": [ "./cjs/email/index.d.ts" ],
-      
-      "Language": [ "./cjs/language/Language.d.ts" ],
-      "language/plugin": [ "./cjs/language/plugin.d.ts" ],
-      "language/types": [ "./cjs/language/types.d.ts" ],
-      "language": [ "./cjs/language/index.d.ts" ],
-
-      "Attribute": [ "./cjs/schema/spec/Attribute.d.ts" ],
-      "Column": [ "./cjs/schema/spec/Column.d.ts" ],
-      "Fieldset": [ "./cjs/schema/spec/Fieldset.d.ts" ],
-      "Model": [ "./cjs/schema/spec/Model.d.ts" ],
-      "assert": [ "./cjs/schema/assert.d.ts" ],
-      "Registry": [ "./cjs/schema/Registry.d.ts" ],
-      "schema/types": [ "./cjs/schema/types.d.ts" ],
-      "schema": [ "./cjs/schema/index.d.ts" ],
-      
-      "scripts/*": [ "./cjs/scripts/*.d.ts" ],
-      "scripts": [ "./cjs/scripts/index.d.ts" ],
-      
-      "http": [ "./cjs/server/http.d.ts" ],
-      "whatwg": [ "./cjs/server/whatwg.d.ts" ],
-      "server/types": [ "./cjs/server/types.d.ts" ],
-      "server": [ "./cjs/server/index.d.ts" ],
-      
-      "Session": [ "./cjs/session/Session.d.ts" ],
-      "session/plugin": [ "./cjs/session/plugin.d.ts" ],
-      "session/types": [ "./cjs/session/types.d.ts" ],
-      "session": [ "./cjs/session/index.d.ts" ],
-      
-      "sql/actions/*": [ "./cjs/sql/actions/*.d.ts" ],
-      "sql/actions": [ "./cjs/sql/actions/index.d.ts" ],
-      "sql/events/*": [ "./cjs/sql/events/*.d.ts" ],
-      "sql/events": [ "./cjs/sql/events/index.d.ts" ],
-      "mysql": [ "./cjs/sql/mysql.d.ts" ],
-      "pglite": [ "./cjs/sql/pglite.d.ts" ],
-      "pgsql": [ "./cjs/sql/pgsql.d.ts" ],
-      "sqlite": [ "./cjs/sql/sqlite.d.ts" ],
-      "sql/transform": [ "./cjs/sql/transform/index.d.ts" ],
-      "sql/plugin": [ "./cjs/sql/plugin.d.ts" ],
-      "sql/types": [ "./cjs/sql/types.d.ts" ],
-      "sql": [ "./cjs/sql/index.d.ts" ],
-      
-      "terminal/events/*": [ "./cjs/terminal/events/*.d.ts" ],
-      "terminal/events": [ "./cjs/terminal/events/index.d.ts" ],
-      "Terminal": [ "./cjs/terminal/Terminal.d.ts" ],
-      "terminal/plugin": [ "./cjs/terminal/plugin.d.ts" ],
-      "terminal/types": [ "./cjs/terminal/types.d.ts" ],
-      "terminal": [ "./cjs/terminal/index.d.ts" ],
-
-      "types/transform": [ "./cjs/types/transform/index.d.ts" ],
-      "types/plugin": [ "./cjs/types/plugin.d.ts" ],
-      "types": [ "./cjs/types/index.d.ts" ],
-      
-      "view/import": [ "./cjs/view/import.d.ts" ],
-      "view/transform": [ "./cjs/view/transform/index.d.ts" ],
-      "view/plugin": [ "./cjs/view/plugin.d.ts" ],
-      "view/types": [ "./cjs/view/types.d.ts" ],
-      "view/client": [ "./cjs/view/client.d.ts" ],
-      "view": [ "./cjs/view/index.d.ts" ],
-      "api/views/*": [ "./cjs/api/views/*.d.ts" ],
-      "session/views/*": [ "./cjs/session/views/*.d.ts" ],
-      "esm/api/views/*": [ "./esm/api/views/*.d.ts" ],
-      "esm/session/views/*": [ "./esm/session/views/*.d.ts" ],
-      "cjs/api/views/*": [ "./cjs/api/views/*.d.ts" ],
-      "cjs/session/views/*": [ "./cjs/session/views/*.d.ts" ],
-
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "lib": [ "./cjs/lib.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "unocss": [ "./cjs/unocss.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ]
+      "admin/pages/detail/*": [
+        "./cjs/admin/pages/detail/*.d.ts"
+      ],
+      "admin/pages/*": [
+        "./cjs/admin/pages/*.d.ts"
+      ],
+      "admin/transform": [
+        "./cjs/admin/transform/index.d.ts"
+      ],
+      "admin/plugin": [
+        "./cjs/admin/plugin.d.ts"
+      ],
+      "admin/types": [
+        "./cjs/admin/types.d.ts"
+      ],
+      "admin": [
+        "./cjs/admin/index.d.ts"
+      ],
+      "api/plugin": [
+        "./cjs/api/plugin.d.ts"
+      ],
+      "api/types": [
+        "./cjs/api/types.d.ts"
+      ],
+      "api": [
+        "./cjs/api/index.d.ts"
+      ],
+      "Revisions": [
+        "./cjs/client/Revisions.d.ts"
+      ],
+      "client/transform": [
+        "./cjs/client/transform/index.d.ts"
+      ],
+      "client/plugin": [
+        "./cjs/client/plugin.d.ts"
+      ],
+      "client/types": [
+        "./cjs/client/types.d.ts"
+      ],
+      "client": [
+        "./cjs/client/index.d.ts"
+      ],
+      "email/plugin": [
+        "./cjs/email/plugin.d.ts"
+      ],
+      "email/types": [
+        "./cjs/email/types.d.ts"
+      ],
+      "email": [
+        "./cjs/email/index.d.ts"
+      ],
+      "Language": [
+        "./cjs/language/Language.d.ts"
+      ],
+      "language/plugin": [
+        "./cjs/language/plugin.d.ts"
+      ],
+      "language/types": [
+        "./cjs/language/types.d.ts"
+      ],
+      "language": [
+        "./cjs/language/index.d.ts"
+      ],
+      "Attribute": [
+        "./cjs/schema/spec/Attribute.d.ts"
+      ],
+      "Column": [
+        "./cjs/schema/spec/Column.d.ts"
+      ],
+      "Fieldset": [
+        "./cjs/schema/spec/Fieldset.d.ts"
+      ],
+      "Model": [
+        "./cjs/schema/spec/Model.d.ts"
+      ],
+      "assert": [
+        "./cjs/schema/assert.d.ts"
+      ],
+      "Registry": [
+        "./cjs/schema/Registry.d.ts"
+      ],
+      "schema/types": [
+        "./cjs/schema/types.d.ts"
+      ],
+      "schema": [
+        "./cjs/schema/index.d.ts"
+      ],
+      "scripts/*": [
+        "./cjs/scripts/*.d.ts"
+      ],
+      "scripts": [
+        "./cjs/scripts/index.d.ts"
+      ],
+      "http": [
+        "./cjs/server/http.d.ts"
+      ],
+      "whatwg": [
+        "./cjs/server/whatwg.d.ts"
+      ],
+      "server/types": [
+        "./cjs/server/types.d.ts"
+      ],
+      "server": [
+        "./cjs/server/index.d.ts"
+      ],
+      "Session": [
+        "./cjs/session/Session.d.ts"
+      ],
+      "session/plugin": [
+        "./cjs/session/plugin.d.ts"
+      ],
+      "session/types": [
+        "./cjs/session/types.d.ts"
+      ],
+      "session": [
+        "./cjs/session/index.d.ts"
+      ],
+      "sql/actions/*": [
+        "./cjs/sql/actions/*.d.ts"
+      ],
+      "sql/actions": [
+        "./cjs/sql/actions/index.d.ts"
+      ],
+      "sql/events/*": [
+        "./cjs/sql/events/*.d.ts"
+      ],
+      "sql/events": [
+        "./cjs/sql/events/index.d.ts"
+      ],
+      "mysql": [
+        "./cjs/sql/mysql.d.ts"
+      ],
+      "pglite": [
+        "./cjs/sql/pglite.d.ts"
+      ],
+      "pgsql": [
+        "./cjs/sql/pgsql.d.ts"
+      ],
+      "sqlite": [
+        "./cjs/sql/sqlite.d.ts"
+      ],
+      "sql/transform": [
+        "./cjs/sql/transform/index.d.ts"
+      ],
+      "sql/plugin": [
+        "./cjs/sql/plugin.d.ts"
+      ],
+      "sql/types": [
+        "./cjs/sql/types.d.ts"
+      ],
+      "sql": [
+        "./cjs/sql/index.d.ts"
+      ],
+      "terminal/events/*": [
+        "./cjs/terminal/events/*.d.ts"
+      ],
+      "terminal/events": [
+        "./cjs/terminal/events/index.d.ts"
+      ],
+      "Terminal": [
+        "./cjs/terminal/Terminal.d.ts"
+      ],
+      "terminal/plugin": [
+        "./cjs/terminal/plugin.d.ts"
+      ],
+      "terminal/types": [
+        "./cjs/terminal/types.d.ts"
+      ],
+      "terminal": [
+        "./cjs/terminal/index.d.ts"
+      ],
+      "types/transform": [
+        "./cjs/types/transform/index.d.ts"
+      ],
+      "types/plugin": [
+        "./cjs/types/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types/index.d.ts"
+      ],
+      "view/import": [
+        "./cjs/view/import.d.ts"
+      ],
+      "view/transform": [
+        "./cjs/view/transform/index.d.ts"
+      ],
+      "view/plugin": [
+        "./cjs/view/plugin.d.ts"
+      ],
+      "view/types": [
+        "./cjs/view/types.d.ts"
+      ],
+      "view/client": [
+        "./cjs/view/client.d.ts"
+      ],
+      "view": [
+        "./cjs/view/index.d.ts"
+      ],
+      "api/views/*": [
+        "./cjs/api/views/*.d.ts"
+      ],
+      "session/views/*": [
+        "./cjs/session/views/*.d.ts"
+      ],
+      "esm/api/views/*": [
+        "./esm/api/views/*.d.ts"
+      ],
+      "esm/session/views/*": [
+        "./esm/session/views/*.d.ts"
+      ],
+      "cjs/api/views/*": [
+        "./cjs/api/views/*.d.ts"
+      ],
+      "cjs/session/views/*": [
+        "./cjs/session/views/*.d.ts"
+      ],
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "lib": [
+        "./cjs/lib.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "unocss": [
+        "./cjs/unocss.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ]
     }
   },
   "files": [
@@ -492,14 +618,15 @@
     "nodemailer": "6.9.16",
     "papaparse": "5.5.1",
     "r22n": "1.0.10",
+    "react-google-recaptcha-v3": "^1.11.0",
     "react-toastify": "11.0.5",
     "reactus": "0.6.1",
     "universal-cookie": "8.0.1"
   },
   "devDependencies": {
     "@types/mustache": "4.2.5",
-    "@types/nodemailer": "6.4.17",
     "@types/node": "22.9.3",
+    "@types/nodemailer": "6.4.17",
     "@types/papaparse": "5.3.15",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
@@ -508,8 +635,8 @@
     "prettier": "3.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "ts-node": "10.9.2",
     "ts-morph": "24.0.0",
+    "ts-node": "10.9.2",
     "typescript": "5.7.2",
     "unocss": "66.0.0"
   },
