@@ -375,8 +375,50 @@ export default class Column extends ColumnAttributes {
       //related columns are not assertable
       return [];
     }
+    //implicit default validators
+    const defaults: SchemaAssertion[] = [];
+    //implied validators
+    //if the type maps to an assert method
+    // For example:
+    // String, Text,    Number, Integer, 
+    // Float,  Boolean, Date,   Datetime, 
+    // Time,   Json,    Object, Hash
+    if (this.type in typemap.method) {
+      //get the assert method
+      const method = typemap.method[this.type];
+      const { array } = map.assert;
+      defaults.push(this.multiple 
+        ? toAssertToken(array, [ method ], 'Invalid value')
+        : toAssertToken(map.assert[method], [], 'Invalid value')
+      );
+    }
+    // - enum
+    if (this.enum) {
+      const { option } = map.assert;
+      const args = Object.values(this.enum);
+      defaults.push(
+        toAssertToken(option, args, 'Invalid option')
+      );
+    }
+    // - unique
+    if (this.unique) {
+      const { unique } = map.assert;
+      defaults.push(
+        toAssertToken(unique, [], 'Already exists')
+      );
+    }
+    // - required
+    if (!this.multiple 
+      && this.required 
+      && typeof this.default === 'undefined'
+    ) {
+      const { required } = map.assert;
+      defaults.push(
+        toAssertToken(required, [], `${this.name} is required`)
+      );
+    }
     //explicit validators
-    return this.defaultAssertions
+    return defaults
       //remove the default assertions that are already defined
       .filter(defaultAssert => !super.assertions.find(
         assert => assert.method === defaultAssert.method
@@ -452,55 +494,6 @@ export default class Column extends ColumnAttributes {
       }
     }
     return defaults;
-  }
-
-  /**
-   * Returns the default assertions for this column
-   */
-  public get defaultAssertions() {
-    //explicit validators
-    const assertions: SchemaAssertion[] = [];
-    //implied validators
-    //if the type maps to an assert method
-    // For example:
-    // String, Text,    Number, Integer, 
-    // Float,  Boolean, Date,   Datetime, 
-    // Time,   Json,    Object, Hash
-    if (this.type in typemap.method) {
-      //get the assert method
-      const method = typemap.method[this.type];
-      const { array } = map.assert;
-      assertions.push(this.multiple 
-        ? toAssertToken(array, [ method ], 'Invalid value')
-        : toAssertToken(map.assert[method], [], 'Invalid value')
-      );
-    }
-    // - enum
-    if (this.enum) {
-      const { option } = map.assert;
-      const args = Object.values(this.enum);
-      assertions.push(
-        toAssertToken(option, args, 'Invalid option')
-      );
-    }
-    // - unique
-    if (this.unique) {
-      const { unique } = map.assert;
-      assertions.push(
-        toAssertToken(unique, [], 'Already exists')
-      );
-    }
-    // - required
-    if (!this.multiple 
-      && this.required 
-      && typeof this.default === 'undefined'
-    ) {
-      const { required } = map.assert;
-      assertions.push(
-        toAssertToken(required, [], `${this.name} is required`)
-      );
-    }
-    return assertions;
   }
 
   /**
