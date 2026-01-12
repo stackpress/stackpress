@@ -178,9 +178,7 @@ describe('schema/spec/Column', () => {
 
   it('should get component tokens', async () => {
     const column = mockColumn('name String');
-    expect(column.field?.component).to.equal('Input');
-    expect(column.field?.name).to.equal('field.string');
-    expect(column.field?.import.from).to.equal('frui/form/Input');
+    expect(column.field).to.be.null;
     expect(column.filter).to.be.null;
 
     expect(mockColumn('name String @field.none').field).to.be.null;

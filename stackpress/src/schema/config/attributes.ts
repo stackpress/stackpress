@@ -2037,17 +2037,6 @@ const field: AttributeDataMap = {
       "props": {}
     }
   },
-  "none": {
-    "type": [ "none" ],
-    "name": "field.none",
-    "description": "Do not display this column in a field view.",
-    "args": [],
-    "data": {
-      "component": "",
-      "import": { "from": "", "default": true },
-      "props": {}
-    }
-  },
   "number": {
     "type": [ "component" ],
     "name": "field.number",
@@ -4590,17 +4579,6 @@ const view: AttributeDataMap = {
         "from": "frui/view/Metadata",
         "default": true
       },
-      "props": {}
-    }
-  },
-  "none": {
-    "type": [ "none" ],
-    "name": "view.none",
-    "description": "Do not display this column in a detail view.",
-    "args": [],
-    "data": {
-      "component": "",
-      "import": { "from": "", "default": true },
       "props": {}
     }
   },

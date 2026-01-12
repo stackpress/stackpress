@@ -27,12 +27,7 @@ import {
 } from '../helpers.js';
 import assert from '../assert.js';
 import * as typemap from '../config/typemaps.js';
-import {
-  first, 
-  map,
-  toComponentToken,
-  toAssertToken
-} from '../config/attributes.js';
+import { map, toAssertToken } from '../config/attributes.js';
 
 export class ColumnAttributes extends Attributes {
   /**
@@ -509,108 +504,10 @@ export default class Column extends ColumnAttributes {
   }
 
   /**
-   * Returns the default form field for this column
-   * will default to none if generated or not found
-   */
-  public get defaultField() {
-    //if it's generated or updated
-    return this.generated || this.updated
-      //then none field
-      ? toComponentToken(map.field.none)
-      //if multiple like String[]
-      : this.multiple
-      //ex. String[] to field.stringlist...
-      ? toComponentToken(first({ 
-        kind: 'field', 
-        name: `field.${this.type.toLowerCase()}list` 
-      }) || map.field.none)
-      //ex. String to field.string...
-      : toComponentToken(first({ 
-        kind: 'field', 
-        name: `field.${this.type.toLowerCase()}` 
-      }) || map.field.none);
-  }
-
-  /**
-   * Returns the default filter for this column
-   * In all cases, defaults to none
-   * (should not force a filter field...)
-   */
-  public get defaultFilter() {
-    return toComponentToken(map.filter.none);
-  }
-
-  /**
-   * Returns the default list format for this column
-   * It's based on type and multiple...
-   * (defaults to text view)
-   */
-  public get defaultList() {
-    //if multiple like String[]
-    return this.multiple 
-      //ex. String[] to list.stringlist...
-      ? toComponentToken(
-        first({ 
-          kind: 'list', 
-          name: `list.${this.type.toLowerCase()}list` 
-        }) || map.list.text
-      )
-      //ex. String to field.string...
-      : toComponentToken(
-        first({ 
-          kind: 'list', 
-          name: `list.${this.type.toLowerCase()}` 
-        }) || map.list.text
-      );
-  }
-
-  /**
-   * Returns the default filter for this column
-   * In all cases, defaults to none
-   * (should not force a filter field...)
-   */
-  public get defaultSpan() {
-    return toComponentToken(map.span.none);
-  }
-
-  /**
-   * Returns the default view format for this column
-   * It's based on type and multiple...
-   * (defaults to text view)
-   */
-  public get defaultView() {
-    //if multiple like String[]
-    return this.multiple 
-      //ex. String[] to list.stringlist...
-      ? toComponentToken(
-        first({ 
-          kind: 'view', 
-          name: `view.${this.type.toLowerCase()}list` 
-        }) || map.view.text
-      )
-      //ex. String to field.string...
-      : toComponentToken(
-        first({ 
-          kind: 'view', 
-          name: `view.${this.type.toLowerCase()}` 
-        }) || map.view.text
-      );
-  }
-
-  /**
    * If type is an enum, this returns the enum configuration
    */
   public get enum(): EnumConfig | null {
     return this._fieldset.registry.enum.get(this.type) || null;
-  }
-
-  /**
-   * Returns the column field (defaults to none)
-   * example: @field.text({type "text"})
-   */
-  public get field() {
-    const component = super.field || this.defaultField;
-    return component.component ? component : null;
   }
 
   /**
@@ -621,28 +518,10 @@ export default class Column extends ColumnAttributes {
   }
 
   /**
-   * Returns the column filter field (defaults to none)
-   * example: @filter.text({type "text"})
-   */
-  public get filter() {
-    const component = super.filter || this.defaultFilter;
-    return component.component ? component : null;
-  }
-
-  /**
    * Returns true if column is filterable
    */
   public get filterable() {
     return Boolean(this.filter);
-  }
-
-  /**
-   * Returns the column list format
-   * example: @list.char({length 1})
-   */
-  public get list() {
-    const component = super.list || this.defaultList;
-    return component.component ? component : null;
   }
 
   /**
@@ -736,15 +615,6 @@ export default class Column extends ColumnAttributes {
   }
 
   /**
-   * Returns the column span field (defaults to none)
-   * example: @span.text({type "text"})
-   */
-  public get span() {
-    const component = super.span || this.defaultSpan;
-    return component.component ? component : null;
-  }
-
-  /**
    * Returns true if column is spannable
    */
   public get spannable() {
@@ -784,15 +654,6 @@ export default class Column extends ColumnAttributes {
       sqlite: typemap.sqlite[this.type],
       helper: typemap.helper[this.type]
     };
-  }
-
-  /**
-   * Returns the column @view format (defaults to none)
-   * example: @view.char({length 1})
-   */
-  public get view() {
-    const component = super.view || this.defaultView;
-    return component.component ? component : null;
   }
   
   /**

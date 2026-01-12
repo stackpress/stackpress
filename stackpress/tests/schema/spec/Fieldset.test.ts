@@ -106,12 +106,12 @@ describe('schema/spec/Fieldset', () => {
       'age Integer',
       'email String @field.mask'
     ]);
-    expect(fieldset.fields.length).to.equal(3);
+    expect(fieldset.fields.length).to.equal(1);
 
     const nofields = mockFieldset('User', '', [
-      'name String @field.none',
-      'age Integer @field.none',
-      'email String @field.none'
+      'name String',
+      'age Integer',
+      'email String'
     ]);
     expect(nofields.fields.length).to.equal(0);
   });
@@ -141,9 +141,9 @@ describe('schema/spec/Fieldset', () => {
       'name String',
       'age Integer @list.number',
       'email String @list.email',
-      'password String @list.none'
+      'password String'
     ]);
-    expect(fieldset.lists.length).to.equal(3);
+    expect(fieldset.lists.length).to.equal(2);
   });
 
   it('should collect view columns', async () => {
@@ -151,8 +151,8 @@ describe('schema/spec/Fieldset', () => {
       'name String',
       'age Integer @view.number',
       'email String @view.email',
-      'password String @view.none'
+      'password String'
     ]);
-    expect(fieldset.views.length).to.equal(3);
+    expect(fieldset.views.length).to.equal(2);
   });
 });
