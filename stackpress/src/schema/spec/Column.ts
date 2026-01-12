@@ -1,18 +1,21 @@
 //modules
+import type { 
+  AttributeValue, 
+  ColumnConfig,
+  Data, 
+  EnumConfig
+} from '@stackpress/idea-parser';
 import { createId as cuid, init } from '@paralleldrive/cuid2';
 import { nanoid } from 'nanoid';
-//stackpress
-import type { EnumConfig } from '@stackpress/idea-parser/types';
-//root
+//schema
 import type { 
   ErrorList,
-  SchemaColumnInfo, 
-  SchemaSerialOptions 
-} from '../types.js';
-//config
-import * as typemap from '../config/typemaps.js';
-//schema
-import assert from '../assert.js';
+  SchemaAssertion,
+  SchemaRelation,
+  SchemaSerialOptions
+} from '../types';
+import type Fieldset from './Fieldset.js';
+import Attributes from './Attributes';
 import { 
   capitalize, 
   camelize, 
@@ -22,30 +25,346 @@ import {
   hash, 
   snakerize 
 } from '../helpers.js';
-//local
-import type Fieldset from './Fieldset.js';
-import Attributes from './Attributes.js';
+import assert from '../assert.js';
+import * as typemap from '../config/typemaps.js';
+import {
+  first, 
+  map,
+  toComponentToken,
+  toAssertToken
+} from '../config/attributes.js';
 
-export default class Column {
-  //ex. String, Number, Date, etc.
-  public readonly type: string;
-  //name of the column
-  public readonly name: string;
-  //whether if the column is required
-  public readonly required: boolean;
-  //whether if the column is multiple values
-  public readonly multiple: boolean;
-  //column attributes
-  public readonly attributes: Attributes;
-  //the fieldset this column belongs to
-  protected _fieldset: Fieldset;
-
+export class ColumnAttributes extends Attributes {
   /**
    * Returns true if this column is an @active column
    */
   public get active() {
-    return this.attributes.active;
+    return this.enabled('active');
   }
+
+  /**
+   * Returns a new set of attributes that are admin specific
+   */
+  public get admin() {
+    return this._filter('admin');
+  }
+
+  /**
+   * Returns the column assertions
+   */
+  public get assertions() {
+    const assertions: SchemaAssertion[] = [];
+    const attributes = this._filter('is');
+
+    //explicit validators
+    for (const name of attributes.keys()) {
+      //get the attribute (instance)
+      const attribute = attributes.attribute(name)!;
+      //get the method name (remove "is." prefix)
+      const method = name.replace('is.', '');
+      //get the arguments
+      const args = attribute.args;
+      //the last argument is the message
+      const message = typeof args[args.length - 1] === 'string' 
+        ? args.pop() as string
+        : null;
+      //get the attribute configuration
+      const config = attribute.config;
+      assertions.push({ method, args, message, config });
+    }
+
+    return assertions;
+  }
+
+  /**
+   * Returns a char length if ever
+   */
+  public get chars() {
+    //if is.ceq, is.clt, is.cle
+    for (const assertion of this.assertions) {
+      if (assertion.method === 'ceq') {
+        return assertion.args[0] as number;
+      } else if (assertion.method === 'clt') {
+        return assertion.args[0] as number;
+      } else if (assertion.method === 'cle') {
+        return assertion.args[0] as number;
+      }
+    }
+    return 255;
+  }
+
+  /**
+   * Returns the column @default value
+   * example: @default("some value")
+   */
+  public get default() {
+    return this.value<Data | Date>('default');
+  }
+
+  /**
+   * Returns the column @description
+   * example: @description("Some description")
+   */
+  public get description() {
+    return this.value<string>('description');
+  }
+
+  /**
+   * Returns true if column should be @encrypted
+   */
+  public get encrypted() {
+    return this.enabled('encrypted');
+  }
+
+  /**
+   * Returns the column @example
+   * example: @example("Some example") @example(true)
+   */
+  public get examples() {
+    return this.args<string>('examples');
+  }
+
+  /**
+   * Returns the column field (defaults to none)
+   * example: @field.text({type "text"})
+   */
+  public get field() {
+    const attributes = this._filter('field');
+    const first = attributes.index(0);
+    return first ? first.component : null;
+  }
+
+  /**
+   * Returns the column filter field (defaults to none)
+   * example: @filter.text({type "text"})
+   */
+  public get filter() {
+    const attributes = this._filter('filter');
+    const first = attributes.index(0);
+    return first ? first.component : null;
+  }
+
+  /**
+   * Returns true if column should be @generated
+   */
+  public get generated() {
+    return this.enabled('generated');
+  }
+
+  /**
+   * Returns true if column should be @hashed
+   */
+  public get hashed() {
+    return this.enabled('hashed');
+  }
+
+  /**
+   * Returns true if column is an @id
+   */
+  public get id() {
+    return this.enabled('id');
+  }
+
+  /**
+   * Returns true if column is @filterable, @searchable, or @sortable
+   */
+  public get indexable() {
+    return this.searchable 
+      || this.filter
+      || this.span
+      || this.sortable;
+  }
+
+  /**
+   * Returns the column @label
+   * example: @label("Some Label")
+   */
+  public get label() {
+    return this.value<string>('label');
+  }
+
+  /**
+   * Returns the column list format (defaults to none)
+   * example: @list.char({length 1})
+   */
+  public get list() {
+    const attributes = this._filter('list');
+    const first = attributes.index(0);
+    return first ? first.component : null;
+  }
+
+  /**
+   * Returns the column @max
+   * example: @max(100)
+   * example: @is.eq(100)
+   * example: @is.lt(100)
+   * example: @is.le(100)
+   */
+  public get max() {
+    const maxes: number[] = [];
+    const max = this.value<number>('max');
+    if (typeof max === 'number') {
+      maxes.push(max);
+    }
+    this.assertions.forEach(assertion => {
+      if (assertion.method === 'eq'
+        || assertion.method === 'lt'
+        || assertion.method === 'le'
+      ) {
+        maxes.push(assertion.args[0] as number);
+      }
+    });
+    if (maxes.length > 0) {
+      return Math.max(...maxes.filter(number => Number(number)));
+    }
+    return 0;
+  }
+
+  /**
+   * Returns the column @min
+   * example: @min(100)
+   * example: @is.eq(100)
+   * example: @is.gt(100)
+   * example: @is.ge(100)
+   */
+  public get min() {
+    const mins: number[] = [];
+    const min = this.value<number>('min');
+    if (typeof min === 'number') {
+      mins.push(min);
+    }
+    this.assertions.forEach(assertion => {
+      if (assertion.method === 'eq'
+        || assertion.method === 'gt'
+        || assertion.method === 'ge'
+      ) {
+        mins.push(assertion.args[0] as number);
+      }
+    });
+    if (mins.length > 0) {
+      return Math.min(...mins.filter(number => Number(number)));
+    }
+    return 0;
+  }
+
+  /**
+   * Returns relation information
+   */
+  public get relation() {
+    //ie. owner User @relation({ name "connections" local "userId" foreign "id" })
+    return this.value<SchemaRelation>('relation');
+  }
+
+  /**
+   * Returns true if column is @searchable
+   */
+  public get searchable() {
+    return this.enabled('searchable');
+  }
+
+  /**
+   * Returns true if column is @sortable
+   */
+  public get sortable() {
+    return this.enabled('sortable');
+  }
+
+  /**
+   * Returns the column span field (defaults to none)
+   * example: @span.text({type "text"})
+   */
+  public get span() {
+    const attributes = this._filter('span');
+    const first = attributes.index(0);
+    return first ? first.component : null;
+  }
+
+  /**
+   * Returns the column @step
+   * example: @step(0.01)
+   */
+  public get step() {
+    const step = this.value<number>('step');
+    if (typeof step === 'number') {
+      return step;
+    }
+    
+    const max = this.max;
+    const min = this.min;
+    //if max has decimals, get the length
+    const maxDecimals = max.toString().split('.')[1]?.length || 0;
+    //if min has decimals, get the length
+    const minDecimals = min.toString().split('.')[1]?.length || 0;
+    //which ever is longer that's the step
+    const decimalLength = Math.max(maxDecimals, minDecimals);
+    //if no decimals
+    if (decimalLength === 0) {
+      //step is 1 by default
+      return 1;
+    }
+    //convert to 0.001 for example
+    return Math.pow(10, -decimalLength);
+  }
+
+  /**
+   * Returns true if column is @unique
+   */
+  public get unique() {
+    return this.enabled('unique');
+  }
+
+  /**
+   * Returns true if there is an @updated column
+   */
+  public get updated() {
+    return this.enabled('updated');
+  }
+
+  /**
+   * Returns the column @view format (defaults to none)
+   * example: @view.char({length 1})
+   */
+  public get view() {
+    const attributes = this._filter('view');
+    const first = attributes.index(0);
+    return first ? first.component : null;
+  }
+  
+  /**
+   * Filters attributes by prefix
+   */
+  protected _filter(prefix: string) {
+    const query = prefix + '.';
+    //store filtered attributes here
+    const attributes: Array<[string, AttributeValue]> = [];
+    //loop through attributes
+    for (const name of this.keys()) {
+      //if it doesn't start with the prefix, skip it
+      if (!name.startsWith(query)) {
+        continue;
+      }
+      //we found it.
+      const attribute = this.attribute(name);
+      if (attribute) {
+        //get the arguments
+        attributes.push([ name, attribute.raw ]);
+      }
+    }
+    return new ColumnAttributes(attributes);
+  }
+};
+
+export default class Column extends ColumnAttributes {
+  //name of the column
+  public readonly name: string;
+  //ex. String, Number, Date, etc.
+  public readonly type: string;
+  //whether if the column is required
+  public readonly required: boolean;
+  //whether if the column is multiple values
+  public readonly multiple: boolean;
+  //the fieldset this column belongs to
+  protected _fieldset: Fieldset;
 
   /**
    * Returns the column attributes
@@ -55,82 +374,58 @@ export default class Column {
     //if column is system generated
     //if column is a relation to another model
     //if column is related to another model
-    if (this.attributes.generated || this.relation || this.related) {
+    if (this.generated || this.parentRelation || this.childRelation) {
       //then there is no need to validate
       //relation columns are not assertable
       //related columns are not assertable
       return [];
     }
     //explicit validators
-    const assertions = this.attributes.assertions;
-    //implied validators
-    // String, Text,    Number, Integer, 
-    // Float,  Boolean, Date,   Datetime, 
-    // Time,   Json,    Object, Hash
-    for (const type in typemap) {
-      if (this.type === type) {
-        if (this.multiple) {
-          if (!assertions.find(v => v.method === 'array')) {
-            assertions.unshift({ 
-              method: 'array', 
-              args: [ typemap.method[type] ], 
-              message: 'Invalid format'
-            });
-          }
-        } else if (!assertions.find(v => v.method === typemap.method[type])) {
-          assertions.unshift({ 
-            method: typemap.method[type], 
-            args: [], 
-            message: 'Invalid format'
-          });
-        }
-      }
-    }
-    // - enum
-    if (this.enum && !assertions.find(v => v.method === 'option')) {
-      assertions.unshift({ 
-        method: 'option', 
-        args: Object.values(this.enum), 
-        message: 'Invalid option'
-      });
-    }
-    // - unique
-    if (this.attributes.unique) {
-      if (!assertions.find(v => v.method === 'unique')) {
-        assertions.unshift({ 
-          method: 'unique', 
-          args: [], 
-          message: 'Already exists'
-        });
-      }
-    }
-    // - required
-    if (!this.multiple 
-      && this.required 
-      && typeof this.attributes.default === 'undefined'
-    ) {
-      if (!assertions.find(v => v.method === 'required')) {
-        assertions.unshift({ 
-          method: 'required', 
-          args: [], 
-          message: `${this.name} is required`
-        });
-      }
-    }
-    return assertions;
+    return this.defaultAssertions
+      //remove the default assertions that are already defined
+      .filter(defaultAssert => !super.assertions.find(
+        assert => assert.method === defaultAssert.method
+      ))
+      //then add explicit assertions
+      .concat(super.assertions);
   }
 
   /**
-   * Returns a char length if ever
+   * Returns the capitalized column name
    */
-  public get clen() {
-    return this.attributes.clen;
+  public get capitalCase() {
+    return capitalize(camelize(this.name));
+  }
+
+  /**
+   * Returns the relations column, if any
+   * - where parent is this (local) column (id)
+   * - where child is the foreign column (profileId)
+   */
+  public get childRelation() {
+    //get foreign model
+    //example: user User[]
+    const model = this._fieldset.registry.model.get(this.type);
+    //if no model is found
+    if (!model) {
+      return null;
+    }
+    //get the foreign model's relational column
+    const column = Array.from(model.columns.values())
+      //example: user User @relation(local "userId" foreign: "id")
+      .filter(column => !!column.parentRelation)
+      //example: user User @relation(...) === user User[]
+      .find(column => column.type ===  this._fieldset.name);
+    if (!column?.parentRelation) {
+      return null;
+    }
+    return column.parentRelation;
   }
 
   /**
    * Returns the dashed fieldset name
    */
-  public get dash() {
+  public get dashCase() {
     return dasherize(this.name);
   }
 
@@ -140,7 +435,7 @@ export default class Column {
    */
   public get default() {
     //@default("some value")
-    const defaults = this.attributes.default;
+    const defaults = super.default;
     if (typeof defaults === 'string') {
       if (defaults.toLowerCase() === 'cuid()') {
         return cuid();
@@ -165,11 +460,141 @@ export default class Column {
   }
 
   /**
-   * Returns the column @description
-   * example: @description("Some description")
+   * Returns the default assertions for this column
    */
-  public get description() {
-    return this.attributes.description;
+  public get defaultAssertions() {
+    //explicit validators
+    const assertions: SchemaAssertion[] = [];
+    //implied validators
+    //if the type maps to an assert method
+    // For example:
+    // String, Text,    Number, Integer, 
+    // Float,  Boolean, Date,   Datetime, 
+    // Time,   Json,    Object, Hash
+    if (this.type in typemap.method) {
+      //get the assert method
+      const method = typemap.method[this.type];
+      const { array } = map.assert;
+      assertions.push(this.multiple 
+        ? toAssertToken(array, [ method ], 'Invalid value')
+        : toAssertToken(map.assert[method], [], 'Invalid value')
+      );
+    }
+    // - enum
+    if (this.enum) {
+      const { option } = map.assert;
+      const args = Object.values(this.enum);
+      assertions.push(
+        toAssertToken(option, args, 'Invalid option')
+      );
+    }
+    // - unique
+    if (this.unique) {
+      const { unique } = map.assert;
+      assertions.push(
+        toAssertToken(unique, [], 'Already exists')
+      );
+    }
+    // - required
+    if (!this.multiple 
+      && this.required 
+      && typeof this.default === 'undefined'
+    ) {
+      const { required } = map.assert;
+      assertions.push(
+        toAssertToken(required, [], `${this.name} is required`)
+      );
+    }
+    return assertions;
+  }
+
+  /**
+   * Returns the default form field for this column
+   * will default to none if generated or not found
+   */
+  public get defaultField() {
+    //if it's generated or updated
+    return this.generated || this.updated
+      //then none field
+      ? toComponentToken(map.field.none)
+      //if multiple like String[]
+      : this.multiple
+      //ex. String[] to field.stringlist...
+      ? toComponentToken(first({ 
+        kind: 'field', 
+        name: `field.${this.type.toLowerCase()}list` 
+      }) || map.field.none)
+      //ex. String to field.string...
+      : toComponentToken(first({ 
+        kind: 'field', 
+        name: `field.${this.type.toLowerCase()}` 
+      }) || map.field.none);
+  }
+
+  /**
+   * Returns the default filter for this column
+   * In all cases, defaults to none
+   * (should not force a filter field...)
+   */
+  public get defaultFilter() {
+    return toComponentToken(map.filter.none);
+  }
+
+  /**
+   * Returns the default list format for this column
+   * It's based on type and multiple...
+   * (defaults to text view)
+   */
+  public get defaultList() {
+    //if multiple like String[]
+    return this.multiple 
+      //ex. String[] to list.stringlist...
+      ? toComponentToken(
+        first({ 
+          kind: 'list', 
+          name: `list.${this.type.toLowerCase()}list` 
+        }) || map.list.text
+      )
+      //ex. String to field.string...
+      : toComponentToken(
+        first({ 
+          kind: 'list', 
+          name: `list.${this.type.toLowerCase()}` 
+        }) || map.list.text
+      );
+  }
+
+  /**
+   * Returns the default filter for this column
+   * In all cases, defaults to none
+   * (should not force a filter field...)
+   */
+  public get defaultSpan() {
+    return toComponentToken(map.span.none);
+  }
+
+  /**
+   * Returns the default view format for this column
+   * It's based on type and multiple...
+   * (defaults to text view)
+   */
+  public get defaultView() {
+    //if multiple like String[]
+    return this.multiple 
+      //ex. String[] to list.stringlist...
+      ? toComponentToken(
+        first({ 
+          kind: 'view', 
+          name: `view.${this.type.toLowerCase()}list` 
+        }) || map.view.text
+      )
+      //ex. String to field.string...
+      : toComponentToken(
+        first({ 
+          kind: 'view', 
+          name: `view.${this.type.toLowerCase()}` 
+        }) || map.view.text
+      );
   }
 
   /**
@@ -180,26 +605,12 @@ export default class Column {
   }
 
   /**
-   * Returns true if column is @encrypted
-   */
-  public get encrypted() {
-    return this.attributes.encrypted;
-  }
-
-  /**
-   * Returns the column @example
-   * example: @example("Some example") @example(true)
-   */
-  public get example() {
-    return this.attributes.example;
-  }
-
-  /**
    * Returns the column field (defaults to none)
    * example: @field.text({type "text"})
    */
   public get field() {
-    return this.attributes.field;
+    const component = super.field || this.defaultField;
+    return component.component ? component : null;
   }
 
   /**
@@ -214,73 +625,24 @@ export default class Column {
    * example: @filter.text({type "text"})
    */
   public get filter() {
-    return this.attributes.filter;
+    const component = super.filter || this.defaultFilter;
+    return component.component ? component : null;
   }
 
   /**
-   * Returns true if column is @generated
+   * Returns true if column is filterable
    */
-  public get generated() {
-    return this.attributes.generated;
+  public get filterable() {
+    return Boolean(this.filter);
   }
 
   /**
-   * Returns true if column is a @hash
-   */
-  public get hash() {
-    return this.attributes.hash;
-  }
-
-  /**
-   * Returns true if column is an @id
-   */
-  public get id() {
-    return this.attributes.id;
-  }
-
-  /**
-   * Returns true if column is @filterable, @searchable, or @sortable
-   */
-  public get indexable() {
-    return this.attributes.indexable;
-  }
-
-  /**
-   * Returns the column @label
-   * example: @label("Some Label")
-   */
-  public get label() {
-    return this.attributes.label || this.name;
-  }
-
-  /**
-   * Returns the column list format (defaults to none)
+   * Returns the column list format
    * example: @list.char({length 1})
    */
   public get list() {
-    if (this.model) {
-      return { 
-        component: false, 
-        method: 'hide', 
-        args: [], 
-        attributes: {} 
-      };
-    }
-    return this.attributes.list;
-  }
-
-  /**
-   * Returns the highest number value
-   */
-  public get max() {
-    return this.attributes.max;
-  }
-
-  /**
-   * Returns the lowest number value
-   */
-  public get min() {
-    return this.attributes.min;
+    const component = super.list || this.defaultList;
+    return component.component ? component : null;
   }
 
   /**
@@ -291,38 +653,13 @@ export default class Column {
   }
 
   /**
-   * Returns the related column, if any
-   * - where parent is this (local) column (id)
-   * - where child is the foreign column (profileId)
-   */
-  public get related() {
-    //get foreign model
-    //example: user User[]
-    const model = this._fieldset.registry.model.get(this.type);
-    //if no model is found
-    if (!model) {
-      return null;
-    }
-    //get the foreign model's relational column
-    const column = Array.from(model.columns.values())
-      //example: user User @relation(local "userId" foreign: "id")
-      .filter(column => !!column.relation)
-      //example: user User @relation(...) === user User[]
-      .find(column => column.type ===  this._fieldset.name);
-    if (!column?.relation) {
-      return null;
-    }
-    return column.relation;
-  }
-
-  /**
    * Returns the column relations
    * - where parent is the foreign column (id)
    * - where child is this (local) column (profileId)
    */
-  public get relation() {
+  public get parentRelation() {
     //ie. owner User @relation({ name "connections" local "userId" foreign "id" })
-    const relation = this.attributes.relation;
+    const relation = super.relation;
     //if no relation data or this column type is not a model
     if (!relation || !this.model) {
       return null;
@@ -399,93 +736,26 @@ export default class Column {
   }
 
   /**
-   * Returns true if column is @searchable
-   */
-  public get searchable() {
-    return this.attributes.searchable;
-  }
-
-  /**
-   * Returns information on how this column 
-   * should look like in a database schema
-   */
-  public get schema() {
-    const type = (() => {
-      if (Boolean(this.fieldset 
-        || this.multiple || this.type === 'Json' 
-        || this.type === 'Object' || this.type === 'Hash'
-      )) {
-        return 'json';
-      } else if ([ 
-        'Char', 'Text', 'Integer', 'Float', 'Boolean', 
-        'Date', 'Time', 'Datetime', 'Binary', 'Timestamp'
-      ].includes(this.type)) {
-        return this.type.toLowerCase();
-      } else if (this.type === 'Number') {
-        return String(this.step).split('.')[1].length > 0 
-          ? 'float' 
-          : 'integer';
-      } else if (this.enum) {
-        return 'enum';
-      }
-      return 'varchar';
-    })();
-    const length = (() => {
-      if (type === 'enum' && this.enum) {
-        return [ Math.max(...Object.values(this.enum).map(
-          value => String(value).length
-        )), 0 ];
-      } else if (type === 'char' || type === 'varchar') {
-        return [ Math.min(this.clen || 255, 255), 0];
-      } else if (type === 'integer') {
-        return [ String(this.max).split('.')[0].length, 0 ];
-      } else if (type === 'float') {
-        return [ 
-          String(this.max).split('.')[0].length, 
-          String(this.step).split('.')[1].length 
-        ];
-      }
-      return [ 0, 0 ];
-    })();
-    const defaults = this.default ? this.default
-      : this.required ? null 
-      : undefined;
-    const unsigned = this.min >= 0;
-    const increment = Boolean(this.attributes.get('increment'));
-    const index = this.id ? 'primary'
-      : this.unique ? 'unique' 
-      : this.indexable ? 'index'
-      : undefined;
-    return { type, length, defaults, unsigned, increment, index };
-  }
-
-  /**
-   * Returns true if column is @sortable
-   */
-  public get sortable() {
-    return this.attributes.sortable;
-  }
-
-  /**
-   * returns snake case name
-   */
-  public get snake() {
-    return snakerize(this.name);
-  }
-
-  /**
    * Returns the column span field (defaults to none)
    * example: @span.text({type "text"})
    */
   public get span() {
-    return this.attributes.span;
+    const component = super.span || this.defaultSpan;
+    return component.component ? component : null;
+  }
+
+  /**
+   * Returns true if column is spannable
+   */
+  public get spannable() {
+    return Boolean(this.span);
   }
 
   /**
    * Returns number step value
    */
   public get step() {
-    const step = this.attributes.step;
+    const step = super.step;
     if (step === 1 && this.type === 'Float') {
       return 0.01;
     }
@@ -493,13 +763,16 @@ export default class Column {
   }
 
   /**
-   * Returns the capitalized column name
+   * returns snake case name
    */
-  public get title() {
-    return capitalize(camelize(this.name));
+  public get snakeCase() {
+    return snakerize(this.name);
   }
 
-  public get typemap() {
+  /**
+   * Returns the type mappings for this column
+   */
+  public get typemaps() {
     return {
       type: typemap.type[this.type],
       model: typemap.model[this.type],
@@ -514,48 +787,24 @@ export default class Column {
   }
 
   /**
-   * Returns true if column is @unique
-   */
-  public get unique() {
-    return this.attributes.unique;
-  }
-
-  /**
    * Returns the column @view format (defaults to none)
    * example: @view.char({length 1})
    */
   public get view() {
-    if (this.model) {
-      return { 
-        component: false, 
-        method: 'hide', 
-        args: [], 
-        attributes: {} 
-      };
-    }
-    return this.attributes.view;
+    const component = super.view || this.defaultView;
+    return component.component ? component : null;
   }
-
+  
   /**
-   * Returns the column @zindex format
-   * example: @zindex(100)
+   * Sets the fieldset and column config
    */
-  public get zindex() {
-    return this.attributes.zindex;
-  }
-
-  /**
-   * Sets the fieldset and column information
-   */
-  public constructor(fieldset: Fieldset, info: SchemaColumnInfo) {
+  public constructor(fieldset: Fieldset, config: ColumnConfig) {
+    super(config.attributes);
     this._fieldset = fieldset;
-    this.type = info.type;
-    this.name = info.name;
-    this.multiple = info.multiple;
-    this.required = info.required;
-    this.attributes = new Attributes(
-      Object.entries(info.attributes)
-    );
+    this.type = config.type;
+    this.name = config.name;
+    this.multiple = config.multiple;
+    this.required = config.required;
   }
 
   /**
@@ -611,13 +860,6 @@ export default class Column {
     }
     return null;
   }
-  
-  /**
-   * Returns a column attribute
-   */
-  public attribute(name: string) {
-    return this.attributes.get(name);
-  }
 
   /**
    * Serializes a value to be inserted into the database
@@ -638,7 +880,7 @@ export default class Column {
       return value;
     }
     //serialize and hash
-    if (typeof value === 'string' && this.hash) {
+    if (typeof value === 'string' && this.hashed) {
       return hash(value);
     } else if (typeof value === 'string' && this.encrypted && seed) {
       return encrypt(value, seed);
@@ -649,9 +891,9 @@ export default class Column {
       return object ? value: JSON.stringify(value);
     }
     //if type is in the typemap
-    if (this.typemap.method) {
+    if (this.typemaps.method) {
       //string, number, integer, float, boolean, date, object
-      const type = this.typemap.method;
+      const type = this.typemaps.method;
       //if type is a number
       if ([ 'number', 'integer', 'float' ].includes(type)) {
         const serialized = Number(value);
@@ -764,9 +1006,9 @@ export default class Column {
       return decrypt(value, seed);
     }
     //if type is in the typemap
-    if (this.typemap.method) {
+    if (this.typemaps.method) {
       //string, number, integer, float, boolean, date, object
-      const type = this.typemap.method;
+      const type = this.typemaps.method;
       if ([ 'number', 'integer', 'float' ].includes(type)) {
         const serialized = Number(value);
         return !isNaN(serialized) ? serialized : 0;
@@ -805,5 +1047,34 @@ export default class Column {
       }
     }
     return value;
+  }
+
+  /**
+   * Filters attributes by prefix
+   */
+  protected _filter(prefix: string) {
+    const query = prefix + '.';
+    //store filtered attributes here
+    const attributes: Array<[string, AttributeValue]> = [];
+    //loop through attributes
+    for (const name of this.keys()) {
+      //if it doesn't start with the prefix, skip it
+      if (!name.startsWith(query)) {
+        continue;
+      }
+      //we found it.
+      const attribute = this.attribute(name);
+      if (attribute) {
+        //get the arguments
+        attributes.push([ name, attribute.raw ]);
+      }
+    }
+    return new Column(this._fieldset, {
+      name: this.name,
+      type: this.type,
+      multiple: this.multiple,
+      required: this.required,
+      attributes: Object.fromEntries(attributes)
+    });
   }
 }

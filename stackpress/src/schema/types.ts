@@ -1,23 +1,52 @@
-//stackpress
+//modules
 import type { NestedObject } from '@stackpress/lib';
-import type { Data } from '@stackpress/idea-parser/types';
-//spec
-import type Column from './spec/Column.js';
-import type Model from './spec/Model.js';
+import type { AttributeValue } from '@stackpress/idea-parser';
 
-export type { 
-  EnumConfig,
-  ModelConfig,
-  TypeConfig,
-  PropConfig,
-  PluginConfig,
-  SchemaConfig
-} from '@stackpress/idea-parser/types';
+//data structure for attribute info
+// this is hard coded in a separate file
+export type AttributeConfigArgument = {
+  spread: boolean,
+  type: Array<string | Record<string, unknown>>,
+  name?: string,
+  required: boolean,
+  description: string,
+  examples: Array<unknown>
+};
+
+export type AttributeConfigComponent = {
+  component: string,
+  import: { from: string, default: boolean },
+  props: Record<string, unknown>
+};
+
+export type AttributeData = {
+  type: Array<string>,
+  name: string,
+  description?: string,
+  args: Array<AttributeConfigArgument>,
+  data?: Record<string, unknown>
+};
+
+export type AttributeConfig = AttributeData & {
+  key: string,
+  kind: string
+};
+
+export type AttributeValues = Iterable<[string, AttributeValue]> 
+  | Record<string, AttributeValue>;
+
+export type SchemaComponent = {
+  name: string,
+  props: Record<string, unknown>,
+  component: string,
+  import: { from: string, default: boolean }
+};
 
 export type SchemaAssertion = {
   method: string,
   args: unknown[],
   message: string|null
+  config: AttributeConfig
 };
 
 export type SchemaRelation = {
@@ -26,42 +55,10 @@ export type SchemaRelation = {
   name?: string
 };
 
-export type SchemaColumnInfo = {
-  type: string,
-  name: string,
-  required: boolean,
-  multiple: boolean,
-  attributes: Record<string, unknown>
-};
-
-export type SchemaComponent = {
-  component: string|false,
-  method: string,
-  args: Data[],
-  attributes: Record<string, Data>
-}
-
-export type SchemaColumnRelation = { 
-  model: Model, 
-  column: Column, 
-  key: Column, 
-  type: number 
-};
-
-export type SchemaColumnRelationLink = { 
-  parent: SchemaColumnRelation,
-  child: SchemaColumnRelation
-};
-
 export type SchemaSerialOptions = {
   bool?: boolean,
   date?: boolean,
   object?: boolean
-};
-
-export type ColumnOption = { 
-  name: string|false, 
-  attributes: Record<string, any>
 };
 
 export type ErrorList = (ErrorMap | null)[];

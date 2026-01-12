@@ -1,10 +1,13 @@
 //modules
+import type { 
+  AttributeValue,
+  ColumnConfig
+} from '@stackpress/idea-parser';
 import Mustache from 'mustache';
 //schema
 import type { 
-  ErrorMap,
-  SchemaColumnInfo, 
-  SchemaSerialOptions 
+  ErrorMap, 
+  SchemaSerialOptions
 } from '../types.js';
 import type Registry from '../Registry.js';
 import { 
@@ -18,13 +21,37 @@ import {
 import Attributes from './Attributes.js';
 import Column from './Column.js';
 
-export default class Fieldset {
+export class FieldsetAttributes extends Attributes {
+  /**
+   * Returns the column @display
+   * example: @display("User: {{name}}")
+   */
+  public get display() {
+    return this.value<string>('display');
+  }
+
+  /**
+   * Returns the column @label
+   * example: @icon("user")
+   */
+  public get icon() {
+    return this.value<string>('icon');
+  }
+
+  /**
+   * Returns the column @label
+   * example: @label("Some Label" "Some other label")
+   */
+  public get labels() {
+    return this.args<string>('labels');
+  }
+};
+
+export default class Fieldset extends FieldsetAttributes {
   //stores the registry
   public readonly registry: Registry;
   //name of the fieldset
   public readonly name: string;
-  //attributes of the fieldset
-  public readonly attributes: Attributes;
   //columns of the fieldset
   public readonly columns: Map<string, Column>;
 
@@ -40,14 +67,14 @@ export default class Fieldset {
   /**
    * Returns the camel cased fieldset name
    */
-  public get camel() {
+  public get camelized() {
     return camelize(this.name);
   }
 
   /**
    * Returns the dashed fieldset name
    */
-  public get dash() {
+  public get dasherized() {
     return dasherize(this.name);
   }
 
@@ -66,8 +93,12 @@ export default class Fieldset {
   public get defaults() {
     const defaults: Record<string, any> = {};
     for (const column of this.columns.values()) {
-      if (column.default === undefined 
-        || generators.includes(column.default)
+      //if no default
+      if (typeof column.default === 'undefined' 
+        || ( //or default is a generator
+          typeof column.default === 'string'
+          && generators.includes(column.default)
+        )
       ) {
         continue;
       }
@@ -104,8 +135,8 @@ export default class Fieldset {
   public get examples() {
     const examples: Record<string, any> = {};
     for (const column of this.columns.values()) {
-      if (column.example !== undefined) {
-        examples[column.name] = column.example;
+      if (column.examples.length > 0) {
+        examples[column.name] = column.examples;
       }
     }
     return examples;
@@ -116,7 +147,7 @@ export default class Fieldset {
    */
   public get fields() {
     return Array.from(this.columns.values()).filter(
-      column => column.field.method !== 'none'
+      column => Boolean(column.field)
     );
   }
 
@@ -131,17 +162,12 @@ export default class Fieldset {
   }
 
   /**
-   * Returns the icon
+   * Returns all the filters columns
    */
-  public get icon() {
-    return this.attributes.icon;
-  }
-
-  /**
-   * Returns all the indexable columns
-   */
-  public get label() {
-    return this.attributes.labels;
+  public get filters() {
+    return Array.from(this.columns.values()).filter(
+      column => Boolean(column.filter)
+    );
   }
 
   /**
@@ -149,14 +175,14 @@ export default class Fieldset {
    */
   public get lists() {
     return Array.from(this.columns.values()).filter(
-      column => column.list.method !== 'hide'
+      column => column.list && column.list.name !== 'list.none'
     );
   }
 
   /**
    * Returns the lower cased fieldset name
    */
-  public get lower() {
+  public get lowerCase() {
     return this.name.toLocaleLowerCase();
   }
 
@@ -164,34 +190,36 @@ export default class Fieldset {
    * Returns the schema plural label
    */
   public get plural() {
-    return this.attributes.labels[1] || this.name;
+    return this.labels[1] || this.name;
   }
 
   /**
    * Returns the schema singular label
    */
   public get singular() {
-    return this.attributes.labels[0] || this.name;
+    return this.labels[0] || this.name;
   }
 
   /**
    * returns snake case name
    */
-  public get snake() {
+  public get snakeCase() {
     return snakerize(this.name);
   }
 
   /**
-   * Returns the fieldset @template
+   * Returns all the span columns
    */
-  public get template() {
-    return this.attributes.template;
+  public get spans() {
+    return Array.from(this.columns.values()).filter(
+      column => Boolean(column.span)
+    );
   }
 
   /**
    * Returns the capitalized column name
    */
-  public get title() {
+  public get titleCase() {
     return capitalize(camelize(this.name));
   }
 
@@ -199,9 +227,9 @@ export default class Fieldset {
    * Returns all the viewable columns
    */
   public get views() {
-    return Array.from(this.columns.values()).filter(
-      column => column.view.method !== 'hide'
-    );
+    return Array
+      .from(this.columns.values())
+      .filter(column => Boolean(column.view));
   }
 
   /**
@@ -210,20 +238,20 @@ export default class Fieldset {
   public constructor(
     registry: Registry,
     name: string, 
-    attributes: Record<string, unknown>, 
-    columns: SchemaColumnInfo[]
+    attributes: Record<string, AttributeValue>, 
+    columns: ColumnConfig[]
   ) {
+    super(attributes);
     this.registry = registry;
     this.name = name;
-    this.attributes = new Attributes(Object.entries(attributes));
     this.columns = new Map(columns.map(
-      info =>[ info.name, new Column(this, info) ]
+      config => [ config.name, new Column(this, config) ]
     ));
   }
 
   /**
-   * Asserts the values
-   */
+     * Asserts the values
+     */
   public assert(values: Record<string, any> = {}, strict = true) {
     const errors: ErrorMap = {};
     for (const column of this.columns.values()) {
@@ -263,7 +291,7 @@ export default class Fieldset {
   public fromSnake(name: string) {
     const columns = Array.from(this.columns.values());
     for (const column of columns) {
-      if (column.snake === name) {
+      if (column.snakeCase === name) {
         return column;
       }
     }
@@ -294,17 +322,17 @@ export default class Fieldset {
    * Renders a template given the data
    */
   public render(data: Record<string, any>) {
-    if (!this.template) {
+    if (!this.display) {
       return '';
     }
-    return Mustache.render(this.template, data);
+    return Mustache.render(this.display, data);
   }
 
   /**
    * Returns a function to generate a suggested label
    */
   public transformTemplate(to = '${data.%s}') {
-    const template = this.template || '';
+    const template = this.display || '';
     return Array.from(
       template.matchAll(/\{\{([a-zA-Z0-9_\.]+)\}\}/g)
     ).reduce((result, match) => {
@@ -326,7 +354,7 @@ export default class Fieldset {
       if (!column) {
         continue;
       }
-      serialized[column.snake] = column.serialize(value, options, seed);
+      serialized[column.snakeCase] = column.serialize(value, options, seed);
     }
     return serialized;
   }

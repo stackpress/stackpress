@@ -1,10 +1,7 @@
 //stackpress
-import type { 
-  EnumConfig, 
-  SchemaConfig 
-} from '@stackpress/idea-parser/types';
+import type { EnumConfig, SchemaConfig } from '@stackpress/idea-parser';
 import { isObject } from '@stackpress/ingest/helpers';
-//spec
+//schema
 import Fieldset from './spec/Fieldset.js';
 import Model from './spec/Model.js';
 
