@@ -11,23 +11,19 @@ import { nanoid } from 'nanoid';
 import type { 
   ErrorList,
   SchemaAssertion,
-  SchemaRelation,
-  SchemaSerialOptions
+  SchemaRelation
 } from '../types';
 import type Fieldset from './Fieldset.js';
-import Attributes from './Attributes';
+import Attributes from './Attributes.js';
+import typemap from './TypeMap.js';
 import { 
   capitalize, 
   camelize, 
   dasherize,
-  decrypt, 
-  encrypt, 
-  hash, 
   snakerize 
 } from '../helpers.js';
 import assert from '../assert.js';
-import * as typemap from '../config/typemaps.js';
-import { map, toAssertToken } from '../config/attributes.js';
+import { map, toAssertToken } from '../config.js';
 
 export class ColumnAttributes extends Attributes {
   /**
@@ -383,9 +379,10 @@ export default class Column extends ColumnAttributes {
     // String, Text,    Number, Integer, 
     // Float,  Boolean, Date,   Datetime, 
     // Time,   Json,    Object, Hash
-    if (this.type in typemap.method) {
+    if (this.typemap.has('assert')) {
+    //if (this.type in typemap.method) {
       //get the assert method
-      const method = typemap.method[this.type];
+      const method = this.typemap.call('assert') as string;
       const { array } = map.assert;
       defaults.push(this.multiple 
         ? toAssertToken(array, [ method ], 'Invalid value')
@@ -635,18 +632,28 @@ export default class Column extends ColumnAttributes {
   /**
    * Returns the type mappings for this column
    */
-  public get typemaps() {
-    return {
-      type: typemap.type[this.type],
-      model: typemap.model[this.type],
-      format: typemap.format[this.type],
-      method: typemap.method[this.type],
-      literal: typemap.literal[this.type],
-      mysql: typemap.mysql[this.type],
-      pgsql: typemap.pgsql[this.type],
-      sqlite: typemap.sqlite[this.type],
-      helper: typemap.helper[this.type]
+  public get typemap() {
+    const settings = {
+      encrypt: this.encrypted,
+      hash: this.hashed,
+      require: this.required,
+      multiple: this.multiple
     };
+    switch(this.type) {
+      case 'String': return typemap.String.make(settings);
+      case 'Text': return typemap.String.make(settings);
+      case 'Boolean': return typemap.Boolean.make(settings);
+      case 'Number': return typemap.Number.make(settings);
+      case 'Integer': return typemap.Integer.make(settings);
+      case 'Float': return typemap.Float.make(settings);
+      case 'Date': return typemap.Date.make(settings);
+      case 'Datetime': return typemap.Datetime.make(settings);
+      case 'Time': return typemap.Time.make(settings);
+      case 'Object': return typemap.Object.make(settings);
+      case 'Hash': return typemap.Object.make(settings);
+      case 'Json': return typemap.Object.make(settings);
+      default: return typemap.Unknown.make(settings);
+    }
   }
   
   /**
@@ -664,9 +671,12 @@ export default class Column extends ColumnAttributes {
   /**
    * Returns error message if the value is invalid
    */
-  public assert(value: any, strict = true) {
+  public assert<V>(value: V, strict = true) {
     for (const assertion of this.assertions) {
-      const { method, args, message } = assertion;
+      const { method, args } = assertion;
+      const message = assertion.message 
+        || assertion.config.data?.message as string
+        || 'Invalid value';
       const hasDefault = typeof this.default !== 'undefined';
       const hasNoValue = value === null 
         || typeof value === 'undefined'
@@ -687,7 +697,13 @@ export default class Column extends ColumnAttributes {
       //now we can assert
       if (!assert[method](value, ...args)) {
         //return message, but if message is null, then return empty string
-        return message || '';
+        return message
+          .replaceAll('{{name}}', this.name)
+          .replaceAll('{{label}}', this.label || this.name)
+          .replaceAll('{{arg}}', String(args[0]))
+          .replaceAll('{{arg2}}', String(args[1]))
+          .replaceAll('{{arg3}}', String(args[2]))
+          .replaceAll('{{value}}', String(value));
       }
     }
     //if there was an error it would have been returned
@@ -718,189 +734,23 @@ export default class Column extends ColumnAttributes {
   /**
    * Serializes a value to be inserted into the database
    */
-  public serialize(
-    value: any, 
-    options: SchemaSerialOptions = {},
-    seed?: string
-  ): string|number|boolean|Date|null|undefined {
-    const { bool = true, date = true, object = false } = options;
-    //if value is null or undefined and not required
-    if (!this.required && (
-      value === null || typeof value === 'undefined'
-    )) {
-      return value;
-    //if value is null or undefined and required
-    } else if (typeof value === 'undefined') {
-      return value;
+  public serialize<V>(value: V, seed?: string|boolean, scalar = false) {
+    if (typeof seed === 'boolean') {
+      scalar = seed;
+      seed = undefined;
     }
-    //serialize and hash
-    if (typeof value === 'string' && this.hashed) {
-      return hash(value);
-    } else if (typeof value === 'string' && this.encrypted && seed) {
-      return encrypt(value, seed);
-    }
-    //if fieldset or multiple
-    if (this.fieldset || this.multiple) {
-      //there's no need to recursive serialize
-      return object ? value: JSON.stringify(value);
-    }
-    //if type is in the typemap
-    if (this.typemaps.method) {
-      //string, number, integer, float, boolean, date, object
-      const type = this.typemaps.method;
-      //if type is a number
-      if ([ 'number', 'integer', 'float' ].includes(type)) {
-        const serialized = Number(value);
-        return !isNaN(serialized) ? serialized : 0;
-      //if type is a boolean
-      } else if (type === 'boolean') {
-        if (value === 'false') {
-          return bool ? false: 0;
-        } else if (value === 'true') {
-          return bool ? true: 1;
-        }
-        return bool ? Boolean(value): Number(Boolean(value));
-      //if type is a date
-      } else if (type === 'date') {
-        if (value instanceof Date) {
-          return date ? value: [
-            value.toISOString().split('T')[0],
-            value.toTimeString().split(' ')[0]
-          ].join(' ');
-        } else if (typeof value === 'number') {
-          const stamp = new Date(value);
-          return date? stamp: [
-            stamp.toISOString().split('T')[0],
-            stamp.toTimeString().split(' ')[0]
-          ].join(' ');
-        }
-        let stamp = new Date(value as unknown as string);
-        if (isNaN(stamp.getTime())) {
-          stamp = new Date(0);
-        }
-        return date ? stamp : [
-          stamp.toISOString().split('T')[0],
-          stamp.toTimeString().split(' ')[0]
-        ].join(' ');
-      //if type is an object
-      } else if (type === 'object') {
-        //if value is a string
-        if (typeof value === 'string') {
-          try { //to see if it's a valid JSON string
-            if (object) {
-              return JSON.parse(value);
-            }
-            //if value can be parsed as JSON
-            JSON.parse(value);
-            //then it's already JSON serialized
-            return value;
-          //let JSON serialize the value
-          } catch (e) {}
-        }
-        //let JSON serialize the value
-        return object ? value: JSON.stringify(value);
-      }
-      //if string...
-      return value?.toString() || value;
-    }
-    //allow: string|number|null|undefined
-    if (value === null 
-      || typeof value === 'string'
-      || typeof value === 'number'
-      || typeof value === 'undefined'
-    ) {
-      return value as string|number|null|undefined;
-    //if value is a boolean
-    } else if (typeof value === 'boolean') {
-      return bool ? value: Number(value);
-    //if value is a date
-    } else if (value instanceof Date) {
-      return date ? value: [
-        value.toISOString().split('T')[0],
-        value.toTimeString().split(' ')[0]
-      ].join(' ');
-    }
-    //try to get the string value
-    return object ? value : (value?.toString() || value);
+    return this.typemap.serialize(value, seed, scalar);
   }
 
   /**
    * Unserializes a value coming from the database
    */
-  public unserialize(
-    value: any, 
-    options: SchemaSerialOptions = {},
-    seed?: string
-  ) {
-    const { bool = true, date = true } = options;
-    //if value is null or undefined
-    if (value === null || typeof value === 'undefined') {
-      return value;
-    //if fieldset or multiple
-    } else if (this.fieldset || this.multiple) {
-      if (typeof value === 'string') {
-        try {
-          return JSON.parse(value);
-        } catch (e) {
-          return this.multiple ? []: {};
-        }
-      }
+  public unserialize<V>(value: V, seed?: string|boolean, scalar = false) {
+    if (typeof seed === 'boolean') {
+      scalar = seed;
+      seed = undefined;
     }
-    //fieldset
-    if (this.fieldset) {
-      const fieldset = this.fieldset;
-      return !this.multiple 
-        ? this.fieldset.unserialize(value, options, seed)
-        : Array.isArray(value)
-        ? value.map(value => fieldset.unserialize(value, options, seed))
-        : [];
-    }
-    //unserialize
-    if (typeof value === 'string' && this.encrypted && seed) {
-      return decrypt(value, seed);
-    }
-    //if type is in the typemap
-    if (this.typemaps.method) {
-      //string, number, integer, float, boolean, date, object
-      const type = this.typemaps.method;
-      if ([ 'number', 'integer', 'float' ].includes(type)) {
-        const serialized = Number(value);
-        return !isNaN(serialized) ? serialized : 0;
-      } else if (type === 'boolean') {
-        return bool ? Boolean(value): Number(Boolean(value));
-      } else if (type === 'date') {
-        if (value instanceof Date) {
-          return date ? value: [
-            value.toISOString().split('T')[0],
-            value.toTimeString().split(' ')[0]
-          ].join(' ');
-        } else if (typeof value === 'number') {
-          const stamp = new Date(value);
-          return date? stamp: [
-            stamp.toISOString().split('T')[0],
-            stamp.toTimeString().split(' ')[0]
-          ].join(' ');
-        }
-        let stamp = new Date(value as unknown as string);
-        if (isNaN(stamp.getTime())) {
-          stamp = new Date(0);
-        }
-        return date ? stamp : [
-          stamp.toISOString().split('T')[0],
-          stamp.toTimeString().split(' ')[0]
-        ].join(' ');
-      //if type is an object
-      } else if (type === 'object') {
-        //if value is a string
-        if (typeof value === 'string') {
-          try { //to parse the value
-            return JSON.parse(value);
-          } catch (e) {}
-        }
-        return value;
-      }
-    }
-    return value;
+    return this.typemap.unserialize(value, seed, scalar);
   }
 
   /**

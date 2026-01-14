@@ -2,7 +2,7 @@
 import type { AttributeValue } from '@stackpress/idea-parser';
 //schema
 import type { AttributeConfig } from '../types.js';
-import { first, toComponentToken } from '../config/attributes.js';
+import { first, toComponentToken } from '../config.js';
 
 export default class Attribute {
   /**

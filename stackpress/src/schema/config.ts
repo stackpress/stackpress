@@ -6,8 +6,8 @@ import type {
   AttributeConfig, 
   AttributeConfigComponent ,
   SchemaComponent
-} from '../types.js';
-import { mapObjectValue } from '../helpers.js';
+} from './types.js';
+import { mapObjectValue } from './helpers.js';
 
 type AttributeDataMap = Record<string, Required<AttributeData>>;
 type AttributeConfigMap = Record<string, Record<string, Required<AttributeConfig>>>;
@@ -351,7 +351,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be equal to {{value}}."
+      "message": "Must be equal to {{arg}}."
     }
   },
   "ne": {
@@ -375,7 +375,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must not be equal to {{value}}."
+      "message": "Must not be equal to {{arg}}."
     }
   },
   "option": {
@@ -515,7 +515,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be greater than {{value}}."
+      "message": "Must be greater than {{arg}}."
     }
   },
   "ge": {
@@ -539,7 +539,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be greater than or equal to {{value}}."
+      "message": "Must be greater than or equal to {{arg}}."
     }
   },
   "lt": {
@@ -563,7 +563,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be less than {{value}}."
+      "message": "Must be less than {{arg}}."
     }
   },
   "le": {
@@ -587,7 +587,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be less than or equal to {{value}}."
+      "message": "Must be less than or equal to {{arg}}."
     }
   },
   "ceq": {
@@ -611,7 +611,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be {{value}} characters."
+      "message": "Must be {{arg}} characters."
     }
   },
   "cgt": {
@@ -635,7 +635,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be greater than {{value}} characters."
+      "message": "Must be greater than {{arg}} characters."
     }
   },
   "cge": {
@@ -659,7 +659,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be greater than or equal to {{value}} characters."
+      "message": "Must be greater than or equal to {{arg}} characters."
     }
   },
   "clt": {
@@ -683,7 +683,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be less than {{value}} characters."
+      "message": "Must be less than {{arg}} characters."
     }
   },
   "cle": {
@@ -707,7 +707,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be less than or equal to {{value}} characters."
+      "message": "Must be less than or equal to {{arg}} characters."
     }
   },
   "weq": {
@@ -731,7 +731,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be {{value}} words."
+      "message": "Must be {{arg}} words."
     }
   },
   "wgt": {
@@ -755,7 +755,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be greater than {{value}} words."
+      "message": "Must be greater than {{arg}} words."
     }
   },
   "wge": {
@@ -779,7 +779,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be greater than or equal to {{value}} words."
+      "message": "Must be greater than or equal to {{arg}} words."
     }
   },
   "wlt": {
@@ -803,7 +803,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be less than {{value}} words."
+      "message": "Must be less than {{arg}} words."
     }
   },
   "wle": {
@@ -827,7 +827,7 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
-      "message": "Must be less than or equal to {{value}} words."
+      "message": "Must be less than or equal to {{arg}} words."
     }
   },
   "cc": {

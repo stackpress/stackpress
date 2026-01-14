@@ -55,11 +55,19 @@ export type SchemaRelation = {
   name?: string
 };
 
-export type SchemaSerialOptions = {
-  bool?: boolean,
-  date?: boolean,
-  object?: boolean
-};
-
 export type ErrorList = (ErrorMap | null)[];
 export type ErrorMap = NestedObject<string | string[] | ErrorList>;
+
+//used in spec/Typemap spec/Serializers
+export type SerializerSettings = {
+  encrypt?: boolean,
+  hash?: boolean,
+  require?: boolean, 
+  multiple?: boolean
+};
+
+export type SerializeOptions = {
+  booleanToNumber?: boolean,
+  dateToString?: boolean,
+  objectToString?: boolean
+};

@@ -5,10 +5,7 @@ import type {
 } from '@stackpress/idea-parser';
 import Mustache from 'mustache';
 //schema
-import type { 
-  ErrorMap, 
-  SchemaSerialOptions
-} from '../types.js';
+import type { ErrorMap, SerializeOptions } from '../types.js';
 import type Registry from '../Registry.js';
 import { 
   camelize, 
@@ -250,8 +247,8 @@ export default class Fieldset extends FieldsetAttributes {
   }
 
   /**
-     * Asserts the values
-     */
+   * Asserts the values
+   */
   public assert(values: Record<string, any> = {}, strict = true) {
     const errors: ErrorMap = {};
     for (const column of this.columns.values()) {
@@ -344,17 +341,33 @@ export default class Fieldset extends FieldsetAttributes {
    * Serializes values to be inserted into the database
    */
   public serialize(
-    values: Record<string, any>, 
-    options: SchemaSerialOptions = {},
-    seed?: string
+    values: Record<string, any>,
+    seed?: string, 
+    options: SerializeOptions = {}
   ) {
+    const {
+      booleanToNumber = false,
+      dateToString = false,
+      objectToString = false
+    } = options;
     const serialized: Record<string, string|number|boolean|Date|null|undefined> = {};
     for (const [ name, value ] of Object.entries(values)) {
       const column = this.columns.get(name);
       if (!column) {
         continue;
       }
-      serialized[column.snakeCase] = column.serialize(value, options, seed);
+      const scalar = column.type === 'Boolean' 
+        ? booleanToNumber 
+        : column.type === 'Date' 
+          || column.type === 'Datetime' 
+          || column.type === 'Time'
+        ? dateToString
+        : column.type === 'Object' 
+          || column.type === 'Hash' 
+          || column.type === 'Json'
+        ? objectToString
+        : false;
+      serialized[column.snakeCase] = column.serialize(value, seed, scalar);
     }
     return serialized;
   }
@@ -364,9 +377,14 @@ export default class Fieldset extends FieldsetAttributes {
    */
   public unserialize(
     values: Record<string, any>, 
-    options: SchemaSerialOptions = {},
-    seed?: string
+    seed?: string, 
+    options: SerializeOptions = {}
   ) {
+    const {
+      booleanToNumber = false,
+      dateToString = false,
+      objectToString = false
+    } = options;
     const unserialized: Record<string, any> = {};
     for (const [ name, value ] of Object.entries(values)) {
       const column = this.fromSnake(name);
@@ -374,7 +392,18 @@ export default class Fieldset extends FieldsetAttributes {
         unserialized[name] = value;
         continue;
       }
-      unserialized[column.name] = column.unserialize(value, options, seed);
+      const scalar = column.type === 'Boolean' 
+        ? booleanToNumber 
+        : column.type === 'Date' 
+          || column.type === 'Datetime' 
+          || column.type === 'Time'
+        ? dateToString
+        : column.type === 'Object' 
+          || column.type === 'Hash' 
+          || column.type === 'Json'
+        ? objectToString
+        : false;
+      unserialized[column.name] = column.unserialize(value, seed, scalar);
     }
     return unserialized;
   }
