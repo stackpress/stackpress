@@ -11,40 +11,43 @@ export default function generate(directory: Directory, registry: Registry) {
   //for each model
   for (const model of registry.model.values()) {
     //generate all column fields
-    model.columns.forEach(
-      column => column.field.method === 'relation' 
+    for (const column of model.columns.values()) {
+      const field = column.field;
+      if (!field) continue;
+      field.component === 'Relation'
         ? generateRelation(directory, model, column)
-        : column.field.method === 'fieldset' 
+        : field.component === 'Fieldset'
         ? generateFieldset(directory, model, column)
-        : column.field.component 
-          && [ 'Checkbox', 'Switch' ].indexOf(column.field.component) !== -1
+        : ['Checkbox', 'Switch'].includes(field.component)
         ? generateBoolean(directory, model, column)
-        : generateField(directory, model, column)
-    );
+        : generateField(directory, model, column);
+    }
   }
   //for each fieldset
   for (const fieldset of registry.fieldset.values()) {
     //generate all column fields
-    fieldset.columns.forEach(
-      column => column.field.method === 'fieldset' 
+    for (const column of fieldset.columns.values()) {
+      const field = column.field;
+      if (!field) continue;
+      field.component === 'Fieldset'
         ? generateFieldset(directory, fieldset, column)
-        : column.field.component 
-          && [ 'Checkbox', 'Switch' ].indexOf(column.field.component) !== -1
+        : [ 'Checkbox', 'Switch' ].includes(field.component)
         ? generateBoolean(directory, fieldset, column)
-        : generateField(directory, fieldset, column)
-    );
+        : generateField(directory, fieldset, column);
+    }
   }
-}
+};
 
 export function generateRelation(
   directory: Directory, 
   model: Model,
   column: Column
 ) {
-  //skip if no format component
-  if (typeof column.field.component !== 'string') return;
+  const field = column.field;
+  //skip if no field component
+  if (!field) return;
   //get the path where this should be saved
-  const path = `${model.name}/components/fields/${column.title}Field.tsx`;
+  const path = `${model.name}/components/form/${column.titleCase}FormField.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
@@ -52,6 +55,11 @@ export function generateRelation(
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
+  });
+  //import { useState } from 'react';
+  source.addImportDeclaration({
+    moduleSpecifier: 'react',
+    namedImports: [ 'useState' ]
   });
   //import mustache from 'mustache';
   source.addImportDeclaration({
@@ -63,20 +71,20 @@ export function generateRelation(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/form/Control';
+  //import FieldControl from 'frui/form/FieldControl';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Control',
-    defaultImport: 'Control'
+    moduleSpecifier: 'frui/form/FieldControl',
+    defaultImport: 'FieldControl'
   });
-  //import Text from 'frui/field/Text';
+  //import SuggestInput from 'frui/form/SuggestInput';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/field/${column.field.component}`,
-    defaultImport: column.field.component
+    moduleSpecifier: 'frui/form/SuggestInput',
+    defaultImport: 'SuggestInput'
   });
   //export function NameField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}Field`,
+    name: `${column.titleCase}Field`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
@@ -89,35 +97,42 @@ export function generateRelation(
         change, 
         error = false 
       } = props;
+      const [ 
+        options, 
+        updateOptions 
+      ] = useState<{ label: string , value: any }[]>([]);
       //render
       return (
-        <${column.field.component} 
+        <SuggestInput 
           name={name}
           className={className}
           error={error} 
-          defaultValue={value} 
-          searchable={true}
-          onQuery={async (query, update) => {
-            const response = await fetch(\`${
-              (column.field.attributes.search as string)?.includes('?')
-                ? column.field.attributes.search + '&q=${query}'
-                : column.field.attributes.search + '?q=${query}'
-            }\`);
+          defaultValue={value}
+          onQuery={async query => {
+            const response = await fetch(
+              '${String(field.props.search || '')}'.replace('{{query}}', query)
+            );
             const json = await response.json();
             const options = json.results.map(row => ({
-              label: mustache.render('${column.field.attributes.template}', row),
-              value: row.${column.field.attributes.id}
+              label: mustache.render('${field.props.template}', row),
+              value: row.${field.props.id}
             }));
-            update(options);
+            updateOptions(options);
           }}
-        />
+        >
+          {options.map(option => (
+            <SuggestInput.Option value={option.value} key={option.value}>
+              {option.label}
+            </SuggestInput.Option>
+          ))}
+        </SuggestInput>
       );
     `)
   });
   //export function NameFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}FieldControl`,
+    name: `${column.titleCase}FieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -133,47 +148,51 @@ export function generateRelation(
       }
       //render
       return (
-        <Control label={label} error={error} className={className}>
-          <${column.title}Field
+        <FieldControl label={label} error={error} className={className}>
+          <${column.titleCase}Field
             error={!!error} 
             name={name}
             value={value} 
             change={change}
           />
-        </Control>
+        </FieldControl>
       );
     `)
   });
-}
+};
 
 export function generateFieldset(
   directory: Directory, 
   model: Fieldset,
   column: Column
 ) {
-  //skip if no format component
-  if (!column.fieldset) return;
-  //get the path where this should be saved
-  const path = `${model.name}/components/fields/${column.title}Field.tsx`;
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //NOTE: column.field is a computed getter, 
+  // so dont keep computing it multiple times
+  const field = column.field;
   const fieldset = column.fieldset;
+  //skip if no field component
+  if (!field || !fieldset) return;
+  //get the path where this should be saved
+  const path = `${model.name}/components/form/${column.titleCase}FormField.tsx`;
+  const source = directory.createSourceFile(path, '', { overwrite: true });
+  
   //import type { ReactNode, CSSProperties } from 'react';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'react',
     namedImports: [ 'ReactNode', 'CSSProperties' ]
   });
-  //import type { FieldsProps, FieldsetProps } from 'frui/element/Fieldset';
+  //import type { FieldsProps, FieldsetProps } from 'frui/form/Fieldset';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'frui/element/Fieldset',
+    moduleSpecifier: 'frui/form/Fieldset',
     namedImports: [ 'FieldsProps', 'FieldsetProps' ]
   });
   //import type { AddressInput } from '../../../Address/types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: `../../../${fieldset.name}/types.js`,
-    namedImports: [ `${column.title}Input` ]
+    namedImports: [ `${column.titleCase}Input` ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -185,49 +204,52 @@ export function generateFieldset(
     moduleSpecifier: 'frui/form/Fieldset',
     defaultImport: 'make'
   });
-  //import LabelFieldControl from '../../../Address/components/fields/LabelField.js';
-  fieldset.fields.forEach(column => {
-    //skip if no component
-    if (typeof column.field.component !== 'string') return;
-    if (column.field.method === 'fieldset') {
-      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
+  //import LabelFieldControl from '../../../Address/components/form/LabelField.js';
+  for (const column of fieldset.fields) {
+    //NOTE: column.field is a computed getter, 
+    // so dont keep computing it multiple times
+    const field = column.field;
+    //skip if no field component
+    if (!field) continue;
+    if (column.field.component === 'Fieldset') {
+      //import { ActiveFieldsetControl } from '../../components/form/ActiveField.js';
       source.addImportDeclaration({
-        moduleSpecifier: `../../../${fieldset.name}/components/fields/${column.title}Field.js`,
-        namedImports: [ `${column.title}FieldsetControl` ]
+        moduleSpecifier: `../../../${fieldset.name}/components/form/${column.titleCase}Field.js`,
+        namedImports: [ `${column.titleCase}FieldsetControl` ]
       });
-      return;
+      continue;
     }
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${fieldset.name}/components/fields/${column.title}Field.js`,
-      namedImports: [ `${column.title}FieldControl` ]
+      moduleSpecifier: `../../../${fieldset.name}/components/form/${column.titleCase}Field.js`,
+      namedImports: [ `${column.titleCase}FieldControl` ]
     });
-  });
+  }
 
   //export type AddressConfig = {};
   source.addTypeAlias({
     isExported: true,
-    name: `${column.title}Config`,
+    name: `${column.titleCase}Config`,
     type: `{
       type?: string,
-      values?: (${column.title}Input|undefined)[],
+      values?: (${column.titleCase}Input|undefined)[],
       index: number,
-      set: (values: (${column.title}Input|undefined)[]) => void
+      set: (values: (${column.titleCase}Input|undefined)[]) => void
     }`
   });
   //export type AddressFieldsetProps = FieldsetProps<AddressInput>
   source.addTypeAlias({
     isExported: true,
-    name: `${column.title}FieldsetProps`,
-    type: `FieldsetProps<${column.title}Input> & { errors?: Record<string, any>[] }`
+    name: `${column.titleCase}FieldsetProps`,
+    type: `FieldsetProps<${column.titleCase}Input> & { errors?: Record<string, any>[] }`
   });
   //export type AddressControlProps = {};
   source.addTypeAlias({
     isExported: true,
-    name: `${column.title}ControlProps`,
+    name: `${column.titleCase}ControlProps`,
     type: `{
       label?: string,
       error?: string,
-      value?: ${column.title}Input|${column.title}Input[],
+      value?: ${column.titleCase}Input|${column.titleCase}Input[],
       errors?: Record<string, any>|Record<string, any>[],
       style?: CSSProperties,
       className?: string
@@ -236,9 +258,9 @@ export function generateFieldset(
   //export function useAddressFieldset(config: AddressConfig) {}
   source.addFunction({
     isExported: true,
-    name: `use${column.title}Fieldset`,
+    name: `use${column.titleCase}Fieldset`,
     parameters: [
-      { name: 'config', type: `${column.title}Config` }
+      { name: 'config', type: `${column.titleCase}Config` }
     ],
     statements: (`
       //props
@@ -262,9 +284,9 @@ export function generateFieldset(
   //export function AddressFields(props: FieldsProps<AddressInput>) {}
   source.addFunction({
     isExported: true,
-    name: `${column.title}Fields`,
+    name: `${column.titleCase}Fields`,
     parameters: [
-      { name: 'props', type: `FieldsProps<${column.title}Input>` }
+      { name: 'props', type: `FieldsProps<${column.titleCase}Input>` }
     ],
     statements: (`
       const { 
@@ -278,7 +300,7 @@ export function generateFieldset(
       const { _ } = useLanguage();
       const { errors = [] } = config;
       //handlers
-      const { handlers } = use${column.title}Fieldset({ values, index, set });
+      const { handlers } = use${column.titleCase}Fieldset({ values, index, set });
       //variables
       const prefix = !limit && name 
         ? \`\${name}[\${index}]\` 
@@ -312,18 +334,18 @@ export function generateFieldset(
           ) : null}
           <main>
             ${fieldset.fields.map(column => {
-              return column.field.method === 'fieldset' 
+              return column.field?.component === 'Fieldset' 
                 ? (`
-                  <${column.title}FieldsetControl
+                  <${column.titleCase}FieldsetControl
                     className="field-fieldset-control"
                     name={prefix ? \`\${prefix}[${column.name}]\` : undefined}
                     errors={error['${column.name}']}
                     value={value['${column.name}']} 
                   />  
                 `)
-                : column.field.component 
+                : column.field
                 ? (`
-                  <${column.title}FieldControl
+                  <${column.titleCase}FieldControl
                     className="field-fieldset-control"
                     name={prefix ? \`\${prefix}[${column.name}]\` : undefined}
                     error={error['${column.name}']}
@@ -342,15 +364,15 @@ export function generateFieldset(
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Fieldset',
-      initializer: `make<${column.title}Input>(${column.title}Fields)`,
+      initializer: `make<${column.titleCase}Input>(${column.titleCase}Fields)`,
     }]
   });
   //export function AddressFieldset(props: AddressFieldsetProps) {}
   source.addFunction({
     isExported: true,
-    name: `${column.title}Fieldset`,
+    name: `${column.titleCase}Fieldset`,
     parameters: [
-      { name: 'props', type: `${column.title}FieldsetProps` }
+      { name: 'props', type: `${column.titleCase}FieldsetProps` }
     ],
     statements: (`
       //config gets passed straight to the fields
@@ -383,9 +405,9 @@ export function generateFieldset(
   //export function AddressFieldsetControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}FieldsetControl`,
+    name: `${column.titleCase}FieldsetControl`,
     parameters: [
-      { name: 'props', type: `${column.title}ControlProps` }
+      { name: 'props', type: `${column.titleCase}ControlProps` }
     ],
     statements: (`
       //hooks
@@ -427,7 +449,7 @@ export function generateFieldset(
             <label className="frui-control-label">{label}</label>
           )}
           <div className="frui-control-field">
-            <${column.title}Fieldset 
+            <${column.titleCase}Fieldset 
               error={errors.length > 0} 
               errors={errors} 
               name={name} 
@@ -441,17 +463,20 @@ export function generateFieldset(
       );
     `)
   });
-}
+};
 
 export function generateBoolean(
   directory: Directory, 
   fieldset: Fieldset,
   column: Column
 ) {
-  //skip if no format component
-  if (typeof column.field.component !== 'string') return;
+  //NOTE: column.field is a computed getter, 
+  // so dont keep computing it multiple times
+  const field = column.field;
+  //skip if no field component
+  if (!field) return;
   //get the path where this should be saved
-  const path = `${fieldset.name}/components/fields/${column.title}Field.tsx`;
+  const path = `${fieldset.name}/components/form/${column.titleCase}FormField.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -464,20 +489,25 @@ export function generateBoolean(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/form/Control';
+  //import FieldControl from 'frui/form/FieldControl';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Control',
-    defaultImport: 'Control'
+    moduleSpecifier: 'frui/form/FieldControl',
+    defaultImport: 'FieldControl'
   });
   //import Text from 'frui/field/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/field/${column.field.component}`,
-    defaultImport: column.field.component
+    moduleSpecifier: field.import.from,
+    defaultImport: field.import.default 
+      ? field.component 
+      : undefined,
+    namedImports: !field.import.default 
+      ? [ field.component ] 
+      : undefined
   });
   //export function NameField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}Field`,
+    name: `${column.titleCase}Field`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
@@ -490,10 +520,10 @@ export function generateBoolean(
         change, 
         error = false 
       } = props;
-      const attributes = ${JSON.stringify(column.field.attributes)};
+      const attributes = ${JSON.stringify(field.props)};
       //render
       return (
-        <${column.field.component} 
+        <${field.component} 
           {...attributes}
           name={name}
           className={className}
@@ -508,11 +538,10 @@ export function generateBoolean(
   //export function NameFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}FieldControl`,
+    name: `${column.titleCase}FieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
-
     statements: (`
       //props
       const { 
@@ -531,29 +560,32 @@ export function generateBoolean(
       }
       //render
       return (
-        <Control label={label} error={error} className={className}>
+        <FieldControl label={label} error={error} className={className}>
           <input type="hidden" name="${column.name}" value="0" />
-          <${column.title}Field
+          <${column.titleCase}Field
             error={!!error} 
             name={name}
             value={value} 
             change={change}
           />
-        </Control>
+        </FieldControl>
       );
     `)
   });
-}
+};
 
 export function generateField(
   directory: Directory, 
   fieldset: Fieldset,
   column: Column
 ) {
-  //skip if no format component
-  if (typeof column.field.component !== 'string') return;
+  //NOTE: column.field is a computed getter, 
+  // so dont keep computing it multiple times
+  const field = column.field;
+  //skip if no field component
+  if (!field) return;
   //get the path where this should be saved
-  const path = `${fieldset.name}/components/fields/${column.title}Field.tsx`;
+  const path = `${fieldset.name}/components/form/${column.titleCase}FormField.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -566,20 +598,25 @@ export function generateField(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/form/Control';
+  //import FieldControl from 'frui/form/FieldControl';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Control',
-    defaultImport: 'Control'
+    moduleSpecifier: 'frui/form/FieldControl',
+    defaultImport: 'FieldControl'
   });
   //import Text from 'frui/field/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/field/${column.field.component}`,
-    defaultImport: column.field.component
+    moduleSpecifier: field.import.from,
+    defaultImport: field.import.default 
+      ? field.component 
+      : undefined,
+    namedImports: !field.import.default 
+      ? [ field.component ] 
+      : undefined
   });
-  //export function NameField(props: FieldProps) {
+  //export function NameFormField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}Field`,
+    name: `${column.titleCase}FormField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
@@ -592,10 +629,10 @@ export function generateField(
         change, 
         error = false 
       } = props;
-      const attributes = ${JSON.stringify(column.field.attributes)};
+      const attributes = ${JSON.stringify(field.props)};
       //render
       return (
-        <${column.field.component} 
+        <${field.component} 
           {...attributes}
           name={name}
           className={className}
@@ -606,10 +643,10 @@ export function generateField(
       );
     `)
   });
-  //export function NameFieldControl(props: ControlProps) {
+  //export function NameFormFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}FieldControl`,
+    name: `${column.titleCase}FormFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -625,15 +662,15 @@ export function generateField(
       }
       //render
       return (
-        <Control label={label} error={error} className={className}>
-          <${column.title}Field
+        <FieldControl label={label} error={error} className={className}>
+          <${column.titleCase}FormField
             error={typeof error === 'string'} 
             name={name}
             value={value} 
             change={change}
           />
-        </Control>
+        </FieldControl>
       );
     `)
   });
-}
+};

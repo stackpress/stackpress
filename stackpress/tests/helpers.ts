@@ -1,13 +1,19 @@
+//node
+import fs from 'node:fs';
+import path from 'node:path';
 //modules
+import prettier from 'prettier';
+import { Project, IndentationText } from 'ts-morph';
+import FileLoader from '@stackpress/lib/FileLoader';
 import type { 
   Data,
-  ColumnConfig,
   AttributeValue,
   IdentifierToken,
   LiteralToken,
   DataToken
 } from '@stackpress/idea-parser';
 import { Lexer, Compiler } from '@stackpress/idea-parser';
+import { Transformer } from '@stackpress/idea-transformer';
 import definitions, { data, scan } from '@stackpress/idea-parser/definitions';
 //tests
 import schema from './fixtures/schema.js';
@@ -16,11 +22,13 @@ import Registry from '../src/schema/Registry.js';
 import Column from '../src/schema/spec/Column.js';
 import Fieldset from '../src/schema/spec/Fieldset.js';
 import Model from '../src/schema/spec/Model.js';
+import Terminal from '../src/terminal/Terminal.js';
+import { server as http } from '../src/server/http';
 
 export { schema };
 
 export const auth = schema.model!.Auth;
-export const profile = schema.model!.Auth;
+export const profile = schema.model!.Profile;
 export const registry = new Registry(schema);
 
 export const mocks = {
@@ -48,6 +56,17 @@ export const mocks = {
       profile.columns
     )
   }
+};
+
+export const cwd = process.cwd();
+
+export const paths = {
+  cwd,
+  tests: path.join(cwd, 'tests'),
+  idea: path.join(cwd, 'tests/fixtures/test.idea'),
+  tsconfig: path.join(cwd, 'tsconfig.json'),
+  output: path.join(cwd, 'tests/out/lib'),
+  build: path.join(cwd, 'tests/out/build')
 };
 
 /**
@@ -231,3 +250,99 @@ export function mockModel(name: string, attr = '', cols: string[] = []) {
   const columns = cols.map(col => parser.load(col).toColumn());
   return new Model(registry, name, attributes, columns);
 };
+
+/**
+ * Mocks a server instance
+ */
+export function mockServer(cwd = paths.tests) {
+  return http({ cwd });
+};
+
+/**
+ * Mocks a file loader instance
+ */
+export function mockFileLoader(server = mockServer()) {
+  return new FileLoader(server.loader.fs, server.loader.cwd);
+};
+
+/**
+ * Mocks a terminal instance
+ */
+export function mockTerminal(args: string[] = [], server = mockServer()) {
+  return new Terminal(args, server);
+};
+
+/**
+ * Mocks a transformer instance
+ */
+export function mockTransformer(idea: string, loader = mockFileLoader()) {
+  return new Transformer(idea, loader);
+};
+
+/**
+ * Mocks a ts-morph project instance
+ */
+export function mockProject(tsconfig: string, outDir: string) {
+  return new Project({
+    tsConfigFilePath: tsconfig,
+    skipAddingFilesFromTsConfig: true,
+    compilerOptions: {
+      outDir,
+      declaration: true, 
+      declarationMap: false, 
+      sourceMap: false, 
+    },
+    manipulationSettings: {
+      indentationText: IndentationText.TwoSpaces
+    }
+  });
+};
+
+/**
+ * Mocks a ts-morph project directory instance
+ */
+export function mockProjectDirectory(
+  tsconfig: string, 
+  outDir: string, 
+  build: string
+) {
+  const project = mockProject(tsconfig, outDir);
+  return project.createDirectory(build);
+};
+
+/**
+ * Makes directory if not exists
+ */
+export function mkdir(dir: string) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
+
+/**
+ * Removes directory if exists
+ */
+export function rmdir(dir: string) {
+  if (fs.existsSync(dir)) {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+};
+
+/**
+ * Saves and pretty prints a ts-morph project
+ */
+export async function savePrettyProject(project: Project) {
+  //save first
+    project.saveSync();
+    //get source files
+    const files = project.getSourceFiles();
+    for (const file of files) {
+      const filePath = file.getFilePath();
+      const content = file.getFullText();
+      //so we can pretty print
+      const pretty = await prettier.format(content, { 
+        parser: 'typescript' 
+      });
+      fs.writeFileSync(filePath, pretty);
+    }
+}

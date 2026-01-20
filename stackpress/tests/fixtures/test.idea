@@ -1,0 +1,85 @@
+//A profile can be a person, organization, or any other type of entity.
+//Profiles can be authenticated or added from various sources. That's 
+//why we call it profile instead of user and company indicating it's 
+//just a general information of an entity.
+
+model User
+  @label("Profile" "Profiles") 
+  @template("{{name}}") 
+  @icon("user") 
+{
+  id          String    @label("ID") 
+                        @id @default("cuid()")
+                        @list.overflow({ length 10 hellip true })
+                        @description("Unique generated identifier.")
+                        @example("pjfdz7tg8bcf7e2lig3iuej3")
+  
+  name        String    @label("Name") 
+                        @searchable
+                        @field.input({ required true type "text" })
+                        @is.required("Required")
+                        @is.notempty("Cannot be empty")
+                        @list.string @view.string
+                        @description("Full name (first middle last).")
+                        @example("John Doe")
+
+  image       String?   @label("Image") 
+                        @field.url
+                        @list.image(20 20) @view.image(100 100)
+                        @description("Profile image URL.")
+                        @example("https://example.com/image.jpg")
+  
+  type        String    @label("Type") 
+                        @default("person") 
+                        @filter.string
+                        @field.input({ required true type "text" })
+                        @is.notempty("Cannot be empty")
+                        @list.string({ lower true }) 
+                        @view.string({ lower true })
+                        @description("Type of profile (ie. person, company, etc.).")
+                        @example("person")
+  
+  roles       String[]  @label("Roles") 
+                        @default([])
+                        @field.textlist({ add "Add Role" })
+                        @list.hide @view.taglist({ warning true })
+                        @description("Roles held by the profile. This is used with sessions to determine access levels of the app.")
+                        @example(["admin" "user" "gues"])
+  
+  tags        String[]  @label("Tags") 
+                        @default([])
+                        @field.taglist
+                        @list.hide @view.taglist({ warning true })
+                        @description("Abritrary tags for general use.")
+                        @example(["top buyer" "verified" "moderator"])
+  
+  references  Hash?     @label("References") 
+                        @default({})
+                        @field.metadata({ add "Add Reference" })
+                        @list.hide @view.metadata
+                        @description("Arbitrary key/value references for general use.")
+                        @example({ fbid "abc123" })
+  
+  active      Boolean   @label("Active") 
+                        @default(true) @active
+                        @filter.switch
+                        @list.hide @view.yesno
+                        @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+                        @example(true)
+  
+  created     Datetime  @label("Created") 
+                        @default("now()") @sortable
+                        @span.datetime
+                        @list.date("m d, Y h:iA") 
+                        @view.date("m d, Y h:iA")
+                        @description("Generated timestamp when row was created.")
+                        @example("2025-10-01T12:00:00Z")
+  
+  updated     Datetime  @label("Updated") 
+                        @default("now()") @timestamp @sortable
+                        @span.datetime
+                        @list.date("m d, Y h:iA") 
+                        @view.date("m d, Y h:iA")
+                        @description("Generated timestamp that is updated whenever the row has changed.")
+                        @example("2025-10-01T12:00:00Z")
+}

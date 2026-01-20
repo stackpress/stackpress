@@ -5,32 +5,49 @@ import type Registry from '../../schema/Registry.js';
 import type Fieldset from '../../schema/spec/Fieldset.js';
 import type Column from '../../schema/spec/Column.js';
 
+const formatType: Record<string, string> = {
+  String: 'string',
+  Text: 'string',
+  Number: 'number',
+  Integer: 'number',
+  Float: 'number',
+  Boolean: 'boolean',
+  Date: 'string|number|Date',
+  Time: 'string|number|Date',
+  Datetime: 'string|number|Date',
+  Json: 'Record<string, any>',
+  Object: 'Record<string, any>',
+  Hash: 'Record<string, any>'
+};
+
 export default function generate(directory: Directory, registry: Registry) {
   //for each model
   for (const model of registry.model.values()) {
     //generate all column formats
-    model.columns.forEach(
-      column => column.view.method === 'fieldset'
-        ? (
-          column.multiple 
-            ? generateFieldsetTable(directory, model, column) 
-            : generateFieldsetInfo(directory, model, column)
+    for (const column of model.columns.values()) {
+      const view = column.view;
+      if (!view) continue;
+      view.component === 'Fieldset'
+        ? (column.multiple 
+          ? generateFieldsetTable(directory, model, column) 
+          : generateFieldsetInfo(directory, model, column)
         )
-        : generateFormat(directory, model, column)
-    );
+        : generateFormat(directory, model, column);
+    }
   }
   //for each fieldset
   for (const fieldset of registry.fieldset.values()) {
     //generate all column formats
-    fieldset.columns.forEach(
-      column => column.view.method === 'fieldset'
-        ? (
-          column.multiple 
-            ? generateFieldsetTable(directory, fieldset, column) 
-            : generateFieldsetInfo(directory, fieldset, column)
+    for (const column of fieldset.columns.values()) {
+      const view = column.view;
+      if (!view) continue;
+      view.component === 'Fieldset'
+        ? (column.multiple 
+          ? generateFieldsetTable(directory, fieldset, column) 
+          : generateFieldsetInfo(directory, fieldset, column)
         )
-        : generateFormat(directory, fieldset, column)
-    );
+        : generateFormat(directory, fieldset, column);
+    }
   }
 }
 
@@ -39,11 +56,15 @@ export function generateFieldsetTable(
   fieldset: Fieldset,
   column: Column
 ) {
-  //skip if no format component
-  if (!column.fieldset) return;
+  //NOTE: column.view is a computed getter, 
+  // so dont keep computing it multiple times
+  const view = column.view;
   const columnFieldset = column.fieldset;
+  //skip if no view component
+  if (!view || !columnFieldset) return;
+  const views = columnFieldset.views.filter(column => column.view);
   //get the path where this should be saved
-  const path = `${fieldset.name}/components/views/${column.title}ViewFormat.tsx`;
+  const path = `${fieldset.name}/components/view/${column.titleCase}ViewFormat.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -61,22 +82,24 @@ export function generateFieldsetTable(
     namedImports: [ 'Table', 'Thead', 'Trow', 'Tcol' ]
   });
   //export function AddressViewFormat() {}
-  columnFieldset.views.forEach(column => {
-    //skip if no component
-    if (typeof column.view.component !== 'string') return;
+  views.forEach(column => {
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${columnFieldset.name}/components/views/${column.title}ViewFormat.js`,
-      defaultImport: `${column.title}ViewFormat`
+      moduleSpecifier: `../../../${
+        columnFieldset.name
+      }/components/view/${
+        column.titleCase
+      }ViewFormat.js`,
+      defaultImport: `${column.titleCase}ViewFormat`
     });
   });
   const props = `{ 
-    data: ${fieldset.title}Extended,
-    value: ${columnFieldset.title}${column.multiple ? '[]': ''} 
+    data: ${fieldset.titleCase}Extended,
+    value: ${columnFieldset.titleCase}${column.multiple ? '[]': ''} 
   }`;
   //export function AddressFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: `${column.title}Format`,
+    name: `${column.titleCase}Format`,
     parameters: [ { name: 'props', type: props } ],
     statements: (`
       const { value } = props;
@@ -85,26 +108,17 @@ export function generateFieldsetTable(
       if (!Array.isArray(value) || !value.length) return null;
       return (
         <Table>
-          ${columnFieldset.views.filter(
-            column => column.view.method !== 'hide'
-          ).map(column => (`
+          ${views.map(column => (`
             <Thead noWrap stickyTop className="!theme-bc-bd2 theme-bg-bg2 text-left">
               {_('${column.label}')}
             </Thead>
           `)).join('\n')}
           {value.map((row, index) => (
             <Trow key={index}>
-              ${columnFieldset.views.filter(
-                column => column.view.method !== 'hide'
-              ).map(column => {
-                const value = column.required && column.view.method === 'none'
-                  ? `{row.${column.name}.toString()}`
-                  : column.required && column.view.method !== 'none'
-                  ? `<${column.title}ViewFormat data={row} value={row.${column.name}} />`
-                  : !column.required && column.view.method === 'none'
-                  ? `{row.${column.name} ? row.${column.name}.toString() : ''}`
-                  //!column.required && column.view.method !== 'none'
-                  : `{row.${column.name} ? (<${column.title}ViewFormat data={row} value={row.${column.name}} />) : ''}`;
+              ${views.map(column => {
+                const value = column.required
+                  ? `<${column.titleCase}ViewFormat data={row} value={row.${column.name}} />`
+                  : `{row.${column.name} ? (<${column.titleCase}ViewFormat data={row} value={row.${column.name}} />) : ''}`;
                 const align = column.sortable ? 'text-right' : 'text-left';
                 return (`
                   <Tcol noWrap className={\`!theme-bc-bd2 ${align} \${stripe(index)}\`}>
@@ -125,11 +139,15 @@ export function generateFieldsetInfo(
   fieldset: Fieldset,
   column: Column
 ) {
-  //skip if no format component
-  if (!column.fieldset) return;
+  //NOTE: column.view is a computed getter, 
+  // so dont keep computing it multiple times
+  const view = column.view;
   const columnFieldset = column.fieldset;
+  //skip if no view component
+  if (!view || !columnFieldset) return;
+  const views = columnFieldset.views.filter(column => column.view);
   //get the path where this should be saved
-  const path = `${fieldset.name}/components/views/${column.title}ViewFormat.tsx`;
+  const path = `${fieldset.name}/components/view/${column.titleCase}ViewFormat.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -147,22 +165,22 @@ export function generateFieldsetInfo(
     namedImports: [ 'Table', 'Trow', 'Tcol' ]
   });
   //export function AddressViewFormat() {}
-  columnFieldset.views.forEach(column => {
+  views.forEach(column => {
     //skip if no component
-    if (typeof column.view.component !== 'string') return;
+    if (typeof column.view!.component !== 'string') return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${columnFieldset.name}/components/views/${column.title}ViewFormat.js`,
-      defaultImport: `${column.title}ViewFormat`
+      moduleSpecifier: `../../../${columnFieldset.name}/components/view/${column.titleCase}ViewFormat.js`,
+      defaultImport: `${column.titleCase}ViewFormat`
     });
   });
   const props = `{ 
-    data: ${fieldset.title}Extended,
-    value: ${columnFieldset.title}${column.multiple ? '[]': ''} 
+    data: ${fieldset.titleCase}Extended,
+    value: ${columnFieldset.titleCase}${column.multiple ? '[]': ''} 
   }`;
   //export function AddressFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: `${column.title}Format`,
+    name: `${column.titleCase}Format`,
     parameters: [ { name: 'props', type: props } ],
     statements: (`
       const { value } = props;
@@ -173,23 +191,17 @@ export function generateFieldsetInfo(
       ) return null;
       return (
         <Table>
-          ${columnFieldset.views.filter(
-            column => column.view.method !== 'hide'
-          ).map(column => {
+          ${views.map(column => {
             return (`
               <Trow>
                 <Tcol noWrap className={\`!theme-bc-bd2 font-bold \${stripe(true)}\`}>
                   {_('${column.label}')}
                 </Tcol>
                 <Tcol noWrap className={\`!theme-bc-bd2 \${stripe()}\`}>
-                  ${column.required && !column.view.component
-                    ? `{value.${column.name}.toString()}`
-                    : column.required && column.view.component
-                    ? `<${column.title}ViewFormat data={value} value={value.${column.name}} />`
-                    : !column.required && !column.view.component
-                    ? `{value.${column.name} ? value.${column.name}.toString() : ''}`
+                  ${column.required
+                    ? `<${column.titleCase}ViewFormat data={value} value={value.${column.name}} />`
                     //!column.required && column.view.component
-                    : `{value.${column.name} ? (<${column.title}ViewFormat data={value} value={value.${column.name}} />) : ''}`
+                    : `{value.${column.name} ? (<${column.titleCase}ViewFormat data={value} value={value.${column.name}} />) : ''}`
                   }
                 </Tcol>
               </Trow>
@@ -206,47 +218,52 @@ export function generateFormat(
   fieldset: Fieldset,
   column: Column
 ) {
+  //NOTE: column.view is a computed getter, 
+  // so dont keep computing it multiple times
+  const view = column.view;
+  //skip if no view component
+  if (!view) return;
   //skip if no format component
   if (typeof column.view.component !== 'string') return;
   //get the path where this should be saved
-  const path = `${fieldset.name}/components/views/${column.title}ViewFormat.tsx`;
+  const path = `${fieldset.name}/components/view/${column.titleCase}ViewFormat.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
-  //import Text from 'frui/format/Text';
+  //import Text from 'frui/view/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/format/${column.view.component}`,
+    moduleSpecifier: `frui/view/${column.view.component}`,
     defaultImport: column.view.component
   });
+  //import type { ProfileExtended } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ `${fieldset.titleCase}Extended` ]
+  });
   const props = `{ 
-    data: ${fieldset.title}Extended,
-    value: ${column.typemap.format}${column.multiple ? '[]': ''} 
+    data: ${fieldset.titleCase}Extended,
+    value: ${formatType[column.type]}${column.multiple ? '[]': ''} 
   }`;
-  if (column.view.method === 'template') {
+  if (view.component === 'Template') {
     //import mustache from 'mustache';
     source.addImportDeclaration({
       moduleSpecifier: 'mustache',
       defaultImport: 'mustache'
     });
-    //import type { ProfileExtended } from '../../types.js';
-    source.addImportDeclaration({
-      isTypeOnly: true,
-      moduleSpecifier: '../../types.js',
-      namedImports: [ `${fieldset.title}Extended` ]
-    });
     //export function NameFormat() {
     source.addFunction({
       isDefaultExport: true,
-      name: `${column.title}Format`,
+      name: `${column.titleCase}Format`,
       parameters: [ { name: 'props', type: props } ],
       statements: (`
         //props
         const { data } = props;
         const value = mustache.render(
-          '${column.view.attributes.template}',
+          '${view.props.template}',
           data
         );
         //render
         return (
-          <${column.view.component} value={value} />
+          <${view.component} value={value} />
         );
       `)
     });
@@ -255,15 +272,15 @@ export function generateFormat(
   //export function NameViewFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: `${column.title}ViewFormat`,
+    name: `${column.titleCase}ViewFormat`,
     parameters: [ { name: 'props', type: props } ],
     statements: (`
       //props
       const { data, value } = props;
-      const attributes = ${JSON.stringify(column.view.attributes)};
+      const attributes = { data, ...${JSON.stringify(view.props)} };
       //render
       return (
-        <${column.view.component} {...attributes} data={data} value={value} />
+        <${view.component} {...attributes} value={value} />
       );
     `)
   });

@@ -20,10 +20,13 @@ export function generateSpan(
   model: Model,
   column: Column
 ) {
-  //skip if no format component
-  if (typeof column.span.component !== 'string') return;
+  //NOTE: column.list is a computed getter, 
+  // so dont keep computing it multiple times
+  const span = column.span;
+  //skip if no field component
+  if (!span) return;
   //get the path where this should be saved
-  const path = `${model.name}/components/spans/${column.title}Span.tsx`;
+  const path = `${model.name}/components/span/${column.titleCase}SpanField.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
@@ -37,27 +40,27 @@ export function generateSpan(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Control from 'frui/form/Control';
+  //import FieldControl from 'frui/form/FieldControl';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Control',
-    defaultImport: 'Control'
+    moduleSpecifier: 'frui/form/FieldControl',
+    defaultImport: 'FieldControl'
   });
-  //import Text from 'frui/fields/Text';
+  //import Text from 'frui/form/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/field/${column.span.component}`,
+    moduleSpecifier: `frui/form/${column.span.component}`,
     defaultImport: column.span.component
   });
-  //export function NameSpan(props: FieldProps) {
+  //export function NameSpanField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}Span`,
+    name: `${column.titleCase}SpanField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
     statements: (`
       //props
       const { className, value, change, error = false } = props;
-      const attributes = ${JSON.stringify(column.span.attributes)};
+      const attributes = ${JSON.stringify(column.span.props)};
       const values = Array.isArray(value) ? value : [];
       //render
       return (
@@ -83,10 +86,10 @@ export function generateSpan(
       );
     `)
   });
-  //export function NameSpanControl(props: ControlProps) {
+  //export function NameSpanFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.title}SpanControl`,
+    name: `${column.titleCase}SpanFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -97,14 +100,14 @@ export function generateSpan(
       const { _ } = useLanguage();
       //render
       return (
-        <Control label={_('${column.label}')} error={error} className={className}>
-          <${column.title}Span
+        <FieldControl label={_('${column.label}')} error={error} className={className}>
+          <${column.titleCase}SpanField
             className="!border-b2 dark:bg-gray-300 outline-none"
             error={!!error} 
             value={value} 
             change={change}
           />
-        </Control>
+        </FieldControl>
       );
     `)
   });

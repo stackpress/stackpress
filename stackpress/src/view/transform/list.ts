@@ -5,32 +5,51 @@ import type Registry from '../../schema/Registry.js';
 import type Fieldset from '../../schema/spec/Fieldset.js';
 import type Column from '../../schema/spec/Column.js';
 
+const formatType: Record<string, string> = {
+  String: 'string',
+  Text: 'string',
+  Number: 'number',
+  Integer: 'number',
+  Float: 'number',
+  Boolean: 'boolean',
+  Date: 'string|number|Date',
+  Time: 'string|number|Date',
+  Datetime: 'string|number|Date',
+  Json: 'Record<string, any>',
+  Object: 'Record<string, any>',
+  Hash: 'Record<string, any>'
+};
+
 export default function generate(directory: Directory, registry: Registry) {
   //for each model
   for (const model of registry.model.values()) {
     //generate all column formats
-    model.columns.forEach(
-      column => column.list.method === 'fieldset'
+    for (const column of model.columns.values()) {
+      const list = column.list;
+      if (!list) continue;
+      list.component === 'Fieldset'
         ? (
           column.multiple 
             ? generateFieldsetTable(directory, model, column) 
             : generateFieldsetInfo(directory, model, column)
         )
-        : generateFormat(directory, model, column)
-    );
+        : generateFormat(directory, model, column); 
+    }
   }
   //for each fieldset
   for (const fieldset of registry.fieldset.values()) {
     //generate all column formats
-    fieldset.columns.forEach(
-      column => column.list.method === 'fieldset'
+    for (const column of fieldset.columns.values()) {
+      const list = column.list;
+      if (!list) continue;
+      list.component === 'Fieldset'
         ? (
           column.multiple 
             ? generateFieldsetTable(directory, fieldset, column) 
             : generateFieldsetInfo(directory, fieldset, column)
         )
-        : generateFormat(directory, fieldset, column)
-    );
+        : generateFormat(directory, fieldset, column);
+    }
   }
 }
 
@@ -39,12 +58,16 @@ export function generateFieldsetTable(
   fieldset: Fieldset,
   column: Column
 ) {
-  //skip if no format component
-  if (!column.fieldset) return;
+  //NOTE: column.list is a computed getter, 
+  // so dont keep computing it multiple times
+  const list = column.list;
   const columnFieldset = column.fieldset;
+  //skip if no field component
+  if (!list || !columnFieldset) return;
   //get the path where this should be saved
-  const path = `${fieldset.name}/components/lists/${column.title}ListFormat.tsx`;
+  const path = `${fieldset.name}/components/list/${column.titleCase}ListFormat.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
+
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
@@ -61,22 +84,29 @@ export function generateFieldsetTable(
     namedImports: [ 'Table', 'Thead', 'Trow', 'Tcol' ]
   });
   //export function AddressListFormat() {}
-  columnFieldset.lists.forEach(column => {
-    //skip if no component
-    if (typeof column.list.component !== 'string') return;
+  for (const column of columnFieldset.lists.values()) {
+    //NOTE: column.list is a computed getter, 
+    // so dont keep computing it multiple times
+    const list = column.list;
+    //skip if no list component
+    if (!list) return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${columnFieldset.name}/components/lists/${column.title}ListFormat.js`,
-      defaultImport: `${column.title}ListFormat`
+      moduleSpecifier: `../../../${
+        columnFieldset.name
+      }/components/list/${
+        column.titleCase
+      }ListFormat.js`,
+      defaultImport: `${column.titleCase}ListFormat`
     });
-  });
+  }
   const props = `{ 
-    data: ${fieldset.title}Extended,
-    value: ${columnFieldset.title}${column.multiple ? '[]': ''} 
+    data: ${fieldset.titleCase}Extended,
+    value: ${columnFieldset.titleCase}${column.multiple ? '[]': ''} 
   }`;
   //export function AddressListFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: `${column.title}ListFormat`,
+    name: `${column.titleCase}ListFormat`,
     parameters: [ { name: 'props', type: props } ],
     statements: (`
       const { value } = props;
@@ -85,23 +115,22 @@ export function generateFieldsetTable(
       if (!Array.isArray(value) || !value.length) return null;
       return (
         <Table>
-          ${columnFieldset.lists.filter(
-            column => column.list.method !== 'hide'
-          ).map(column => {
+          ${columnFieldset.lists.map(column => {
+            const list = column.list!;
             return (`
               <Trow>
                 <Tcol noWrap className={\`!theme-bc-bd2 font-bold \${stripe(true)}\`}>
                   {_('${column.label}')}
                 </Tcol>
                 <Tcol noWrap className={\`!theme-bc-bd2 \${stripe()}\`}>
-                  ${column.required && !column.list.component
+                  ${column.required && !list.component
                     ? `{value.${column.name}.toString()}`
-                    : column.required && column.list.component
-                    ? `<${column.title}ListFormat data={value} value={value.${column.name}} />`
-                    : !column.required && !column.list.component
+                    : column.required && list.component
+                    ? `<${column.titleCase}ListFormat data={value} value={value.${column.name}} />`
+                    : !column.required && !list.component
                     ? `{value.${column.name} ? value.${column.name}.toString() : ''}`
                     //!column.required && column.list.component
-                    : `{value.${column.name} ? (<${column.title}ListFormat data={value} value={value.${column.name}} />) : ''}`
+                    : `{value.${column.name} ? (<${column.titleCase}ListFormat data={value} value={value.${column.name}} />) : ''}`
                   }
                 </Tcol>
               </Trow>
@@ -122,7 +151,7 @@ export function generateFieldsetInfo(
   if (!column.fieldset) return;
   const columnFieldset = column.fieldset;
   //get the path where this should be saved
-  const path = `${fieldset.name}/components/lists/${column.title}ListFormat.tsx`;
+  const path = `${fieldset.name}/components/list/${column.titleCase}ListFormat.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -141,21 +170,24 @@ export function generateFieldsetInfo(
   });
   //export function AddressListFormat() {}
   columnFieldset.lists.forEach(column => {
-    //skip if no component
-    if (typeof column.list.component !== 'string') return;
+    //NOTE: column.list is a computed getter, 
+    // so dont keep computing it multiple times
+    const list = column.list;
+    //skip if no list component
+    if (!list) return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${columnFieldset.name}/components/lists/${column.title}ListFormat.js`,
-      defaultImport: `${column.title}ListFormat`
+      moduleSpecifier: `../../../${columnFieldset.name}/components/list/${column.titleCase}ListFormat.js`,
+      defaultImport: `${column.titleCase}ListFormat`
     });
   });
   const props = `{ 
-    data: ${fieldset.title}Extended,
-    value: ${columnFieldset.title}${column.multiple ? '[]': ''} 
+    data: ${fieldset.titleCase}Extended,
+    value: ${columnFieldset.titleCase}${column.multiple ? '[]': ''} 
   }`;
   //export function AddressListFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: `${column.title}ListFormat`,
+    name: `${column.titleCase}ListFormat`,
     parameters: [ { name: 'props', type: props } ],
     statements: (`
       const { value } = props;
@@ -163,23 +195,22 @@ export function generateFieldsetInfo(
       const stripe = useStripe('theme-bg-bg0', 'theme-bg-bg1');
       return (
         <Table>
-          ${columnFieldset.lists.filter(
-            column => column.list.method !== 'hide'
-          ).map(column => {
+          ${columnFieldset.lists.map(column => {
+            const list = column.list!;
             return (`
               <Trow>
                 <Tcol noWrap className={\`!theme-bc-bd2 font-bold \${stripe(true)}\`}>
                   {_('${column.label}')}
                 </Tcol>
                 <Tcol noWrap className={\`!theme-bc-bd2 \${stripe()}\`}>
-                  ${column.required && !column.list.component
+                  ${column.required && !list.component
                     ? `{value.${column.name}.toString()}`
-                    : column.required && column.list.component
-                    ? `<${column.title}ListFormat data={value} value={value.${column.name}} />`
-                    : !column.required && !column.list.component
+                    : column.required && list.component
+                    ? `<${column.titleCase}ListFormat data={value} value={value.${column.name}} />`
+                    : !column.required && !list.component
                     ? `{value.${column.name} ? value.${column.name}.toString() : ''}`
                     //!column.required && column.list.component
-                    : `{value.${column.name} ? (<${column.title}ListFormat data={value} value={value.${column.name}} />) : ''}`
+                    : `{value.${column.name} ? (<${column.titleCase}ListFormat data={value} value={value.${column.name}} />) : ''}`
                   }
                 </Tcol>
               </Trow>
@@ -196,48 +227,50 @@ export function generateFormat(
   fieldset: Fieldset,
   column: Column
 ) {
-  //skip if no format component
-  if (typeof column.list.component !== 'string') return;
+  //NOTE: column.list is a computed getter, 
+  // so dont keep computing it multiple times
+  const list = column.list;
+  //skip if no field component
+  if (!list) return;
   //get the path where this should be saved
-  const path = `${fieldset.name}/components/lists/${column.title}ListFormat.tsx`;
+  const path = `${fieldset.name}/components/list/${column.titleCase}ListFormat.tsx`;
   const source = directory.createSourceFile(path, '', { overwrite: true });
-  //import Text from 'frui/format/Text';
+  //import Text from 'frui/view/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/format/${column.list.component}`,
+    moduleSpecifier: `frui/view/${column.list.component}`,
     defaultImport: column.list.component
   });
+  //import type { ProfileExtended } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ `${fieldset.titleCase}Extended` ]
+  });
   const props = `{ 
-    data: ${fieldset.title}Extended,
-    value: ${column.typemap.format}${column.multiple ? '[]': ''} 
+    data: ${fieldset.titleCase}Extended,
+    value: ${formatType[column.type]}${column.multiple ? '[]': ''} 
   }`;
   //import mustache from 'mustache';
-  if (column.list.method === 'template') {
+  if (list.component === 'Template') {
     source.addImportDeclaration({
       moduleSpecifier: 'mustache',
       defaultImport: 'mustache'
     });
-
-    //import type { ProfileExtended } from '../../types.js';
-    source.addImportDeclaration({
-      isTypeOnly: true,
-      moduleSpecifier: '../../types.js',
-      namedImports: [ `${fieldset.title}Extended` ]
-    });
     //export function NameFormat() {
     source.addFunction({
       isDefaultExport: true,
-      name: `${column.title}Format`,
+      name: `${column.titleCase}Format`,
       parameters: [ { name: 'props', type: props } ],
       statements: (`
         //props
         const { data } = props;
         const value = mustache.render(
-          '${column.list.attributes.template}',
+          '${list.props.template}',
           data
         );
         //render
         return (
-          <${column.list.component} value={value} />
+          <${list.component} value={value} />
         );
       `)
     });
@@ -246,17 +279,17 @@ export function generateFormat(
   //export function NameListFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: `${column.title}ListFormat`,
+    name: `${column.titleCase}ListFormat`,
     parameters: [
       { name: 'props', type: props }
     ],
     statements: (`
       //props
       const { data, value } = props;
-      const attributes = ${JSON.stringify(column.list.attributes)};
+      const attributes = { data, ...${JSON.stringify(list.props)} };
       //render
       return (
-        <${column.list.component} {...attributes} data={data} value={value} />
+        <${list.component} {...attributes} value={value} />
       );
     `)
   });

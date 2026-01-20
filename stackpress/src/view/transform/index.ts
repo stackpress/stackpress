@@ -3,21 +3,21 @@ import type { IdeaPluginWithProject } from '../../types/index.js';
 //schema
 import Registry from '../../schema/Registry.js';
 //local
-import generateViews from './views.js';
-import generateFields from './fields.js';
-import generateFilters from './filters.js';
-import generateLists from './lists.js';
-import generateSpans from './spans.js';
+import generateViews from './view.js';
+import generateFields from './form.js';
+import generateFilters from './filter.js';
+import generateLists from './list.js';
+import generateSpans from './span.js';
 
 /**
  * Client File Structure
  * - profile/
  * | - components/
- * | | - filters/
- * | | - fields/
- * | | - lists/
- * | | - spans/
- * | | - views/
+ * | | - filter/
+ * | | - form/
+ * | | - list/
+ * | | - span/
+ * | | - view/
  */
 
 /**
@@ -40,14 +40,14 @@ export default async function generate(props: IdeaPluginWithProject) {
 
   //-----------------------------//
   // 2. Generators
-  // - profile/components/fields/
+  // - profile/components/form/
   generateFields(project, registry);
-  // - profile/components/filters/
+  // - profile/components/filter/
   generateFilters(project, registry);
-  // - profile/components/lists/
+  // - profile/components/list/
   generateLists(project, registry);
-  // - profile/components/spans/
+  // - profile/components/span/
   generateSpans(project, registry);
-  // - profile/components/views
+  // - profile/components/view/
   generateViews(project, registry);
 };
