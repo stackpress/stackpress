@@ -4,7 +4,21 @@ import type { Directory, SourceFile } from 'ts-morph';
 import type Model from '../../schema/spec/Model.js';
 import type Fieldset from '../../schema/spec/Fieldset.js';
 import type Registry from '../../schema/Registry.js';
-import * as typemap from '../../schema/config/typemaps.js';
+
+const typemap: Record<string, string> = {
+  String: 'string',
+  Text: 'string',
+  Number: 'number',
+  Integer: 'number',
+  Float: 'number',
+  Boolean: 'boolean',
+  Date: 'string',
+  Time: 'string',
+  Datetime: 'string',
+  Json: 'Record<string, string|number|boolean|null>',
+  Object: 'Record<string, string|number|boolean|null>',
+  Hash: 'Record<string, string|number|boolean|null>'
+};
 
 /**
  * This is the The params comes form the cli
@@ -39,7 +53,7 @@ export default function generate(directory: Directory, registry: Registry) {
     source.addExportDeclaration({
       isTypeOnly: true,
       moduleSpecifier: `./${model.name}/types.js`,
-      namedExports: [ model.title, `${model.title}Input`, `${model.title}Extended` ]
+      namedExports: [ model.titleCase, `${model.titleCase}Input`, `${model.titleCase}Extended` ]
     });
   }
   //export type * from './module/Profile/types.js';
@@ -47,7 +61,7 @@ export default function generate(directory: Directory, registry: Registry) {
     source.addExportDeclaration({
       isTypeOnly: true,
       moduleSpecifier: `./${fieldset.name}/types.js`,
-      namedExports: [ fieldset.title, `${fieldset.title}Input` ]
+      namedExports: [ fieldset.titleCase, `${fieldset.titleCase}Input` ]
     });
   }
 };
@@ -66,13 +80,13 @@ export function generateModel(source: SourceFile, model: Model) {
     });
   }
   for (const column of model.relations) {
-    const relation = column.relation;
+    const relation = column.parentRelation;
     if (!relation) continue;
     const model = relation?.parent.model;
     //import type { Profile } from '../Profile/types.js'
     source.addImportDeclaration({
       moduleSpecifier: `../${model.name}/types.js`,
-      namedImports: [ model.title ]
+      namedImports: [ model.titleCase ]
     });
   }
   for (const column of model.fieldsets.values()) {
@@ -85,16 +99,16 @@ export function generateModel(source: SourceFile, model: Model) {
   //export type Profile
   source.addTypeAlias({
     isExported: true,
-    name: model.title,
+    name: model.titleCase,
     type: (`{
       ${columns.filter(
         //filter out columns that are not in the model map
-        column => !!column.typemap.model || !!column.enum || !!column.fieldset
+        column => !!typemap[column.type] || !!column.enum || !!column.fieldset
       ).map(column => (
         //name?: string
         `${column.name}${
           !column.required ? '?' : ''
-        }: ${column.typemap.model || column.type}${
+        }: ${typemap[column.type] || column.type}${
           column.multiple ? '[]' : ''
         }`
       )).join(',\n')}
@@ -104,8 +118,8 @@ export function generateModel(source: SourceFile, model: Model) {
   if (model.relations.length) {
     source.addTypeAlias({
       isExported: true,
-      name: `${model.title}Extended`,
-      type: (`${model.title} & {
+      name: `${model.titleCase}Extended`,
+      type: (`${model.titleCase} & {
         ${model.relations.map(column => (
           //user?: User
           `${column.name}${
@@ -119,8 +133,8 @@ export function generateModel(source: SourceFile, model: Model) {
   } else {
     source.addTypeAlias({
       isExported: true,
-      name: `${model.title}Extended`,
-      type: model.title
+      name: `${model.titleCase}Extended`,
+      type: model.titleCase
     });
   }
   //gather all the field inputs
@@ -132,18 +146,18 @@ export function generateModel(source: SourceFile, model: Model) {
       //...also include enum names
       ...model.enums.map(column => column.type),
       //...also include fieldset names
-      ...model.fieldsets.map(column => column.fieldset?.title)
+      ...model.fieldsets.map(column => column.fieldset?.titleCase)
     ].includes(column.type));
   //export type ProfileInput
   source.addTypeAlias({
     isExported: true,
-    name: `${model.title}Input`,
+    name: `${model.titleCase}Input`,
     type: (`{
       ${inputs.map(column => (
         //name?: string
         `${column.name}${
           !column.required || typeof column.default !== 'undefined' ? '?' : ''
-        }: ${column.typemap.model || column.type}${
+        }: ${typemap[column.type] || column.type}${
           column.multiple ? '[]' : ''
         }`
       )).join(',\n')}
@@ -174,16 +188,16 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
   //export type Profile
   source.addTypeAlias({
     isExported: true,
-    name: fieldset.title,
+    name: fieldset.titleCase,
     type: (`{
       ${columns.filter(
         //filter out columns that are not in the map
-        column => !!column.typemap.model || !!column.enum || !!column.fieldset
+        column => !!typemap[column.type] || !!column.enum || !!column.fieldset
       ).map(column => (
         //name?: string
         `${column.name}${
           !column.required ? '?' : ''
-        }: ${column.typemap.model || column.type}${
+        }: ${typemap[column.type] || column.type}${
           column.multiple ? '[]' : ''
         }`
       )).join(',\n')}
@@ -198,18 +212,18 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
       //...also include enum names
       ...fieldset.enums.map(column => column.type),
       //...also include fieldset names
-      ...fieldset.fieldsets.map(column => column.fieldset?.title)
+      ...fieldset.fieldsets.map(column => column.fieldset?.titleCase)
     ].includes(column.type));
   //export type ProfileInput
   source.addTypeAlias({
     isExported: true,
-    name: `${fieldset.title}Input`,
+    name: `${fieldset.titleCase}Input`,
     type: (`{
       ${inputs.map(column => (
         //name?: string
         `${column.name}${
           !column.required || typeof column.default !== 'undefined' ? '?' : ''
-        }: ${column.typemap.model || column.type}${
+        }: ${typemap[column.type] || column.type}${
           column.multiple ? '[]' : ''
         }`
       )).join(',\n')}
