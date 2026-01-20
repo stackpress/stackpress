@@ -35,4 +35,4 @@ export default class Request<I extends UnknownNest = UnknownNest> {
     this.session = map(Object.entries(config.session));
     this.method = config.method || 'GET';
   }
-}
+};

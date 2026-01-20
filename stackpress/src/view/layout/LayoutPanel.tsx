@@ -1,14 +1,12 @@
 //modules
 import { useEffect } from 'react';
+import Notifier, { unload } from 'frui/Notifier';
 //views
 import type { 
   ServerConfigProps, 
   PanelAppProps, 
   LayoutPanelProps 
 } from '../types.js';
-//notify
-import NotifyContainer from '../notify/NotifyContainer.js';
-import { unload } from '../notify/hooks.js';
 //theme
 import { useTheme } from '../theme/hooks.js';
 //client
@@ -55,10 +53,11 @@ export function PanelApp(props: PanelAppProps) {
       <LayoutMain open={{ left, right }}>{children}</LayoutMain>
     </div>
   );
-}
+};
 
 export default function LayoutPanel(props: LayoutPanelProps) {
   const { 
+    cookie,
     data,
     session,
     request,
@@ -69,7 +68,9 @@ export default function LayoutPanel(props: LayoutPanelProps) {
     children 
   } = props;
   //unload flash message
-  useEffect(unload, []);
+  useEffect(() => {
+    unload(cookie);
+  }, []);
   return (
     <LayoutProvider 
       data={data}
@@ -80,7 +81,7 @@ export default function LayoutPanel(props: LayoutPanelProps) {
       <PanelApp left={left} right={right} menu={menu}>
         {children}
       </PanelApp>
-      <NotifyContainer />
+      <Notifier.Container />
     </LayoutProvider>
   );
-}
+};

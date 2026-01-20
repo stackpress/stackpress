@@ -26,4 +26,4 @@ export default function ThemeProvider(props: ThemeProviderProps) {
       {children}
     </ThemeContext.Provider>
   );
-}
+};

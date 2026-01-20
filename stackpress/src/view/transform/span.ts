@@ -13,7 +13,7 @@ export default function generate(directory: Directory, registry: Registry) {
       column => generateSpan(directory, model, column)
     );
   }
-}
+};
 
 export function generateSpan(
   directory: Directory, 
@@ -111,4 +111,4 @@ export function generateSpan(
       );
     `)
   });
-}
+};

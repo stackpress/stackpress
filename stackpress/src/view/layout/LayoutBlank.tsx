@@ -1,8 +1,6 @@
 //modules
 import { useEffect } from 'react';
-//notify
-import NotifyContainer from '../notify/NotifyContainer.js';
-import { unload } from '../notify/hooks.js';
+import Notifier, { unload } from 'frui/Notifier';
 //theme
 import { useTheme } from '../theme/hooks.js';
 //client
@@ -35,19 +33,22 @@ export function BlankApp({ head = true, children }: BlankAppProps) {
       <LayoutMain head={head}>{children}</LayoutMain>
     </div>
   );
-}
+};
 
 export default function LayoutBlank(props: LayoutBlankProps) {
   const { 
-    head,
+    cookie,
     data,
+    head,
     session,
     request,
     response,
     children 
   } = props;
   //unload flash message
-  useEffect(unload, []);
+  useEffect(() => {
+    unload(cookie);
+  }, []);
   return (
     <LayoutProvider 
       data={data}
@@ -56,7 +57,7 @@ export default function LayoutBlank(props: LayoutBlankProps) {
       response={response}
     >
       <BlankApp head={head}>{children}</BlankApp>
-      <NotifyContainer />
+      <Notifier.Container />
     </LayoutProvider>
   );
-}
+};

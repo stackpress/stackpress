@@ -32,4 +32,4 @@ export default function LayoutLeft(props: LayoutLeftProps) {
       <main>{children}</main>
     </aside>
   );
-}
+};

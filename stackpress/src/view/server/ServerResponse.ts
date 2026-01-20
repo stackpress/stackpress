@@ -152,4 +152,4 @@ export default class Response<O = UnknownNest> {
       total: this._total
     };
   }
-}
+};

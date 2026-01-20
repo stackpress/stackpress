@@ -1,11 +1,10 @@
 //modules
 import { R22nProvider } from 'r22n';
+import Notifier from 'frui/Notifier';
 //views
 import type { LayoutProviderProps } from '../types.js';
 //providers
 import ServerProvider from '../server/ServerProvider.js';
-import ModalProvider from '../modal/ModalProvider.js';
-import NotifyProvider from '../notify/NotifyProvider.js';
 import ThemeProvider from '../theme/ThemeProvider.js';
 
 export default function LayoutProvider(props: LayoutProviderProps) {
@@ -29,13 +28,14 @@ export default function LayoutProvider(props: LayoutProviderProps) {
     >
       <R22nProvider language={label} translations={translations}>
         <ThemeProvider theme={theme}>
-          <NotifyProvider config={notify}>
-            <ModalProvider className="layout-modal">
-              {children}
-            </ModalProvider>
-          </NotifyProvider>
+          <Notifier.Provider {...notify}>
+            {children}
+            <div id="popup-root"></div>
+            <div id="dialog-root"></div>
+            <div id="dropdown-root"></div>
+          </Notifier.Provider>
         </ThemeProvider>
       </R22nProvider>
     </ServerProvider>
   );
-}
+};

@@ -2,13 +2,11 @@
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import { useLanguage } from 'r22n';
+import Notifier, { unload } from 'frui/Notifier';
 //admin
 import type { AdminConfigProps } from '../../admin/types.js';
 //views
 import type { LayoutProviderProps } from '../types.js';
-//notify
-import NotifyContainer from '../notify/NotifyContainer.js';
-import { unload } from '../notify/hooks.js';
 //theme
 import { useTheme } from '../theme/hooks.js';
 //client
@@ -70,7 +68,7 @@ export function AdminUserMenu() {
       </main>
     </section>
   );
-}
+};
 
 export function AdminApp({ children }: { children: ReactNode }) {
   const config = useConfig<AdminConfigProps>();
@@ -110,10 +108,11 @@ export function AdminApp({ children }: { children: ReactNode }) {
       <LayoutMain head left open={{ left, right }}>{children}</LayoutMain>
     </div>
   );
-}
+};
 
 export default function LayoutAdmin(props: LayoutProviderProps) {
   const { 
+    cookie,
     data,
     session,
     request,
@@ -121,7 +120,9 @@ export default function LayoutAdmin(props: LayoutProviderProps) {
     children 
   } = props;
   //unload flash message
-  useEffect(unload, []);
+  useEffect(() => {
+    unload(cookie);
+  }, []);
   return (
     <LayoutProvider 
       data={data}
@@ -130,7 +131,7 @@ export default function LayoutAdmin(props: LayoutProviderProps) {
       response={response}
     >
       <AdminApp>{children}</AdminApp>
-      <NotifyContainer />
+      <Notifier.Container />
     </LayoutProvider>
   );
-}
+};

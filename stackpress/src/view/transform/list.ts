@@ -51,7 +51,7 @@ export default function generate(directory: Directory, registry: Registry) {
         : generateFormat(directory, fieldset, column);
     }
   }
-}
+};
 
 export function generateFieldsetTable(
   directory: Directory, 
@@ -140,7 +140,7 @@ export function generateFieldsetTable(
       ); 
     `)
   });
-}
+};
 
 export function generateFieldsetInfo(
   directory: Directory, 
@@ -220,7 +220,7 @@ export function generateFieldsetInfo(
       ); 
     `)
   });
-}
+};
 
 export function generateFormat(
   directory: Directory, 
@@ -293,4 +293,4 @@ export function generateFormat(
       );
     `)
   });
-}
+};
