@@ -41,7 +41,7 @@ export default async function push(
     const order = sequence(models);
     //add drop queries
     for (const model of order) {
-      queries.push(database.dialect.drop(model.snake));
+      queries.push(database.dialect.drop(model.snakeCase));
     }
     //add create queries
     for (const model of order.reverse()) {

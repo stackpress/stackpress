@@ -26,7 +26,7 @@ export default async function purge(
   for (const model of order) {
     const exists = models.find(map => map.config.name === model.name);
     if (exists) {
-      queries.push(database.dialect.truncate(model.snake, true));
+      queries.push(database.dialect.truncate(model.snakeCase, true));
     }
   }
 
