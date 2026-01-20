@@ -1,9 +1,9 @@
 //modules
 import { useLanguage } from 'r22n';
-import Control from 'frui/form/Control';
-import Button from 'frui/form/Button';
-import Input from 'frui/field/Input';
-import Password from 'frui/field/Password';
+import FieldControl from 'frui/form/FieldControl';
+import Button from 'frui/Button';
+import Input from 'frui/form/Input';
+import PasswordInput from 'frui/form/PasswordInput';
 //views
 import type { NestedObject, ServerPageProps } from '../../view/types.js';
 import LayoutBlank from '../../view/layout/LayoutBlank.js';
@@ -18,7 +18,7 @@ import type {
 export type AuthSigninFormProps = {
   input: Partial<SigninInput>;
   errors: NestedObject<string | string[]>;
-}
+};
 
 export function AuthSigninForm(props: AuthSigninFormProps) {
   const { input, errors } = props;
@@ -26,7 +26,7 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
   return (
     <form className="auth-form" method="post">
       {input.type === 'phone' ? (
-        <Control 
+        <FieldControl 
           label={`${_('Phone Number')}*`} 
           error={errors.phone as string|undefined} 
           className="control"
@@ -38,9 +38,9 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
             defaultValue={input.phone}
             required
           />
-        </Control>
+        </FieldControl>
       ) : input.type === 'email' ? (
-        <Control 
+        <FieldControl 
           label={`${_('Email Address')}*`} 
           error={errors.email as string|undefined} 
           className="control"
@@ -52,9 +52,9 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
             defaultValue={input.email}
             required
           />
-        </Control>
+        </FieldControl>
       ) : (
-        <Control 
+        <FieldControl 
           label={`${_('Username')}*`} 
           error={errors.username as string|undefined} 
           className="control"
@@ -66,20 +66,20 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
             defaultValue={input.username}
             required
           />
-        </Control>
+        </FieldControl>
       )}
-      <Control 
+      <FieldControl 
         label={`${_('Password')}*`} 
         error={errors.secret as string|undefined} 
         className="control"
       >
-        <Password
+        <PasswordInput
           name="secret"
           error={!!errors.secret}
           defaultValue={input.secret}
           required
         />
-      </Control>
+      </FieldControl>
       <div className="action">
         <Button className="submit" type="submit">
           {_('Sign In')}
@@ -87,7 +87,7 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
       </div>
     </form>
   );
-}
+};
 
 export function AuthSigninBody() {
   const { config, request, response } = useServer<
@@ -163,7 +163,7 @@ export function AuthSigninBody() {
       </div>
     </main>
   );
-}
+};
 
 export function AuthSigninHead(props: ServerPageProps<AuthConfigProps>) {
   const { data, styles = [] } = props;
@@ -184,7 +184,7 @@ export function AuthSigninHead(props: ServerPageProps<AuthConfigProps>) {
       ))}
     </>
   );
-}
+};
 
 export function AuthSigninPage(props: ServerPageProps<AuthConfigProps>) {
   return (
@@ -192,7 +192,7 @@ export function AuthSigninPage(props: ServerPageProps<AuthConfigProps>) {
       <AuthSigninBody />
     </LayoutBlank>
   );
-}
+};
 
 export const Head = AuthSigninHead;
 export default AuthSigninPage;
