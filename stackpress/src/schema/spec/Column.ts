@@ -467,7 +467,7 @@ export default class Column extends ColumnAttributes {
    * Returns the column @default value
    * example: @default("some value")
    */
-  public get default() {
+  public get defaultComputed() {
     //@default("some value")
     const defaults = super.default;
     if (typeof defaults === 'string') {

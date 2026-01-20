@@ -44,15 +44,15 @@ export function handlers(model: Model) {
 
 export default function listen(model: Model) {
   const emitter = server();
-  emitter.on(`${model.dash}-batch`, batch(model));
-  emitter.on(`${model.dash}-create`, create(model));
-  emitter.on(`${model.dash}-detail`, detail(model));
-  emitter.on(`${model.dash}-get`, get(model));
-  emitter.on(`${model.dash}-purge`, purge(model));
-  emitter.on(`${model.dash}-remove`, remove(model));
-  emitter.on(`${model.dash}-restore`, restore(model));
-  emitter.on(`${model.dash}-search`, search(model));
-  emitter.on(`${model.dash}-update`, update(model));
-  emitter.on(`${model.dash}-upsert`, upsert(model));
+  emitter.on(`${model.dashCase}-batch`, batch(model));
+  emitter.on(`${model.dashCase}-create`, create(model));
+  emitter.on(`${model.dashCase}-detail`, detail(model));
+  emitter.on(`${model.dashCase}-get`, get(model));
+  emitter.on(`${model.dashCase}-purge`, purge(model));
+  emitter.on(`${model.dashCase}-remove`, remove(model));
+  emitter.on(`${model.dashCase}-restore`, restore(model));
+  emitter.on(`${model.dashCase}-search`, search(model));
+  emitter.on(`${model.dashCase}-update`, update(model));
+  emitter.on(`${model.dashCase}-upsert`, upsert(model));
   return emitter;
 };

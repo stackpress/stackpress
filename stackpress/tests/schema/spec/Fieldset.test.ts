@@ -33,8 +33,8 @@ describe('schema/spec/Fieldset', () => {
 
   it('should manipulate name', async () => {
     const fieldset = mockFieldset('UserComment');
-    expect(fieldset.camelized).to.equal('userComment');
-    expect(fieldset.dasherized).to.equal('user-comment');
+    expect(fieldset.camelCase).to.equal('userComment');
+    expect(fieldset.dashCase).to.equal('user-comment');
     expect(fieldset.lowerCase).to.equal('usercomment');
     expect(fieldset.titleCase).to.equal('UserComment');
   });

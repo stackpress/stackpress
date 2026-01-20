@@ -91,17 +91,16 @@ export default function generate(directory: Directory, registry: Registry) {
     //const router = server();
     source.addStatements(`
       const router = server();
-      router.on('${model.dash}-batch', batch);
-      router.on('${model.dash}-create', create);
-      router.on('${model.dash}-detail', detail);
-      router.on('${model.dash}-get', get);
-      router.on('${model.dash}-purge', purge);
-      router.on('${model.dash}-remove', remove);
-      router.on('${model.dash}-restore', restore);
-      router.on('${model.dash}-search', search);
-      router.on('${model.dash}-update', update);
-      router.on('${model.dash}-upsert', upsert);
-
+      router.on('${model.dashCase}-batch', batch);
+      router.on('${model.dashCase}-create', create);
+      router.on('${model.dashCase}-detail', detail);
+      router.on('${model.dashCase}-get', get);
+      router.on('${model.dashCase}-purge', purge);
+      router.on('${model.dashCase}-remove', remove);
+      router.on('${model.dashCase}-restore', restore);
+      router.on('${model.dashCase}-search', search);
+      router.on('${model.dashCase}-update', update);
+      router.on('${model.dashCase}-upsert', upsert);
       export default router;
     `);
     //export { create, detail, ... }
@@ -147,7 +146,7 @@ export function event(action: string, model: Model, directory: Directory) {
   });
   //export default function ProfileCreateEvent(req: Request, res: Response)
   source.addFunction({
-    name: `${model.title}${title}Event`,
+    name: `${model.titleCase}${title}Event`,
     isAsync: true,
     isDefaultExport: true,
     parameters: [

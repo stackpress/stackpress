@@ -36,7 +36,7 @@ export default async function batch<M extends UnknownNest = UnknownNest>(
   //get the id names
   const ids = model.ids.map(column => column.name);
   //make select column names
-  const columns = model.ids.map(column => `${q}${column.snake}${q}`);
+  const columns = model.ids.map(column => `${q}${column.snakeCase}${q}`);
   //make the where clauses
   const clauses = columns.map(column => `${column} = ?`).join(' AND ');
   //make the where statement
@@ -56,7 +56,7 @@ export default async function batch<M extends UnknownNest = UnknownNest>(
         //get all the rows that already exists
         const exists = await engine
           .select<Record<string, string|number>>(columns)
-          .from(model.snake)
+          .from(model.snakeCase)
           .where(where, values);
         //update the check actions rows to create or update
         for (const action of actions) {

@@ -71,18 +71,18 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     const q = engine.dialect.q;
     const column = selector.table.length > 0
       ? `${q}${selector.table}${q}.${q}${selector.column}${q}`
-      : `${q}${model.snake}${q}.${q}${selector.column}${q}`;
+      : `${q}${model.snakeCase}${q}.${q}${selector.column}${q}`;
 
     //address.street_name AS user__address__street_name
     return `${column} AS ${q}${selector.alias}${q}`;
   })
 
   //finally, make the select builder
-  const select = engine.select<M>(selectors).from(model.snake);
+  const select = engine.select<M>(selectors).from(model.snakeCase);
   //also make the count builder
   const count = engine
     .select<{ total: number }>('COUNT(*) as total')
-    .from(model.snake);
+    .from(model.snakeCase);
   //make a joins map
   const joins: SearchJoinMap = {};
   info.forEach(selector => Object.assign(joins, selector.joins));
@@ -115,13 +115,13 @@ export default async function search<M extends UnknownNest = UnknownNest>(
   if (q && model.searchables.length > 0) {
     select.where(
       model.searchables.map(
-        column => `${column.snake} ILIKE ?`
+        column => `${column.snakeCase} ILIKE ?`
       ).join(' OR '), 
       model.searchables.map(_ => `%${q}%`)
     );
     count.where(
       model.searchables.map(
-        column => `${column.snake} ILIKE ?`
+        column => `${column.snakeCase} ILIKE ?`
       ).join(' OR '), 
       model.searchables.map(_ => `%${q}%`)
     );
@@ -140,8 +140,8 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     const info = getColumnInfo(key, model).last;
     if (!info) return;
     const q = engine.dialect.q;
-    const selector = `${q}${info.model.snake}${q}.${q}${info.column.snake}${q}`;
-    value = info.column.serialize(value, undefined, seed) as string|number|boolean;
+    const selector = `${q}${info.model.snakeCase}${q}.${q}${info.column.snakeCase}${q}`;
+    value = info.column.serialize(value, seed) as string|number|boolean;
     const serialized = stringable.includes(info.column.type)
       ? toSqlString(value)
       : floatable.includes(info.column.type)
@@ -163,12 +163,12 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     const info = getColumnInfo(key, model).last;
     if (!info) return;
     const q = engine.dialect.q;
-    const selector = `${q}${info.model.snake}${q}.${q}${info.column.snake}${q}`;
+    const selector = `${q}${info.model.snakeCase}${q}.${q}${info.column.snakeCase}${q}`;
     if (typeof values[0] !== 'undefined'
       && values[0] !== null
       && values[0] !== ''
     ) {
-      const value = info.column.unserialize(values[0], undefined, seed);
+      const value = info.column.unserialize(values[0], seed);
       const serialized = stringable.includes(info.column.type)
         ? toSqlString(value)
         : floatable.includes(info.column.type)
@@ -189,7 +189,7 @@ export default async function search<M extends UnknownNest = UnknownNest>(
       && values[1] !== null
       && values[1] !== ''
     ) {
-      const value = info.column.unserialize(values[1], undefined, seed);
+      const value = info.column.unserialize(values[1], seed);
       const serialized = stringable.includes(info.column.type)
         ? toSqlString(value)
         : floatable.includes(info.column.type)
@@ -219,7 +219,7 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     if (!info) return;
     const q = engine.dialect.q;
     //NOTE: inquire already adds the quotes around the column name
-    const selector = `${info.model.snake}${q}.${q}${info.column.snake}`;
+    const selector = `${info.model.snakeCase}${q}.${q}${info.column.snakeCase}${q}`;
     select.order(selector, direction.toUpperCase() as 'ASC' | 'DESC');
   });
 
@@ -249,7 +249,7 @@ export default async function search<M extends UnknownNest = UnknownNest>(
         }
         nest.withPath.set(
           selector.name, 
-          selector.last.column.unserialize(value, undefined, seed)
+          selector.last.column.unserialize(value, seed)
         );
       });
       rows.push(nest.get<M>());

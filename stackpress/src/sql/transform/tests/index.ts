@@ -83,7 +83,7 @@ export default function generate(directory: Directory, registry: Registry) {
   for (const model of registry.model.values()) {
     source.addImportDeclaration({
       moduleSpecifier: `./${model.name}/tests/index.js`,
-      defaultImport: `${model.camel}Tests`
+      defaultImport: `${model.camelCase}Tests`
     });
   }
 
@@ -94,6 +94,6 @@ export default function generate(directory: Directory, registry: Registry) {
     isDefaultExport: true,
     name: 'tests',
     parameters: [{ name: 'server', type: 'HttpServer' }],
-    statements: order.reverse().map(model => `${model.camel}Tests(server);`)
+    statements: order.reverse().map(model => `${model.camelCase}Tests(server);`)
   });
 };

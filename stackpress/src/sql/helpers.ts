@@ -309,17 +309,19 @@ export function getColumnJoins(
   }
   //model: product -> group
   const column = model.columns.get(selectors[index]);
+  //get the relation
+  const relation = column?.parentRelation;
+  //get the related
+  const related = column?.childRelation;
   //if there is a relation
-  if (column?.relation) {
-    //get the relation
-    const relation = column.relation;
+  if (relation) {
     //get the table (should be the parent table)
     //group
-    const table = relation.parent.model.snake;
+    const table = relation.parent.model.snakeCase;
     //get the from (should be the child column)
-    const from = `${alias.parent}${relation.child.key.snake}`;
+    const from = `${alias.parent}${relation.child.key.snakeCase}`;
     //get the to (should be the parent column)
-    const to = `${alias.child}.${relation.parent.key.snake}`;
+    const to = `${alias.child}.${relation.parent.key.snakeCase}`;
     //make a record key
     const key = `INNER JOIN ${table} AS ${alias.child} ON (${from} = ${to})`;
     //add the join to the joins
@@ -332,18 +334,16 @@ export function getColumnJoins(
       joins
     );
   //if there is a related and its not multiple
-  } else if (column?.related && !column?.related.parent.column.multiple) {
-    //get the related
-    const related = column.related;
+  } else if (related && !related.parent.column.multiple) {
     //get the table (should be the child table this time.)
-    const table = related.child.model.snake;
+    const table = related.child.model.snakeCase;
     //redetermine the alias (if root it would be id, but id is ambiguous)
     //so if no alias then assume the parent table name
-    const aliasParent = alias.parent || `${related.parent.model.snake}.`;
+    const aliasParent = alias.parent || `${related.parent.model.snakeCase}.`;
     //get the from (should be the parent column)
-    const from = `${aliasParent}${related.parent.key.snake}`;
+    const from = `${aliasParent}${related.parent.key.snakeCase}`;
     //get the to (should be the child column)
-    const to = `${alias.child}.${related.child.key.snake}`;
+    const to = `${alias.child}.${related.child.key.snakeCase}`;
     //make a record key
     const key = `INNER JOIN ${table} AS ${alias.child} ON (${from} = ${to})`;
     //add the join to the joins

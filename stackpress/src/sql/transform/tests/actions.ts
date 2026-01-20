@@ -54,11 +54,14 @@ export default function generate(directory: Directory, registry: Registry) {
     //does any of the existing tables depend on this table?
     const dependents = model.relations
       .filter(column => column.model)
-      .map(column => ({
-        foreign: column.relation?.parent.key as Column,
-        local: column.relation?.child.key as Column,
-        model: column.model as Model
-      }));
+      .map(column => {
+        const relation = column.parentRelation;
+        return {
+          foreign: relation?.parent.key as Column,
+          local: relation?.child.key as Column,
+          model: column.model as Model
+        };
+      });
     const inputs = samples.map(sample => {
       const input: Record<string, unknown> = {};
       model.fields.forEach(column => {
@@ -106,7 +109,7 @@ export default function generate(directory: Directory, registry: Registry) {
       //import * as profileActions from '../../Profile/actions/index.js';
       source.addImportDeclaration({
         moduleSpecifier: `../../${dependent.model.name}/actions/index.js`,
-        namespaceImport: `${dependent.model.camel}Actions`
+        namespaceImport: `${dependent.model.camelCase}Actions`
       });
     }
     //import { create, detail, ... } from '../actions/index.js';
@@ -127,21 +130,21 @@ export default function generate(directory: Directory, registry: Registry) {
     //export default function ProfileActionTests(engine: Engine) {}
     source.addFunction({
       isDefaultExport: true,
-      name: `${model.title}ActionTests`,
+      name: `${model.titleCase}ActionTests`,
       parameters: [{ name: 'engine', type: 'Engine' }],
       statements: (`
-        describe('${model.title} Actions', async () => {
+        describe('${model.titleCase} Actions', async () => {
           ${dependents.length > 0 ? (`
             const dependents: Record<string, any[]> = {};
             before(async () => {
               ${dependents.map(dependent => {
                 const name = dependent.local.name;
-                const actions = `${dependent.model.camel}Actions`;
+                const actions = `${dependent.model.camelCase}Actions`;
                 return `dependents.${name} = ((await ${actions}.search(engine)).results) || [];`;
               }).join('\n')}
             });
           `): ''}
-          it('should create ${model.title}', async () => {
+          it('should create ${model.titleCase}', async () => {
             ${dependents.length > 0 
               ? (`
                 const ids: Record<string, any> = {};
@@ -159,7 +162,7 @@ export default function generate(directory: Directory, registry: Registry) {
             expect(actual.status).to.equal('OK');
           });
           ${dependents.length < 2 ? (` 
-            it('should batch ${model.title}', async () => {
+            it('should batch ${model.titleCase}', async () => {
               const rows = ${JSON.stringify(inputs.slice(2))};
               ${dependents.map(dependent => {
                 const local = dependent.local.name;
@@ -174,14 +177,14 @@ export default function generate(directory: Directory, registry: Registry) {
               expect(actual.status).to.equal('OK');
             });
           `) : ''}
-          it('should search ${model.title}', async () => {
+          it('should search ${model.titleCase}', async () => {
             const actual = await search(engine);
             expect(actual.code).to.equal(200);
             expect(actual.status).to.equal('OK');
             expect(Array.isArray(actual.results)).to.be.true;
           });
           ${model.ids.length ? (`
-            it('should get ${model.title}', async () => {
+            it('should get ${model.titleCase}', async () => {
               const response = await search(engine);
               const row = response.results?.[0];
 
@@ -192,7 +195,7 @@ export default function generate(directory: Directory, registry: Registry) {
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should get ${model.title} with ids', async () => {
+            it('should get ${model.titleCase} with ids', async () => {
               const response = await search(engine);
               const row = response.results?.[0];
 
@@ -204,7 +207,7 @@ export default function generate(directory: Directory, registry: Registry) {
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should update ${model.title}', async () => {
+            it('should update ${model.titleCase}', async () => {
               const response = await search(engine);
               const row = response.results?.[0];
 
@@ -223,7 +226,7 @@ export default function generate(directory: Directory, registry: Registry) {
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should remove ${model.title}', async () => {
+            it('should remove ${model.titleCase}', async () => {
               const response = await search(engine);
               const row = response.results?.[0];
 
@@ -236,7 +239,7 @@ export default function generate(directory: Directory, registry: Registry) {
               expect(actual.status).to.equal('OK');
             });
             ${model.active ? (`
-              it('should restore ${model.title}', async () => {
+              it('should restore ${model.titleCase}', async () => {
                 const response = await search(engine, { filter: { ${model.active.name}: -1 } });
                 const row = response.results?.[0];
 

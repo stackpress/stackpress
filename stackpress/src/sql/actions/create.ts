@@ -37,12 +37,12 @@ export default async function create<M extends UnknownNest = UnknownNest>(
   //action and return response
   try {
     const results = await engine
-      .insert<Record<string, any>>(model.snake)
-      .values(model.serialize(data, undefined, seed) as NestedObject<string>)
+      .insert<Record<string, any>>(model.snakeCase)
+      .values(model.serialize(data, seed) as NestedObject<string>)
       .returning('*');
     if (results.length) {
       return toResponse(
-        model.unserialize(results[0], undefined, seed)
+        model.unserialize(results[0], seed)
       ) as StatusResponse<Partial<M>>;
     }
   } catch (e) {

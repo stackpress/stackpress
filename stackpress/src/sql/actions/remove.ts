@@ -26,9 +26,9 @@ export default async function remove<M extends UnknownNest = UnknownNest>(
   if (row.code !== 200) {
     return row;
   }
-  const remove = engine.delete(model.snake);
+  const remove = engine.delete(model.snakeCase);
   for (const column of model.ids) {
-    remove.where(`${column.snake} = ?`, [ ids[column.name] ]);
+    remove.where(`${column.snakeCase} = ?`, [ ids[column.name] ]);
   }
   try {
     await remove;

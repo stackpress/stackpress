@@ -1,3 +1,5 @@
+//modules
+import { isObject } from '@stackpress/lib';
 //schema
 import type { SerializerSettings } from '../types.js';
 import { encrypt, decrypt, hash } from '../helpers.js';
@@ -317,7 +319,6 @@ export class ObjectSerializer extends Serializer {
         return {} as M;
       }
     }
-    const name = Object.prototype.toString.call(value);
-    return (name === '[object Object]' ? value : {}) as M;
+    return (isObject(value) ? value : {}) as M;
   }
 };

@@ -1,4 +1,5 @@
 //stackpress
+import { isObject } from '@stackpress/lib';
 import Create from '@stackpress/inquire/Create';
 //schema
 import type Column from '../schema/spec/Column.js';
@@ -25,30 +26,31 @@ export default function schema(
   onDelete: 'CASCADE'|'SET NULL'|'RESTRICT' = 'CASCADE',
   onUpdate: 'CASCADE'|'SET NULL'|'RESTRICT' = 'RESTRICT'
 ) {
-  const schema = new Create(model.snake);
+  const schema = new Create(model.snakeCase);
   for (const column of model.columns.values()) {
-    //schema.addField(column.snake, {})...
+    //schema.addField(column.snakeCase, {})...
     field(column, schema);
   }
 
   for (const column of model.ids) {
-    schema.addPrimaryKey(column.snake);
+    schema.addPrimaryKey(column.snakeCase);
   }
   for (const column of model.uniques) {
-    schema.addUniqueKey(`${column.snake}_unique`, column.snake);
+    schema.addUniqueKey(`${column.snakeCase}_unique`, column.snakeCase);
   }
   for (const column of model.indexables) {
-    schema.addKey(`${model.lower}_${column.snake}_index`, column.snake);
+    schema.addKey(`${model.lowerCase}_${column.snakeCase}_index`, column.snakeCase);
   }
 
   const relations = model.relations.map(column => {
-    const table = column.model?.snake as string;
-    const foreign = column.relation?.parent.key.snake as string;
-    const local = column.relation?.child.key.snake as string;
+    const relation = column.parentRelation;
+    const table = column.model?.snakeCase as string;
+    const foreign = relation?.parent.key.snakeCase as string;
+    const local = relation?.child.key.snakeCase as string;
     return { table, foreign, local, delete: onDelete, update: onUpdate };
   });
   for (const relation of relations) {
-    schema.addForeignKey(`${model.snake}_${relation.local}_foreign`, relation);
+    schema.addForeignKey(`${model.snakeCase}_${relation.local}_foreign`, relation);
   }
 
   return schema;
@@ -59,61 +61,71 @@ export function field(column: Column, schema: Create) {
   if (!type && !column.fieldset && !column.enum) {
     return;
   }
-  const comment = (
-    column.attribute('comment') as [ string ] | undefined
-  )?.[0];
+  const comment = column.description;
 
   //array
   if (column.multiple) {
-    let hasDefault = false;
+    let isArrayString = false;
     try {
-      hasDefault = typeof column.default === 'string' 
+      isArrayString = typeof column.default === 'string' 
         && Array.isArray(JSON.parse(column.default));
     } catch(e) {}
-    return schema.addField(column.snake, {
+    return schema.addField(column.snakeCase, {
       type: 'JSON',
-      default: hasDefault ? column.default: undefined,
+      default: Array.isArray(column.default) 
+        ? JSON.stringify(column.default) 
+        : isArrayString 
+        ? column.default as string 
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     });
   } else if (type === 'json' || column.fieldset) {
-    let hasDefault = false;
+    let isObjectString = false;
     try {
-      hasDefault = typeof column.default === 'string' 
+      isObjectString = typeof column.default === 'string' 
         && !!column.default 
         && typeof JSON.parse(column.default) === 'object';
     } catch(e) {}
-    return schema.addField(column.snake, {
+    return schema.addField(column.snakeCase, {
       type: 'JSON',
-      default: hasDefault ? column.default: undefined,
+      default: isObject(column.default) 
+        ? JSON.stringify(column.default) 
+        : isObjectString 
+        ? column.default as string 
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     });
   //char, varchar
   } else if (type === 'string') {
     const length = clen(column);
-    const hasDefault = typeof column.attributes.default === 'string'
-      && !column.attributes.default.startsWith('uuid(')
-      && !column.attributes.default.startsWith('cuid(')
-      && !column.attributes.default.startsWith('nanoid(');
-    return schema.addField(column.snake, {
+    const isComputer = typeof column.default === 'string'
+      && !column.default.startsWith('uuid(')
+      && !column.default.startsWith('cuid(')
+      && !column.default.startsWith('nanoid(');
+    return schema.addField(column.snakeCase, {
       type: length[0] === length[1] ? 'CHAR' : 'VARCHAR',
       length: length[1],
-      default: hasDefault ? column.attributes.default : undefined,
+      default: isComputer ? column.default : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     });
   } else if (type === 'text') {
-    return schema.addField(column.snake, {
+    return schema.addField(column.snakeCase, {
       type: 'TEXT',
-      default: column.attributes.default ,
+      default: typeof column.default === 'string' 
+        ? column.default as string 
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined 
     });
   } else if (type === 'boolean') {
-    return schema.addField(column.snake, {
+    return schema.addField(column.snakeCase, {
       type: 'BOOLEAN',
-      default: column.attributes.default,
+      default: typeof column.default === 'boolean' 
+        ? column.default 
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     });
@@ -123,51 +135,65 @@ export function field(column: Column, schema: Create) {
 
     if (decimalLength > 0) {
       const length = integerLength + decimalLength;
-      return schema.addField(column.snake, {
+      const number = Number(column.default);
+      return schema.addField(column.snakeCase, {
         type: 'FLOAT',
         length: [ length, decimalLength ],
-        default: column.attributes.default,
+        default: !isNaN(number) ? number : undefined,
         nullable: !column.required,
         unsigned: minmax[0] < 0,
         comment: comment ? String(comment) : undefined
       });
     } else {
-      return schema.addField(column.snake, {
+      const number = Number(column.default);
+      return schema.addField(column.snakeCase, {
         type: 'INTEGER',
         length: integerLength,
-        default: column.attributes.default,
+        default: !isNaN(number) ? number : undefined,
         nullable: !column.required,
         unsigned: minmax[0] < 0,
         comment: comment ? String(comment) : undefined
       });
     }
   } else if (type === 'date') {
-    return schema.addField(column.snake, {
+    return schema.addField(column.snakeCase, {
       type: 'DATE',
-      default: column.attributes.default,
+      default: column.default instanceof Date
+        ? column.serialize(column.default, undefined, true) as string
+        : typeof column.default === 'string'
+        ? column.default as string
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     });
   } else if (type === 'datetime') {
-    return schema.addField(column.snake, {
+    return schema.addField(column.snakeCase, {
       type: 'DATETIME',
-      default: column.attributes.default,
+      default: column.default instanceof Date
+        ? column.serialize(column.default, undefined, true) as string
+        : typeof column.default === 'string'
+        ? column.default as string
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined  
     });
   } else if (type === 'time') {
-    return schema.addField(column.snake, {
+    return schema.addField(column.snakeCase, {
       type: 'TIME',
-      default: column.attributes.default,
+      default: column.default instanceof Date
+        ? column.serialize(column.default, undefined, true) as string
+        : typeof column.default === 'string'
+        ? column.default as string
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     });
   //if it's an enum
   } else if (column.enum) {
-    return schema.addField(column.snake, {
+    return schema.addField(column.snakeCase, {
       type: 'VARCHAR',
       length: 255,
-      default: column.attributes.default,
+      default: String(column.default),
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     });
@@ -216,8 +242,8 @@ export function numdata(column: Column) {
     }
   });
   //check for @step(0.01)
-  const step = Array.isArray(column.attributes.step)
-    ? column.attributes.step[0]
+  const step = Array.isArray(column.step)
+    ? column.step[0]
     : column.type.toLowerCase() === 'float'
     ? 10000000.01
     : 0;

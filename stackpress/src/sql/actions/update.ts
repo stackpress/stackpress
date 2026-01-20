@@ -38,8 +38,8 @@ export default async function update<M extends UnknownNest = UnknownNest>(
 
   //action and return response
   const update = engine
-    .update(model.snake)
-    .set(model.serialize(input, undefined, seed) as NestedObject<string>);
+    .update(model.snakeCase)
+    .set(model.serialize(input, seed) as NestedObject<string>);
   for (const column of model.ids) {
     if (!ids[column.name]) {
       return Exception
@@ -47,7 +47,7 @@ export default async function update<M extends UnknownNest = UnknownNest>(
         .withCode(400)
         .toResponse()as StatusResponse<M>;
     }
-    update.where(`${column.snake} = ?`, [ ids[column.name] ]);
+    update.where(`${column.snakeCase} = ?`, [ ids[column.name] ]);
   }
   try {
     await update;

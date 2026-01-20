@@ -64,14 +64,14 @@ export default class Fieldset extends FieldsetAttributes {
   /**
    * Returns the camel cased fieldset name
    */
-  public get camelized() {
+  public get camelCase() {
     return camelize(this.name);
   }
 
   /**
    * Returns the dashed fieldset name
    */
-  public get dasherized() {
+  public get dashCase() {
     return dasherize(this.name);
   }
 

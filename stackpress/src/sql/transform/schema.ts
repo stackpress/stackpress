@@ -1,5 +1,6 @@
 //modules
 import type { Directory } from 'ts-morph';
+import { isObject } from '@stackpress/lib';
 //schema
 import type Column from '../../schema/spec/Column.js';
 import type Registry from '../../schema/Registry.js';
@@ -10,9 +11,10 @@ export default function generate(directory: Directory, registry: Registry) {
   //loop through models
   for (const model of registry.model.values()) {
     const relations = model.relations.map(column => {
-      const table = column.model?.snake as string;
-      const foreign = column.relation?.parent.key.snake as string;
-      const local = column.relation?.child.key.snake as string;
+      const relation = column.parentRelation;
+      const table = column.model?.snakeCase as string;
+      const foreign = relation?.parent.key.snakeCase as string;
+      const local = relation?.child.key.snakeCase as string;
       return { table, foreign, local, delete: 'CASCADE', update: 'RESTRICT' };
     });
 
@@ -32,7 +34,7 @@ export default function generate(directory: Directory, registry: Registry) {
       name: 'create',
       isExported: true,
       statements: (`
-        const schema = new Create('${model.snake}');
+        const schema = new Create('${model.snakeCase}');
         ${Array
           .from(model.columns.values())
           .map(column => field(column))
@@ -40,16 +42,16 @@ export default function generate(directory: Directory, registry: Registry) {
           .join('\n')
         }
         ${model.ids.map(
-          column => `schema.addPrimaryKey('${column.snake}');`
+          column => `schema.addPrimaryKey('${column.snakeCase}');`
         ).join('\n')}
         ${model.uniques.map(
-          column => `schema.addUniqueKey('${model.snake}_${column.snake}_unique', '${column.snake}');`
+          column => `schema.addUniqueKey('${model.snakeCase}_${column.snakeCase}_unique', '${column.snakeCase}');`
         ).join('\n')}
         ${model.indexables.map(
-          column => `schema.addKey('${model.snake}_${column.snake}_index', '${column.snake}');`
+          column => `schema.addKey('${model.snakeCase}_${column.snakeCase}_index', '${column.snakeCase}');`
         ).join('\n')}
         ${relations.map(relation => {
-          return `schema.addForeignKey('${model.snake}_${relation.local}_foreign', ${
+          return `schema.addForeignKey('${model.snakeCase}_${relation.local}_foreign', ${
             JSON.stringify(relation, null, 2)
           });`;
         }).join('\n')}
@@ -87,71 +89,77 @@ export function field(column: Column) {
     return false;
   }
 
-  const comment = (
-    column.attribute('comment') as [ string ] | undefined
-  )?.[0];
+  const comment = column.description;
 
   //array
   if (column.multiple) {
-    let hasDefault = false;
+    let isStringArray = false;
     try {
-      hasDefault = typeof column.default === 'string' 
+      isStringArray = typeof column.default === 'string' 
         && Array.isArray(JSON.parse(column.default));
     } catch(e) {}
-    return `schema.addField('${column.snake}', ${JSON.stringify({
+    return `schema.addField('${column.snakeCase}', ${JSON.stringify({
       type: 'JSON',
-      default: hasDefault ? column.default: undefined,
+      default: Array.isArray(column.default) 
+        ? JSON.stringify(column.default)
+        : isStringArray 
+        ? column.default as string 
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     }, null, 2)});`;
   } else if (type === 'json' || column.fieldset) {
-    let hasDefault = false;
+    let isStringObject = false;
     try {
-      hasDefault = typeof column.default === 'string' 
+      isStringObject = typeof column.default === 'string' 
         && !!column.default 
         && typeof JSON.parse(column.default) === 'object';
     } catch(e) {}
-    return `schema.addField('${column.snake}', ${JSON.stringify({
+    return `schema.addField('${column.snakeCase}', ${JSON.stringify({
       type: 'JSON',
-      default: hasDefault ? column.default: undefined,
+      default: isObject(column.default) 
+        ? JSON.stringify(column.default) 
+        : isStringObject 
+        ? column.default as string
+        : undefined,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     }, null, 2)});`;
   //char, varchar
   } else if (type === 'string') {
     const length = clen(column);
-    const hasDefault = typeof column.attributes.default === 'string'
-      && !column.attributes.default.startsWith('uuid(')
-      && !column.attributes.default.startsWith('cuid(')
-      && !column.attributes.default.startsWith('nanoid(');
+    const hasDefault = typeof column.default === 'string'
+      && !column.default.startsWith('uuid(')
+      && !column.default.startsWith('cuid(')
+      && !column.default.startsWith('nanoid(');
     if (length[0] === length[1]) {
-      return `schema.addField('${column.snake}', ${JSON.stringify({
+      return `schema.addField('${column.snakeCase}', ${JSON.stringify({
         type: 'CHAR',
         length: length[1],
-        default: hasDefault ? column.attributes.default : undefined,
+        default: hasDefault ? column.default : undefined,
         nullable: !column.required,
         comment: comment ? String(comment) : undefined
       }, null, 2)});`;
     } else {
-      return `schema.addField('${column.snake}', ${JSON.stringify({
+      return `schema.addField('${column.snakeCase}', ${JSON.stringify({
         type: 'VARCHAR',
         length: length[1],
-        default: hasDefault ? column.attributes.default : undefined,
+        default: hasDefault ? column.default : undefined,
         nullable: !column.required,
         comment: comment ? String(comment) : undefined
       }, null, 2)});`;
     }
   } else if (type === 'text') {
-    return `schema.addField('${column.snake}', ${JSON.stringify({
+    return `schema.addField('${column.snakeCase}', ${JSON.stringify({
       type: 'TEXT',
-      default: column.attributes.default ,
+      default: column.default ,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined 
     }, null, 2)});`;
   } else if (type === 'boolean') {
-    return `schema.addField('${column.snake}', ${JSON.stringify({
+    return `schema.addField('${column.snakeCase}', ${JSON.stringify({
       type: 'BOOLEAN',
-      default: column.attributes.default,
+      default: column.default,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     }, null, 2)});`;
@@ -161,51 +169,51 @@ export function field(column: Column) {
 
     if (decimalLength > 0) {
       const length = integerLength + decimalLength;
-      return `schema.addField('${column.snake}', ${JSON.stringify({
+      return `schema.addField('${column.snakeCase}', ${JSON.stringify({
         type: 'FLOAT',
         length: `${length}, ${decimalLength}`,
-        default: column.attributes.default,
+        default: column.default,
         nullable: !column.required,
         unsigned: minmax[0] < 0,
         comment: comment ? String(comment) : undefined
       }, null, 2)});`;
     } else {
-      return `schema.addField('${column.snake}', ${JSON.stringify({
+      return `schema.addField('${column.snakeCase}', ${JSON.stringify({
         type: 'INTEGER',
         length: integerLength,
-        default: column.attributes.default,
+        default: column.default,
         nullable: !column.required,
         unsigned: minmax[0] < 0,
         comment: comment ? String(comment) : undefined
       }, null, 2)});`;
     }
   } else if (type === 'date') {
-    return `schema.addField('${column.snake}', ${JSON.stringify({
+    return `schema.addField('${column.snakeCase}', ${JSON.stringify({
       type: 'DATE',
-      default: column.attributes.default,
+      default: column.default,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     }, null, 2)});`;
   } else if (type === 'datetime') {
-    return `schema.addField('${column.snake}', ${JSON.stringify({
+    return `schema.addField('${column.snakeCase}', ${JSON.stringify({
       type: 'DATETIME',
-      default: column.attributes.default,
+      default: column.default,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined  
     }, null, 2)});`;
   } else if (type === 'time') {
-    return `schema.addField('${column.snake}', ${JSON.stringify({
+    return `schema.addField('${column.snakeCase}', ${JSON.stringify({
       type: 'TIME',
-      default: column.attributes.default,
+      default: column.default,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     }, null, 2)});`;
   //if it's an enum
   } else if (column.enum) {
-    return `schema.addField('${column.snake}', ${JSON.stringify({
+    return `schema.addField('${column.snakeCase}', ${JSON.stringify({
       type: 'VARCHAR',
       length: 255,
-      default: column.attributes.default,
+      default: column.default,
       nullable: !column.required,
       comment: comment ? String(comment) : undefined
     }, null, 2)});`;

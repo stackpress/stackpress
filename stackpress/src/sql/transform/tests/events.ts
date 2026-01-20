@@ -54,11 +54,14 @@ export default function generate(directory: Directory, registry: Registry) {
     //does any of the existing tables depend on this table?
     const dependents = model.relations
       .filter(column => column.model)
-      .map(column => ({
-        foreign: column.relation?.parent.key as Column,
-        local: column.relation?.child.key as Column,
-        model: column.model as Model
-      }));
+      .map(column => {
+        const relation = column.parentRelation;
+        return {
+          foreign: relation?.parent.key as Column,
+          local: relation?.child.key as Column,
+          model: column.model as Model
+        };
+      });
     const inputs = samples.map(sample => {
       const input: Record<string, unknown> = {};
       model.fields.forEach(column => {
@@ -105,24 +108,24 @@ export default function generate(directory: Directory, registry: Registry) {
     //export default function ProfileEventTests(emitter: EventEmitter) {}
     source.addFunction({
       isDefaultExport: true,
-      name: `${model.title}EventTests`,
+      name: `${model.titleCase}EventTests`,
       parameters: [{ name: 'server', type: 'HttpServer' }],
       statements: (`
-        describe('${model.title} Events', async () => {
+        describe('${model.titleCase} Events', async () => {
           before(async () => {
-            await server.resolve('${model.lower}-purge');
+            await server.resolve('${model.lowerCase}-purge');
           });
           ${dependents.length > 0 ? (`
             const dependents: Record<string, any[]> = {};
             before(async () => {
               ${dependents.map(dependent => {
                 const name = dependent.local.name;
-                const event = `'${dependent.model.lower}-search'`;
+                const event = `'${dependent.model.lowerCase}-search'`;
                 return `dependents.${name} = ((await server.resolve(${event})).results as any[]) || [];`;
               }).join('\n')}
             });
           `): ''}
-          it('should create ${model.title}', async () => {
+          it('should create ${model.titleCase}', async () => {
             ${dependents.length > 0 
               ? (`
                 const ids: Record<string, any> = {};
@@ -135,12 +138,12 @@ export default function generate(directory: Directory, registry: Registry) {
               `)
               : `const input = ${JSON.stringify(inputs[0])};`
             }
-            const actual = await server.resolve('${model.lower}-create', input);
+            const actual = await server.resolve('${model.lowerCase}-create', input);
             expect(actual.code).to.equal(200);
             expect(actual.status).to.equal('OK');
           });
           ${dependents.length < 2 ? (` 
-            it('should batch ${model.title}', async () => {
+            it('should batch ${model.titleCase}', async () => {
               const rows = ${JSON.stringify(inputs.slice(2))};
               ${dependents.map(dependent => {
                 const local = dependent.local.name;
@@ -150,43 +153,43 @@ export default function generate(directory: Directory, registry: Registry) {
                   rows[1].${local} = dependents.${local}[3].${foreign};
                 `;
               }).join('\n')}
-              const actual = await server.resolve('${model.lower}-batch', { rows });
+              const actual = await server.resolve('${model.lowerCase}-batch', { rows });
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
           `) : ''}
-          it('should search ${model.title}', async () => {
-            const actual = await server.resolve('${model.lower}-search');
+          it('should search ${model.titleCase}', async () => {
+            const actual = await server.resolve('${model.lowerCase}-search');
             expect(actual.code).to.equal(200);
             expect(actual.status).to.equal('OK');
             expect(Array.isArray(actual.results)).to.be.true;
           });
           ${model.ids.length ? (`
-            it('should get ${model.title}', async () => {
-              const response = await server.resolve('${model.lower}-search');
+            it('should get ${model.titleCase}', async () => {
+              const response = await server.resolve('${model.lowerCase}-search');
               const row = response.results?.[0];
 
               const key = '${model.ids[0].name}';
               const value = row[key];
 
-              const actual = await server.resolve('${model.lower}-get', { key, value });
+              const actual = await server.resolve('${model.lowerCase}-get', { key, value });
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should get ${model.title} with ids', async () => {
-              const response = await server.resolve('${model.lower}-search');
+            it('should get ${model.titleCase} with ids', async () => {
+              const response = await server.resolve('${model.lowerCase}-search');
               const row = response.results?.[0];
 
               const ids = { ${
                 model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
               } };
 
-              const actual = await server.resolve('${model.lower}-detail', ids);
+              const actual = await server.resolve('${model.lowerCase}-detail', ids);
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should update ${model.title}', async () => {
-              const response = await server.resolve('${model.lower}-search');
+            it('should update ${model.titleCase}', async () => {
+              const response = await server.resolve('${model.lowerCase}-search');
               const row = response.results?.[0];
 
               const ids = { ${
@@ -201,28 +204,28 @@ export default function generate(directory: Directory, registry: Registry) {
               ).join('\n')}
 
               const actual = await server.resolve(
-                '${model.lower}-update', 
+                '${model.lowerCase}-update', 
                 { ...ids, ...input }
               );
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should remove ${model.title}', async () => {
-              const response = await server.resolve('${model.lower}-search');
+            it('should remove ${model.titleCase}', async () => {
+              const response = await server.resolve('${model.lowerCase}-search');
               const row = response.results?.[0];
 
               const ids = { ${
                 model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
               } };
 
-              const actual = await server.resolve('${model.lower}-remove', ids);
+              const actual = await server.resolve('${model.lowerCase}-remove', ids);
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
             ${model.active ? (`
-              it('should restore ${model.title}', async () => {
+              it('should restore ${model.titleCase}', async () => {
                 const response = await server.resolve(
-                  '${model.lower}-search', 
+                  '${model.lowerCase}-search', 
                   { filter: { ${model.active.name}: -1 } }
                 );
                 const row = response.results?.[0];
@@ -231,7 +234,7 @@ export default function generate(directory: Directory, registry: Registry) {
                   model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
                 } };
 
-                const actual = await server.resolve('${model.lower}-restore', ids);
+                const actual = await server.resolve('${model.lowerCase}-restore', ids);
                 expect(actual.code).to.equal(200);
                 expect(actual.status).to.equal('OK');
               });
