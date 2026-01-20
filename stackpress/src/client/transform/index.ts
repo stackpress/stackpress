@@ -155,14 +155,14 @@ export default function generate(props: IdeaPluginWithProject) {
   for (const model of registry.model.values()) {
     source.addImportDeclaration({
       moduleSpecifier: `./${model.name}/index.js`,
-      defaultImport: `* as model${model.title}`
+      defaultImport: `* as model${model.titleCase}`
     });
   }
   //import * as fieldsetAddress from './Profile/index.js';
   for (const fieldset of registry.fieldset.values()) {
     source.addImportDeclaration({
       moduleSpecifier: `./${fieldset.name}/index.js`,
-      defaultImport: `* as fieldset${fieldset.title}`
+      defaultImport: `* as fieldset${fieldset.titleCase}`
     });
   }
   //export { config, registry };
@@ -178,14 +178,14 @@ export default function generate(props: IdeaPluginWithProject) {
       name: 'model',
       initializer: `{
         ${Array.from(registry.model.values()).map(
-          model => `${model.camel}: model${model.title}`
+          model => `${model.camelCase}: model${model.titleCase}`
         ).join(',\n')}
       }`
     }, {
       name: 'fieldset',
       initializer: `{
         ${Array.from(registry.fieldset.values()).map(
-          fieldset => `${fieldset.camel}: fieldset${fieldset.title}`
+          fieldset => `${fieldset.camelCase}: fieldset${fieldset.titleCase}`
         ).join(',\n')}
       }`
     }]
