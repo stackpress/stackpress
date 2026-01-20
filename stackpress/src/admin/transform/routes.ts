@@ -25,67 +25,67 @@ export default function generate(directory: Directory, registry: Registry) {
       statements: `
         const root = server.config.path('admin.root', '/admin');
         server.import.all(
-          \`\${root}/${model.dash}/create\`, 
+          \`\${root}/${model.dashCase}/create\`, 
           () => import('./pages/create.js')
         );
         server.import.all(
-          \`\${root}/${model.dash}/detail/${ids}\`, 
+          \`\${root}/${model.dashCase}/detail/${ids}\`, 
           () => import('./pages/detail.js')
         );
         server.import.all(
-          \`\${root}/${model.dash}/export\`, 
+          \`\${root}/${model.dashCase}/export\`, 
           () => import('./pages/export.js')
         );
         server.import.all(
-          \`\${root}/${model.dash}/import\`, 
+          \`\${root}/${model.dashCase}/import\`, 
           () => import('./pages/import.js')
         );
         server.import.all(
-          \`\${root}/${model.dash}/remove/${ids}\`, 
+          \`\${root}/${model.dashCase}/remove/${ids}\`, 
           () => import('./pages/remove.js')
         );
         server.import.all(
-          \`\${root}/${model.dash}/restore/${ids}\`, 
+          \`\${root}/${model.dashCase}/restore/${ids}\`, 
           () => import('./pages/restore.js')
         );
         server.import.all(
-          \`\${root}/${model.dash}/search\`, 
+          \`\${root}/${model.dashCase}/search\`, 
           () => import('./pages/search.js')
         );
         server.import.all(
-          \`\${root}/${model.dash}/update/${ids}\`, 
+          \`\${root}/${model.dashCase}/update/${ids}\`, 
           () => import('./pages/update.js')
         );
 
         const module = server.config.path<string>('client.module');
         if (module) {
           server.view.all(
-            \`\${root}/${model.dash}/create\`, 
+            \`\${root}/${model.dashCase}/create\`, 
             \`\${module}/${model.name}/admin/views/create\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dash}/detail/${ids}\`, 
+            \`\${root}/${model.dashCase}/detail/${ids}\`, 
             \`\${module}/${model.name}/admin/views/detail\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dash}/remove/${ids}\`, 
+            \`\${root}/${model.dashCase}/remove/${ids}\`, 
             \`\${module}/${model.name}/admin/views/remove\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dash}/restore/${ids}\`, 
+            \`\${root}/${model.dashCase}/restore/${ids}\`, 
             \`\${module}/${model.name}/admin/views/restore\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dash}/search\`, 
+            \`\${root}/${model.dashCase}/search\`, 
             \`\${module}/${model.name}/admin/views/search\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dash}/update/${ids}\`, 
+            \`\${root}/${model.dashCase}/update/${ids}\`, 
             \`\${module}/${model.name}/admin/views/update\`,
             -100
           );
@@ -106,7 +106,7 @@ export default function generate(directory: Directory, registry: Registry) {
   for (const model of registry.model.values()) {
     source.addImportDeclaration({
       moduleSpecifier: `./${model.name}/admin/routes.js`,
-      defaultImport: `${model.camel}Routes`
+      defaultImport: `${model.camelCase}Routes`
     });
   }
 
@@ -119,7 +119,7 @@ export default function generate(directory: Directory, registry: Registry) {
     ],
     statements: `
       ${Array.from(registry.model.values()).map(
-        model => `${model.camel}Routes(server);`
+        model => `${model.camelCase}Routes(server);`
       ).join('\n')}
     `.trim()
   });

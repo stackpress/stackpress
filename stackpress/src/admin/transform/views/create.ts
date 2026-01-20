@@ -27,16 +27,16 @@ export default function createView(directory: Directory, _registry: Registry, mo
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Input`, model.title ]
+    namedImports: [ `${model.titleCase}Input`, model.titleCase ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Button from 'frui/form/Button';
+  //import Button from 'frui/Button';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Button',
+    moduleSpecifier: 'frui/Button',
     defaultImport: 'Button'
   });
   //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view/client';
@@ -47,25 +47,26 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //import { ActiveFieldControl } from '../../components/fields/ActiveField.js';
   model.fields.forEach(column => {
     //skip if no component
-    if (typeof column.field.component !== 'string') return;
-    if (column.field.method === 'fieldset') {
+    const field = column.field;
+    if (!field) return;
+    if (field.component === 'Fieldset') {
       //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
       source.addImportDeclaration({
-        moduleSpecifier: `../../components/fields/${column.title}Field.js`,
-        namedImports: [ `${column.title}FieldsetControl` ]
+        moduleSpecifier: `../../components/fields/${column.titleCase}Field.js`,
+        namedImports: [ `${column.titleCase}FieldsetControl` ]
       });
       return;
     }
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/fields/${column.title}Field.js`,
-      namedImports: [ `${column.title}FieldControl` ]
+      moduleSpecifier: `../../components/fields/${column.titleCase}Field.js`,
+      namedImports: [ `${column.titleCase}FieldControl` ]
     });
   });
   
   //export function AdminProfileCreateCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreateCrumbs`,
+    name: `Admin${model.titleCase}CreateCrumbs`,
     statements: (`
       //hooks
       const { _ } = useLanguage();
@@ -87,11 +88,11 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileCreateForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreateForm`,
+    name: `Admin${model.titleCase}CreateForm`,
     parameters: [{ 
       name: 'props', 
       type: `{ 
-        input: Partial<${model.title}Input>, 
+        input: Partial<${model.titleCase}Input>, 
         errors: NestedObject<string | string[]> 
       }` 
     }],
@@ -100,15 +101,15 @@ export default function createView(directory: Directory, _registry: Registry, mo
       const { _ } = useLanguage();
       return (
         <form method="post">
-          ${model.fields.map(column => column.field.method === 'fieldset' ? (`
-            <${column.title}FieldsetControl 
+          ${model.fields.map(column => column.field?.component === 'Fieldset' ? (`
+            <${column.titleCase}FieldsetControl 
               className="control"
               name="${column.name}"
               value={input['${column.name}']} 
               errors={errors['${column.name}']} 
             />
           `) : (`
-            <${column.title}FieldControl 
+            <${column.titleCase}FieldControl 
               className="control"
               name="${column.name}${column.multiple ? '[]' : ''}"
               value={input['${column.name}']} 
@@ -126,12 +127,12 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileCreateBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreateBody`,
+    name: `Admin${model.titleCase}CreateBody`,
     statements: (`
       const { request, response } = useServer<${[
         'AdminConfigProps', 
-        `Partial<${model.title}Input>`,
-        model.title
+        `Partial<${model.titleCase}Input>`,
+        model.titleCase
       ].join(', ')}>();
       const input = { ...response.results, ...request.data() };
       const errors = response.errors();
@@ -139,10 +140,10 @@ export default function createView(directory: Directory, _registry: Registry, mo
       return (
         <main className="admin-page admin-form-page">
           <div className="admin-crumbs">
-            <Admin${model.title}CreateCrumbs />
+            <Admin${model.titleCase}CreateCrumbs />
           </div>
           <div className="admin-form">
-            <Admin${model.title}CreateForm errors={errors} input={input} />
+            <Admin${model.titleCase}CreateForm errors={errors} input={input} />
           </div>
         </main>
       );
@@ -151,7 +152,7 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileCreateHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreateHead`,
+    name: `Admin${model.titleCase}CreateHead`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -180,7 +181,7 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileCreatePage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreatePage`,
+    name: `Admin${model.titleCase}CreatePage`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -188,7 +189,7 @@ export default function createView(directory: Directory, _registry: Registry, mo
     statements: (`
       return (
         <LayoutAdmin {...props}>
-          <Admin${model.title}CreateBody />
+          <Admin${model.titleCase}CreateBody />
         </LayoutAdmin>
       );  
     `)
@@ -199,9 +200,9 @@ export default function createView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}CreateHead`
+      initializer: `Admin${model.titleCase}CreateHead`
     }]
   });
   //export default AdminProfileCreatePage;
-  source.addStatements(`export default Admin${model.title}CreatePage;`);
+  source.addStatements(`export default Admin${model.titleCase}CreatePage;`);
 }

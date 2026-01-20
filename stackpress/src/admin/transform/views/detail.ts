@@ -13,7 +13,7 @@ export default function detailView(directory: Directory, _registry: Registry, mo
   const link = (
     action: string,
     extras = ''
-  ) => `\`\${base}/${model.dash}/${action}/${path}${extras}\``;
+  ) => `\`\${base}/${model.dashCase}/${action}/${path}${extras}\``;
   
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
@@ -40,7 +40,7 @@ export default function detailView(directory: Directory, _registry: Registry, mo
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Extended` ]
+    namedImports: [ `${model.titleCase}Extended` ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -60,20 +60,20 @@ export default function detailView(directory: Directory, _registry: Registry, mo
   //import CreatedViewFormat from '../../components/views/CreatedViewFormat.js';
   model.views.forEach(column => {
     //skip if no component
-    if (typeof column.view.component !== 'string') return;
+    if (!column.view) return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/views/${column.title}ViewFormat.js`,
-      defaultImport: `${column.title}ViewFormat`
+      moduleSpecifier: `../../components/views/${column.titleCase}ViewFormat.js`,
+      defaultImport: `${column.titleCase}ViewFormat`
     });
   });
 
   //export function AdminProfileDetailCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}DetailCrumbs`,
+    name: `Admin${model.titleCase}DetailCrumbs`,
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.title}Extended }` 
+      type: `{ base: string, results: ${model.titleCase}Extended }` 
     }],
     statements: (`
       //props
@@ -85,7 +85,7 @@ export default function detailView(directory: Directory, _registry: Registry, mo
         {
           label: (<span className="admin-crumb">{_('${model.plural}')}</span>),
           icon: '${model.icon}',
-          href: \`\${base}/${model.dash}/search\`
+          href: \`\${base}/${model.dashCase}/search\`
         },
         {
           label: \`${model.transformTemplate('${results?.%s || \'\'}')}\`,
@@ -98,12 +98,12 @@ export default function detailView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileDetailActions() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}DetailActions`,
+    name: `Admin${model.titleCase}DetailActions`,
     parameters: [{ 
       name: 'props', 
       type: `{
         base: string,
-        results: ${model.title}Extended,
+        results: ${model.titleCase}Extended,
         can: (...permits: SessionPermission[]) => boolean,
       }` 
     }],
@@ -151,10 +151,10 @@ export default function detailView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileDetailResults() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}DetailResults`,
+    name: `Admin${model.titleCase}DetailResults`,
     parameters: [{ 
       name: 'props', 
-      type: `{ results: ${model.title}Extended }` 
+      type: `{ results: ${model.titleCase}Extended }` 
     }],
     statements: (`
       const { results } = props;
@@ -162,23 +162,17 @@ export default function detailView(directory: Directory, _registry: Registry, mo
       const stripe = useStripe('results-row-1', 'results-row-2');
       return (
         <Table>
-          ${model.views.filter(
-            column => column.view.method !== 'hide'
-          ).map(column => {
+          ${model.views.map(column => {
+            const view = column.view!;
             return (`
               <Trow>
                 <Tcol noWrap className={\`results-label \${stripe(true)}\`}>
                   {_('${column.label}')}
                 </Tcol>
                 <Tcol noWrap className={\`results-value \${stripe()}\`}>
-                  ${column.required && !column.view.component
-                    ? `{results.${column.name}.toString()}`
-                    : column.required && column.view.component
-                    ? `<${column.title}ViewFormat data={results} value={results.${column.name}} />`
-                    : !column.required && !column.view.component
-                    ? `{results.${column.name} ? results.${column.name}.toString() : ''}`
-                    //!column.required && column.view.component
-                    : `{results.${column.name} ? (<${column.title}ViewFormat data={results} value={results.${column.name}} />) : ''}`
+                  ${column.required && view.component
+                    ? `<${column.titleCase}ViewFormat data={results} value={results.${column.name}} />`
+                    : `{results.${column.name} ? (<${column.titleCase}ViewFormat data={results} value={results.${column.name}} />) : ''}`
                   }
                 </Tcol>
               </Trow>
@@ -191,31 +185,31 @@ export default function detailView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileDetailBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}DetailBody`,
+    name: `Admin${model.titleCase}DetailBody`,
     statements: (`
       const { config, session, response } = useServer<${[
         `AdminConfigProps`, 
         'Partial<SearchParams>', 
-        `${model.title}Extended`
+        `${model.titleCase}Extended`
       ].join(', ')}>();
       const can = session.can.bind(session);
       const base = config.path('admin.base', '/admin');
-      const results = response.results as ${model.title}Extended;
+      const results = response.results as ${model.titleCase}Extended;
       //render
       return (
         <main className="admin-detail-page admin-page">
           <div className="admin-crumbs">
-            <Admin${model.title}DetailCrumbs base={base} results={results} />
+            <Admin${model.titleCase}DetailCrumbs base={base} results={results} />
           </div>
           <div className="admin-actions">
-            <Admin${model.title}DetailActions 
+            <Admin${model.titleCase}DetailActions 
               can={can} 
               base={base} 
               results={results} 
             />
           </div>
           <div className="admin-results">
-            <Admin${model.title}DetailResults results={results} />
+            <Admin${model.titleCase}DetailResults results={results} />
           </div>
         </main>
       );  
@@ -224,7 +218,7 @@ export default function detailView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileDetailHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}DetailHead`,
+    name: `Admin${model.titleCase}DetailHead`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -253,7 +247,7 @@ export default function detailView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileDetailPage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}DetailPage`,
+    name: `Admin${model.titleCase}DetailPage`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -261,7 +255,7 @@ export default function detailView(directory: Directory, _registry: Registry, mo
     statements: (`
       return (
         <LayoutAdmin {...props}>
-          <Admin${model.title}DetailBody />
+          <Admin${model.titleCase}DetailBody />
         </LayoutAdmin>
       );
     `)
@@ -272,9 +266,9 @@ export default function detailView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}DetailHead`
+      initializer: `Admin${model.titleCase}DetailHead`
     }]
   });
   //export default AdminProfileDetailPage;
-  source.addStatements(`export default Admin${model.title}DetailPage;`);
+  source.addStatements(`export default Admin${model.titleCase}DetailPage;`);
 }

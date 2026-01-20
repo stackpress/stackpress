@@ -58,7 +58,7 @@ export default function AdminRemovePageFactory(model: Model) {
       //if confirmed
       if (req.data('confirmed')) {
         //emit remove event
-        await ctx.emit(`${model.dash}-remove`, req, res);
+        await ctx.emit(`${model.dashCase}-remove`, req, res);
         //if error
         if (res.code !== 200) {
           //pass straight to error
@@ -67,11 +67,11 @@ export default function AdminRemovePageFactory(model: Model) {
         }
         //redirect
         const base = admin.base || '/admin';
-        res.redirect(`${base}/${model.dash}/search`);
+        res.redirect(`${base}/${model.dashCase}/search`);
         return;
       }
       //not confirmed, fetch the data using the id
-      await ctx.emit(`${model.dash}-detail`, req, res);
+      await ctx.emit(`${model.dashCase}-detail`, req, res);
       //if error
       if (res.code !== 200) {
         //pass straight to error

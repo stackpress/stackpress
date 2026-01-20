@@ -5402,6 +5402,7 @@ function toComponentToken(
     name: attribute.name, 
     component: data.component,
     props: { ...data.props, ...attributes }, 
+    virtual: [ 'Fieldset', 'Relation', 'Template' ].includes(data.component),
     import: data.import
   } as SchemaComponent;
 }

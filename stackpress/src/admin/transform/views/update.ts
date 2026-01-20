@@ -10,7 +10,7 @@ export default function updateView(directory: Directory, _registry: Registry, mo
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.ids.map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${base}/${model.dash}/${action}/${path}\``;
+  const link = (action: string) => `\`\${base}/${model.dashCase}/${action}/${path}\``;
 
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
@@ -31,7 +31,7 @@ export default function updateView(directory: Directory, _registry: Registry, mo
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Input`, `${model.title}Extended` ]
+    namedImports: [ `${model.titleCase}Input`, `${model.titleCase}Extended` ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -43,36 +43,37 @@ export default function updateView(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
   });
-  //import Button from 'frui/form/Button';
+  //import Button from 'frui/Button';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Button',
+    moduleSpecifier: 'frui/Button',
     defaultImport: 'Button'
   });
   //import { ActiveFieldControl } from '../../components/fields/ActiveField.js';
   model.fields.forEach(column => {
+    const field = column.field;
     //skip if no component
-    if (typeof column.field.component !== 'string') return;
-    if (column.field.method === 'fieldset') {
+    if (!field) return;
+    if (field.component === 'Fieldset') {
       //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
       source.addImportDeclaration({
-        moduleSpecifier: `../../components/fields/${column.title}Field.js`,
-        namedImports: [ `${column.title}FieldsetControl` ]
+        moduleSpecifier: `../../components/fields/${column.titleCase}Field.js`,
+        namedImports: [ `${column.titleCase}FieldsetControl` ]
       });
       return;
     }
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/fields/${column.title}Field.js`,
-      namedImports: [ `${column.title}FieldControl` ]
+      moduleSpecifier: `../../components/fields/${column.titleCase}Field.js`,
+      namedImports: [ `${column.titleCase}FieldControl` ]
     });
   });
 
   //export function AdminProfileUpdateCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdateCrumbs`,
+    name: `Admin${model.titleCase}UpdateCrumbs`,
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.title}Extended }` 
+      type: `{ base: string, results: ${model.titleCase}Extended }` 
     }],
     statements: (`
       const { base, results } = props;
@@ -83,7 +84,7 @@ export default function updateView(directory: Directory, _registry: Registry, mo
         {
           label: (<span className="admin-crumb">{_('${model.plural}')}</span>),
           icon: '${model.icon}',
-          href: \`\${base}/${model.dash}/search\`
+          href: \`\${base}/${model.dashCase}/search\`
         },
         {
           label: (
@@ -105,11 +106,11 @@ export default function updateView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileUpdateForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdateForm`,
+    name: `Admin${model.titleCase}UpdateForm`,
     parameters: [{ 
       name: 'props', 
       type: `{ 
-        input: Partial<${model.title}Input>,
+        input: Partial<${model.titleCase}Input>,
         errors: NestedObject<string | string[]>
       }` 
     }],
@@ -118,15 +119,15 @@ export default function updateView(directory: Directory, _registry: Registry, mo
       const { _ } = useLanguage();
       return (
         <form method="post">
-          ${model.fields.map(column => column.field.method === 'fieldset' ? (`
-            <${column.title}FieldsetControl 
+          ${model.fields.map(column => column.field?.component === 'Fieldset' ? (`
+            <${column.titleCase}FieldsetControl 
               className="control"
               name="${column.name}"
               value={input['${column.name}']} 
               errors={errors['${column.name}']} 
             />
           `) : (`
-            <${column.title}FieldControl 
+            <${column.titleCase}FieldControl 
               className="control"
               name="${column.name}${column.multiple ? '[]' : ''}"
               value={input['${column.name}']} 
@@ -144,25 +145,25 @@ export default function updateView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileUpdateBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdateBody`,
+    name: `Admin${model.titleCase}UpdateBody`,
     statements: (`
       const { config, request, response } = useServer<${[
         'AdminConfigProps', 
-        `Partial<${model.title}Input>`, 
-        `${model.title}Extended`
+        `Partial<${model.titleCase}Input>`, 
+        `${model.titleCase}Extended`
       ].join(',')}>();
       const base = config.path('admin.base', '/admin');
       const input = { ...response.results, ...request.data() };
       const errors = response.errors();
-      const results = response.results as ${model.title}Extended;
+      const results = response.results as ${model.titleCase}Extended;
       //render
       return (
         <main className="admin-page admin-form-page">
           <div className="admin-crumbs">
-            <Admin${model.title}UpdateCrumbs base={base} results={results} />
+            <Admin${model.titleCase}UpdateCrumbs base={base} results={results} />
           </div>
           <div className="admin-form">
-            <Admin${model.title}UpdateForm errors={errors} input={input} />
+            <Admin${model.titleCase}UpdateForm errors={errors} input={input} />
           </div>
         </main>
       );
@@ -171,7 +172,7 @@ export default function updateView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileUpdateHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdateHead`,
+    name: `Admin${model.titleCase}UpdateHead`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -200,7 +201,7 @@ export default function updateView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileUpdatePage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdatePage`,
+    name: `Admin${model.titleCase}UpdatePage`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -208,7 +209,7 @@ export default function updateView(directory: Directory, _registry: Registry, mo
     statements: (`
       return (
         <LayoutAdmin {...props}>
-          <Admin${model.title}UpdateBody />
+          <Admin${model.titleCase}UpdateBody />
         </LayoutAdmin>
       );
     `)
@@ -219,9 +220,9 @@ export default function updateView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}UpdateHead`
+      initializer: `Admin${model.titleCase}UpdateHead`
     }]
   });
   //export default AdminProfileUpdatePage;
-  source.addStatements(`export default Admin${model.title}UpdatePage;`);
+  source.addStatements(`export default Admin${model.titleCase}UpdatePage;`);
 }

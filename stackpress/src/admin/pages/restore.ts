@@ -58,7 +58,7 @@ export default function AdminRestorePageFactory(model: Model) {
       //if confirmed
       if (req.data('confirmed')) {
         //emit restore event
-        await ctx.emit(`${model.dash}-restore`, req, res);
+        await ctx.emit(`${model.dashCase}-restore`, req, res);
         //if error
         if (res.code !== 200) {
           //pass straight to error
@@ -67,11 +67,11 @@ export default function AdminRestorePageFactory(model: Model) {
         }
         //redirect
         const base = admin.base || '/admin';
-        res.redirect(`${base}/${model.dash}/detail/${ids.join('/')}`);
+        res.redirect(`${base}/${model.dashCase}/detail/${ids.join('/')}`);
         return;
       }
       //not confirmed, fetch the data using the id
-      await ctx.emit(`${model.dash}-detail`, req, res);
+      await ctx.emit(`${model.dashCase}-detail`, req, res);
       //if error
       if (res.code !== 200) {
         //pass straight to error

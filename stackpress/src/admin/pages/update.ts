@@ -61,12 +61,12 @@ export default function AdminUpdatePageFactory(model: Model) {
       //if form submitted
       if (req.method === 'POST') {
         //emit update with the fixed fields
-        await ctx.emit(`${model.dash}-update`, req, res);
+        await ctx.emit(`${model.dashCase}-update`, req, res);
         //if error
         if (res.code !== 200) {
           //still need the details for the page...
           const detail = await ctx.resolve<UnknownNest>(
-            `${model.dash}-detail`, 
+            `${model.dashCase}-detail`, 
             req
           );
           //if error
@@ -80,11 +80,11 @@ export default function AdminUpdatePageFactory(model: Model) {
         }
         //redirect
         const base = admin.base || '/admin';
-        res.redirect(`${base}/${model.dash}/detail/${ids.join('/')}`);
+        res.redirect(`${base}/${model.dashCase}/detail/${ids.join('/')}`);
         return;
       }
       //not submitted, fetch the data using the id
-      await ctx.emit(`${model.dash}-detail`, req, res);
+      await ctx.emit(`${model.dashCase}-detail`, req, res);
       //if error
       if (res.code !== 200) {
         //pass straight to error

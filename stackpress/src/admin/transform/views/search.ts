@@ -41,7 +41,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Extended` ]
+    namedImports: [ `${model.titleCase}Extended` ]
   });
   //import { useState } from 'react';
   source.addImportDeclaration({
@@ -63,9 +63,9 @@ export default function searchView(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'frui/element/Alert',
     defaultImport: 'Alert'
   });
-  //import Button from 'frui/form/Button';
+  //import Button from 'frui/Button';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Button',
+    moduleSpecifier: 'frui/Button',
     defaultImport: 'Button'
   });
   //import Input from 'frui/field/Input';
@@ -90,35 +90,35 @@ export default function searchView(directory: Directory, _registry: Registry, mo
   //import CreatedListFormat from '../../components/lists/CreatedListFormat.js';
   model.lists.forEach(column => {
     //skip if no component
-    if (typeof column.list.component !== 'string') return;
+    if (column.list && !column.list?.virtual) return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/lists/${column.title}ListFormat.js`,
-      defaultImport: `${column.title}ListFormat`
+      moduleSpecifier: `../../components/lists/${column.titleCase}ListFormat.js`,
+      defaultImport: `${column.titleCase}ListFormat`
     });
   });
   //import { ActiveFilterControl } from '../../components/filters/ActiveFilter.js';
   model.filters.forEach(column => {
     //skip if no component
-    if (typeof column.filter.component !== 'string') return;
+    if (column.filter && !column.filter?.virtual) return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/filters/${column.title}Filter.js`,
-      namedImports: [ `${column.title}FilterControl` ]
+      moduleSpecifier: `../../components/filters/${column.titleCase}Filter.js`,
+      namedImports: [ `${column.titleCase}FilterControl` ]
     });
   });
   //import { ActiveSpanControl } from '../../components/spans/ActiveSpan.js';
   model.spans.forEach(column => {
     //skip if no component
-    if (typeof column.span.component !== 'string') return;
+    if (column.span && !column.span?.virtual) return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/spans/${column.title}Span.js`,
-      namedImports: [ `${column.title}SpanControl` ]
+      moduleSpecifier: `../../components/spans/${column.titleCase}Span.js`,
+      namedImports: [ `${column.titleCase}SpanControl` ]
     });
   });
 
   //export function AdminProfileSearchCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchCrumbs`,
+    name: `Admin${model.titleCase}SearchCrumbs`,
     statements: (`
       //hooks
       const { _ } = useLanguage();
@@ -133,7 +133,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileSearchFilters() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchFilters`,
+    name: `Admin${model.titleCase}SearchFilters`,
     parameters: [{ 
       name: 'props', 
       type: `{ 
@@ -154,16 +154,16 @@ export default function searchView(directory: Directory, _registry: Registry, mo
           </header>
           <form>
             ${Array.from(model.columns.values()).map(column => {
-              if (column.filter.component) {
+              if (column.filter?.component) {
                 return (`
-                  <${column.title}FilterControl 
+                  <${column.titleCase}FilterControl 
                     className="control"
                     value={query.filter?.${column.name}} 
                   />
                 `);
-              } else if (column.span.component) {
+              } else if (column.span?.component) {
                 return (`
-                  <${column.title}SpanControl 
+                  <${column.titleCase}SpanControl 
                     className="control"
                     value={query.span?.${column.name}} 
                   />
@@ -183,7 +183,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileSearchForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchForm`,
+    name: `Admin${model.titleCase}SearchForm`,
     parameters: [{ 
       name: 'props', 
       type: (`{ 
@@ -230,18 +230,18 @@ export default function searchView(directory: Directory, _registry: Registry, mo
               </form>
             `): ''}
           </div>
-          {can({ method: 'GET', route: \`\${base}/${model.dash}/export\` }) ?(
+          {can({ method: 'GET', route: \`\${base}/${model.dashCase}/export\` }) ?(
             <Button info className="action" href="export">
               <i className="fas fa-download"></i>
             </Button>
           ): null}
-          {can({ method: 'GET', route: \`\${base}/${model.dash}/import\` }) ?(
+          {can({ method: 'GET', route: \`\${base}/${model.dashCase}/import\` }) ?(
             <Button warning type="button" className="action import">
               <i className="cursor-pointer fas fa-upload"></i>
               <input className="input" type="file" onChange={upload} />
             </Button>
           ): null}
-          {can({ method: 'GET', route: \`\${base}/${model.dash}/create\` }) ? (
+          {can({ method: 'GET', route: \`\${base}/${model.dashCase}/create\` }) ? (
             <Button success className="action" href="create">
               <i className="fas fa-plus"></i>
             </Button>
@@ -253,7 +253,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileSearchResults() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchResults`,
+    name: `Admin${model.titleCase}SearchResults`,
     parameters: [{ 
       name: 'props', 
       type: (`{ 
@@ -271,7 +271,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
       return (
         <Table>
           ${model.lists.filter(
-            column => column.list.method !== 'hide'
+            column => column.list && column.list?.virtual
           ).map(column => column.sortable ? (`
             <Thead noWrap stickyTop className="results-label sortable">
               <span onClick={() => order('sort[${column.name}]')}>
@@ -296,18 +296,13 @@ export default function searchView(directory: Directory, _registry: Registry, mo
           {results.map((row, index) => (
             <Trow key={index}>
               ${model.lists.filter(
-                column => column.list.method !== 'hide'
+                column => column.list && !column.list?.virtual
               ).map(column => {
-                const value = column.required && column.list.method === 'none'
-                  ? `{row.${column.name}.toString()}`
-                  : column.required && column.list.method !== 'none'
-                  ? `<${column.title}ListFormat data={row} value={row.${column.name}} />`
-                  : !column.required && column.list.method === 'none'
-                  ? `{row.${column.name} ? row.${column.name}.toString() : ''}`
-                  //!column.required && column.list.method !== 'none'
-                  : `{row.${column.name} ? (<${column.title}ListFormat data={row} value={row.${column.name}} />) : ''}`;
+                const value = column.required
+                  ? `<${column.titleCase}ListFormat data={row} value={row.${column.name}} />`
+                  : `{row.${column.name} ? (<${column.titleCase}ListFormat data={row} value={row.${column.name}} />) : ''}`;
                 const align = column.sortable ? 'right' : 'left';
-                return column.filter.method !== 'none' ? (`
+                return column.filterable ? (`
                   <Tcol noWrap className={\`results-value ${align} filterable \${stripe(index)}\`}>
                     <span onClick={() => filter('filter[${column.name}]', row.${column.name})}>
                       ${value}
@@ -320,7 +315,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
                 `);
               }).join('\n')}
               <Tcol stickyRight className={\`results-value center \${stripe(index)}\`}>
-                {can({ method: 'GET', route: \`\${base}/${model.dash}/detail/${path}\`}) ? (
+                {can({ method: 'GET', route: \`\${base}/${model.dashCase}/detail/${path}\`}) ? (
                   <Button info className="detail" href={\`detail/\${row.id}\`}>
                     <i className="fas fa-fw fa-caret-right"></i>
                   </Button>
@@ -335,20 +330,20 @@ export default function searchView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileSearchBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchBody`,
+    name: `Admin${model.titleCase}SearchBody`,
     statements: (`
       //props
       const { config, session, request, response } = useServer<${[
         'AdminConfigProps', 
         'Partial<SearchParams>', 
-        `${model.title}Extended[]`
+        `${model.titleCase}Extended[]`
       ].join(', ')}>();
       const base = config.path('admin.base', '/admin');
       const can = session.can.bind(session);
       const query = request.data();
       const skip = query.skip || 0;
       const take = query.take || 50;
-      const results = response.results as ${model.title}Extended[];
+      const results = response.results as ${model.titleCase}Extended[];
       const total = response.total || 0;
       //hooks
       const { _ } = useLanguage();
@@ -359,13 +354,13 @@ export default function searchView(directory: Directory, _registry: Registry, mo
       return (
         <main className="admin-page admin-search-page">
           <div className="admin-crumbs">
-            <Admin${model.title}SearchCrumbs />
+            <Admin${model.titleCase}SearchCrumbs />
           </div>
           <div className={\`admin-filters \${opened? 'open': '' }\`}>
-            <Admin${model.title}SearchFilters query={query} close={() => open(false)} />
+            <Admin${model.titleCase}SearchFilters query={query} close={() => open(false)} />
           </div>
           <div className="admin-search-form">
-            <Admin${model.title}SearchForm 
+            <Admin${model.titleCase}SearchForm 
               base={base} 
               token={session.data.token} 
               open={open} 
@@ -387,7 +382,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
                 {_('No results found.')}
               </Alert>
             ): (
-              <Admin${model.title}SearchResults 
+              <Admin${model.titleCase}SearchResults 
                 base={base}
                 can={can} 
                 query={query} 
@@ -408,7 +403,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileSearchHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchHead`,
+    name: `Admin${model.titleCase}SearchHead`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -437,7 +432,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileSearchPage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchPage`,
+    name: `Admin${model.titleCase}SearchPage`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -445,7 +440,7 @@ export default function searchView(directory: Directory, _registry: Registry, mo
     statements: (`
       return (
         <LayoutAdmin {...props}>
-          <Admin${model.title}SearchBody />
+          <Admin${model.titleCase}SearchBody />
         </LayoutAdmin>
       );
     `)
@@ -456,9 +451,9 @@ export default function searchView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}SearchHead`
+      initializer: `Admin${model.titleCase}SearchHead`
     }]
   });
   //export default AdminProfileSearchPage;
-  source.addStatements(`export default Admin${model.title}SearchPage;`);
+  source.addStatements(`export default Admin${model.titleCase}SearchPage;`);
 }

@@ -10,7 +10,7 @@ export default function removeView(directory: Directory, _registry: Registry, mo
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.ids.map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${base}/${model.dash}/${action}/${path}\``;
+  const link = (action: string) => `\`\${base}/${model.dashCase}/${action}/${path}\``;
 
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
@@ -37,7 +37,7 @@ export default function removeView(directory: Directory, _registry: Registry, mo
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Extended` ]
+    namedImports: [ `${model.titleCase}Extended` ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -53,10 +53,10 @@ export default function removeView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileRestoreCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestoreCrumbs`,
+    name: `Admin${model.titleCase}RestoreCrumbs`,
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.title}Extended }` 
+      type: `{ base: string, results: ${model.titleCase}Extended }` 
     }],
     statements: (`
       const { base, results } = props;
@@ -69,7 +69,7 @@ export default function removeView(directory: Directory, _registry: Registry, mo
             <span className="admin-crumb">{_('${model.plural}')}</span>
           ),
           icon: '${model.icon}',
-          href: \`\${base}/${model.dash}/search\`
+          href: \`\${base}/${model.dashCase}/search\`
         },
         {
           label: (
@@ -91,10 +91,10 @@ export default function removeView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileRestoreForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestoreForm`,
+    name: `Admin${model.titleCase}RestoreForm`,
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.title}Extended }` 
+      type: `{ base: string, results: ${model.titleCase}Extended }` 
     }],
     statements: (`
       const { base, results } = props;
@@ -127,23 +127,23 @@ export default function removeView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileRestoreBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestoreBody`,
+    name: `Admin${model.titleCase}RestoreBody`,
     statements: (`
       const { config, response } = useServer<${[
         `AdminConfigProps`, 
         'Partial<SearchParams>', 
-        `${model.title}Extended`
+        `${model.titleCase}Extended`
       ].join(', ')}>();
       const base = config.path('admin.base', '/admin');
-      const results = response.results as ${model.title}Extended;
+      const results = response.results as ${model.titleCase}Extended;
       //render
       return (
         <main className="admin-page admin-confirm-page">
           <div className="admin-crumbs">
-            <Admin${model.title}RestoreCrumbs base={base} results={results} />
+            <Admin${model.titleCase}RestoreCrumbs base={base} results={results} />
           </div>
           <div className="admin-confirm">
-            <Admin${model.title}RestoreForm base={base} results={results} />
+            <Admin${model.titleCase}RestoreForm base={base} results={results} />
           </div>
         </main>
       );
@@ -152,7 +152,7 @@ export default function removeView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileRestoreHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestoreHead`,
+    name: `Admin${model.titleCase}RestoreHead`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -181,7 +181,7 @@ export default function removeView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileRestorePage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestorePage`,
+    name: `Admin${model.titleCase}RestorePage`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -189,7 +189,7 @@ export default function removeView(directory: Directory, _registry: Registry, mo
     statements: (`
       return (
         <LayoutAdmin {...props}>
-          <Admin${model.title}RestoreBody />
+          <Admin${model.titleCase}RestoreBody />
         </LayoutAdmin>
       );
     `)
@@ -200,9 +200,9 @@ export default function removeView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}RestoreHead`
+      initializer: `Admin${model.titleCase}RestoreHead`
     }]
   });
   //export default AdminProfileRestorePage;
-  source.addStatements(`export default Admin${model.title}RestorePage;`);
+  source.addStatements(`export default Admin${model.titleCase}RestorePage;`);
 }

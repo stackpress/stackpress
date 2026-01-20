@@ -57,7 +57,7 @@ export default function AdminDetailCreatePageFactory(model: Model) {
     const ids = model.ids.map(column => req.data(column.name)).filter(Boolean);
     if (ids.length === model.ids.length) {
       //emit detail event
-      const response = await ctx.resolve<UnknownNest>(`${model.dash}-detail`, req, res);
+      const response = await ctx.resolve<UnknownNest>(`${model.dashCase}-detail`, req, res);
       if (!res.body) {
         //pass straight to error
         await ctx.emit('error', req, res);

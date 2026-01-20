@@ -58,7 +58,7 @@ export default function AdminDetailPageFactory(model: Model) {
     if (ids.length === model.ids.length) {
       //emit detail event
       const response = await ctx.resolve<UnknownNest>(
-        `${model.dash}-detail`, 
+        `${model.dashCase}-detail`, 
         req, 
         res
       );

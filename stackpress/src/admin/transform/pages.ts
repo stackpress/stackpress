@@ -52,7 +52,7 @@ export function page(action: string, directory: Directory, registry: Registry) {
     });
     // export default function AdminProfileCreatePage(req, res) {} 
     source.addFunction({
-      name: `Admin${model.title}${title}Page`,
+      name: `Admin${model.titleCase}${title}Page`,
       isDefaultExport: true,
       parameters: [
         { name: 'req', type: 'Request' }, 

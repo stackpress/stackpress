@@ -57,7 +57,7 @@ export default function AdminCreatePageFactory(model: Model) {
     if (req.method === 'POST') {
       //emit the create event
       const response = await ctx.resolve<UnknownNest>(
-        `${model.dash}-create`, 
+        `${model.dashCase}-create`, 
         req, 
         res
       );
@@ -72,7 +72,7 @@ export default function AdminCreatePageFactory(model: Model) {
       //redirect
       const base = admin.base || '/admin';
       res.redirect(
-        `${base}/${model.dash}/detail/${ids.join('/')}`
+        `${base}/${model.dashCase}/detail/${ids.join('/')}`
       );
     }
   };

@@ -26,7 +26,7 @@ export default function AdminExportPageFactory(model: Model) {
     }>();
     //search using the filters
     const response = await ctx.resolve<UnknownNest[]>(
-      `${model.dash}-search`,
+      `${model.dashCase}-search`,
       { q, filter, span, sort, take: 0 }
     );
     //if successfully searched
@@ -80,7 +80,7 @@ export default function AdminExportPageFactory(model: Model) {
       ].map(row => row.join(',')).join('\n');
       res.headers.set(
         'Content-Disposition', 
-        `attachment; filename=${model.dash}-${Date.now()}.csv`
+        `attachment; filename=${model.dashCase}-${Date.now()}.csv`
       );
       res.setBody('text/csv', csv);
     }
