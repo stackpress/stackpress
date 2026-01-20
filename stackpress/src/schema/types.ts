@@ -2,6 +2,15 @@
 import type { NestedObject } from '@stackpress/lib';
 import type { AttributeValue } from '@stackpress/idea-parser';
 
+export type { 
+  EnumConfig,
+  ModelConfig,
+  TypeConfig,
+  PropConfig,
+  PluginConfig,
+  SchemaConfig
+} from '@stackpress/idea-parser/types';
+
 //data structure for attribute info
 // this is hard coded in a separate file
 export type AttributeConfigArgument = {
@@ -15,6 +24,7 @@ export type AttributeConfigArgument = {
 
 export type AttributeConfigComponent = {
   component: string,
+  virtual: boolean,
   import: { from: string, default: boolean },
   props: Record<string, unknown>
 };
@@ -35,11 +45,8 @@ export type AttributeConfig = AttributeData & {
 export type AttributeValues = Iterable<[string, AttributeValue]> 
   | Record<string, AttributeValue>;
 
-export type SchemaComponent = {
-  name: string,
-  props: Record<string, unknown>,
-  component: string,
-  import: { from: string, default: boolean }
+export type SchemaComponent = AttributeConfigComponent & {
+  name: string
 };
 
 export type SchemaAssertion = {

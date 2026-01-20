@@ -1596,6 +1596,20 @@ const field: AttributeDataMap = {
       "props": { "type": "email" }
     }
   },
+  "fieldset": {
+    "type": [ "component" ],
+    "name": "field.fieldset",
+    "description": "Special fieldset field to group other fields together.",
+    "args": [],
+    "data": {
+      "component": "Fieldset",
+      "import": {
+        "from": "Fieldset",
+        "default": true
+      },
+      "props": {}
+    }
+  },
   "file": {
     "type": [ "component" ],
     "name": "field.file",
@@ -2524,6 +2538,45 @@ const field: AttributeDataMap = {
       "component": "Rating",
       "import": {
         "from": "frui/form/Rating",
+        "default": true
+      },
+      "props": {}
+    }
+  },
+  "relation": {
+    "type": [ "component" ],
+    "name": "field.relation",
+    "description": "Special relation field to link to another model.",
+    "args": [
+      {
+        "spread": false,
+        "type": [ "string" ],
+        "name": "id",
+        "required": true,
+        "description": "ID name to be used as the select value",
+        "examples": [ "id" ]
+      },
+      {
+        "spread": false,
+        "type": [ "string" ],
+        "name": "search",
+        "required": true,
+        "description": "Search URL to be used for fetching related data",
+        "examples": [ "/admin/profile/search?json" ]
+      },
+      {
+        "spread": false,
+        "type": [ "string" ],
+        "name": "template",
+        "required": true,
+        "description": "Template used to display related items in the select options",
+        "examples": [ "{{name}}" ]
+      },
+    ],
+    "data": {
+      "component": "Relation",
+      "import": {
+        "from": "Relation",
         "default": true
       },
       "props": {}
@@ -4210,6 +4263,20 @@ const view: AttributeDataMap = {
       "props": {}
     }
   },
+  "fieldset": {
+    "type": [ "component" ],
+    "name": "view.fieldset",
+    "description": "Special fieldset view to group other fields together.",
+    "args": [],
+    "data": {
+      "component": "Fieldset",
+      "import": {
+        "from": "Fieldset",
+        "default": true
+      },
+      "props": {}
+    }
+  },
   "formula": {
     "type": [ "component" ],
     "name": "view.formula",
@@ -4911,6 +4978,29 @@ const view: AttributeDataMap = {
       "props": {}
     }
   },
+  "template": {
+    "type": [ "component" ],
+    "name": "view.template",
+    "description": "Special template view used to render custom content using a template string.",
+    "args": [
+      {
+        "spread": false,
+        "type": [ "string" ],
+        "name": "template",
+        "required": true,
+        "description": "The template string",
+        "examples": [ "Name: {{name}}" ]
+      }
+    ],
+    "data": {
+      "component": "Template",
+      "import": {
+        "from": "Template",
+        "default": true
+      },
+      "props": {}
+    }
+  },
   "time": {
     "type": [ "component" ],
     "name": "view.time",
@@ -5174,7 +5264,6 @@ const span = mapObjectValue(field, value => ({
   name: value.name.replace('field.', 'span.')
 }));
 
-// Accepted Attributes
 const map: AttributeConfigMap = {
   model: mapObjectValue(model, (value, key) => (
     { ...value, key, kind: 'model' }

@@ -628,6 +628,13 @@ export default class Column extends ColumnAttributes {
   public get snakeCase() {
     return snakerize(this.name);
   }
+  
+  /**
+   * Returns the capitalized column name
+   */
+  public get titleCase() {
+    return capitalize(camelize(this.name));
+  }
 
   /**
    * Returns the type mappings for this column

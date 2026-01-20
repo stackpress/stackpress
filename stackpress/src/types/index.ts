@@ -51,14 +51,18 @@ export type {
 } from '../language/types.js';
 
 export type {
+  AttributeConfigArgument,
+  AttributeConfigComponent,
+  AttributeData,
+  AttributeConfig,
+  AttributeValues,
   SchemaAssertion,
   SchemaRelation,
-  SchemaColumnInfo,
   SchemaComponent,
-  SchemaColumnRelation,
-  SchemaColumnRelationLink,
-  SchemaSerialOptions,
-  ColumnOption
+  ErrorList,
+  ErrorMap,
+  SerializeOptions,
+  SerializerSettings
 } from '../schema/types.js';
 
 export type {
