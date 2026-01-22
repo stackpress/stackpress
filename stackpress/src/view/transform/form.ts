@@ -81,10 +81,10 @@ export function generateRelation(
     moduleSpecifier: 'frui/form/SuggestInput',
     defaultImport: 'SuggestInput'
   });
-  //export function NameField(props: FieldProps) {
+  //export function NameFormField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}Field`,
+    name: `${column.titleCase}FormField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
@@ -132,7 +132,7 @@ export function generateRelation(
   //export function NameFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FieldControl`,
+    name: `${column.titleCase}FormFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -149,7 +149,7 @@ export function generateRelation(
       //render
       return (
         <FieldControl label={label} error={error} className={className}>
-          <${column.titleCase}Field
+          <${column.titleCase}FormField
             error={!!error} 
             name={name}
             value={value} 
@@ -214,14 +214,14 @@ export function generateFieldset(
     if (column.field.component === 'Fieldset') {
       //import { ActiveFieldsetControl } from '../../components/form/ActiveField.js';
       source.addImportDeclaration({
-        moduleSpecifier: `../../../${fieldset.name}/components/form/${column.titleCase}Field.js`,
-        namedImports: [ `${column.titleCase}FieldsetControl` ]
+        moduleSpecifier: `../../../${fieldset.name}/components/form/${column.titleCase}FormField.js`,
+        namedImports: [ `${column.titleCase}FormFieldsetControl` ]
       });
       continue;
     }
     source.addImportDeclaration({
-      moduleSpecifier: `../../../${fieldset.name}/components/form/${column.titleCase}Field.js`,
-      namedImports: [ `${column.titleCase}FieldControl` ]
+      moduleSpecifier: `../../../${fieldset.name}/components/form/${column.titleCase}FormField.js`,
+      namedImports: [ `${column.titleCase}FormFieldControl` ]
     });
   }
 
@@ -239,7 +239,7 @@ export function generateFieldset(
   //export type AddressFieldsetProps = FieldsetProps<AddressInput>
   source.addTypeAlias({
     isExported: true,
-    name: `${column.titleCase}FieldsetProps`,
+    name: `${column.titleCase}FormFieldsetProps`,
     type: `FieldsetProps<${column.titleCase}Input> & { errors?: Record<string, any>[] }`
   });
   //export type AddressControlProps = {};
@@ -255,10 +255,10 @@ export function generateFieldset(
       className?: string
     }`
   });
-  //export function useAddressFieldset(config: AddressConfig) {}
+  //export function useAddressFormFieldset(config: AddressConfig) {}
   source.addFunction({
     isExported: true,
-    name: `use${column.titleCase}Fieldset`,
+    name: `use${column.titleCase}FormFieldset`,
     parameters: [
       { name: 'config', type: `${column.titleCase}Config` }
     ],
@@ -284,7 +284,7 @@ export function generateFieldset(
   //export function AddressFields(props: FieldsProps<AddressInput>) {}
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}Fields`,
+    name: `${column.titleCase}FormFields`,
     parameters: [
       { name: 'props', type: `FieldsProps<${column.titleCase}Input>` }
     ],
@@ -300,7 +300,7 @@ export function generateFieldset(
       const { _ } = useLanguage();
       const { errors = [] } = config;
       //handlers
-      const { handlers } = use${column.titleCase}Fieldset({ values, index, set });
+      const { handlers } = use${column.titleCase}FormFieldset({ values, index, set });
       //variables
       const prefix = !limit && name 
         ? \`\${name}[\${index}]\` 
@@ -336,7 +336,7 @@ export function generateFieldset(
             ${fieldset.fields.map(column => {
               return column.field?.component === 'Fieldset' 
                 ? (`
-                  <${column.titleCase}FieldsetControl
+                  <${column.titleCase}FormFieldsetControl
                     className="field-fieldset-control"
                     name={prefix ? \`\${prefix}[${column.name}]\` : undefined}
                     errors={error['${column.name}']}
@@ -345,7 +345,7 @@ export function generateFieldset(
                 `)
                 : column.field
                 ? (`
-                  <${column.titleCase}FieldControl
+                  <${column.titleCase}FormFieldControl
                     className="field-fieldset-control"
                     name={prefix ? \`\${prefix}[${column.name}]\` : undefined}
                     error={error['${column.name}']}
@@ -364,15 +364,15 @@ export function generateFieldset(
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Fieldset',
-      initializer: `make<${column.titleCase}Input>(${column.titleCase}Fields)`,
+      initializer: `make<${column.titleCase}Input>(${column.titleCase}FormFields)`,
     }]
   });
-  //export function AddressFieldset(props: AddressFieldsetProps) {}
+  //export function AddressFormFieldset(props: AddressFieldsetProps) {}
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}Fieldset`,
+    name: `${column.titleCase}FormFieldset`,
     parameters: [
-      { name: 'props', type: `${column.titleCase}FieldsetProps` }
+      { name: 'props', type: `${column.titleCase}FormFieldsetProps` }
     ],
     statements: (`
       //config gets passed straight to the fields
@@ -402,10 +402,10 @@ export function generateFieldset(
       );
     `)
   });
-  //export function AddressFieldsetControl(props: ControlProps) {
+  //export function AddressFormFieldsetControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FieldsetControl`,
+    name: `${column.titleCase}FormFieldsetControl`,
     parameters: [
       { name: 'props', type: `${column.titleCase}ControlProps` }
     ],
@@ -449,7 +449,7 @@ export function generateFieldset(
             <label className="frui-control-label">{label}</label>
           )}
           <div className="frui-control-field">
-            <${column.titleCase}Fieldset 
+            <${column.titleCase}FormFieldset 
               error={errors.length > 0} 
               errors={errors} 
               name={name} 
@@ -504,10 +504,10 @@ export function generateBoolean(
       ? [ field.component ] 
       : undefined
   });
-  //export function NameField(props: FieldProps) {
+  //export function NameFormField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}Field`,
+    name: `${column.titleCase}FormField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
@@ -535,10 +535,10 @@ export function generateBoolean(
       );
     `)
   });
-  //export function NameFieldControl(props: ControlProps) {
+  //export function NameFormFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FieldControl`,
+    name: `${column.titleCase}FormFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -562,7 +562,7 @@ export function generateBoolean(
       return (
         <FieldControl label={label} error={error} className={className}>
           <input type="hidden" name="${column.name}" value="0" />
-          <${column.titleCase}Field
+          <${column.titleCase}FormField
             error={!!error} 
             name={name}
             value={value} 

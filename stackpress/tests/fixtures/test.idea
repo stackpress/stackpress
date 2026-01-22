@@ -1,85 +1,171 @@
-//A profile can be a person, organization, or any other type of entity.
-//Profiles can be authenticated or added from various sources. That's 
-//why we call it profile instead of user and company indicating it's 
-//just a general information of an entity.
-
-model User
-  @label("Profile" "Profiles") 
-  @template("{{name}}") 
-  @icon("user") 
+model BasicFixture
 {
-  id          String    @label("ID") 
-                        @id @default("cuid()")
-                        @list.overflow({ length 10 hellip true })
-                        @description("Unique generated identifier.")
-                        @example("pjfdz7tg8bcf7e2lig3iuej3")
-  
-  name        String    @label("Name") 
-                        @searchable
-                        @field.input({ required true type "text" })
-                        @is.required("Required")
-                        @is.notempty("Cannot be empty")
-                        @list.string @view.string
-                        @description("Full name (first middle last).")
-                        @example("John Doe")
+  title String
+  description Text
+  price Number
+  age Integer
+  height Float
+  active Boolean
+  publishAt Date
+  showAt Time
+  createdAt Datetime
+  references Hash
+  data Json
+  cache Object
+  sink KitchenSinkFixture[]
+}
 
-  image       String?   @label("Image") 
-                        @field.url
-                        @list.image(20 20) @view.image(100 100)
-                        @description("Profile image URL.")
-                        @example("https://example.com/image.jpg")
-  
-  type        String    @label("Type") 
-                        @default("person") 
-                        @filter.string
-                        @field.input({ required true type "text" })
-                        @is.notempty("Cannot be empty")
-                        @list.string({ lower true }) 
-                        @view.string({ lower true })
-                        @description("Type of profile (ie. person, company, etc.).")
-                        @example("person")
-  
-  roles       String[]  @label("Roles") 
-                        @default([])
-                        @field.textlist({ add "Add Role" })
-                        @list.hide @view.taglist({ warning true })
-                        @description("Roles held by the profile. This is used with sessions to determine access levels of the app.")
-                        @example(["admin" "user" "gues"])
-  
-  tags        String[]  @label("Tags") 
-                        @default([])
-                        @field.taglist
-                        @list.hide @view.taglist({ warning true })
-                        @description("Abritrary tags for general use.")
-                        @example(["top buyer" "verified" "moderator"])
-  
-  references  Hash?     @label("References") 
-                        @default({})
-                        @field.metadata({ add "Add Reference" })
-                        @list.hide @view.metadata
-                        @description("Arbitrary key/value references for general use.")
-                        @example({ fbid "abc123" })
-  
-  active      Boolean   @label("Active") 
-                        @default(true) @active
-                        @filter.switch
-                        @list.hide @view.yesno
-                        @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
-                        @example(true)
-  
-  created     Datetime  @label("Created") 
-                        @default("now()") @sortable
-                        @span.datetime
-                        @list.date("m d, Y h:iA") 
-                        @view.date("m d, Y h:iA")
-                        @description("Generated timestamp when row was created.")
-                        @example("2025-10-01T12:00:00Z")
-  
-  updated     Datetime  @label("Updated") 
-                        @default("now()") @timestamp @sortable
-                        @span.datetime
-                        @list.date("m d, Y h:iA") 
-                        @view.date("m d, Y h:iA")
-                        @description("Generated timestamp that is updated whenever the row has changed.")
-                        @example("2025-10-01T12:00:00Z")
+enum Role {
+  ADMIN "ADMIN"
+  EDITOR "EDITOR"
+  USER "USER"
+}
+
+type Address {
+  street   String
+           @field.input({ type "text" placeholder "123 Main St" })
+  city     String
+           @field.input({ type "text" placeholder "Anytown" })
+  state    String?
+           @field.input({ type "text" placeholder "CA" })
+  zipCode  String
+           @is.ce(5)
+           @field.input({ type "text" placeholder "12345" })
+  country  String
+           @field.country({ defaultValue "US" })
+}
+
+model KitchenSinkFixture
+  @display("{{title}}")
+  @icon("sink")
+  @labels("The Kitchen Sink" "Kitchen Sinks")
+  @query("*" "basic.*")
+{
+  id          String    
+              @label("ID") 
+              @id @default("cuid()")
+              @list.overflow({ length 10 hellip true })
+              @description("Unique generated identifier.")
+              @example("pjfdz7tg8bcf7e2lig3iuej3")
+  basicId     String
+              @label("Basic Fixture") 
+              @description("1:1 Relation to BasicFixture model.")
+              @field.relation({ 
+                id "id"
+                search "/admin/profile/search?json&q={{QUERY}}"
+                template "{{name}}" 
+              }) 
+              @list.relation({ id "id" template "{{name}}" })
+              @view.relation({ id "id" template "{{name}}" })
+  title       String
+              @label("Title") 
+              @searchable @unique
+              @is.notempty @is.unique @is.ne("Untitled") @is.cge(5) @is.clt(255)
+              @field.input({ type "text" placeholder "Enter title here" })
+              @list.link({ to "/admin/kitchensink/{{id}}" })
+              @view.string
+              @description("Title of the item.")
+              @example("Sample Title")
+  notes       String?
+              @label("Notes") 
+              @is.wlt(50)
+              @field.textarea({ rows 4 placeholder "Enter notes here" })
+              @view.text
+  description Text
+              @field.text
+  bio         Text?
+              @field.markdown
+              @view.markdown
+  email       String
+              @encrypted
+              @is.email
+              @field.email
+              @view.email
+  password    String
+              @hashed
+              @field.password
+  currency    String
+              @is.regex("^[A-Z]{3}$" "Must be a valid 3-letter currency code.")
+              @field.currency
+              @filter.currency
+              @list.lowercase
+              @view.uppercase
+  price       Number? 
+              @min(0) @step(0.01)
+              @is.ge(0) @is.price
+              @field.price
+              @list.price
+              @view.price
+  age         Integer
+              @sortable @min(0) @max(100) @step(1) @default(18)
+              @is.ge(0) @is.le(100)
+              @field.slider({ min 0 max 100 step 1 })
+              @span.slider({ min 0 max 100 step 1 })
+              @list.number
+              @view.number
+  height      Float
+              @sortable @max(10) @step(0.1) @default(5.5)
+              @is.le(10)
+              @field.number({ min 0 max 10 step 0.1 })
+  tags        String[]
+              @field.tags
+              @list.tags
+              @view.tags
+  keywords    String[]
+              @field.textlist
+              @view.spread({ separator ", " })
+  rating      Integer
+              @min(1) @max(5) @step(1)
+              @is.ge(1) @is.le(5)
+              @field.rating
+              @list.rating
+              @view.rating
+  ratings     Number[]
+  comments    Object[]
+  history     Datetime[]
+  role        Role
+              @default("USER")
+              @is.option("ADMIN" "EDITOR" "USER" "Should be valid role")
+              @field.select(options ["ADMIN" "EDITOR" "USER"])
+  secondRole  Role?
+              @is.option("ADMIN" "EDITOR" "USER" "Should be valid role")
+              @field.select(options ["ADMIN" "EDITOR" "USER"])
+  approved    Boolean
+              @default(false)
+              @field.checkbox
+              @list.yesno
+              @view.yesno
+  homeAddress Address
+              @field.fieldset
+              @list.fieldset
+              @view.fieldset
+  workAddress Address?
+              @field.fieldset
+              @view.fieldset
+  addressBook Address[]
+              @field.fieldset
+              @view.fieldset
+  active      Boolean
+              @label("Is Active")
+              @active @default(true)
+              @field.switch
+              @list.yesno
+              @view.yesno
+  publishAt   Date?
+              @sortable
+              @is.date @is.future
+              @field.date
+  showAt      Time
+              @field.time
+  createdAt   Datetime
+              @sortable @default("now()")
+  updatedAt   Datetime
+              @sortable @default("now()") @updated
+  references  Hash 
+              @default({})
+              @field.metadata
+  data        Json 
+              @default("{}")
+  cache       Object?
+  basic       BasicFixture @relation({ local "basicId" foreign "id" })
 }

@@ -1,22 +1,22 @@
 //tests
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-import { mockFieldset } from '../../helpers.js';
+import { mockFieldset } from '../helpers.js';
 
 describe('schema/spec/Fieldset', () => {
   it('should return icon', async () => {
-    const fieldset = mockFieldset('User');
+    const fieldset = await mockFieldset('User');
     expect(fieldset.icon).to.be.undefined;
 
-    const actual = mockFieldset('User', '@icon("user")');
+    const actual = await mockFieldset('User', '@icon("user")');
     expect(actual.icon).to.equal('user');
   });
 
   it('should return labels', async () => {
-    const fieldset = mockFieldset('User');
+    const fieldset = await mockFieldset('User');
     expect(fieldset.labels).to.be.empty;
 
-    const actual = mockFieldset('User', '@labels("User" "Users")');
+    const actual = await mockFieldset('User', '@labels("User" "Users")');
     expect(actual.labels[0]).to.equal('User');
     expect(actual.labels[1]).to.equal('Users');
     expect(actual.singular).to.equal('User');
@@ -24,15 +24,15 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should return display', async () => {
-    const fieldset = mockFieldset('User');
+    const fieldset = await mockFieldset('User');
     expect(fieldset.display).to.be.undefined;
 
-    const actual = mockFieldset('User', '@display("User: {{name}}")');
+    const actual = await mockFieldset('User', '@display("User: {{name}}")');
     expect(actual.display).to.equal('User: {{name}}');
   });
 
   it('should manipulate name', async () => {
-    const fieldset = mockFieldset('UserComment');
+    const fieldset = await mockFieldset('UserComment');
     expect(fieldset.camelCase).to.equal('userComment');
     expect(fieldset.dashCase).to.equal('user-comment');
     expect(fieldset.lowerCase).to.equal('usercomment');
@@ -40,7 +40,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect columns assertions', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String @is.required @is.notempty',
       'age Integer @is.gte(18)',
       'email String @is.required @is.email'
@@ -49,7 +49,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect encrypted columns', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String',
       'ssn String @encrypted',
       'creditCard String @encrypted'
@@ -58,7 +58,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect columns with defaults', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String @default("John Doe")',
       'age Integer @default(30)',
       'createdAt Date @default("now()")',
@@ -72,7 +72,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect columns with descriptions', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String @description("Full name of the user")',
       'age Integer',
       'email String @description("Email address")'
@@ -84,7 +84,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect columns with examples', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String @examples("John Doe")',
       'age Integer',
       'email String @examples("john.doe@example.com")'
@@ -96,19 +96,19 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect enum columns', async () => {
-    const fieldset = mockFieldset('User', '', [ 'role Roles', 'name String' ]);
+    const fieldset = await mockFieldset('User', '', [ 'role Role', 'name String' ]);
     expect(fieldset.enums.length).to.equal(1);
   });
 
   it('should collect field columns', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String',
       'age Integer',
       'email String @field.mask'
     ]);
     expect(fieldset.fields.length).to.equal(1);
 
-    const nofields = mockFieldset('User', '', [
+    const nofields = await mockFieldset('User', '', [
       'name String',
       'age Integer',
       'email String'
@@ -117,7 +117,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect filter columns', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String @filter.text',
       'age Integer',
       'email String @filter.mask'
@@ -127,7 +127,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect span columns', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String',
       'age Integer @span.number',
       'email String',
@@ -137,7 +137,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect list columns', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String',
       'age Integer @list.number',
       'email String @list.email',
@@ -147,7 +147,7 @@ describe('schema/spec/Fieldset', () => {
   });
 
   it('should collect view columns', async () => {
-    const fieldset = mockFieldset('User', '', [
+    const fieldset = await mockFieldset('User', '', [
       'name String',
       'age Integer @view.number',
       'email String @view.email',

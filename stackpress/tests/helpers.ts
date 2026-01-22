@@ -15,8 +15,6 @@ import type {
 import { Lexer, Compiler } from '@stackpress/idea-parser';
 import { Transformer } from '@stackpress/idea-transformer';
 import definitions, { data, scan } from '@stackpress/idea-parser/definitions';
-//tests
-import schema from './fixtures/schema.js';
 //src
 import Registry from '../src/schema/Registry.js';
 import Column from '../src/schema/spec/Column.js';
@@ -25,47 +23,14 @@ import Model from '../src/schema/spec/Model.js';
 import Terminal from '../src/terminal/Terminal.js';
 import { server as http } from '../src/server/http';
 
-export { schema };
-
-export const auth = schema.model!.Auth;
-export const profile = schema.model!.Profile;
-export const registry = new Registry(schema);
-
-export const mocks = {
-  auth: {
-    schema: auth,
-    columns: Object.fromEntries(auth.columns.map(
-      column => [ column.name, column ]
-    )),
-    fieldset: new Fieldset(
-      registry, 
-      auth.name, 
-      auth.attributes, 
-      auth.columns
-    )
-  },
-  profile: {
-    schema: profile,
-    columns: Object.fromEntries(profile.columns.map(
-      column => [ column.name, column ]
-    )),
-    fieldset: new Fieldset(
-      registry, 
-      profile.name, 
-      profile.attributes, 
-      profile.columns
-    )
-  }
-};
-
 export const cwd = process.cwd();
-
 export const paths = {
   cwd,
   tests: path.join(cwd, 'tests'),
   idea: path.join(cwd, 'tests/fixtures/test.idea'),
   tsconfig: path.join(cwd, 'tsconfig.json'),
-  output: path.join(cwd, 'tests/out/lib'),
+  out: path.join(cwd, 'tests/out'),
+  lib: path.join(cwd, 'tests/out/lib'),
   build: path.join(cwd, 'tests/out/build')
 };
 
@@ -223,18 +188,37 @@ export class ColumnParser {
 };
 
 /**
+ * Mocks a registry instance
+ */
+export async function mockRegistry() {
+  return new Registry(await mockSchema());
+};
+
+/**
+ * Mocks a schema instance
+ */
+export async function mockSchema() {
+  const transformer = mockTransformer();
+  return await transformer.schema();
+};
+
+/**
  * Mocks a column from a code string
  */
-export function mockColumn(code: string) {
-  const { profile } = mocks;
+export async function mockColumn(code: string, fieldset = 'Address') {
+  const registry = await mockRegistry();
   const parser = new ColumnParser();
-  return new Column(profile.fieldset, parser.load(code).toColumn());
+  return new Column(
+    registry.fieldset.get(fieldset)!, 
+    parser.load(code).toColumn()
+  );
 };
 
 /**
  * Mocks a fieldset from a name, attributes string and columns strings
  */
-export function mockFieldset(name: string, attr = '', cols: string[] = []) {
+export async function mockFieldset(name: string, attr = '', cols: string[] = []) {
+  const registry = await mockRegistry();
   const parser = new ColumnParser();
   const attributes = attr.length ? parser.load(attr).toAttributes() : {};
   const columns = cols.map(col => parser.load(col).toColumn());
@@ -244,7 +228,8 @@ export function mockFieldset(name: string, attr = '', cols: string[] = []) {
 /**
  * Mocks a model from a name, attributes string and columns strings
  */
-export function mockModel(name: string, attr = '', cols: string[] = []) {
+export async function mockModel(name: string, attr = '', cols: string[] = []) {
+  const registry = await mockRegistry();
   const parser = new ColumnParser();
   const attributes = attr.length ? parser.load(attr).toAttributes() : {};
   const columns = cols.map(col => parser.load(col).toColumn());
@@ -275,8 +260,11 @@ export function mockTerminal(args: string[] = [], server = mockServer()) {
 /**
  * Mocks a transformer instance
  */
-export function mockTransformer(idea: string, loader = mockFileLoader()) {
-  return new Transformer(idea, loader);
+export function mockTransformer(
+  ideaFile = paths.idea, 
+  loader = mockFileLoader()
+) {
+  return new Transformer(ideaFile, loader);
 };
 
 /**
@@ -308,24 +296,6 @@ export function mockProjectDirectory(
 ) {
   const project = mockProject(tsconfig, outDir);
   return project.createDirectory(build);
-};
-
-/**
- * Makes directory if not exists
- */
-export function mkdir(dir: string) {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-};
-
-/**
- * Removes directory if exists
- */
-export function rmdir(dir: string) {
-  if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true, force: true });
-  }
 };
 
 /**

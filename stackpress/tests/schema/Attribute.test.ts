@@ -2,7 +2,7 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 //src
-import Attribute from '../../../src/schema/spec/Attribute.js';
+import Attribute from '../../src/schema/spec/Attribute.js';
 
 describe('schema/spec/Attribute', () => {
   it('should factory instantiate', async () => {

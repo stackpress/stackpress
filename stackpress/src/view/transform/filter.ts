@@ -262,7 +262,7 @@ export function generateField(
   //export function NameFiter(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}Filter`,
+    name: `${column.titleCase}FilterField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
@@ -286,7 +286,7 @@ export function generateField(
   //export function NameFilterControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FilterControl`,
+    name: `${column.titleCase}FilterFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -298,7 +298,7 @@ export function generateField(
       //render
       return (
         <FieldControl label={_('${column.label}')} error={error} className={className}>
-          <${column.titleCase}Filter
+          <${column.titleCase}FilterField
             error={!!error} 
             value={value} 
             change={change}

@@ -90,16 +90,17 @@ export default class Fieldset extends FieldsetAttributes {
   public get defaults() {
     const defaults: Record<string, any> = {};
     for (const column of this.columns.values()) {
+      const computed = column.defaultComputed;
       //if no default
-      if (typeof column.default === 'undefined' 
+      if (typeof computed === 'undefined' 
         || ( //or default is a generator
-          typeof column.default === 'string'
-          && generators.includes(column.default)
+          typeof computed === 'string'
+          && generators.includes(computed)
         )
       ) {
         continue;
       }
-      defaults[column.name] = column.default;
+      defaults[column.name] = computed;
     }
     return defaults;
   }

@@ -2,7 +2,7 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 //src
-import Attributes from '../../../src/schema/spec/Attributes.js';
+import Attributes from '../../src/schema/spec/Attributes.js';
 
 describe('schema/spec/Attributes', () => {
   it('should act like map', async () => {

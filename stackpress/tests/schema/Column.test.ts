@@ -1,18 +1,18 @@
 //tests
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-import { mockColumn } from '../../helpers.js';
+import { mockColumn } from '../helpers.js';
 
 describe('schema/spec/Column', () => {
   it('should determine active column', async () => {
-    const active = mockColumn('active Boolean @active');
+    const active = await mockColumn('active Boolean @active');
     expect(active.active).to.be.true;
-    const inactive = mockColumn('name String');
+    const inactive = await mockColumn('name String');
     expect(inactive.active).to.be.false;
   });
 
   it('should return admin attributes', async () => {
-    const column = mockColumn([
+    const column = await mockColumn([
       'age Number',
       '@active',
       '@is.gt(4)',
@@ -39,8 +39,10 @@ describe('schema/spec/Column', () => {
   });
 
   it('should return assertions', async () => {
-    expect(mockColumn('references Any?').assertions).to.be.empty;
-    expect(mockColumn('age Number').assertions.length).to.equal(2);
+    const references = await mockColumn('references Any?');
+    expect(references.assertions).to.be.empty;
+    const age = await mockColumn('age Number');
+    expect(age.assertions.length).to.equal(2);
     // expect(mockColumn('name String').assertions.length).to.equal(2);
 
     // const column = mockColumn([
@@ -74,43 +76,43 @@ describe('schema/spec/Column', () => {
   });
 
   it('should return char length', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
     expect(column.chars).to.equal(255);
 
-    const ceq = mockColumn('name String @is.ceq(4)');
+    const ceq = await mockColumn('name String @is.ceq(4)');
     expect(ceq.chars).to.equal(4);
 
-    const clt = mockColumn('name String @is.clt(5)');
+    const clt = await mockColumn('name String @is.clt(5)');
     expect(clt.chars).to.equal(5);
 
-    const cle = mockColumn('name String @is.cle(6)');
+    const cle = await mockColumn('name String @is.cle(6)');
     expect(cle.chars).to.equal(6);
   });
 
   it('should return default value', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
     expect(column.default).to.be.undefined;
 
-    const number = mockColumn('age Number @default(4)');
+    const number = await mockColumn('age Number @default(4)');
     expect(number.default).to.equal(4);
 
-    const string = mockColumn('name String @default("some default")');
+    const string = await mockColumn('name String @default("some default")');
     expect(string.default).to.equal('some default');
 
-    const boolean = mockColumn('active Boolean @default(true)');
+    const boolean = await mockColumn('active Boolean @default(true)');
     expect(boolean.default).to.equal(true);
   });
 
   it('should describe column', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
     expect(column.description).to.be.undefined;
 
-    const actual = mockColumn('name String @description("Please describe")');
+    const actual = await mockColumn('name String @description("Please describe")');
     expect(actual.description).to.equal('Please describe');
   });
 
   it('should enable flags', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
     expect(column.encrypted).to.be.false;
     expect(column.generated).to.be.false;
     expect(column.hashed).to.be.false;
@@ -120,7 +122,7 @@ describe('schema/spec/Column', () => {
     expect(column.unique).to.be.false;
     expect(column.updated).to.be.false;
 
-    const actual = mockColumn([
+    const actual = await mockColumn([
       'name String',
       '@encrypted',
       '@generated',
@@ -142,28 +144,28 @@ describe('schema/spec/Column', () => {
   });
 
   it('should have examples', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
     expect(column.examples).to.be.empty;
 
-    const actual = mockColumn('name String @examples("Example 1" 42 true)');
+    const actual = await mockColumn('name String @examples("Example 1" 42 true)');
     expect(actual.examples).to.include('Example 1');
     expect(actual.examples).to.include(42);
     expect(actual.examples).to.include(true);
   });
 
   it('should return label', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
     expect(column.label).to.be.undefined;
 
-    const actual = mockColumn('name String @label("Full Name")');
+    const actual = await mockColumn('name String @label("Full Name")');
     expect(actual.label).to.equal('Full Name');
   });
 
   it('should return relation', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
     expect(column.relation).to.be.undefined;
 
-    const actual = mockColumn([
+    const actual = await mockColumn([
       'userId String',
       '@relation({',
       'name "connections"',
@@ -177,13 +179,14 @@ describe('schema/spec/Column', () => {
   });
 
   it('should get component tokens', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
     expect(column.field).to.be.null;
     expect(column.filter).to.be.null;
 
-    expect(mockColumn('name String @field.none').field).to.be.null;
+    const name = await mockColumn('name String @field.none');
+    expect(name.field).to.be.null;
 
-    const actual = mockColumn([
+    const actual = await mockColumn([
       'name String',
       '@field.input({ type "text" })',
       '@filter.input({ type "text" })',
@@ -218,12 +221,12 @@ describe('schema/spec/Column', () => {
   });
 
   it('should get min/max/step', async () => {
-    const column = mockColumn('age Number');
+    const column = await mockColumn('age Number');
     expect(column.max).to.equal(0);
     expect(column.min).to.equal(0);
     expect(column.step).to.equal(1);
 
-    const explicit = mockColumn([
+    const explicit = await mockColumn([
       'age Number',
       '@max(10)',
       '@min(2)',
@@ -233,7 +236,7 @@ describe('schema/spec/Column', () => {
     expect(explicit.min).to.equal(2);
     expect(explicit.step).to.equal(0.5);
 
-    const implicit = mockColumn([
+    const implicit = await mockColumn([
       'age Number',
       '@is.le(8.5)',
       //note this quirk
@@ -248,28 +251,37 @@ describe('schema/spec/Column', () => {
 
   it('should find errors', async () => {
     //type assertions
-    expect(mockColumn('name String').assert(4)).to.equal('Must be a string.');
-    expect(mockColumn('name Text').assert(4)).to.equal('Must be a string.');
-    expect(mockColumn('age Number').assert('not a number')).to.equal('Must be a number.');
-    expect(mockColumn('age Integer').assert('not a number')).to.equal('Must be a valid integer format.');
-    expect(mockColumn('height Float').assert('not a number')).to.equal('Must be a valid float number.');
-    expect(mockColumn('active Boolean').assert('not a boolean')).to.equal('Must be a boolean.');
-    expect(mockColumn('created Date').assert('not a date')).to.equal('Must be a valid date.');
-    expect(mockColumn('data Hash').assert('not a date')).to.equal('Must be an object.');
-    expect(mockColumn('data Object').assert('not a date')).to.equal('Must be an object.');
-    expect(mockColumn('data Json').assert('not a date')).to.equal('Must be an object.');
+    const name1 = await mockColumn('name String');
+    expect(name1.assert(4)).to.equal('Must be a string.');
+
+    const name2 = await mockColumn('name Text');
+    expect(name2.assert(4)).to.equal('Must be a string.');
+    const age = await mockColumn('age Number');
+    expect(age.assert('not a number')).to.equal('Must be a number.');
+    const age2 = await mockColumn('age Integer');
+    expect(age2.assert('not a number')).to.equal('Must be a valid integer format.');
+    const height = await mockColumn('height Float');
+    expect(height.assert('not a number')).to.equal('Must be a valid float number.');
+    const active = await mockColumn('active Boolean');
+    expect(active.assert('not a boolean')).to.equal('Must be a boolean.');
+    const created = await mockColumn('created Date');
+    expect(created.assert('not a date')).to.equal('Must be a valid date.');
+    const data1 = await mockColumn('data Hash');
+    expect(data1.assert('not a date')).to.equal('Must be an object.');
+    const data2 = await mockColumn('data Object');
+    expect(data2.assert('not a date')).to.equal('Must be an object.');
+    const data3 = await mockColumn('data Json');
+    expect(data3.assert('not a date')).to.equal('Must be an object.');
     //TODO:
     //expect(mockColumn('tags String[]').assert(4)).to.equal('Must be an array.');
 
     //explicit assertions
-    expect(
-      mockColumn('age Number @is.gt(4)').assert(2)
-    ).to.equal('Must be greater than 4.');
+    const age3 = await mockColumn('age Number @is.gt(4)');
+    expect(age3.assert(2)).to.equal('Must be greater than 4.');
 
     //override messages
-    expect(
-      mockColumn('name String @is.string("Should be string")').assert(4)
-    ).to.equal('Should be string');
+    const name3 = await mockColumn('name String @is.string("Should be string")');
+    expect(name3.assert(4)).to.equal('Should be string');
   });
 
   //fixtures
@@ -277,7 +289,7 @@ describe('schema/spec/Column', () => {
   
   it('should serialize unknown values', async () => {
     //unknown type
-    const unknown = mockColumn('name Unknown');
+    const unknown = await mockColumn('name Unknown');
     
     let actual = unknown.serialize('Some Name');
     expect(actual).to.equal('Some Name');
@@ -297,7 +309,7 @@ describe('schema/spec/Column', () => {
 
   it('should serialize string values', async () => {
     //string type
-    const string = mockColumn('name String');
+    const string = await mockColumn('name String');
 
     let actual = string.serialize('Some Name');
     expect(actual).to.equal('Some Name');
@@ -313,7 +325,9 @@ describe('schema/spec/Column', () => {
 
     actual = string.serialize(null);
     expect(actual).to.equal('null');
-    actual = mockColumn('name String?').serialize(null);
+
+    const name = await mockColumn('name String?');
+    actual = name.serialize(null);
     expect(actual).to.be.null;
 
     
@@ -326,7 +340,7 @@ describe('schema/spec/Column', () => {
 
   it('should serialize number values', async () => {
     //number type (Number, Integer, Float)
-    const number = mockColumn('age Number');
+    const number = await mockColumn('age Number');
     
     let actual = number.serialize('Some Name');
     expect(actual).to.equal(0);
@@ -352,7 +366,7 @@ describe('schema/spec/Column', () => {
 
   it('should serialize boolean values', async () => {
     //boolean type
-    const boolean = mockColumn('active Boolean');
+    const boolean = await mockColumn('active Boolean');
 
     let actual = boolean.serialize('Some Name');
     expect(actual).to.equal(true);
@@ -403,7 +417,7 @@ describe('schema/spec/Column', () => {
 
   it('should serialize date values', async () => {
     //date type (Date, Time, Datetime)
-    const datetime = mockColumn('created Datetime');
+    const datetime = await mockColumn('created Datetime');
 
     let actual = datetime.serialize(date);
     expect((actual as Date)?.toISOString()).to.equal(date.toISOString());
@@ -414,7 +428,8 @@ describe('schema/spec/Column', () => {
     actual = datetime.serialize(null);
     expect((actual as Date)?.toISOString()).to.equal(new Date(0).toISOString());
 
-    actual = mockColumn('created Datetime?').serialize(null);
+    const created1 = await mockColumn('created Datetime?');
+    actual = created1.serialize(null);
     expect(actual).to.be.null;
 
     actual = datetime.serialize('2020-01-01 12:00:00', true);
@@ -426,7 +441,8 @@ describe('schema/spec/Column', () => {
     actual = datetime.serialize(null, true);
     expect(actual).to.equal('1970-01-01 08:00:00');
 
-    actual = mockColumn('created Datetime?').serialize(null, true);
+    const created2 = await mockColumn('created Datetime?');
+    actual = created2.serialize(null, true);
     expect(actual).to.be.null;
 
     actual = datetime.serialize(undefined);
@@ -435,7 +451,7 @@ describe('schema/spec/Column', () => {
 
   it('should serialize object values', async () => {
     //object type (Json, Object, Hash)
-    const object = mockColumn('data Json');
+    const object = await mockColumn('data Json');
 
     let actual = object.serialize({ key: 'value' }, true);
     expect(actual).to.equal('{"key":"value"}');
@@ -446,7 +462,9 @@ describe('schema/spec/Column', () => {
 
     actual = object.serialize(null, true);
     expect(actual).to.equal('null');
-    actual = mockColumn('data Json?').serialize(null, true);
+
+    const data1 = await mockColumn('data Json?');
+    actual = data1.serialize(null, true);
     expect(actual).to.equal(null);
 
     actual = object.serialize({ key: 'value' });
@@ -459,7 +477,9 @@ describe('schema/spec/Column', () => {
 
     actual = object.serialize(null);
     expect(actual).to.equal(null);
-    actual = mockColumn('data Json?').serialize(null);
+
+    const data2 = await mockColumn('data Json?');
+    actual = data2.serialize(null);
     expect(actual).to.be.null;
 
     actual = object.serialize(undefined);
@@ -467,7 +487,7 @@ describe('schema/spec/Column', () => {
   });
 
   it('should unserialize string values', async () => {
-    const column = mockColumn('name String');
+    const column = await mockColumn('name String');
 
     let actual = column.unserialize('Some Name');
     expect(actual).to.equal('Some Name');
