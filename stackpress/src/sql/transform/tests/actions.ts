@@ -52,7 +52,7 @@ export default function generate(directory: Directory, registry: Registry) {
   //loop through models
   for (const model of order.reverse()) {
     //does any of the existing tables depend on this table?
-    const dependents = model.relations
+    const dependents = model.parentRelations
       .filter(column => column.model)
       .map(column => {
         const relation = column.parentRelation;

@@ -65,7 +65,6 @@ export default async function generate(props: IdeaPluginWithProject) {
 
   //-----------------------------//
   // 3. Profile/index.ts
-
   for (const model of registry.model.values()) {
     const filepath = `${model.name}/index.ts`;
     //load profile/index.ts if it exists, if not create it

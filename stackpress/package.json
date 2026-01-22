@@ -480,7 +480,8 @@
     "build:tsc:cjs": "tsc -p ./tsconfig.cjs.json",
     "build:tsc:esm": "tsc -p ./tsconfig.esm.json",
     "report": "nyc report -r lcov",
-    "test": "yarn test:env nyc ts-mocha -r tsx tests/bootstrap.ts tests/**/*.test.{ts,tsx}",
+    "test": "yarn test:env nyc ts-mocha -r tsx tests/bootstrap.ts tests/**/*.test.ts && yarn test:teardown",
+    "test:teardown": "yarn test:env tsx tests/teardown.ts",
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {

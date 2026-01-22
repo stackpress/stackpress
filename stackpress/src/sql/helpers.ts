@@ -144,7 +144,7 @@ export function sequence(models: Model[]) {
     //loop through all the existing table create schemas
     for (const model of floating) {
       //does any of the existing tables depend on this table?
-      const dependents = floating.filter(float => float.relations
+      const dependents = floating.filter(float => float.parentRelations
         .map(column => column.type)
         .find(table => table === model.name)
       );
