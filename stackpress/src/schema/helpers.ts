@@ -117,20 +117,6 @@ export function lowerize(word: string) {
 }
 
 /**
- * Maps the values of an object using a mapper function
- */
-export function mapObjectValue<T, U>(
-  object: Record<string, T>, 
-  mapper: (value: T, key: string) => U
-) {
-  return Object.fromEntries(
-    Object.entries(object).map(([ key, value ]) => {
-      return [ key, mapper(value, key) ];
-    })
-  );
-};
-
-/**
  * Converts a string into dash format
  * ie. "some string" to "some_string"
  * ie. "someString" to "some_string"

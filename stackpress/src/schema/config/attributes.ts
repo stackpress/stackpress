@@ -1,18 +1,28 @@
-//modules
-import type { Data } from '@stackpress/idea-parser';
-//schema
+//stackpress/schema
 import type { 
-  AttributeData, 
-  AttributeConfig, 
-  AttributeConfigComponent ,
-  SchemaComponent
-} from './types.js';
-import { mapObjectValue } from './helpers.js';
+  AttributeDataMap,
+  AttributeDataComponent,
+  AttributeDataAssertion
+} from '../types.js';
 
-type AttributeDataMap = Record<string, Required<AttributeData>>;
-type AttributeConfigMap = Record<string, Record<string, Required<AttributeConfig>>>;
+/**
+ * Maps the values of an object using a mapper function
+ */
+export function mapObjectValue<T, U>(
+  object: Record<string, T>, 
+  mapper: (value: T, key: string) => U
+) {
+  return Object.fromEntries(
+    Object.entries(object).map(([ key, value ]) => {
+      return [ key, mapper(value, key) ];
+    })
+  );
+};
 
-const model: AttributeDataMap = {
+//--------------------------------------------------------------------//
+// Builtin Schema Attribute Definitions
+
+const schema: AttributeDataMap = {
   "display": {
     "type": [ "method" ],
     "name": "display",
@@ -81,6 +91,9 @@ const model: AttributeDataMap = {
     "data": {}
   }
 };
+
+//--------------------------------------------------------------------//
+// Builtin Column Attribute Definitions
 
 const column: AttributeDataMap = {
   "active": {
@@ -278,7 +291,10 @@ const column: AttributeDataMap = {
   }
 };
 
-const assert: AttributeDataMap = {
+//--------------------------------------------------------------------//
+// Builtin Assertion Attribute Definitions
+
+const assert: AttributeDataMap<AttributeDataAssertion> = {
   "required": {
     "type": [ "flag", "method" ],
     "name": "is.required",
@@ -293,6 +309,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "required",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Value is required."
     }
   },
@@ -310,6 +331,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "notempty",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must not be empty."
     }
   },
@@ -327,6 +353,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "unique",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Already exists."
     }
   },
@@ -351,6 +382,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "eq",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be equal to {{arg}}."
     }
   },
@@ -375,6 +411,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "ne",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must not be equal to {{arg}}."
     }
   },
@@ -399,6 +440,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "option",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid option."
     }
   },
@@ -423,6 +469,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "regex",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Invalid format."
     }
   },
@@ -440,6 +491,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "date",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid date."
     }
   },
@@ -457,6 +513,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "future",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a future date."
     }
   },
@@ -474,6 +535,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "past",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a past date."
     }
   },
@@ -491,6 +557,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "present",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be within the present date."
     }
   },
@@ -515,6 +586,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "gt",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be greater than {{arg}}."
     }
   },
@@ -539,6 +615,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "ge",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be greater than or equal to {{arg}}."
     }
   },
@@ -563,6 +644,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "lt",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be less than {{arg}}."
     }
   },
@@ -587,6 +673,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "le",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be less than or equal to {{arg}}."
     }
   },
@@ -611,6 +702,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "ceq",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be {{arg}} characters."
     }
   },
@@ -635,6 +731,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "cgt",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be greater than {{arg}} characters."
     }
   },
@@ -659,6 +760,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "cge",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be greater than or equal to {{arg}} characters."
     }
   },
@@ -683,6 +789,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "clt",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be less than {{arg}} characters."
     }
   },
@@ -707,6 +818,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "cle",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be less than or equal to {{arg}} characters."
     }
   },
@@ -731,6 +847,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "weq",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be {{arg}} words."
     }
   },
@@ -755,6 +876,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "wgt",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be greater than {{arg}} words."
     }
   },
@@ -779,6 +905,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "wge",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be greater than or equal to {{arg}} words."
     }
   },
@@ -803,6 +934,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "wlt",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be less than {{arg}} words."
     }
   },
@@ -827,6 +963,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "wle",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be less than or equal to {{arg}} words."
     }
   },
@@ -844,6 +985,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "cc",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid credit card number."
     }
   },
@@ -861,6 +1007,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "color",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid color format."
     }
   },
@@ -878,6 +1029,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "email",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid email address."
     }
   },
@@ -895,6 +1051,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "hex",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid hex value."
     }
   },
@@ -912,6 +1073,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "price",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid price format."
     }
   },
@@ -929,6 +1095,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "url",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid URL."
     }
   },
@@ -946,6 +1117,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "string",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a string."
     }
   },
@@ -963,6 +1139,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "boolean",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a boolean."
     }
   },
@@ -980,6 +1161,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "number",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a number."
     }
   },
@@ -997,6 +1183,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "float",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid float number."
     }
   },
@@ -1014,6 +1205,11 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "integer",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be a valid integer format."
     }
   },
@@ -1031,14 +1227,22 @@ const assert: AttributeDataMap = {
       }
     ],
     "data": {
+      "name": "object",
+      "import": {
+        "from": "stackpress/schema/assert",
+        "default": false
+      },
       "message": "Must be an object."
     }
   }
 };
 
-const field: AttributeDataMap = {
+//--------------------------------------------------------------------//
+// Builtin Field Attribute Definitions
+
+const field: AttributeDataMap<AttributeDataComponent> = {
   "checkbox": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.checkbox",
     "description": "Use a checkbox to represent this column in a field.",
     "args": [
@@ -1132,16 +1336,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Checkbox",
+      "name": "Checkbox",
       "import": {
         "from": "frui/form/Checkbox",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "code": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.code",
     "description": "Use a code editor to represent this column in a field.",
     "args": [
@@ -1187,16 +1391,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "CodeEditor",
+      "name": "CodeEditor",
       "import": {
         "from": "frui/form/CodeEditor",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "color": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.color",
     "description": "Use a color field to represent this column in a field.",
     "args": [
@@ -1237,16 +1441,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "ColorInput",
+      "name": "ColorInput",
       "import": {
         "from": "frui/form/ColorInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "country": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.country",
     "description": "Use a country select to represent this column in a field.",
     "args": [
@@ -1317,16 +1521,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "CountrySelect",
+      "name": "CountrySelect",
       "import": {
         "from": "frui/form/CountrySelect",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "currency": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.currency",
     "description": "Use a currency select to represent this column in a field.",
     "args": [
@@ -1397,16 +1601,16 @@ const field: AttributeDataMap = {
       } 
     ],
     "data": {
-      "component": "CurrencySelect",
+      "name": "CurrencySelect",
       "import": {
         "from": "frui/form/CurrencySelect",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "date": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.date",
     "description": "Use a date input to represent this column in a field.",
     "args": [
@@ -1428,16 +1632,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "DateInput",
+      "name": "DateInput",
       "import": {
         "from": "frui/form/DateInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "datelist": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.datelist",
     "description": "Use a date list to represent this column in a field.",
     "args": [
@@ -1475,18 +1679,18 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextList",
+      "name": "TextList",
       "import": {
         "from": "frui/form/TextList",
         "default": true
       },
-      "props": {
+      "attributes": {
         "type": "date"
       }
     }
   },
   "datetime": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.datetime",
     "description": "Use a datetime input to represent this column in a field.",
     "args": [
@@ -1508,16 +1712,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "DatetimeInput",
+      "name": "DatetimeInput",
       "import": {
         "from": "frui/form/DatetimeInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "datetimelist": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.datetimelist",
     "description": "Use a datetime list to represent this column in a field.",
     "args": [
@@ -1555,12 +1759,12 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextList",
+      "name": "TextList",
       "import": {
         "from": "frui/form/TextList",
         "default": true
       },
-      "props": {
+      "attributes": {
         "type": "datetime"
       }
     }
@@ -1588,30 +1792,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Input",
+      "name": "Input",
       "import": {
         "from": "frui/form/Input",
         "default": true
       },
-      "props": { "type": "email" }
-    }
-  },
-  "fieldset": {
-    "type": [ "component" ],
-    "name": "field.fieldset",
-    "description": "Special fieldset field to group other fields together.",
-    "args": [],
-    "data": {
-      "component": "Fieldset",
-      "import": {
-        "from": "Fieldset",
-        "default": true
-      },
-      "props": {}
+      "attributes": { "type": "email" }
     }
   },
   "file": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.file",
     "description": "Use a file input to represent this column in a field.",
     "args": [
@@ -1641,16 +1831,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "FileInput",
+      "name": "FileInput",
       "import": {
         "from": "frui/form/FileInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "filelist": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.filelist",
     "description": "Use a file list field to represent this column in a field.",
     "args": [
@@ -1680,16 +1870,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "FileList",
+      "name": "FileList",
       "import": {
         "from": "frui/form/FileList",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "image": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.image",
     "description": "Use an image input to represent this column in a field.",
     "args": [
@@ -1711,16 +1901,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "ImageInput",
+      "name": "ImageInput",
       "import": {
         "from": "frui/form/ImageInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "imagelist": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.imagelist",
     "description": "Use an image list field to represent this column in a field.",
     "args": [
@@ -1742,16 +1932,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "ImageList",
+      "name": "ImageList",
       "import": {
         "from": "frui/form/ImageList",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "input": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.input",
     "description": "Use an input to represent this column in a field.",
     "args": [
@@ -1781,16 +1971,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Input",
+      "name": "Input",
       "import": {
         "from": "frui/form/Input",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "integer": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.integer",
     "description": "Use an integer input to represent this column in a field.",
     "args": [
@@ -1844,16 +2034,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "NumberInput",
+      "name": "NumberInput",
       "import": {
         "from": "frui/form/NumberInput",
         "default": true
       },
-      "props": { "step": 1 }
+      "attributes": { "step": 1 }
     }
   },
   "json": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.json",
     "description": "Use a raw JSON editor to represent this column in a field.",
     "args": [
@@ -1883,19 +2073,19 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "CodeEditor",
+      "name": "CodeEditor",
       "import": {
         "from": "frui/form/CodeEditor",
         "default": true
       },
-      "props": {
+      "attributes": {
         "language": "json",
         "setup": "basic"
       }
     }
   },
   "markdown": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.markdown",
     "description": "Use a markdown editor to represent this column in a field.",
     "args": [
@@ -1925,16 +2115,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "MarkdownEditor",
+      "name": "MarkdownEditor",
       "import": {
         "from": "frui/form/MarkdownEditor",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "mask": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.mask",
     "description": "Use a mask input to represent this column in a field.",
     "args": [
@@ -1964,16 +2154,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "MaskInput",
+      "name": "MaskInput",
       "import": {
         "from": "frui/form/MaskInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "metadata": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.metadata",
     "description": "Use a metadata field to represent this column in a field.",
     "args": [
@@ -2043,16 +2233,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Metadata",
+      "name": "Metadata",
       "import": {
         "from": "frui/form/Metadata",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "number": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.number",
     "description": "Use a number input to represent this column in a field.",
     "args": [
@@ -2122,16 +2312,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "NumberInput",
+      "name": "NumberInput",
       "import": {
         "from": "frui/form/NumberInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "numberlist": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.numberlist",
     "description": "Use a number list to represent this column in a field.",
     "args": [
@@ -2169,18 +2359,18 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextList",
+      "name": "TextList",
       "import": {
         "from": "frui/form/TextList",
         "default": true
       },
-      "props": {
+      "attributes": {
         "type": "number"
       }
     }
   },
   "password": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.password",
     "description": "Use a password input to represent this column in a field.",
     "args": [
@@ -2202,16 +2392,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "PasswordInput",
+      "name": "PasswordInput",
       "import": {
         "from": "frui/form/PasswordInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "phone": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.phone",
     "description": "Use a phone input to represent this column in a field.",
     "args": [
@@ -2314,16 +2504,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "PhoneInput",
+      "name": "PhoneInput",
       "import": {
         "from": "frui/form/PhoneInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "price": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.price",
     "description": "Use a price input to represent this column in a field.",
     "args": [
@@ -2385,16 +2575,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "NumberInput",
+      "name": "NumberInput",
       "import": {
         "from": "frui/form/NumberInput",
         "default": true
       },
-      "props": { "step": 0.01 }
+      "attributes": { "step": 0.01 }
     }
   },
   "radio": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.radio",
     "description": "Use a radio button to represent this column in a field.",
     "args": [
@@ -2488,16 +2678,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Radio",
+      "name": "Radio",
       "import": {
         "from": "frui/form/Radio",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "rating": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.rating",
     "description": "Use a rating field to represent this column in a field.",
     "args": [
@@ -2535,55 +2725,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Rating",
+      "name": "Rating",
       "import": {
         "from": "frui/form/Rating",
         "default": true
       },
-      "props": {}
-    }
-  },
-  "relation": {
-    "type": [ "component" ],
-    "name": "field.relation",
-    "description": "Special relation field to link to another model.",
-    "args": [
-      {
-        "spread": false,
-        "type": [ "string" ],
-        "name": "id",
-        "required": true,
-        "description": "ID name to be used as the select value",
-        "examples": [ "id" ]
-      },
-      {
-        "spread": false,
-        "type": [ "string" ],
-        "name": "search",
-        "required": true,
-        "description": "Search URL to be used for fetching related data",
-        "examples": [ "/admin/profile/search?json" ]
-      },
-      {
-        "spread": false,
-        "type": [ "string" ],
-        "name": "template",
-        "required": true,
-        "description": "Template used to display related items in the select options",
-        "examples": [ "{{name}}" ]
-      },
-    ],
-    "data": {
-      "component": "Relation",
-      "import": {
-        "from": "Relation",
-        "default": true
-      },
-      "props": {}
+      "attributes": {}
     }
   },
   "select": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.select",
     "description": "Use a select to represent this column in a field.",
     "args": [
@@ -2646,16 +2797,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Select",
+      "name": "Select",
       "import": {
         "from": "frui/form/Select",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "slider": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.slider",
     "description": "Use a slider to represent this column in a field.",
     "args": [
@@ -2934,16 +3085,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Slider",
+      "name": "Slider",
       "import": {
         "from": "frui/form/Slider",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "slug": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.slug",
     "description": "Use a slug input to represent this column in a field.",
     "args": [
@@ -2965,16 +3116,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "SlugInput",
+      "name": "SlugInput",
       "import": {
         "from": "frui/form/SlugInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "small": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.small",
     "description": "Use a small input to represent this column in a field.",
     "args": [
@@ -2996,16 +3147,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "NumberInput",
+      "name": "NumberInput",
       "import": {
         "from": "frui/form/NumberInput",
         "default": true
       },
-      "props": { "max": 9, "min": 0, "step": 1 }
+      "attributes": { "max": 9, "min": 0, "step": 1 }
     }
   },
   "stringlist": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.stringlist",
     "description": "Use a string list to represent this column in a field.",
     "args": [
@@ -3043,18 +3194,18 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextList",
+      "name": "TextList",
       "import": {
         "from": "frui/form/TextList",
         "default": true
       },
-      "props": {
+      "attributes": {
         "type": "string"
       }
     }
   },
   "suggest": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.suggest",
     "description": "Use a suggest input to represent this column in a field.",
     "args": [
@@ -3092,16 +3243,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "SuggestInput",
+      "name": "SuggestInput",
       "import": {
         "from": "frui/form/SuggestInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "switch": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.switch",
     "description": "Use a switch to represent this column in a field.",
     "args": [
@@ -3195,16 +3346,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Switch",
+      "name": "Switch",
       "import": {
         "from": "frui/form/Switch",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "tags": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.tags",
     "description": "Use a tag list input to represent this column in a field.",
     "args": [
@@ -3282,16 +3433,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TagList",
+      "name": "TagList",
       "import": {
         "from": "frui/form/TagList",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "textarea": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.textarea",
     "description": "Use a textarea to represent this column in a field.",
     "args": [
@@ -3321,16 +3472,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Textarea",
+      "name": "Textarea",
       "import": {
         "from": "frui/form/Textarea",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "editor": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.editor",
     "description": "Use a text editor to represent this column in a field.",
     "args": [
@@ -3560,16 +3711,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextEditor",
+      "name": "TextEditor",
       "import": {
         "from": "frui/form/TextEditor",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "textlist": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.textlist",
     "description": "Use a text list to represent this column in a field.",
     "args": [
@@ -3615,16 +3766,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextList",
+      "name": "TextList",
       "import": {
         "from": "frui/form/TextList",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "time": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.time",
     "description": "Use a time input to represent this column in a field.",
     "args": [
@@ -3646,16 +3797,16 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TimeInput",
+      "name": "TimeInput",
       "import": {
         "from": "frui/form/TimeInput",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "timelist": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "field.timelist",
     "description": "Use a time list to represent this column in a field.",
     "args": [
@@ -3693,35 +3844,119 @@ const field: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextList",
+      "name": "TextList",
       "import": {
         "from": "frui/form/TextList",
         "default": true
       },
-      "props": {
+      "attributes": {
         "type": "time"
       }
     }
   }
 };
 
-const view: AttributeDataMap = {
+//special fields
+field.fieldset = {
+  "type": [ "component" ],
+  "name": "field.fieldset",
+  "description": "Special fieldset field to group other fields together.",
+  "args": [],
+  "data": {
+    "name": "Fieldset",
+    "import": {
+      "from": "Fieldset",
+      "default": true
+    },
+    "attributes": {}
+  }
+};
+
+field.relation = {
+  "type": [ "component" ],
+  "name": "field.relation",
+  "description": "Special relation field to link to another model.",
+  "args": [
+    {
+      "spread": false,
+      "type": [ "string" ],
+      "name": "id",
+      "required": true,
+      "description": "ID name to be used as the select value",
+      "examples": [ "id" ]
+    },
+    {
+      "spread": false,
+      "type": [ "string" ],
+      "name": "search",
+      "required": true,
+      "description": "Search URL to be used for fetching related data",
+      "examples": [ "/admin/profile/search?json" ]
+    },
+    {
+      "spread": false,
+      "type": [ "string" ],
+      "name": "template",
+      "required": true,
+      "description": "Template used to display related items in the select options",
+      "examples": [ "{{name}}" ]
+    },
+  ],
+  "data": {
+    "name": "Relation",
+    "import": {
+      "from": "Relation",
+      "default": true
+    },
+    "attributes": {}
+  }
+};
+
+//aliases
+//add aliases
+field.taglist = { ...field.tags, name: 'field.taglist' };
+// type to field aliases
+field.string = { ...field.input, name: 'field.string' };
+field.text = { ...field.textarea, name: 'field.text' };
+field.float = { ...field.number, name: 'field.float' };
+field.boolean = { ...field.switch, name: 'field.boolean' };
+field.object = { ...field.json, name: 'field.object' };
+field.hash = { ...field.json, name: 'field.hash' };
+//type multiple to field aliases
+field.strings = { ...field.stringlist, name: 'field.strings' };
+field.texts = { ...field.stringlist, name: 'field.texts' };
+field.dates = { ...field.datelist, name: 'field.dates' };
+field.datetimes = { ...field.datetimelist, name: 'field.datetimes' };
+field.times = { ...field.timelist, name: 'field.times' };
+field.integerlist = { ...field.numberlist, name: 'field.integerlist' };
+field.integers = { ...field.numberlist, name: 'field.integers' };
+field.floatlist = { ...field.numberlist, name: 'field.floatlist' };
+field.floats = { ...field.numberlist, name: 'field.floats' };
+field.numbers = { ...field.numberlist, name: 'field.numbers' };
+//TODO: field.jsonlist
+//field.objects = field.jsonlist;
+//field.hashes = field.jsonlist;
+
+//--------------------------------------------------------------------//
+// Builtin View Attribute Definitions
+
+const view: AttributeDataMap<AttributeDataComponent> = {
   "capitalize": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.capitalize",
     "description": "Use capitalize to represent this column in a detail view.",
     "args": [],
     "data": {
-      "component": "TextTransform",
+      "name": "TextTransform",
       "import": {
         "from": "frui/view/TextTransform",
         "default": true
       },
-      "props": { "format": "capitalize" }
+      "attributes": { "format": "capitalize" }
     }
   },
   "carousel": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.carousel",
     "description": "Use image carousel to represent this column in a detail view.",
     "args": [
@@ -3807,16 +4042,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "ImageCarousel",
+      "name": "ImageCarousel",
       "import": {
         "from": "frui/view/ImageCarousel",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "chars": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.chars",
     "description": "Use chars to represent this column in a detail view.",
     "args": [
@@ -3838,16 +4073,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextOverflow",
+      "name": "TextOverflow",
       "import": {
         "from": "frui/view/TextOverflow",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "code": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.code",
     "description": "Use code view to represent this column in a detail view.",
     "args": [
@@ -3933,16 +4168,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Code",
+      "name": "Code",
       "import": {
         "from": "frui/view/Code",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "color": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.color",
     "description": "Use color view to represent this column in a detail view.",
     "args": [
@@ -4004,16 +4239,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Color",
+      "name": "Color",
       "import": {
         "from": "frui/view/Color",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "comma": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.comma",
     "description": "Use comma separator to represent this column in a detail view.",
     "args": [
@@ -4035,16 +4270,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Spread",
+      "name": "Spread",
       "import": {
         "from": "frui/view/Spread",
         "default": true
       },
-      "props": { "separator": ", "}
+      "attributes": { "separator": ", "}
     }
   },
   "country": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.country",
     "description": "Use country view to represent this column in a detail view.",
     "args": [
@@ -4106,16 +4341,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Country",
+      "name": "Country",
       "import": {
         "from": "frui/view/Country",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "currency": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.currency",
     "description": "Use currency view to represent this column in a detail view.",
     "args": [
@@ -4177,16 +4412,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Currency",
+      "name": "Currency",
       "import": {
         "from": "frui/view/Currency",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "date": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.date",
     "description": "Use date view to represent this column in a detail view.",
     "args": [
@@ -4208,16 +4443,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "DateFormat",
+      "name": "DateFormat",
       "import": {
         "from": "frui/view/DateFormat",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "email": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.email",
     "description": "Use email link view to represent this column in a detail view.",
     "args": [
@@ -4255,30 +4490,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "EmailLink",
+      "name": "EmailLink",
       "import": {
         "from": "frui/view/EmailLink",
         "default": true
       },
-      "props": {}
-    }
-  },
-  "fieldset": {
-    "type": [ "component" ],
-    "name": "view.fieldset",
-    "description": "Special fieldset view to group other fields together.",
-    "args": [],
-    "data": {
-      "component": "Fieldset",
-      "import": {
-        "from": "Fieldset",
-        "default": true
-      },
-      "props": {}
+      "attributes": {}
     }
   },
   "formula": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.formula",
     "description": "Use a formula to represent this column in a detail view.",
     "args": [
@@ -4292,30 +4513,30 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Formula",
+      "name": "Formula",
       "import": {
         "from": "frui/view/Formula",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "html": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.html",
     "description": "Use HTML to represent this column in a detail view.",
     "args": [],
     "data": {
-      "component": "HTML",
+      "name": "HTML",
       "import": {
         "from": "frui/view/HTML",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "image": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.image",
     "description": "Use image view to represent this column in a detail view.",
     "args": [
@@ -4345,16 +4566,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Image",
+      "name": "Image",
       "import": {
         "from": "frui/view/Image",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "json": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.json",
     "description": "Use code view to represent this column in a detail view.",
     "args": [
@@ -4432,18 +4653,18 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Code",
+      "name": "Code",
       "import": {
         "from": "frui/view/Code",
         "default": true
       },
-      "props": {
+      "attributes": {
         "language": "json"
       }
     }
   },
   "film": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.film",
     "description": "Use image film to represent this column in a detail view.",
     "args": [
@@ -4481,16 +4702,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "ImageFilm",
+      "name": "ImageFilm",
       "import": {
         "from": "frui/view/ImageFilm",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "line": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.line",
     "description": "Use line separator to represent this column in a detail view.",
     "args": [
@@ -4512,16 +4733,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Spread",
+      "name": "Spread",
       "import": {
         "from": "frui/view/Spread",
         "default": true
       },
-      "props": { "separator": "line"}
+      "attributes": { "separator": "line"}
     }
   },
   "link": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.link",
     "description": "Use link view to represent this column in a detail view.",
     "args": [
@@ -4559,16 +4780,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Link",
+      "name": "Link",
       "import": {
         "from": "frui/view/Link",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "list": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.list",
     "description": "Use a list view to represent this column in a detail view.",
     "args": [
@@ -4582,44 +4803,44 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "List",
+      "name": "List",
       "import": {
         "from": "frui/view/List",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "lowercase": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.lowercase",
     "description": "Use lowercase to represent this column in a detail view.",
     "args": [],
     "data": {
-      "component": "TextTransform",
+      "name": "TextTransform",
       "import": {
         "from": "frui/view/TextTransform",
         "default": true
       },
-      "props": { "format": "lowercase" }
+      "attributes": { "format": "lowercase" }
     }
   },
   "markdown": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.markdown",
     "description": "Use markdown to represent this column in a detail view.",
     "args": [],
     "data": {
-      "component": "Markdown",
+      "name": "Markdown",
       "import": {
         "from": "frui/view/Markdown",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "metadata": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.metadata",
     "description": "Use metadata view to represent this column in a detail view.",
     "args": [
@@ -4641,16 +4862,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Metadata",
+      "name": "Metadata",
       "import": {
         "from": "frui/view/Metadata",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "number": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.number",
     "description": "Use number format to represent this column in a detail view.",
     "args": [
@@ -4688,30 +4909,30 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "NumberFormat",
+      "name": "NumberFormat",
       "import": {
         "from": "frui/view/NumberFormat",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "ol": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.ol",
     "description": "Use an ordered list to represent this column in a detail view.",
     "args": [],
     "data": {
-      "component": "List",
+      "name": "List",
       "import": {
         "from": "frui/view/List",
         "default": true
       },
-      "props": { ordered: true }
+      "attributes": { ordered: true }
     }
   },
   "phone": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.phone",
     "description": "Use phone link view to represent this column in a detail view.",
     "args": [
@@ -4749,16 +4970,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "PhoneLink",
+      "name": "PhoneLink",
       "import": {
         "from": "frui/view/PhoneLink",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "price": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.price",
     "description": "Use number format to represent this column in a detail view.",
     "args": [
@@ -4772,12 +4993,12 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "NumberFormat",
+      "name": "NumberFormat",
       "import": {
         "from": "frui/view/NumberFormat",
         "default": true
       },
-      "props": {
+      "attributes": {
         "decimals": 2,
         "separator": ",",
         "decimal": "."
@@ -4785,7 +5006,7 @@ const view: AttributeDataMap = {
     }
   },
   "rating": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.rating",
     "description": "Use rating view to represent this column in a detail view.",
     "args": [
@@ -4815,16 +5036,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Rating",
+      "name": "Rating",
       "import": {
         "from": "frui/view/Rating",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "rel": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.rel",
     "description": "Use short relative date to represent this column in a detail view.",
     "args": [
@@ -4838,16 +5059,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "DateFormat",
+      "name": "DateFormat",
       "import": {
         "from": "frui/view/DateFormat",
         "default": true
       },
-      "props": { "format": "a" }
+      "attributes": { "format": "a" }
     }
   },
   "relative": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.relative",
     "description": "Use relative date to represent this column in a detail view.",
     "args": [
@@ -4861,16 +5082,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "DateFormat",
+      "name": "DateFormat",
       "import": {
         "from": "frui/view/DateFormat",
         "default": true
       },
-      "props": { "format": "ago" }
+      "attributes": { "format": "ago" }
     }
   },
   "spread": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.spread",
     "description": "Use spread view to represent this column in a detail view.",
     "args": [
@@ -4900,16 +5121,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Spread",
+      "name": "Spread",
       "import": {
         "from": "frui/view/Spread",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "tabular": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.tabular",
     "description": "Use tabular view to represent this column in a detail view.",
     "args": [
@@ -4939,16 +5160,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Tabular",
+      "name": "Tabular",
       "import": {
         "from": "frui/view/Tabular",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "tags": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.tags",
     "description": "Use tabular view to represent this column in a detail view.",
     "args": [
@@ -4970,39 +5191,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "Tags",
+      "name": "Tags",
       "import": {
         "from": "frui/view/Tags",
         "default": true
       },
-      "props": {}
-    }
-  },
-  "template": {
-    "type": [ "component" ],
-    "name": "view.template",
-    "description": "Special template view used to render custom content using a template string.",
-    "args": [
-      {
-        "spread": false,
-        "type": [ "string" ],
-        "name": "template",
-        "required": true,
-        "description": "The template string",
-        "examples": [ "Name: {{name}}" ]
-      }
-    ],
-    "data": {
-      "component": "Template",
-      "import": {
-        "from": "Template",
-        "default": true
-      },
-      "props": {}
+      "attributes": {}
     }
   },
   "time": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.time",
     "description": "Use time view to represent this column in a detail view.",
     "args": [
@@ -5016,18 +5214,18 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "DateFormat",
+      "name": "DateFormat",
       "import": {
         "from": "frui/view/DateFormat",
         "default": true
       },
-      "props": {
+      "attributes": {
         "format": "HH:mm:ss"
       }
     }
   },
   "overflow": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.overflow",
     "description": "Use text overflow to represent this column in a detail view.",
     "args": [
@@ -5057,30 +5255,30 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextOverflow",
+      "name": "TextOverflow",
       "import": {
         "from": "frui/view/TextOverflow",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "text": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.text",
     "description": "Use text format to represent this column in a detail view.",
     "args": [],
     "data": {
-      "component": "TextTransform",
+      "name": "TextTransform",
       "import": {
         "from": "frui/view/TextTransform",
         "default": true
       },
-      "props": { "format": "none" }
+      "attributes": { "format": "none" }
     }
   },
   "transform": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.transform",
     "description": "Use transform format to represent this column in a detail view.",
     "args": [
@@ -5094,44 +5292,44 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextTransform",
+      "name": "TextTransform",
       "import": {
         "from": "frui/view/TextTransform",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "ul": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.ul",
     "description": "Use an unordered list view to represent this column in a detail view.",
     "args": [],
     "data": {
-      "component": "List",
+      "name": "List",
       "import": {
         "from": "frui/view/List",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   },
   "uppercase": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.uppercase",
     "description": "Use uppercase to represent this column in a detail view.",
     "args": [],
     "data": {
-      "component": "TextTransform",
+      "name": "TextTransform",
       "import": {
         "from": "frui/view/TextTransform",
         "default": true
       },
-      "props": { "format": "uppercase" }
+      "attributes": { "format": "uppercase" }
     }
   },
   "words": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.words",
     "description": "Use words to represent this column in a detail view.",
     "args": [
@@ -5153,16 +5351,16 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "TextOverflow",
+      "name": "TextOverflow",
       "import": {
         "from": "frui/view/TextOverflow",
         "default": true
       },
-      "props": { words: true }
+      "attributes": { words: true }
     }
   },
   "yesno": {
-    "type": [ "component" ],
+    "type": [ "flag", "method" ],
     "name": "view.yesno",
     "description": "Use yes/no view to represent this column in a detail view.",
     "args": [
@@ -5184,40 +5382,57 @@ const view: AttributeDataMap = {
       }
     ],
     "data": {
-      "component": "YesNo",
+      "name": "YesNo",
       "import": {
         "from": "frui/view/YesNo",
         "default": true
       },
-      "props": {}
+      "attributes": {}
     }
   }
 };
 
-//add aliases
-field.taglist = { ...field.tags, name: 'field.taglist' };
-// type to field aliases
-field.string = { ...field.input, name: 'field.string' };
-field.text = { ...field.textarea, name: 'field.text' };
-field.float = { ...field.number, name: 'field.float' };
-field.boolean = { ...field.switch, name: 'field.boolean' };
-field.object = { ...field.json, name: 'field.object' };
-field.hash = { ...field.json, name: 'field.hash' };
-//type multiple to field aliases
-field.strings = { ...field.stringlist, name: 'field.strings' };
-field.texts = { ...field.stringlist, name: 'field.texts' };
-field.dates = { ...field.datelist, name: 'field.dates' };
-field.datetimes = { ...field.datetimelist, name: 'field.datetimes' };
-field.times = { ...field.timelist, name: 'field.times' };
-field.integerlist = { ...field.numberlist, name: 'field.integerlist' };
-field.integers = { ...field.numberlist, name: 'field.integers' };
-field.floatlist = { ...field.numberlist, name: 'field.floatlist' };
-field.floats = { ...field.numberlist, name: 'field.floats' };
-field.numbers = { ...field.numberlist, name: 'field.numbers' };
-//TODO: field.jsonlist
-//field.objects = field.jsonlist;
-//field.hashes = field.jsonlist;
+//special fields
+view.fieldset = {
+  "type": [ "component" ],
+  "name": "view.fieldset",
+  "description": "Special fieldset view to group other fields together.",
+  "args": [],
+  "data": {
+    "name": "Fieldset",
+    "import": {
+      "from": "Fieldset",
+      "default": true
+    },
+    "attributes": {}
+  }
+};
 
+view.template = {
+  "type": [ "component" ],
+  "name": "view.template",
+  "description": "Special template view used to render custom content using a template string.",
+  "args": [
+    {
+      "spread": false,
+      "type": [ "string" ],
+      "name": "template",
+      "required": true,
+      "description": "The template string",
+      "examples": [ "Name: {{name}}" ]
+    }
+  ],
+  "data": {
+    "name": "Template",
+    "import": {
+      "from": "Template",
+      "default": true
+    },
+    "attributes": {}
+  }
+};
+
+//aliases
 view.taglist = { ...view.tags, name: 'view.taglist' };
 //type to view aliases
 view.string = { ...view.text, name: 'view.string' };
@@ -5248,195 +5463,38 @@ view.numberlist = { ...view.list, name: 'view.numberlist' };
 //view.objects = view.list;
 //view.hashes = view.list;
 
-//add extended data
+//--------------------------------------------------------------------//
+// Builtin List Attribute Definitions
+
 const list = mapObjectValue(view, value => ({
   ...value,
   name: value.name.replace('view.', 'list.')
 }));
+
+//--------------------------------------------------------------------//
+// Builtin Filter Attribute Definitions
 
 const filter = mapObjectValue(field, value => ({
   ...value,
   name: value.name.replace('field.', 'filter.')
 }));
 
+//--------------------------------------------------------------------//
+// Builtin Span Attribute Definitions
+
 const span = mapObjectValue(field, value => ({
   ...value,
   name: value.name.replace('field.', 'span.')
 }));
 
-const map: AttributeConfigMap = {
-  model: mapObjectValue(model, (value, key) => (
-    { ...value, key, kind: 'model' }
-  )),
-  column: mapObjectValue(column, (value, key) => (
-    { ...value, key, kind: 'column' }
-  )),
-  assert: mapObjectValue(assert, (value, key) => (
-    { ...value, key, kind: 'assert' }
-  )),
-  field: mapObjectValue(field, (value, key) => (
-    { ...value, key, kind: 'field' }
-  )),
-  view: mapObjectValue(view, (value, key) => (
-    { ...value, key, kind: 'view' }
-  )),
-  list: mapObjectValue(list, (value, key) => (
-    { ...value, key, kind: 'list' }
-  )),
-  filter: mapObjectValue(filter, (value, key) => (
-    { ...value, key, kind: 'filter' }
-  )),
-  span: mapObjectValue(span, (value, key) => (
-    { ...value, key, kind: 'span' }
-  ))
-};
-
-//add admin data
-const admin = {
-  model: mapObjectValue(model, (value, key) => (
-    { ...value, key, kind: 'model', name: `admin.${value.name}` }
-  )),
-  column: mapObjectValue(column, (value, key) => (
-    { ...value, key, kind: 'column', name: `admin.${value.name}` }
-  )),
-  assert: mapObjectValue(assert, (value, key) => (
-    { ...value, key, kind: 'assert', name: `admin.${value.name}` }
-  )),
-  field: mapObjectValue(field, (value, key) => (
-    { ...value, key, kind: 'field', name: `admin.${value.name}` }
-  )),
-  view: mapObjectValue(view, (value, key) => (
-    { ...value, key, kind: 'view', name: `admin.${value.name}` }
-  )),
-  list: mapObjectValue(list, (value, key) => (
-    { ...value, key, kind: 'list', name: `admin.${value.name}` }
-  )),
-  filter: mapObjectValue(filter, (value, key) => (
-    { ...value, key, kind: 'filter', name: `admin.${value.name}` }
-  )),
-  span: mapObjectValue(span, (value, key) => (
-    { ...value, key, kind: 'span', name: `admin.${value.name}` }
-  ))
-};
-
-const data = [
-  ...Object.values(map.model),
-  ...Object.values(map.column),
-  ...Object.values(map.assert),
-  ...Object.values(map.field),
-  ...Object.values(map.filter),
-  ...Object.values(map.span),
-  ...Object.values(map.list),
-  ...Object.values(map.view),
-  ...Object.values(admin.model),
-  ...Object.values(admin.column),
-  ...Object.values(admin.assert),
-  ...Object.values(admin.field),
-  ...Object.values(admin.filter),
-  ...Object.values(admin.span),
-  ...Object.values(admin.list),
-  ...Object.values(admin.view)
-];
-
-/**
- * Search attributes by kind, type, key, or name.
- */
-function search({ q, kind, type, key, name }: {
-  q?: string | RegExp,
-  kind?: string,
-  type?: string,
-  key?: string,
-  name?: string
-}) {
-  return [ ...data ]
-    .filter(row => !kind || row.kind === kind)
-    .filter(row => !type || row.type.includes(type))
-    .filter(row => !key || row.key === key)
-    .filter(row => !name || row.name === name)
-    .filter(row => {
-      if (!q) {
-        return true;
-      } else if (typeof q === 'string') {
-        return row.name.startsWith(q);
-      } else if (q instanceof RegExp) {
-        return q.test(row.name);
-      }
-      return true;
-    });
-}
-
-/**
- * Get first attribute by kind, type, key, or name.
- */
-function first({ kind, type, key, name }: {
-  kind?: string,
-  type?: string,
-  key?: string,
-  name?: string
-}) {
-  const results = search({ kind, type, key, name });
-  return results.length ? results[0] : null;
-}
-
-/**
- * Get attribute by name.
- */
-function get(name: string) {
-  return first({ name });
-}
-
-/**
- * Maps an attribute and its arguments to a schema component token.
- */
-function toComponentToken(
-  attribute: AttributeData, 
-  args: Data[] = []
-) {
-  //get data from info
-  const data = attribute.data as AttributeConfigComponent;
-  //the first argument is the field attributes
-  const attributes = typeof args[0] === 'object' 
-    ? (args[0] || {}) as Record<string, Data>
-    : {};
-  return { 
-    name: attribute.name, 
-    component: data.component,
-    props: { ...data.props, ...attributes }, 
-    virtual: [ 'Fieldset', 'Relation', 'Template' ].includes(data.component),
-    import: data.import
-  } as SchemaComponent;
-}
-
-function toAssertToken(
-  attribute: AttributeConfig, 
-  args: Data[] = [],
-  message = 'Invalid value'
-) {
-  return { 
-    method: attribute.key, 
-    args, 
-    message: attribute.data?.message as string || message,
-    config: attribute
-  }
-}
-
 export {
-  model,
+  schema,
   column,
   assert,
   field,
   view,
   list,
   filter,
-  span,
-  map,
-  admin,
-  data,
-  search,
-  first,
-  get,
-  toComponentToken,
-  toAssertToken
+  span
 };
 
-export default data;

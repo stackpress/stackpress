@@ -1,6 +1,5 @@
 //modules
 import type { NestedObject } from '@stackpress/lib';
-import type { AttributeValue } from '@stackpress/idea-parser';
 
 export type { 
   EnumConfig,
@@ -10,57 +9,6 @@ export type {
   PluginConfig,
   SchemaConfig
 } from '@stackpress/idea-parser/types';
-
-//data structure for attribute info
-// this is hard coded in a separate file
-export type AttributeConfigArgument = {
-  spread: boolean,
-  type: Array<string | Record<string, unknown>>,
-  name?: string,
-  required: boolean,
-  description: string,
-  examples: Array<unknown>
-};
-
-export type AttributeConfigComponent = {
-  component: string,
-  virtual: boolean,
-  import: { from: string, default: boolean },
-  props: Record<string, unknown>
-};
-
-export type AttributeData = {
-  type: Array<string>,
-  name: string,
-  description?: string,
-  args: Array<AttributeConfigArgument>,
-  data?: Record<string, unknown>
-};
-
-export type AttributeConfig = AttributeData & {
-  key: string,
-  kind: string
-};
-
-export type AttributeValues = Iterable<[string, AttributeValue]> 
-  | Record<string, AttributeValue>;
-
-export type SchemaComponent = AttributeConfigComponent & {
-  name: string
-};
-
-export type SchemaAssertion = {
-  method: string,
-  args: unknown[],
-  message: string|null
-  config: AttributeConfig
-};
-
-export type SchemaRelation = {
-  local: string,
-  foreign: string,
-  name?: string
-};
 
 export type ErrorList = (ErrorMap | null)[];
 export type ErrorMap = NestedObject<string | string[] | ErrorList>;
@@ -77,4 +25,85 @@ export type SerializeOptions = {
   booleanToNumber?: boolean,
   dateToString?: boolean,
   objectToString?: boolean
+};
+
+//used in config/attributes
+export type AttributeData<
+  D extends Record<string, unknown> = Record<string, unknown>
+> = {
+  type: Array<string>,
+  name: string,
+  description?: string,
+  args: Array<{
+    spread: boolean,
+    type: Array<string | Record<string, unknown>>,
+    name?: string,
+    required: boolean,
+    description: string,
+    examples: Array<unknown>
+  }>,
+  data?: D
+};
+export type AttributeDataMap<
+  D extends Record<string, unknown> = Record<string, unknown>
+> = Record<string, Required<AttributeData<D>>>;
+
+export type AttributeDataComponent = {
+  name: string,
+  import: { from: string, default: boolean },
+  attributes: Record<string, unknown>
+};
+export type AttributeDataAssertion = {
+  name: string,
+  import: { from: string, default: boolean },
+  message: string
+};
+
+//used in config/typemaps
+export type TypeMapDataMap<D = unknown> = Record<string, D>; 
+export type TypeMapDataAssertion = AttributeDataAssertion;
+export type TypeMapDataSerializer = {
+  name: string,
+  import: { from: string, default: boolean }
+};
+
+//used in config/definitions
+export type DefinitionBook = Map<string, Record<string, unknown>>;
+export type AttributeDefinitionInput = {
+  method: boolean,
+  flag: boolean,
+  description: string,
+    args: Array<{
+    spread: boolean,
+    type: Array<string | Record<string, unknown>>,
+    required: boolean,
+    description: string,
+    examples: Array<unknown>
+  }>
+};
+export type AttributeDefinitionToken = AttributeDefinitionInput & {
+  kind: string
+};
+export type AttributeComponentInput = AttributeDataComponent & {
+  props: Record<string, {
+    type: string[],
+    required: boolean,
+    description: string,
+    examples: unknown[]
+  }>
+};
+export type AttributeComponentToken = AttributeComponentInput & {
+  kind: string
+};
+export type AttributeAssertionInput = AttributeDataAssertion;
+export type AttributeAssertionToken = AttributeAssertionInput;
+
+//used in column class
+export type ColumnAssertion = AttributeAssertionToken & {
+  args: unknown[]
+};
+export type ColumnRelationProps = {
+  local: string,
+  foreign: string,
+  name?: string
 };

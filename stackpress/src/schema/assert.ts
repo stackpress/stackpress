@@ -1,5 +1,3 @@
-import typemap from './spec/TypeMap.js';
-
 export function safeValue(value: any) {
   return typeof value !== 'undefined' ? value: '';
 };
@@ -193,16 +191,3 @@ const assert: Record<string, (value: any, ...args: any[]) => boolean> = {
 };
 
 export default assert;
-
-typemap.String.register('assert', () => 'string');
-typemap.Text.register('assert', () => 'string');
-typemap.Boolean.register('assert', () => 'boolean');
-typemap.Number.register('assert', () => 'number');
-typemap.Float.register('assert', () => 'float');
-typemap.Integer.register('assert', () => 'integer');
-typemap.Date.register('assert', () => 'date');
-typemap.Datetime.register('assert', () => 'date');
-typemap.Time.register('assert', () => 'date');
-typemap.Object.register('assert', () => 'object');
-typemap.Hash.register('assert', () => 'object');
-typemap.Json.register('assert', () => 'object');
