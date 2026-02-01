@@ -2,7 +2,7 @@
 import type { UnknownNest, NestedObject } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 //schema
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 //sql
 import type { SearchParams } from '../types.js';
 //local

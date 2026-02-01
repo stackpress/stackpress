@@ -3,7 +3,7 @@ import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type Engine from '@stackpress/inquire/Engine';
 import Nest from '@stackpress/lib/Nest';
 //schema
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 //sql
 import type { SearchParams, SearchJoinMap } from '../types.js';
 import { 

@@ -1,7 +1,7 @@
 //modules
 import type { Directory, SourceFile } from 'ts-morph';
 //schema
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 import type Fieldset from '../../schema/spec/Fieldset.js';
 import type Registry from '../../schema/Registry.js';
 

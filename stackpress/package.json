@@ -480,16 +480,16 @@
     "build:tsc:cjs": "tsc -p ./tsconfig.cjs.json",
     "build:tsc:esm": "tsc -p ./tsconfig.esm.json",
     "report": "nyc report -r lcov",
-    "test": "yarn test:env nyc ts-mocha -r tsx tests/bootstrap.ts tests/**/*.test.ts && yarn test:teardown",
+    "test": "yarn test:env nyc ts-mocha -r tsx tests/bootstrap.ts tests/**/*.test.ts",
     "test:teardown": "yarn test:env tsx tests/teardown.ts",
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
     "@paralleldrive/cuid2": "3.1.0",
-    "@stackpress/idea-transformer": "0.6.7",
-    "@stackpress/ingest": "0.6.7",
-    "@stackpress/inquire": "0.6.7",
-    "@stackpress/lib": "0.6.7",
+    "@stackpress/idea-transformer": "0.6.10",
+    "@stackpress/ingest": "0.6.10",
+    "@stackpress/inquire": "0.6.10",
+    "@stackpress/lib": "0.6.10",
     "jose": "6.1.3",
     "mustache": "4.2.0",
     "nanoid": "5.1.6",
@@ -497,7 +497,7 @@
     "papaparse": "5.5.3",
     "r22n": "1.0.10",
     "react-toastify": "11.0.5",
-    "reactus": "0.6.7",
+    "reactus": "0.6.10",
     "universal-cookie": "8.0.1"
   },
   "devDependencies": {
@@ -527,7 +527,7 @@
     "unocss": "66.5.10"
   },
   "peerDevDependencies": {
-    "@stackpress/idea-transformer": "0.6.7",
+    "@stackpress/idea-transformer": "0.6.10",
     "@vitejs/plugin-react": "4.3.4",
     "fast-glob": "^3.3",
     "prettier": "^3",

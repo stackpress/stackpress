@@ -1,5 +1,6 @@
 //modules
 import type { NestedObject } from '@stackpress/lib';
+import type { Data } from '@stackpress/idea-parser';
 
 export type { 
   EnumConfig,
@@ -98,8 +99,22 @@ export type AttributeComponentToken = AttributeComponentInput & {
 export type AttributeAssertionInput = AttributeDataAssertion;
 export type AttributeAssertionToken = AttributeAssertionInput;
 
+//used in attribute class
+export type AttributeMapToken = Record<string, Data[] | boolean>;
+export type AttributesEntriesToken = Array<[ string, Data[] | boolean ]> ;
+export type AttributesToken = AttributesEntriesToken | AttributeMapToken;
 //used in column class
-export type ColumnAssertion = AttributeAssertionToken & {
+export type ColumnTypeToken = {
+  name: string,
+  required: boolean,
+  multiple: boolean
+};
+export type ColumnToken = {
+  name: string, 
+  type: ColumnTypeToken,
+  attributes?: AttributesToken
+};
+export type ColumnAssertionToken = AttributeAssertionToken & {
   args: unknown[]
 };
 export type ColumnRelationProps = {

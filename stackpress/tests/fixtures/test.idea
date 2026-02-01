@@ -1,20 +1,3 @@
-model BasicFixture
-{
-  title String
-  description Text
-  price Number
-  age Integer
-  height Float
-  active Boolean
-  publishAt Date
-  showAt Time
-  createdAt Datetime
-  references Hash
-  data Json
-  cache Object
-  sink KitchenSinkFixture[]
-}
-
 enum Role {
   ADMIN "ADMIN"
   EDITOR "EDITOR"
@@ -35,7 +18,26 @@ type Address {
            @field.country({ defaultValue "US" })
 }
 
-model KitchenSinkFixture
+model BasicModel
+{
+  title       String
+  description Text
+  price       Number
+  age         Integer
+  height      Float
+  active      Boolean
+  publishAt   Date
+  showAt      Time
+  createdAt   Datetime
+  references  Hash
+  data        Json
+  cache       Object
+  role        Role
+  address     Address
+  sink        KitchenSink[]
+}
+
+model KitchenSink
   @display("{{title}}")
   @icon("sink")
   @labels("The Kitchen Sink" "Kitchen Sinks")
@@ -48,8 +50,8 @@ model KitchenSinkFixture
               @description("Unique generated identifier.")
               @example("pjfdz7tg8bcf7e2lig3iuej3")
   basicId     String
-              @label("Basic Fixture") 
-              @description("1:1 Relation to BasicFixture model.")
+              @label("Basic Model") 
+              @description("1:1 Relation to BasicModel model.")
               @field.relation({ 
                 id "id"
                 search "/admin/profile/search?json&q={{QUERY}}"
@@ -167,5 +169,5 @@ model KitchenSinkFixture
   data        Json 
               @default("{}")
   cache       Object?
-  basic       BasicFixture @relation({ local "basicId" foreign "id" })
+  basic       BasicModel @relation({ local "basicId" foreign "title" })
 }

@@ -3,7 +3,7 @@ import type { Directory } from 'ts-morph';
 //registry
 import type Registry from '../../schema/Registry.js';
 import type Column from '../../schema/spec/Column.js';
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   //for each model

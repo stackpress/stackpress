@@ -16,10 +16,10 @@ import { Lexer, Compiler } from '@stackpress/idea-parser';
 import { Transformer } from '@stackpress/idea-transformer';
 import definitions, { data, scan } from '@stackpress/idea-parser/definitions';
 //src
-import Registry from '../src/schema/Registry.js';
-import Column from '../src/schema/spec/Column.js';
-import Fieldset from '../src/schema/spec/Fieldset.js';
-import Model from '../src/schema/spec/Model.js';
+import Schema from '../src/schema/Schema.js';
+import Column from '../src/schema/column/Column.js';
+import Fieldset from '../src/schema/fieldset/Fieldset.js';
+import Model from '../src/schema/model/Model.js';
 import Terminal from '../src/terminal/Terminal.js';
 import { server as http } from '../src/server/http';
 
@@ -154,10 +154,12 @@ export class ColumnParser {
       : type.value;
     if (this._lexer.index >= this._code.length) {
       return {
-        type: typeName,
         name: name.name,
-        required,
-        multiple,
+        type: {
+          name: typeName as string,
+          required: required as boolean,
+          multiple: multiple as boolean
+        },
         attributes: {}
       };
     }
@@ -165,10 +167,12 @@ export class ColumnParser {
     const attributes = this.toAttributes();
     //then do something with properties
     return {
-      type: typeName,
       name: name.name,
-      required,
-      multiple,
+      type: {
+        name: typeName as string,
+        required: required as boolean,
+        multiple: multiple as boolean
+      },
       attributes
     }
   }
@@ -188,16 +192,16 @@ export class ColumnParser {
 };
 
 /**
- * Mocks a registry instance
+ * Mocks a schema instance
  */
-export async function mockRegistry() {
-  return new Registry(await mockSchema());
+export async function mockSchema() {
+  return Schema.make(await mockConfig());
 };
 
 /**
  * Mocks a schema instance
  */
-export async function mockSchema() {
+export async function mockConfig() {
   const transformer = mockTransformer();
   return await transformer.schema();
 };
@@ -206,34 +210,38 @@ export async function mockSchema() {
  * Mocks a column from a code string
  */
 export async function mockColumn(code: string, fieldset = 'Address') {
-  const registry = await mockRegistry();
+  const schema = await mockSchema();
   const parser = new ColumnParser();
-  return new Column(
-    registry.fieldset.get(fieldset)!, 
-    parser.load(code).toColumn()
-  );
+  const token = parser.load(code).toColumn();
+  const column = Column.make(token.name, token.type, token.attributes);
+  column.parent = schema.fieldsets.get(fieldset)!;
+  return column;
 };
 
 /**
  * Mocks a fieldset from a name, attributes string and columns strings
  */
 export async function mockFieldset(name: string, attr = '', cols: string[] = []) {
-  const registry = await mockRegistry();
+  const schema = await mockSchema();
   const parser = new ColumnParser();
   const attributes = attr.length ? parser.load(attr).toAttributes() : {};
   const columns = cols.map(col => parser.load(col).toColumn());
-  return new Fieldset(registry, name, attributes, columns);
+  const fieldset = Fieldset.make(name, attributes, columns);
+  fieldset.schema = schema;
+  return fieldset;
 };
 
 /**
  * Mocks a model from a name, attributes string and columns strings
  */
 export async function mockModel(name: string, attr = '', cols: string[] = []) {
-  const registry = await mockRegistry();
+  const schema = await mockSchema();
   const parser = new ColumnParser();
   const attributes = attr.length ? parser.load(attr).toAttributes() : {};
   const columns = cols.map(col => parser.load(col).toColumn());
-  return new Model(registry, name, attributes, columns);
+  const model = Model.make(name, attributes, columns);
+  model.schema = schema;
+  return model;
 };
 
 /**

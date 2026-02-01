@@ -8,7 +8,7 @@ import type {
 //stackpress/schema/config
 import * as attributes from './attributes.js';
 import * as typemaps from './typemaps.js';
-import * as definitions from '../spec/Dictionary.js';
+import dictionary from '../dictionary.js';
 
 /**
  * Defines attributes from a data map 
@@ -16,7 +16,7 @@ import * as definitions from '../spec/Dictionary.js';
 export function defineAttributes(kind: string, map: AttributeDataMap) {
   for (const definition of Object.values(map)) {
     const { name, type, description, args } = definition;
-    definitions.attributes.define(name, kind, {
+    dictionary.attributes.define(name, kind, {
       method: type.includes('method'),
       flag: type.includes('flag'),
       description: description,
@@ -35,7 +35,7 @@ export function defineAssertions(
   map: AttributeDataMap<AttributeDataAssertion>
 ) {
   for (const { name, data } of Object.values(map)) {
-    definitions.assertions.define(name, {
+    dictionary.assertions.define(name, {
       name: data.name,
       import: data.import,
       message: data.message
@@ -51,7 +51,7 @@ export function defineComponents(
   map: AttributeDataMap<AttributeDataComponent>
 ) {
   for (const { name, args, data } of Object.values(map)) {
-    definitions.components.define(name, kind, {
+    dictionary.components.define(name, kind, {
       name: data.name,
       import: data.import,
       props: Object.fromEntries(
@@ -70,7 +70,7 @@ export function defineComponents(
  */
 export function defineTypeMap(key: string, map: TypeMapDataMap) {
   for (const [ type, value ] of Object.entries(map)) {
-    definitions.typemaps.define(type, key, value);
+    dictionary.typemaps.define(type, key, value);
   }
 };
 

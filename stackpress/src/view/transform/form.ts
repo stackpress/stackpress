@@ -5,7 +5,7 @@ import { VariableDeclarationKind } from 'ts-morph';
 import type Registry from '../../schema/Registry.js';
 import type Fieldset from '../../schema/spec/Fieldset.js';
 import type Column from '../../schema/spec/Column.js';
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 
 export default function generate(directory: Directory, registry: Registry) {
   //for each model

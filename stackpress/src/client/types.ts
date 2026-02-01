@@ -5,7 +5,7 @@ import type Engine from '@stackpress/inquire/Engine';
 import type Create from '@stackpress/inquire/Create';
 //spec
 import type Fieldset from '../schema/spec/Fieldset.js';
-import type Model from '../schema/spec/Model.js';
+import type Model from '../schema/model/Model.js';
 import type Registry from '../schema/Registry.js';
 //sql
 import type { Actions } from '../sql/actions/index.js';

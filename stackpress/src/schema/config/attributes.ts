@@ -368,7 +368,7 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     "args": [
       {
         "spread": false,
-        "type": [ "string", "number" ],
+        "type": [ "string", "number", "boolean" ],
         "required": true,
         "description": "The value to compare against.",
         "examples": [ "admin", 42 ]
@@ -548,6 +548,13 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     "name": "is.present",
     "description": "Validates that the value is a present date.",
     "args": [
+      {
+        "spread": false,
+        "type": [ "null" ],
+        "required": false,
+        "description": "Buffer in seconds to consider as present.",
+        "examples": [ "Value must be the present date." ]
+      },
       {
         "spread": false,
         "type": [ "string" ],

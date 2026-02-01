@@ -4,7 +4,7 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //schema
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 //sql
 import type { DatabasePlugin } from '../types.js';
 //actions

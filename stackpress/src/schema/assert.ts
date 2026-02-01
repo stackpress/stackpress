@@ -57,9 +57,14 @@ export function past(value: any) {
   return assert.date(value) && new Date(value || 0) < new Date();
 };
 
-export function present(value: any) { 
+export function present(value: any, bufferInSeconds = 5) { 
+  const lowerBound = new Date();
+  lowerBound.setSeconds(lowerBound.getSeconds() - bufferInSeconds);
+  const upperBound = new Date();
+  upperBound.setSeconds(upperBound.getSeconds() + bufferInSeconds);
   return assert.date(value) 
-    && new Date(value || 0).toDateString() === new Date().toDateString();
+    && new Date(value || 0) >= lowerBound 
+    && new Date(value || 0) <= upperBound;
 };
 
 export function gt(value: number|string, compare: number) { 
@@ -123,7 +128,7 @@ export function cc(value: any) {
 };
 
 export function color(value: any) { 
-  return regex(value, /^#?([a-f0-9]{6}|[a-f0-9]{3})$/);
+  return regex(value, /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/);
 };
 
 export function email(value: any) { 
@@ -135,7 +140,7 @@ export function hex(value: any) {
 };
 
 export function price(value: any) { 
-  return regex(value.toString(), /^(\d*(\.\d{2}){0, 1})|(\d+)$/);
+  return regex(value.toString(), /^-?\d+(\.\d{2})?$/);
 };
 
 export function url(value: any) { 
@@ -151,15 +156,33 @@ export function string(value: any) {
 };
 
 export function number(value: any) { 
-  return typeof value === 'number' || regex(value.toString(), /^\d+(\.\d+)*$/);
+  return (
+    typeof value === 'number' && !isNaN(value)
+  ) || (
+    typeof value !== 'undefined' 
+      && value !== null 
+      && regex(value.toString(), /^\d+(\.\d+)*$/)
+  );
 };
 
 export function float(value: any) { 
-  return typeof value === 'number' || regex(value.toString(), /^\d+\.\d+$/);
+  return (
+    typeof value === 'number' && !isNaN(value)
+  ) || (
+    typeof value !== 'undefined' 
+      && value !== null 
+      && regex(value.toString(), /^\d+\.\d+$/)
+  );
 };
 
 export function integer(value: any) { 
-  return typeof value === 'number' || regex(value.toString(), /^\d+$/);
+  return (
+    typeof value === 'number' && !isNaN(value)
+  ) || (
+    typeof value !== 'undefined' 
+      && value !== null 
+      && regex(value.toString(), /^\d+$/)
+  );
 };
 
 export function object(value: any) {

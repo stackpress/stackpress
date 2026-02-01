@@ -10,7 +10,7 @@ import { clen, numdata } from '../schema.js';
 export default function generate(directory: Directory, registry: Registry) {
   //loop through models
   for (const model of registry.model.values()) {
-    const relations = model.relations.map(column => {
+    const relations = model.parentRelations.map(column => {
       const relation = column.parentRelation;
       const table = column.model?.snakeCase as string;
       const foreign = relation?.parent.key.snakeCase as string;
@@ -171,7 +171,7 @@ export function field(column: Column) {
       const length = integerLength + decimalLength;
       return `schema.addField('${column.snakeCase}', ${JSON.stringify({
         type: 'FLOAT',
-        length: `${length}, ${decimalLength}`,
+        length: [length, decimalLength ],
         default: column.default,
         nullable: !column.required,
         unsigned: minmax[0] < 0,

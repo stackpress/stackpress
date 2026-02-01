@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/Server';
 //root
 import Exception from '../../Exception.js';
 //schema
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 //sql
 import type { DatabasePlugin } from '../types.js';
 

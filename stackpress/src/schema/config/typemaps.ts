@@ -114,91 +114,91 @@ const serializers: TypeMapDataMap<TypeMapDataSerializer> = {
   String: {
     "name": "StringSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/StringSerializer",
+      "from": "stackpress/schemas/serializer/StringSerializer",
       "default": false
     }
   },
   Text: {
     "name": "StringSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/StringSerializer",
+      "from": "stackpress/schemas/serializer/StringSerializer",
       "default": false
     }
   },
   Number: {
     "name": "NumberSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/NumberSerializer",
+      "from": "stackpress/schemas/serializer/NumberSerializer",
       "default": false
     }
   },
   Integer: {
     "name": "NumberSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/NumberSerializer",
+      "from": "stackpress/schemas/serializer/NumberSerializer",
       "default": false
     }
   },
   Float: {
     "name": "NumberSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/NumberSerializer",
+      "from": "stackpress/schemas/serializer/NumberSerializer",
       "default": false
     }
   },
   Boolean: {
     "name": "BooleanSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/BooleanSerializer",
+      "from": "stackpress/schemas/serializer/BooleanSerializer",
       "default": false
     }
   },
   Date: {
     "name": "DateSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/DateSerializer",
+      "from": "stackpress/schemas/serializer/DateSerializer",
       "default": false
     }
   },
   Datetime: {
     "name": "DateSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/DateSerializer",
+      "from": "stackpress/schemas/serializer/DateSerializer",
       "default": false
     }
   },
   Time: {
     "name": "DateSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/DateSerializer",
+      "from": "stackpress/schemas/serializer/DateSerializer",
       "default": false
     }
   },
   Object: {
     "name": "ObjectSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/ObjectSerializer",
+      "from": "stackpress/schemas/serializer/ObjectSerializer",
       "default": false
     }
   },
   Hash: {
     "name": "ObjectSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/ObjectSerializer",
+      "from": "stackpress/schemas/serializer/ObjectSerializer",
       "default": false
     }
   },
   Json: {
     "name": "ObjectSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/ObjectSerializer",
+      "from": "stackpress/schemas/serializer/ObjectSerializer",
       "default": false
     }
   },
   Unknown: {
     "name": "UnknownSerializer",
     "import": {
-      "from": "stackpress/schema/specs/serializer/UnknownSerializer",
+      "from": "stackpress/schemas/serializer/UnknownSerializer",
       "default": false
     }
   }

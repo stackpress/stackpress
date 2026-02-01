@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.14",
-    "@stackpress/inquire-pglite": "0.6.7",
+    "@stackpress/inquire-pglite": "0.6.10",
     "frui": "0.2.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",

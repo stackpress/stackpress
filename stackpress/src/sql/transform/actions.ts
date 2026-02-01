@@ -1,7 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 import Registry from '../../schema/Registry.js';
 
 export default function generate(directory: Directory, registry: Registry) {

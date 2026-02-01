@@ -1,7 +1,7 @@
 //stackpress
 import { server } from '@stackpress/ingest/Server';
 //schema
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 //local
 import batch from './batch.js';
 import create from './create.js';

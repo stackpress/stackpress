@@ -8,7 +8,7 @@ import type Engine from '@stackpress/inquire/Engine';
 //root
 import Exception from '../../Exception.js';
 //schema
-import type Model from '../../schema/spec/Model.js';
+import type Model from '../../schema/model/Model.js';
 //sql
 import { toResponse, toErrorResponse } from '../helpers.js';
 
