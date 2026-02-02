@@ -1,16 +1,16 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '../../schema/Registry.js';
+import type Schema from '../../schema/Schema.js';
 
 /**
  * This is the The params comes form the cli
  */
-export default function generate(directory: Directory, registry: Registry) {
+export default function generate(directory: Directory, schema: Schema) {
   // get the source file
   const source = directory.createSourceFile('enums.ts', '', { overwrite: true });
   //loop through enums
-  for (const [ name, options ] of registry.enum.entries()) {
+  for (const [ name, options ] of schema.enums.entries()) {
     source.addEnum({
       name: name,
       isExported: true,

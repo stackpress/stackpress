@@ -12,6 +12,7 @@ import type {
   AttributesToken
 } from '../types.js';
 //stackpress/schema/column
+import type Column from '../column/Column.js';
 import Columns from '../column/Columns.js';
 import ColumnType from '../column/ColumnType.js';
 //stackpress/schema/attribute
@@ -140,6 +141,13 @@ export default class ModelColumns extends Columns {
   }
 
   /**
+   * Returns an iterator of the entries
+   */
+  public entries() {
+    return super.entries() as MapIterator<[ string, ModelColumn ]>;
+  }
+
+  /**
    * Filters the data map (returns a new Columns instance)
    * Override to match constructor arguments and add parent assignment
    */
@@ -201,9 +209,34 @@ export default class ModelColumns extends Columns {
   }
 
   /**
+   * Iterates through each column in the collection
+   */
+  public forEach(callback: DataMapIterator<string, ModelColumn, this, void>) {
+    super.forEach(callback as (
+      value: Column, 
+      key: string, 
+      map: Map<string, Column>
+    ) => void);
+  }
+
+  /**
+   * Returns the data map as an array
+   */
+  public toArray() {
+    return Array.from(this.values()) as Array<ModelColumn>;
+  }
+
+  /**
    * Returns the data map as a plain object
    */
   public toObject() {
     return Object.fromEntries(this) as Record<string, ModelColumn>;
+  }
+
+  /**
+   * Returns an iterator of the values
+   */
+  public values() {
+    return super.values() as MapIterator<ModelColumn>;
   }
 };
