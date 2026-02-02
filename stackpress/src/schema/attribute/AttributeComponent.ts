@@ -1,3 +1,5 @@
+//modules
+import { isObject } from '@stackpress/lib/Nest';
 //stackpress/schema
 import dictionary from '../dictionary.js';
 //stackpress/schema/attribute
@@ -65,6 +67,20 @@ export default class AttributeComponent {
    */
   public get isViewFormat() {
     return this.kind === 'view';
+  }
+
+  /**
+   * Returns the merged props from the defaults 
+   * found in the pre-defined definitions and 
+   * the value set in the attribute.
+   */
+  public get props() {
+    const props = this._attribute.value;
+    const attributes = this.definition?.attributes;
+    return {
+      ...(isObject(props) ? props as Record<string, unknown> : {}),
+      ...(isObject(attributes) ? attributes : {})
+    }
   }
   
   /**

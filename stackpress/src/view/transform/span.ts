@@ -1,13 +1,14 @@
 //modules
 import type { Directory } from 'ts-morph';
 //registry
-import type Registry from '../../schema/Registry.js';
-import type Column from '../../schema/spec/Column.js';
+import type Schema from '../../schema/Schema.js';
+import type Column from '../../schema/column/Column.js';
 import type Model from '../../schema/model/Model.js';
+import { renderCode } from '../../schema/helpers.js';
 
-export default function generate(directory: Directory, registry: Registry) {
+export default function generate(directory: Directory, schema: Schema) {
   //for each model
-  for (const model of registry.model.values()) {
+  for (const model of schema.models.values()) {
     //generate all column fields
     model.columns.forEach(
       column => generateSpan(directory, model, column)
@@ -20,13 +21,20 @@ export function generateSpan(
   model: Model,
   column: Column
 ) {
-  //NOTE: column.list is a computed getter, 
-  // so dont keep computing it multiple times
-  const span = column.span;
-  //skip if no field component
-  if (!span) return;
+  //get the filter field attribute
+  const attribute = column.component.spanField;
+  //skip if no filter field 
+  if (!attribute?.component.defined) return;
+  //this is the component definition token...
+  const component = attribute.component.definition!;
+  //this is the component props from the pre-defined 
+  // definitions and the value set in the attribute.
+  const props = attribute.component.props;
   //get the path where this should be saved
-  const path = `${model.name}/components/span/${column.titleCase}SpanField.tsx`;
+  const path = renderCode(TEMPLATE.FILE_PATH, {
+    model: model.name.toString(),
+    component: column.name.titleCase
+  });
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
@@ -47,68 +55,87 @@ export function generateSpan(
   });
   //import Text from 'frui/form/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/form/${column.span.component}`,
-    defaultImport: column.span.component
+    //component token will have import
+    //info. just use that as is...
+    moduleSpecifier: component.import.from,
+    defaultImport: component.import.default ? component.name : undefined,
+    namedImports: !component.import.default ? [ component.name ] : []
   });
   //export function NameSpanField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}SpanField`,
+    name: `${column.name.titleCase}SpanField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
-    statements: (`
-      //props
-      const { className, value, change, error = false } = props;
-      const attributes = ${JSON.stringify(column.span.props)};
-      const values = Array.isArray(value) ? value : [];
-      //render
-      return (
-        <>
-          <${column.span.component} 
-            {...attributes}
-            name="span[${column.name}][0]}"
-            className={className}
-            error={error} 
-            defaultValue={values[0]} 
-            onUpdate={value => change && change('span[${column.name}][0]', value)}
-          />
-          <br />
-          <${column.span.component} 
-            {...attributes}
-            name="span[${column.name}][1]}"
-            className={className}
-            error={error} 
-            defaultValue={values[1]} 
-            onUpdate={value => change && change('span[${column.name}][1]', value)}
-          />
-        </>
-      );
-    `)
+    statements: renderCode(TEMPLATE.FIELD_FIELD, {
+      props: JSON.stringify(props),
+      component: component.name,
+      column: column.name.toString()
+    })
   });
   //export function NameSpanFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}SpanFieldControl`,
+    name: `${column.name.titleCase}SpanFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
-    statements: (`
-      //props
-      const { className, value, change, error } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //render
-      return (
-        <FieldControl label={_('${column.label}')} error={error} className={className}>
-          <${column.titleCase}SpanField
-            className="!border-b2 dark:bg-gray-300 outline-none"
-            error={!!error} 
-            value={value} 
-            change={change}
-          />
-        </FieldControl>
-      );
-    `)
+    statements: renderCode(TEMPLATE.FIELD_CONTROL, {
+      label: column.name.label,
+      component: column.name.titleCase
+    })
   });
+};
+
+export const TEMPLATE = {
+
+FILE_PATH: 
+'<%model%>/components/span/<%component%>SpanField.tsx',
+
+FIELD_FIELD:
+`//props
+const { className, value, change, error = false } = props;
+const attributes = <%props%>;
+const values = Array.isArray(value) ? value : [];
+//render
+return (
+  <>
+    <<%component%>
+      {...attributes}
+      name="span[<%column%>][0]}"
+      className={className}
+      error={error} 
+      defaultValue={values[0]} 
+      onUpdate={value => change && change('span[<%column%>][0]', value)}
+    />
+    <br />
+    <<%component%>
+      {...attributes}
+      name="span[<%column%>][1]}"
+      className={className}
+      error={error} 
+      defaultValue={values[1]} 
+      onUpdate={value => change && change('span[<%column%>][1]', value)}
+    />
+  </>
+);`,
+
+FIELD_CONTROL:
+`//props
+const { className, value, change, error } = props;
+//hooks
+const { _ } = useLanguage();
+//render
+return (
+  <FieldControl label={_('<%label%>')} error={error} className={className}>
+    <<%component%>SpanField
+      className="!border-b2 dark:bg-gray-300 outline-none"
+      error={!!error} 
+      value={value} 
+      change={change}
+    />
+  </FieldControl>
+);`
+
 };

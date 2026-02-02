@@ -30,7 +30,7 @@ export function camelize(string: string) {
           .replace('_', '');
       })
   );
-}
+};
 
 /**
  * Converts a word into capital format
@@ -38,7 +38,7 @@ export function camelize(string: string) {
  */
 export function capitalize(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
-}
+};
 
 /**
  * Converts a string into dash format
@@ -56,7 +56,7 @@ export function dasherize(string: string) {
     //replace "someString" to "some-string"
     .replace(/([a-z])([A-Z0-9])/g, '$1-$2')
     .toLowerCase();
-}
+};
 
 /**
  * Used to decrypt sensitive info from the database
@@ -76,7 +76,7 @@ export function decrypt(encrypted: string, seed: string) {
     decipher.update(value), 
     decipher.final()
   ]).toString();
-}
+};
 
 /**
  * Used to encrypt sensitive info in the database
@@ -96,7 +96,7 @@ export function encrypt(value: string, seed: string) {
     cipher.final() 
   ]);
   return encrypted.toString('hex');
-}
+};
 
 /**
  * Creates a hash salt of a string
@@ -106,7 +106,7 @@ export function hash(string: string) {
     .createHash('shake256')
     .update(string)
     .digest('hex');
-}
+};
 
 /**
  * Converts a word into lower format
@@ -114,7 +114,7 @@ export function hash(string: string) {
  */
 export function lowerize(word: string) {
   return word.charAt(0).toLowerCase() + word.slice(1);
-}
+};
 
 /**
  * Converts a string into dash format
@@ -132,10 +132,29 @@ export function snakerize(string: string) {
     //replace "someString" to "some-string"
     .replace(/([a-z])([A-Z0-9])/g, '$1_$2')
     .toLowerCase();
-}
+};
 
-export function render(template: string, data: Record<string, any> = {}) {
+export function render(
+  template: string, 
+  data: Record<string, any> = {},
+  delimiter?: string //{{=<% %>=}}
+) {
+  if (delimiter) {
+    template = delimiter + template;
+  }
   return mustache.render(template, data);
+};
+
+/**
+ * Used to "transform" a code template string
+ * using code safe variable handlers
+ */
+export function renderCode(
+  template: string, 
+  data: Record<string, any> = {},
+  delimiter = '{{=<% %>=}}'
+) {
+  return render(template, data, delimiter);
 }
 
 /**
@@ -148,4 +167,4 @@ export function objectToAttributeString(attributes: Record<string, any>) {
   return Object.entries(attributes).map(([key, value]) => {
     return `${key}={${JSON.stringify(value)}}`;
   }).join(' ');
-}
+};

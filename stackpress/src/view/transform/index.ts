@@ -1,7 +1,7 @@
 //root
 import type { IdeaPluginWithProject } from '../../types/index.js';
 //schema
-import Registry from '../../schema/Registry.js';
+import Schema from '../../schema/Schema.js';
 //local
 import generateViews from './view.js';
 import generateFields from './form.js';
@@ -35,19 +35,19 @@ export default async function generate(props: IdeaPluginWithProject) {
   //-----------------------------//
   // 1. Config
   //extract props
-  const { schema, project } = props;
-  const registry = new Registry(schema);
+  const { schema: config, project } = props;
+  const schema = Schema.make(config);
 
   //-----------------------------//
   // 2. Generators
   // - profile/components/form/
-  generateFields(project, registry);
+  generateFields(project, schema);
   // - profile/components/filter/
-  generateFilters(project, registry);
+  generateFilters(project, schema);
   // - profile/components/list/
-  generateLists(project, registry);
+  generateLists(project, schema);
   // - profile/components/span/
-  generateSpans(project, registry);
+  generateSpans(project, schema);
   // - profile/components/view/
-  generateViews(project, registry);
+  generateViews(project, schema);
 };

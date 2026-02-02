@@ -1,3 +1,5 @@
+//stackpress/schema
+import { generators } from '../helpers.js'
 //stackpress/schema/column
 import type Column from './Column.js';
 
@@ -25,6 +27,20 @@ export default class ColumnValue {
    */
   public get generated() {
     return this._column.attributes.enabled('generated');
+  }
+
+  /**
+   * Returns the generator type if column 
+   * has a valid @default generator
+   * 
+   * ie: @default("cuid()") @default("nanoid()") @default("now()")
+   */
+  public get generator() {
+    const value = this.default;
+    if (typeof value === 'string' && generators.includes(value)) {
+      return value;
+    }
+    return null;
   }
 
   /**

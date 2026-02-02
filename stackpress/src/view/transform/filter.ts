@@ -1,21 +1,31 @@
 //modules
 import type { Directory } from 'ts-morph';
-//registry
-import type Registry from '../../schema/Registry.js';
-import type Column from '../../schema/spec/Column.js';
+//schema
+import type Schema from '../../schema/Schema.js';
+import type Column from '../../schema/column/Column.js';
 import type Model from '../../schema/model/Model.js';
+import { renderCode } from '../../schema/helpers.js';
 
-export default function generate(directory: Directory, registry: Registry) {
+export default function generate(directory: Directory, schema: Schema) {
   //for each model
-  for (const model of registry.model.values()) {
-    //generate all column fields
+  for (const model of schema.models.values()) {
+    //and for each column
     for (const column of model.columns.values()) {
-      const filter = column.filter;
-      if (!filter) continue;
-      filter.component === 'Relation'
+      //get the filter field attribute
+      const attribute = column.component.filterField;
+      //skip if no filter field 
+      if (!attribute?.component.defined) continue;
+      //this is the component definition token...
+      const component = attribute.component.definition!;
+      //if filter field component is Relation
+      component.name === 'Relation'
+        //generate relation filter field
         ? generateRelation(directory, model, column)
-        : ['Checkbox', 'Switch'].includes(filter.component)
+        //else if filter field component is Boolean
+        : ['Checkbox', 'Switch'].includes(component.name)
+        //generate boolean filter field
         ? generateBoolean(directory, model, column)
+        //otherwise generate standard field
         : generateField(directory, model, column);
     }
   }
@@ -26,16 +36,23 @@ export function generateRelation(
   model: Model,
   column: Column
 ) {
-  //NOTE: column.filter is a computed getter, 
-  // so dont keep computing it multiple times
-  const filter = column.filter;
-  //skip if no filter component
-  if (!filter) return;
+  //get the filter field attribute
+  const attribute = column.component.filterField;
+  //skip if no filter field 
+  if (!attribute?.component.defined) return;
+  //this is the component definition token...
+  const component = attribute.component.definition!;
+  //this is the component props from the pre-defined 
+  // definitions and the value set in the attribute.
+  const props = attribute.component.props;
   //get the path where this should be saved
-  const path = `${model.name}/components/filter/${column.titleCase}FilterField.tsx`;
+  const path = renderCode(TEMPLATE.FILE_PATH, {
+    model: model.name.toString(),
+    component: column.name.titleCase
+  });
   const source = directory.createSourceFile(path, '', { overwrite: true });
-
-  const BoolComponent = [ 'Checkbox', 'Switch' ].indexOf(filter.component) !== -1;
+  //boolean component?
+  const isBoolComponent = [ 'Checkbox', 'Switch' ].indexOf(component.name) !== -1;
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -45,9 +62,9 @@ export function generateRelation(
   });
   //import mustache from 'mustache';
   source.addImportDeclaration({
-      moduleSpecifier: 'mustache',
-      defaultImport: 'mustache'
-    });
+    moduleSpecifier: 'mustache',
+    defaultImport: 'mustache'
+  });
   //import SuggestInput from 'frui/form/SuggestInput';
   source.addImportDeclaration({
     moduleSpecifier: 'frui/form/SuggestInput',
@@ -65,75 +82,42 @@ export function generateRelation(
   });
   //import Text from 'frui/form/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/form/${column.filter.component}`,
-    defaultImport: column.filter.component
+    //component token will have import
+    //info. just use that as is...
+    moduleSpecifier: component.import.from,
+    defaultImport: component.import.default ? component.name : undefined,
+    namedImports: !component.import.default ? [ component.name ] : []
   });
   //export function NameFilterField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FilterField`,
+    name: `${column.name.titleCase}FilterField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
-    statements: (`
-      //props
-      const { className, value, change, error = false } = props;
-      const [ 
-        options, 
-        updateOptions 
-      ] = useState<{ label: string , value: any }[]>([]);
-      //render
-      return (
-        <SuggestInput 
-          name={name}
-          className={className}
-          error={error} 
-          defaultValue={value}
-          onQuery={async query => {
-            const response = await fetch(
-              '${String(filter.props.search || '')}'.replace('{{query}}', query)
-            );
-            const json = await response.json();
-            const options = json.results.map(row => ({
-              label: mustache.render('${filter.props.template}', row),
-              value: row.${filter.props.id}
-            }));
-            updateOptions(options);
-          }}
-        >
-          {options.map(option => (
-            <SuggestInput.Option value={option.value} key={option.value}>
-              {option.label}
-            </SuggestInput.Option>
-          ))}
-        </SuggestInput>
-      );
-    `)
+    statements: renderCode(TEMPLATE.RELATION_FIELD, {
+      url: String(props.search || ''),
+      template: props.template,
+      id: props.id
+    })
   });
   //export function NameFilterFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FilterFieldControl`,
+    name: `${column.name.titleCase}FilterFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
-    statements: (`
-      //props
-      const { className, value, change, error } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //render
-      return (
-        <FieldControl label={_('${column.label}')} error={error} className={className}>
-          ${BoolComponent ? `<input type="hidden" name="filter[${column.name}]${column.multiple ? '[]': ''}" value="0" />`: ''}
-          <${column.titleCase}FilterField
-            error={!!error} 
-            value={value} 
-            change={change}
-          />
-        </FieldControl>
-      );
-    `)
+    statements: renderCode(TEMPLATE.RELATION_CONTROL, {
+      label: column.name.label,
+      hidden: isBoolComponent 
+        ? renderCode(TEMPLATE.RELATION_BOOLEAN_HIDDEN_FIELD, {
+          column: column.name.toString(),
+          multiple: column.type.multiple ? '[]': ''
+        }) 
+        : '',
+      name: column.name.titleCase
+    })
   });
 };
 
@@ -142,13 +126,20 @@ export function generateBoolean(
   model: Model,
   column: Column
 ) {
-  //NOTE: column.filter is a computed getter, 
-  // so dont keep computing it multiple times
-  const filter = column.filter;
-  //skip if no filter component
-  if (!filter) return;
+  //get the filter field attribute
+  const attribute = column.component.filterField;
+  //skip if no filter field 
+  if (!attribute?.component.defined) return;
+  //this is the component definition token...
+  const component = attribute.component.definition!;
+  //this is the component props from the pre-defined 
+  // definitions and the value set in the attribute.
+  const props = attribute.component.props;
   //get the path where this should be saved
-  const path = `${model.name}/components/filter/${column.titleCase}FilterField.tsx`;
+  const path = renderCode(TEMPLATE.FILE_PATH, {
+    model: model.name.toString(),
+    component: column.name.titleCase
+  });
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
@@ -169,58 +160,39 @@ export function generateBoolean(
   });
   //import Text from 'frui/form/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/form/${column.filter.component}`,
-    defaultImport: column.filter.component
+    //component token will have import
+    //info. just use that as is...
+    moduleSpecifier: component.import.from,
+    defaultImport: component.import.default ? component.name : undefined,
+    namedImports: !component.import.default ? [ component.name ] : []
   });
   //export function NameFiter(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FilterField`,
+    name: `${column.name.titleCase}FilterField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
-    statements: (`
-      //props
-      const { className, value, change, error = false } = props;
-      const attributes = ${JSON.stringify(filter.props)};
-      //render
-      return (
-        <${filter.component} 
-          {...attributes}
-          name="filter[${column.name}]${column.multiple ? '[]': ''}"
-          className={className}
-          error={error} 
-          defaultValue="1"
-          defaultChecked={!!value}
-          onUpdate={value => change && change('filter[${column.name}]${column.multiple ? '[]': ''}', value)}
-        />
-      );
-    `)
+    statements: renderCode(TEMPLATE.BOOLEAN_FIELD, {
+      props: JSON.stringify(props),
+      component: component.name,
+      column: column.name.toString(),
+      multiple: column.type.multiple ? '[]': ''
+    })
   });
   //export function NameFilterFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FilterFieldControl`,
+    name: `${column.name.titleCase}FilterFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
-    statements: (`
-      //props
-      const { className, value, change, error } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //render
-      return (
-        <FieldControl label={_('${column.label}')} error={error} className={className}>
-          <input type="hidden" name="filter[${column.name}]${column.multiple ? '[]': ''}" value="0" />
-          <${column.titleCase}FilterField
-            error={!!error} 
-            value={value} 
-            change={change}
-          />
-        </FieldControl>
-      );
-    `)
+    statements: renderCode(TEMPLATE.BOOLEAN_CONTROL, {
+      label: column.name.label,
+      column: column.name.toString(),
+      multiple: column.type.multiple ? '[]': '',
+      component: column.name.titleCase,
+    })
   });
 };
 
@@ -229,13 +201,20 @@ export function generateField(
   model: Model,
   column: Column
 ) {
-  //NOTE: column.filter is a computed getter, 
-  // so dont keep computing it multiple times
-  const filter = column.filter;
-  //skip if no filter component
-  if (!filter) return;
+  //get the filter field attribute
+  const attribute = column.component.filterField;
+  //skip if no filter field 
+  if (!attribute?.component.defined) return;
+  //this is the component definition token...
+  const component = attribute.component.definition!;
+  //this is the component props from the pre-defined 
+  // definitions and the value set in the attribute.
+  const props = attribute.component.props;
   //get the path where this should be saved
-  const path = `${model.name}/components/filter/${column.titleCase}FilterField.tsx`;
+  const path = renderCode(TEMPLATE.FILE_PATH, {
+    model: model.name.toString(),
+    component: column.name.titleCase
+  });
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
@@ -256,55 +235,163 @@ export function generateField(
   });
   //import Text from 'frui/form/Text';
   source.addImportDeclaration({
-    moduleSpecifier: `frui/form/${column.filter.component}`,
-    defaultImport: column.filter.component
+    //component token will have import
+    //info. just use that as is...
+    moduleSpecifier: component.import.from,
+    defaultImport: component.import.default ? component.name : undefined,
+    namedImports: !component.import.default ? [ component.name ] : []
   });
   //export function NameFiter(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FilterField`,
+    name: `${column.name.titleCase}FilterField`,
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
-    statements: (`
-      //props
-      const { className, value, change, error = false } = props;
-      const attributes = ${JSON.stringify(filter.props)};
-      //render
-      return (
-        <${filter.component} 
-          {...attributes}
-          name="filter[${column.name}]${column.multiple ? '[]': ''}"
-          className={className}
-          error={error} 
-          defaultValue={value} 
-          onUpdate={value => change && change('filter[${column.name}]${column.multiple ? '[]': ''}', value)}
-        />
-      );
-    `)
+    statements: renderCode(TEMPLATE.FIELD_FIELD, {
+      props: JSON.stringify(props),
+      component: component.name,
+      column: column.name.toString(),
+      multiple: column.type.multiple ? '[]': ''
+    })
   });
   //export function NameFilterControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.titleCase}FilterFieldControl`,
+    name: `${column.name.titleCase}FilterFieldControl`,
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
-    statements: (`
-      //props
-      const { className, value, change, error } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //render
-      return (
-        <FieldControl label={_('${column.label}')} error={error} className={className}>
-          <${column.titleCase}FilterField
-            error={!!error} 
-            value={value} 
-            change={change}
-          />
-        </FieldControl>
-      );
-    `)
+    statements: renderCode(TEMPLATE.FIELD_CONTROL, {
+      label: column.name.label,
+      component: column.name.titleCase
+    })
   });
+};
+
+export const TEMPLATE = {
+
+FILE_PATH: 
+'<%model%>/components/filter/<%component%>FilterField.tsx',
+
+RELATION_FIELD:
+`//props
+const { className, value, change, error = false } = props;
+const [ 
+  options, 
+  updateOptions 
+] = useState<{ label: string , value: any }[]>([]);
+//render
+return (
+  <SuggestInput 
+    name={name}
+    className={className}
+    error={error} 
+    defaultValue={value}
+    onQuery={async query => {
+      const response = await fetch(
+        '<%url%>'.replace('{{query}}', query)
+      );
+      const json = await response.json();
+      const options = json.results.map(row => ({
+        label: mustache.render('<%template%>', row),
+        value: row.<%id%>
+      }));
+      updateOptions(options);
+    }}
+  >
+    {options.map(option => (
+      <SuggestInput.Option value={option.value} key={option.value}>
+        {option.label}
+      </SuggestInput.Option>
+    ))}
+  </SuggestInput>
+);`,
+
+RELATION_CONTROL:
+`//props
+const { className, value, change, error } = props;
+//hooks
+const { _ } = useLanguage();
+//render
+return (
+  <FieldControl label={_('<%label%>')} error={error} className={className}>
+    <%hidden%>
+    <<%column%>FilterField
+      error={!!error} 
+      value={value} 
+      change={change}
+    />
+  </FieldControl>
+);`,
+
+RELATION_BOOLEAN_HIDDEN_FIELD:
+'<input type="hidden" name="filter[<%name%>]<%multiple%>" value="0" />',
+
+BOOLEAN_FIELD:
+`//props
+const { className, value, change, error = false } = props;
+const attributes = <%props%>;
+//render
+return (
+  <<%component%> 
+    {...attributes}
+    name="filter[<%column%>]<%multiple%>"
+    className={className}
+    error={error} 
+    defaultValue="1"
+    defaultChecked={!!value}
+    onUpdate={value => change && change('filter[<%column%>]<%multiple%>', value)}
+  />
+);`,
+
+BOOLEAN_CONTROL:
+`//props
+const { className, value, change, error } = props;
+//hooks
+const { _ } = useLanguage();
+//render
+return (
+  <FieldControl label={_('<%label%>')} error={error} className={className}>
+    <input type="hidden" name="filter[<%column%>]<%multiple%>" value="0" />
+    <<%component%>FilterField
+      error={!!error} 
+      value={value} 
+      change={change}
+    />
+  </FieldControl>
+);`,
+
+FIELD_FIELD:
+`//props
+const { className, value, change, error = false } = props;
+const attributes = <%props%>;
+//render
+return (
+  <<%component%> 
+    {...attributes}
+    name="filter[<%column%>]<%multiple%>"
+    className={className}
+    error={error} 
+    defaultValue={value} 
+    onUpdate={value => change && change('filter[<%column%>]<%multiple%>', value)}
+  />
+);`,
+
+FIELD_CONTROL:
+`//props
+const { className, value, change, error } = props;
+//hooks
+const { _ } = useLanguage();
+//render
+return (
+  <FieldControl label={_('<%label%>')} error={error} className={className}>
+    <<%component%>FilterField
+      error={!!error} 
+      value={value} 
+      change={change}
+    />
+  </FieldControl>
+);`
+
 };

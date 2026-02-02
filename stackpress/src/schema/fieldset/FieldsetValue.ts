@@ -23,6 +23,15 @@ export default class FieldsetValue {
   }
 
   /**
+   * Returns all columns that have static default values
+   */
+  public get staticDefaults() {
+    return this.defaults.filter(
+      column => column.value.generator === null
+    );
+  }
+
+  /**
    * Sets the column reference
    */
   constructor(fieldset: Fieldset) {
