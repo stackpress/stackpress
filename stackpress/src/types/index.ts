@@ -51,18 +51,31 @@ export type {
 } from '../language/types.js';
 
 export type {
-  AttributeConfigArgument,
-  AttributeConfigComponent,
-  AttributeData,
-  AttributeConfig,
-  AttributeValues,
-  SchemaAssertion,
-  SchemaRelation,
-  SchemaComponent,
   ErrorList,
   ErrorMap,
+  SerializerSettings,
   SerializeOptions,
-  SerializerSettings
+  AttributeData,
+  AttributeDataMap,
+  AttributeDataComponent,
+  AttributeDataAssertion,
+  TypeMapDataMap,
+  TypeMapDataAssertion,
+  TypeMapDataSerializer,
+  DefinitionBook,
+  AttributeDefinitionInput,
+  AttributeDefinitionToken,
+  AttributeComponentInput,
+  AttributeComponentToken,
+  AttributeAssertionInput,
+  AttributeAssertionToken,
+  ColumnToken,
+  ColumnTypeToken,
+  AttributesToken,
+  AttributeMapToken,
+  AttributesEntriesToken,
+  ColumnAssertionToken,
+  ColumnRelationProps
 } from '../schema/types.js';
 
 export type {

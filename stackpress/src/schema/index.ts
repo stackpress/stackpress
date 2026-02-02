@@ -1,3 +1,37 @@
+export type {
+  EnumConfig,
+  ModelConfig,
+  TypeConfig,
+  PropConfig,
+  PluginConfig,
+  SchemaConfig,
+  ErrorList,
+  ErrorMap,
+  SerializerSettings,
+  SerializeOptions,
+  AttributeData,
+  AttributeDataMap,
+  AttributeDataComponent,
+  AttributeDataAssertion,
+  TypeMapDataMap,
+  TypeMapDataAssertion,
+  TypeMapDataSerializer,
+  DefinitionBook,
+  AttributeDefinitionInput,
+  AttributeDefinitionToken,
+  AttributeComponentInput,
+  AttributeComponentToken,
+  AttributeAssertionInput,
+  AttributeAssertionToken,
+  ColumnToken,
+  ColumnTypeToken,
+  AttributesToken,
+  AttributeMapToken,
+  AttributesEntriesToken,
+  ColumnAssertionToken,
+  ColumnRelationProps
+} from './types.js';
+
 import * as attributes from './config/attributes.js';
 import * as typemaps from './config/typemaps.js';
 import {
@@ -49,7 +83,6 @@ import StringSerializer from './serializer/StringSerializer.js';
 import UnknownSerializer from './serializer/UnknownSerializer.js';
 
 import Schema from './Schema.js';
-
 
 export { 
   attributes, 
