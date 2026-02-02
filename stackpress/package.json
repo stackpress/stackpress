@@ -486,10 +486,10 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "3.1.0",
-    "@stackpress/idea-transformer": "0.6.10",
-    "@stackpress/ingest": "0.6.10",
-    "@stackpress/inquire": "0.6.10",
-    "@stackpress/lib": "0.6.10",
+    "@stackpress/idea-transformer": "0.6.11",
+    "@stackpress/ingest": "0.6.11",
+    "@stackpress/inquire": "0.6.11",
+    "@stackpress/lib": "0.6.11",
     "jose": "6.1.3",
     "mustache": "4.2.0",
     "nanoid": "5.1.6",
@@ -497,7 +497,7 @@
     "papaparse": "5.5.3",
     "r22n": "1.0.10",
     "react-toastify": "11.0.5",
-    "reactus": "0.6.10",
+    "reactus": "0.6.11",
     "universal-cookie": "8.0.1"
   },
   "devDependencies": {
@@ -527,7 +527,7 @@
     "unocss": "66.5.10"
   },
   "peerDevDependencies": {
-    "@stackpress/idea-transformer": "0.6.10",
+    "@stackpress/idea-transformer": "0.6.11",
     "@vitejs/plugin-react": "4.3.4",
     "fast-glob": "^3.3",
     "prettier": "^3",

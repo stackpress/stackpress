@@ -119,7 +119,7 @@ export function generateFieldsetTable(
       } 
     ],
     statements: renderCode(TEMPLATE.FIELDSET_TABLE, {
-      rows: Array.from(columnFieldset.component.listFormats.values()).map(
+      rows: columnFieldset.component.listFormats.toArray().map(
         column => renderCode(TEMPLATE.FIELDSET_TABLE_ROW, {
           label: column.name.label,
           value: column.type.required

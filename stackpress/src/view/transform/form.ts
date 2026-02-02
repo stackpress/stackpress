@@ -252,7 +252,7 @@ export function generateFieldset(
     statements: renderCode(TEMPLATE.FIELDSET_FIELDS, {
       component: column.name.titleCase,
       singular: fieldset.name.singular,
-      fields: Array.from(fieldset.component.formFields.values()).map(
+      fields: fieldset.component.formFields.toArray().map(
         column => column.component.formField?.name === 'Fieldset' 
           ? renderCode(TEMPLATE.FIELDSET_FIELDS_FIELDSET_CONTROL, {
             component: column.name.titleCase,
