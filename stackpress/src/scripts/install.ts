@@ -26,7 +26,7 @@ export default async function install(
   const order = sequence(models.map(model => model.config));
   //add drop queries
   for (const model of order) {
-    queries.push(database.dialect.drop(model.snakeCase));
+    queries.push(database.dialect.drop(model.name.snakeCase));
   }
   //add create queries
   for (const model of order.reverse()) {

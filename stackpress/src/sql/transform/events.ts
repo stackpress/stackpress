@@ -2,11 +2,11 @@
 import type { Directory } from 'ts-morph';
 //schema
 import type Model from '../../schema/model/Model.js';
-import Registry from '../../schema/Registry.js';
+import Schema from '../../schema/Schema.js';
 
-export default function generate(directory: Directory, registry: Registry) {
+export default function generate(directory: Directory, schema: Schema) {
   //loop through models
-  for (const model of registry.model.values()) {
+  for (const model of schema.models.values()) {
     // - profile/events/batch.ts
     event('batch', model, directory);
     // - profile/events/create.ts
@@ -29,7 +29,7 @@ export default function generate(directory: Directory, registry: Registry) {
     event('upsert', model, directory);
     // - profile/events/index.ts
     const source = directory.createSourceFile(
-      `${model.name}/events/index.ts`,
+      `${model.name.toString()}/events/index.ts`,
       '', 
       { overwrite: true }
     );
@@ -91,16 +91,16 @@ export default function generate(directory: Directory, registry: Registry) {
     //const router = server();
     source.addStatements(`
       const router = server();
-      router.on('${model.dashCase}-batch', batch);
-      router.on('${model.dashCase}-create', create);
-      router.on('${model.dashCase}-detail', detail);
-      router.on('${model.dashCase}-get', get);
-      router.on('${model.dashCase}-purge', purge);
-      router.on('${model.dashCase}-remove', remove);
-      router.on('${model.dashCase}-restore', restore);
-      router.on('${model.dashCase}-search', search);
-      router.on('${model.dashCase}-update', update);
-      router.on('${model.dashCase}-upsert', upsert);
+      router.on('${model.name.dashCase}-batch', batch);
+      router.on('${model.name.dashCase}-create', create);
+      router.on('${model.name.dashCase}-detail', detail);
+      router.on('${model.name.dashCase}-get', get);
+      router.on('${model.name.dashCase}-purge', purge);
+      router.on('${model.name.dashCase}-remove', remove);
+      router.on('${model.name.dashCase}-restore', restore);
+      router.on('${model.name.dashCase}-search', search);
+      router.on('${model.name.dashCase}-update', update);
+      router.on('${model.name.dashCase}-upsert', upsert);
       export default router;
     `);
     //export { create, detail, ... }
@@ -125,7 +125,7 @@ export function event(action: string, model: Model, directory: Directory) {
   const lower = action.toLowerCase();
   const title = action.charAt(0).toUpperCase() + action.slice(1);
   const source = directory.createSourceFile(
-    `${model.name}/events/${lower}.ts`,
+    `${model.name.toString()}/events/${lower}.ts`,
     '', 
     { overwrite: true }
   );
@@ -146,7 +146,7 @@ export function event(action: string, model: Model, directory: Directory) {
   });
   //export default function ProfileCreateEvent(req: Request, res: Response)
   source.addFunction({
-    name: `${model.titleCase}${title}Event`,
+    name: `${model.name.titleCase}${title}Event`,
     isAsync: true,
     isDefaultExport: true,
     parameters: [

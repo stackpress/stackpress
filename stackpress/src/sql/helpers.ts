@@ -144,9 +144,10 @@ export function sequence(models: Model[]) {
     //loop through all the existing table create schemas
     for (const model of floating) {
       //does any of the existing tables depend on this table?
-      const dependents = floating.filter(float => float.parentRelations
-        .map(column => column.type)
-        .find(table => table === model.name)
+      const dependents = floating.filter(
+        float => float.store.foreignRelationships
+          .map(column => column.type.name)
+          .find(table => table === model.name.toString())
       );
       //if no dependents, then we can drop the table
       if (!dependents.length) {
@@ -170,22 +171,22 @@ export function getColumns(
     const columns: string[] = [];
     model.columns.forEach(column => {
       //if columns are relations
-      if (column.model) {
+      if (column.type.model) {
         return;
       }
       const prefix = prefixes.length > 0 ? prefixes.join('.') + '.': '';
       //add columns as camelCase
-      columns.push(`${prefix}${column.name}`);
+      columns.push(`${prefix}${column.name.toString()}`);
     });
     return columns;
   }
   const path = column.split('.');
   if (path.length > 1) {
     const column = model.columns.get(path[0]);
-    if (column && column.model) {
+    if (column && column.type.model) {
       return getColumns(
         path.slice(1).join('.'), 
-        column.model, 
+        column.type.model, 
         [ ...prefixes, path[0] ]
       );
     }
@@ -267,13 +268,13 @@ export function getColumnPath(
   //ex. user.address.streetName
   //ex. address.streetName
   //if the column is not a model
-  if (!column.model) {
+  if (!column.type.model) {
     //return an empty array signifying that the selector is invalid
     return [];
   }
   return getColumnPath(
     selectors.slice(1).join('.'), 
-    column.model, 
+    column.type.model, 
     path.concat([{ model, column }])
   );
 }
@@ -310,18 +311,18 @@ export function getColumnJoins(
   //model: product -> group
   const column = model.columns.get(selectors[index]);
   //get the relation
-  const relation = column?.parentRelation;
+  const relation = column?.store.foreignRelationship;
   //get the related
-  const related = column?.childRelation;
+  const related = column?.store.localRelationship;
   //if there is a relation
   if (relation) {
     //get the table (should be the parent table)
     //group
-    const table = relation.parent.model.snakeCase;
+    const table = relation.foreign.model.name.snakeCase;
     //get the from (should be the child column)
-    const from = `${alias.parent}${relation.child.key.snakeCase}`;
+    const from = `${alias.parent}${relation.local.key.name.snakeCase}`;
     //get the to (should be the parent column)
-    const to = `${alias.child}.${relation.parent.key.snakeCase}`;
+    const to = `${alias.child}.${relation.foreign.key.name.snakeCase}`;
     //make a record key
     const key = `INNER JOIN ${table} AS ${alias.child} ON (${from} = ${to})`;
     //add the join to the joins
@@ -329,21 +330,22 @@ export function getColumnJoins(
     //return the join info
     return getColumnJoins(
       selector,
-      relation.parent.model as Model, 
+      relation.foreign.model, 
       index + 1,
       joins
     );
   //if there is a related and its not multiple
-  } else if (related && !related.parent.column.multiple) {
+  } else if (related && !related.foreign.column.type.multiple) {
     //get the table (should be the child table this time.)
-    const table = related.child.model.snakeCase;
+    const table = related.local.model.name.snakeCase;
     //redetermine the alias (if root it would be id, but id is ambiguous)
     //so if no alias then assume the parent table name
-    const aliasParent = alias.parent || `${related.parent.model.snakeCase}.`;
+    const aliasParent = alias.parent 
+      || `${related.foreign.model.name.snakeCase}.`;
     //get the from (should be the parent column)
-    const from = `${aliasParent}${related.parent.key.snakeCase}`;
+    const from = `${aliasParent}${related.foreign.key.name.snakeCase}`;
     //get the to (should be the child column)
-    const to = `${alias.child}.${related.child.key.snakeCase}`;
+    const to = `${alias.child}.${related.local.key.name.snakeCase}`;
     //make a record key
     const key = `INNER JOIN ${table} AS ${alias.child} ON (${from} = ${to})`;
     //add the join to the joins
@@ -351,7 +353,7 @@ export function getColumnJoins(
     //return the join info
     return getColumnJoins(
       selector, 
-      related.child.model as Model, 
+      related.local.model as Model, 
       index + 1, 
       joins
     );

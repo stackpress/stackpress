@@ -44,15 +44,15 @@ export function handlers(model: Model) {
 
 export default function listen(model: Model) {
   const emitter = server();
-  emitter.on(`${model.dashCase}-batch`, batch(model));
-  emitter.on(`${model.dashCase}-create`, create(model));
-  emitter.on(`${model.dashCase}-detail`, detail(model));
-  emitter.on(`${model.dashCase}-get`, get(model));
-  emitter.on(`${model.dashCase}-purge`, purge(model));
-  emitter.on(`${model.dashCase}-remove`, remove(model));
-  emitter.on(`${model.dashCase}-restore`, restore(model));
-  emitter.on(`${model.dashCase}-search`, search(model));
-  emitter.on(`${model.dashCase}-update`, update(model));
-  emitter.on(`${model.dashCase}-upsert`, upsert(model));
+  emitter.on(`${model.name.dashCase}-batch`, batch(model));
+  emitter.on(`${model.name.dashCase}-create`, create(model));
+  emitter.on(`${model.name.dashCase}-detail`, detail(model));
+  emitter.on(`${model.name.dashCase}-get`, get(model));
+  emitter.on(`${model.name.dashCase}-purge`, purge(model));
+  emitter.on(`${model.name.dashCase}-remove`, remove(model));
+  emitter.on(`${model.name.dashCase}-restore`, restore(model));
+  emitter.on(`${model.name.dashCase}-search`, search(model));
+  emitter.on(`${model.name.dashCase}-update`, update(model));
+  emitter.on(`${model.name.dashCase}-upsert`, upsert(model));
   return emitter;
 };

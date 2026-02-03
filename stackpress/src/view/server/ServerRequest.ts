@@ -5,7 +5,7 @@ import type {
   CallableMap, 
   CallableNest
 } from '@stackpress/lib/types';
-import map from '@stackpress/lib/map';
+import { map } from '@stackpress/lib/Map';
 import { nest } from '@stackpress/lib/Nest';
 //views
 import type { ServerRequestProps } from '../types.js';

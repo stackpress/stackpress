@@ -1,12 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//registry
+//stackpress
+import { renderCode } from '../../helpers.js';
+//stackpress/schema
 import type Schema from '../../schema/Schema.js';
 import type Fieldset from '../../schema/fieldset/Fieldset.js';
 import type Column from '../../schema/column/Column.js';
 import type Model from '../../schema/model/Model.js';
-import { renderCode } from '../../schema/helpers.js';
 
 export default function generate(directory: Directory, schema: Schema) {
   //for each model
@@ -73,8 +74,8 @@ export function generateRelation(
   const props = attribute.component.props;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    fieldset: model.name.toString(),
-    component: column.name.titleCase
+    fieldset: model.name.toPathName(),
+    component: column.name.toComponentName('%sFormField')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
@@ -112,12 +113,12 @@ export function generateRelation(
   //export function NameFormField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FormField`,
+    name: column.name.toComponentName('%sFormField'),
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
     statements: renderCode(TEMPLATE.RELATION_FIELD, {
-      column: column.name.toString(),
+      column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': '',
       url: String(props.search || ''),
       template: String(props.template || ''),
@@ -127,7 +128,7 @@ export function generateRelation(
   //export function NameFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FormFieldControl`,
+    name: column.name.toComponentName('%sFormFieldControl'),
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -136,7 +137,7 @@ export function generateRelation(
       required: column.type.required && !column.type.multiple
         ? ` + '*'`
         : '',
-      component: column.name.titleCase
+      component: column.name.toComponentName('%sFormField')
     })
   });
 };
@@ -155,8 +156,8 @@ export function generateFieldset(
   const props = attribute.component.props;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    fieldset: fieldset.name.toString(),
-    component: column.name.titleCase
+    fieldset: fieldset.name.toPathName(),
+    component: column.name.toComponentName('%sFormField')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
   
@@ -175,8 +176,8 @@ export function generateFieldset(
   //import type { AddressInput } from '../../../Address/types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: `../../../${fieldset.name.toString()}/types.js`,
-    namedImports: [ `${column.name.titleCase}Input` ]
+    moduleSpecifier: fieldset.name.toPathName('../../../%s/types.js'),
+    namedImports: [ column.name.toTypeName('%sInput') ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -200,10 +201,10 @@ export function generateFieldset(
       //import { ActiveFieldsetControl } from '../../components/form/ActiveField.js';
       source.addImportDeclaration({
         moduleSpecifier: renderCode(TEMPLATE.RELATIVE_FORM_FIELD_PATH, {
-          fieldset: fieldset.name.toString(),
-          component: column.name.titleCase
+          fieldset: fieldset.name.toPathName(),
+          component: column.name.toComponentName('%sFormField')
         }),
-        namedImports: [ `${column.name.titleCase}FormFieldsetControl` ]
+        namedImports: [ column.name.toComponentName('%sFormFieldsetControl') ]
       });
       continue;
     }
@@ -212,17 +213,17 @@ export function generateFieldset(
   //export type AddressConfig = { ... };
   source.addTypeAlias({
     isExported: true,
-    name: `${column.name.titleCase}Config`,
+    name: column.name.toTypeName('%sConfig'),
     type: renderCode(TEMPLATE.FIELDSET_TYPE_CONFIG, { 
-      typename: column.name.titleCase 
+      type: column.name.toTypeName('%sInput')
     })
   });
   //export type AddressFieldsetProps = FieldsetProps<AddressInput>
   source.addTypeAlias({
     isExported: true,
-    name: `${column.name.titleCase}FormFieldsetProps`,
+    name: column.name.toTypeName('%sFormFieldsetProps'),
     type: renderCode(TEMPLATE.FIELDSET_TYPE_PROPS, { 
-      typename: column.name.titleCase 
+      type: column.name.toTypeName('%sInput') 
     })
   });
   //export type AddressControlProps = { ... };
@@ -230,15 +231,15 @@ export function generateFieldset(
     isExported: true,
     name: `${column.name.titleCase}ControlProps`,
     type: renderCode(TEMPLATE.FIELDSET_TYPE_CONTROL_PROPS, { 
-      typename: column.name.titleCase 
+      type: column.name.toTypeName('%sInput')
     })
   });
   //export function useAddressFormFieldset(config: AddressConfig) {}
   source.addFunction({
     isExported: true,
-    name: `use${column.name.titleCase}FormFieldset`,
+    name: column.name.toComponentName('use%sFormFieldset'),
     parameters: [
-      { name: 'config', type: `${column.name.titleCase}Config` }
+      { name: 'config', type: column.name.toTypeName('%sConfig') }
     ],
     statements: TEMPLATE.FIELDSET_HOOK
   });
@@ -250,18 +251,18 @@ export function generateFieldset(
       { name: 'props', type: `FieldsProps<${column.name.titleCase}Input>` }
     ],
     statements: renderCode(TEMPLATE.FIELDSET_FIELDS, {
-      component: column.name.titleCase,
+      hook: column.name.toComponentName('use%sFormFieldset'),
       singular: fieldset.name.singular,
       fields: fieldset.component.formFields.toArray().map(
         column => column.component.formField?.name === 'Fieldset' 
           ? renderCode(TEMPLATE.FIELDSET_FIELDS_FIELDSET_CONTROL, {
-            component: column.name.titleCase,
-            column: column.name.toString()
+            component: column.name.toComponentName('%sFormFieldsetControl'),
+            column: column.name.toURLPath()
           })
           : column.component.formField
           ? renderCode(TEMPLATE.FIELDSET_FIELDS_FIELD_CONTROL, {
-            component: column.name.titleCase,
-            column: column.name.toString()
+            component: column.name.toComponentName('%sFormFieldsetControl'),
+            column: column.name.toURLPath()
           })
           : ''
       ).filter(Boolean).join('\n')
@@ -273,16 +274,20 @@ export function generateFieldset(
     declarations: [{
       name: 'Fieldset',
       initializer: renderCode(TEMPLATE.FIELDSET_MAKE, { 
-        component: column.name.titleCase 
+        type: column.name.toTypeName('%sInput'),
+        component: column.name.toComponentName('%sFormFields')
       })
     }]
   });
   //export function AddressFormFieldset(props: AddressFieldsetProps) {}
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FormFieldset`,
+    name: column.name.toComponentName('%sFormFieldset'),
     parameters: [
-      { name: 'props', type: `${column.name.titleCase}FormFieldsetProps` }
+      { 
+        name: 'props', 
+        type: column.name.toTypeName('%sFormFieldsetProps') 
+      }
     ],
     statements: renderCode(TEMPLATE.FIELDSET_FIELD, {
       required: column.type.required ? 'true' : 'false',
@@ -302,14 +307,17 @@ export function generateFieldset(
     isExported: true,
     name: `${column.name.titleCase}FormFieldsetControl`,
     parameters: [
-      { name: 'props', type: `${column.name.titleCase}ControlProps` }
+      { 
+        name: 'props', 
+        type: column.name.toTypeName('%sControlProps') 
+      }
     ],
     statements: renderCode(TEMPLATE.FIELDSET_CONTROL, {
       label: column.name.label,
       required: column.type.required && !column.type.multiple
         ? ` + '*'`
         : '',
-      component: column.name.titleCase
+      component: column.name.toComponentName('%sFormFieldset'),
     })
   });
 };
@@ -330,8 +338,8 @@ export function generateBoolean(
   const props = attribute.component.props;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    fieldset: fieldset.name.toString(),
-    component: column.name.titleCase
+    fieldset: fieldset.name.toPathName(),
+    component: column.name.toComponentName('%sFormField')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
@@ -361,12 +369,12 @@ export function generateBoolean(
   //export function NameFormField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FormField`,
+    name: column.name.toComponentName('%sFormField'),
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
     statements: renderCode(TEMPLATE.BOOLEAN_FIELD, {
-      column: column.name.toString(),
+      column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': '',
       props: JSON.stringify(props),
       component: component.name
@@ -380,7 +388,7 @@ export function generateBoolean(
       { name: 'props', type: 'ControlProps' }
     ],
     statements: renderCode(TEMPLATE.BOOLEAN_CONTROL, {
-      column: column.name.toString(),
+      column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': '',
       default: column.value.default && !column.value.generator 
         ? '=' + JSON.stringify(column.value.default) 
@@ -389,7 +397,7 @@ export function generateBoolean(
       required: column.type.required && !column.type.multiple
         ? ` + '*'`
         : '',
-      component: column.name.titleCase
+      component: column.name.toComponentName('%sFormField')
     })
   });
 };
@@ -409,14 +417,10 @@ export function generateField(
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
   //get the path where this should be saved
-  const path = renderCode(
-    '<%fieldset%>/components/form/<%component%>FormField.tsx', 
-    {
-      fieldset: fieldset.name.toString(),
-      component: column.name.titleCase
-    }, 
-    '{{=<% %>=}}'
-  );
+  const path = renderCode(TEMPLATE.FILE_PATH, {
+    fieldset: fieldset.name.toPathName(),
+    component: column.name.toComponentName('%sFormField')
+  });
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -445,42 +449,19 @@ export function generateField(
   //export function NameFormField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FormField`,
+    name: column.name.toComponentName('%sFormField'),
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
-    statements: renderCode(
-      `//props
-      const { 
-        className, 
-        name = '<%column%><%multiple%>', 
-        value<%default%>, 
-        change, 
-        error = false 
-      } = props;
-      const attributes = <%props%>;
-      //renderCode
-      return (
-        <<%component%> 
-          {...attributes}
-          name={name}
-          className={className}
-          error={error} 
-          defaultValue={value} 
-          onUpdate={value => change && change('<%column%><%multiple%>', value)}
-        />
-      );`,
-      {
-        column: column.name.toString(),
-        multiple: column.type.multiple ? '[]': '',
-        default: column.value.default && !column.value.generator 
-          ? '=' + JSON.stringify(column.value.default) 
-          : '',
-        props: JSON.stringify(props),
-        component: component.name
-      },
-      '{{=<% %>=}}'
-    )
+    statements: renderCode(TEMPLATE.FIELD_FIELD, {
+      column: column.name.toURLPath(),
+      multiple: column.type.multiple ? '[]': '',
+      default: column.value.default && !column.value.generator 
+        ? '=' + JSON.stringify(column.value.default) 
+        : '',
+      props: JSON.stringify(props),
+      component: component.name
+    })
   });
   //export function NameFormFieldControl(props: ControlProps) {
   source.addFunction({
@@ -489,43 +470,23 @@ export function generateField(
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
-    statements: renderCode(
-      `//props
-      const { className, name, value, change, error } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //determine label
-      const label = _('<%label%>')<%required%>;
-      //renderCode
-      return (
-        <FieldControl label={label} error={error} className={className}>
-          <<%component%>FormField
-            error={typeof error === 'string'} 
-            name={name}
-            value={value} 
-            change={change}
-          />
-        </FieldControl>
-      );`,
-      {
-        label: column.name.label,
-        required: column.type.required && !column.type.multiple
-          ? ` + '*'`
-          : '',
-        component: column.name.titleCase
-      },
-      '{{=<% %>=}}'
-    )
+    statements: renderCode(TEMPLATE.FIELD_CONTROL, {
+      label: column.name.label,
+      required: column.type.required && !column.type.multiple
+        ? ` + '*'`
+        : '',
+      component: column.name.toComponentName('%sFormField')
+    })
   });
 };
 
 export const TEMPLATE = {
 
 FILE_PATH:
-'<%fieldset%>/components/form/<%component%>FormField.tsx',
+'<%fieldset%>/components/form/<%component%>.tsx',
 
 RELATIVE_FORM_FIELD_PATH:
-'../../../<%fieldset%>/components/form/<%component%>FormField.tsx',
+'../../../<%fieldset%>/components/form/<%component%>.tsx',
 
 RELATION_FIELD:
 `//props
@@ -577,7 +538,7 @@ const label = _('<%label%>')<%required%>;
 //renderCode
 return (
   <FieldControl label={label} error={error} className={className}>
-    <<%component%>FormField
+    <<%component%>
       error={!!error} 
       name={name}
       value={value} 
@@ -590,21 +551,21 @@ return (
 FIELDSET_TYPE_CONFIG:
 `{
   type?: string,
-  values?: (<%typename%>Input|undefined)[],
+  values?: (<%type%>|undefined)[],
   index: number,
-  set: (values: (<%typename%>Input|undefined)[]) => void
+  set: (values: (<%type%>|undefined)[]) => void
 }`,
 
 //export type AddressFieldsetProps = FieldsetProps<AddressInput>
 FIELDSET_TYPE_PROPS:
-'FieldsetProps<<%typename%>Input> & { errors?: Record<string, any>[] }',
+'FieldsetProps<<%type%>> & { errors?: Record<string, any>[] }',
 
 //export type AddressControlProps = { ... };
 FIELDSET_TYPE_CONTROL_PROPS:
 `{
   label?: string,
   error?: string,
-  value?: <%typename%>Input|<%typename%>Input[],
+  value?: <%type%>|<%type%>[],
   errors?: Record<string, any>|Record<string, any>[],
   style?: CSSProperties,
   className?: string
@@ -633,7 +594,7 @@ FIELDSET_FIELDS:
 const { _ } = useLanguage();
 const { errors = [] } = config;
 //handlers
-const { handlers } = use<%component%>FormFieldset({ values, index, set });
+const { handlers } = <%hook%>({ values, index, set });
 //variables
 const prefix = !limit && name 
   ? \`\${name}[\${index}]\` 
@@ -672,7 +633,7 @@ return (
 );`,
 
 FIELDSET_FIELDS_FIELDSET_CONTROL:
-`<<%component%>FormFieldsetControl
+`<<%component%>
   className="field-fieldset-control"
   name={prefix ? \`\${prefix}[<%column%>]\` : undefined}
   errors={error['<%column%>']}
@@ -680,7 +641,7 @@ FIELDSET_FIELDS_FIELDSET_CONTROL:
 />`,
 
 FIELDSET_FIELDS_FIELD_CONTROL:
-`<<%component%>FormFieldControl
+`<<%component%>
   className="field-fieldset-control"
   name={prefix ? \`\${prefix}[<%column%>]\` : undefined}
   error={error['<%column%>']}
@@ -688,7 +649,7 @@ FIELDSET_FIELDS_FIELD_CONTROL:
 />`,
 
 FIELDSET_MAKE:
-`make<<%component%>Input>(<%component%>FormFields)`,
+`make<<%type%>>(<%component%>)`,
 
 FIELDSET_FIELD:
 `//config gets passed straight to the fields
@@ -750,7 +711,7 @@ return (
       <label className="frui-control-label">{label}</label>
     )}
     <div className="frui-control-field">
-      <<%component%>FormFieldset 
+      <<%component%> 
         error={errors.length > 0} 
         errors={errors} 
         name={name} 
@@ -804,8 +765,49 @@ const label = _('<%label%>')<%required%>;
 return (
   <FieldControl label={label} error={error} className={className}>
     <input type="hidden" name={name} value="0" />
-    <<%component%>FormField
+    <<%component%>
       error={!!error} 
+      name={name}
+      value={value} 
+      change={change}
+    />
+  </FieldControl>
+);`,
+
+FIELD_FIELD:
+`//props
+const { 
+  className, 
+  name = '<%column%><%multiple%>', 
+  value<%default%>, 
+  change, 
+  error = false 
+} = props;
+const attributes = <%props%>;
+//renderCode
+return (
+  <<%component%> 
+    {...attributes}
+    name={name}
+    className={className}
+    error={error} 
+    defaultValue={value} 
+    onUpdate={value => change && change('<%column%><%multiple%>', value)}
+  />
+);`,
+
+FIELD_CONTROL:
+`//props
+const { className, name, value, change, error } = props;
+//hooks
+const { _ } = useLanguage();
+//determine label
+const label = _('<%label%>')<%required%>;
+//renderCode
+return (
+  <FieldControl label={label} error={error} className={className}>
+    <<%component%>
+      error={typeof error === 'string'} 
       name={name}
       value={value} 
       change={change}

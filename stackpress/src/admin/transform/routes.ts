@@ -1,13 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '../../schema/Registry.js';
+import type Schema from '../../schema/Schema.js';
 
-export default function generate(directory: Directory, registry: Registry) {
+export default function generate(directory: Directory, schema: Schema) {
   //loop through models
-  for (const model of registry.model.values()) {
-    const ids = model.ids.map(column => `:${column.name}`).join('/')
-    const file = `${model.name}/admin/routes.ts`;
+  for (const model of schema.models.values()) {
+    const ids = model.store.ids.toArray().map(column => `:${column.name.toString()}`).join('/')
+    const file = `${model.name.toString()}/admin/routes.ts`;
     const source = directory.createSourceFile(file, '', { overwrite: true });
     //import type Server from '@stackpress/ingest//Server';
     source.addImportDeclaration({
@@ -25,68 +25,68 @@ export default function generate(directory: Directory, registry: Registry) {
       statements: `
         const root = server.config.path('admin.root', '/admin');
         server.import.all(
-          \`\${root}/${model.dashCase}/create\`, 
+          \`\${root}/${model.name.dashCase}/create\`, 
           () => import('./pages/create.js')
         );
         server.import.all(
-          \`\${root}/${model.dashCase}/detail/${ids}\`, 
+          \`\${root}/${model.name.dashCase}/detail/${ids}\`, 
           () => import('./pages/detail.js')
         );
         server.import.all(
-          \`\${root}/${model.dashCase}/export\`, 
+          \`\${root}/${model.name.dashCase}/export\`, 
           () => import('./pages/export.js')
         );
         server.import.all(
-          \`\${root}/${model.dashCase}/import\`, 
+          \`\${root}/${model.name.dashCase}/import\`, 
           () => import('./pages/import.js')
         );
         server.import.all(
-          \`\${root}/${model.dashCase}/remove/${ids}\`, 
+          \`\${root}/${model.name.dashCase}/remove/${ids}\`, 
           () => import('./pages/remove.js')
         );
         server.import.all(
-          \`\${root}/${model.dashCase}/restore/${ids}\`, 
+          \`\${root}/${model.name.dashCase}/restore/${ids}\`, 
           () => import('./pages/restore.js')
         );
         server.import.all(
-          \`\${root}/${model.dashCase}/search\`, 
+          \`\${root}/${model.name.dashCase}/search\`, 
           () => import('./pages/search.js')
         );
         server.import.all(
-          \`\${root}/${model.dashCase}/update/${ids}\`, 
+          \`\${root}/${model.name.dashCase}/update/${ids}\`, 
           () => import('./pages/update.js')
         );
 
         const module = server.config.path<string>('client.module');
         if (module) {
           server.view.all(
-            \`\${root}/${model.dashCase}/create\`, 
-            \`\${module}/${model.name}/admin/views/create\`,
+            \`\${root}/${model.name.dashCase}/create\`, 
+            \`\${module}/${model.name.toString()}/admin/views/create\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dashCase}/detail/${ids}\`, 
-            \`\${module}/${model.name}/admin/views/detail\`,
+            \`\${root}/${model.name.dashCase}/detail/${ids}\`, 
+            \`\${module}/${model.name.toString()}/admin/views/detail\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dashCase}/remove/${ids}\`, 
-            \`\${module}/${model.name}/admin/views/remove\`,
+            \`\${root}/${model.name.dashCase}/remove/${ids}\`, 
+            \`\${module}/${model.name.toString()}/admin/views/remove\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dashCase}/restore/${ids}\`, 
-            \`\${module}/${model.name}/admin/views/restore\`,
+            \`\${root}/${model.name.dashCase}/restore/${ids}\`, 
+            \`\${module}/${model.name.toString()}/admin/views/restore\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dashCase}/search\`, 
-            \`\${module}/${model.name}/admin/views/search\`,
+            \`\${root}/${model.name.dashCase}/search\`, 
+            \`\${module}/${model.name.toString()}/admin/views/search\`,
             -100
           );
           server.view.all(
-            \`\${root}/${model.dashCase}/update/${ids}\`, 
-            \`\${module}/${model.name}/admin/views/update\`,
+            \`\${root}/${model.name.dashCase}/update/${ids}\`, 
+            \`\${module}/${model.name.toString()}/admin/views/update\`,
             -100
           );
         }
@@ -103,10 +103,10 @@ export default function generate(directory: Directory, registry: Registry) {
     defaultImport: 'Server'
   });
   //import profileRoutes from './profile/admin/routes.js';
-  for (const model of registry.model.values()) {
+  for (const model of schema.models.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: `./${model.name}/admin/routes.js`,
-      defaultImport: `${model.camelCase}Routes`
+      moduleSpecifier: `./${model.name.toString()}/admin/routes.js`,
+      defaultImport: `${model.name.camelCase}Routes`
     });
   }
 
@@ -118,8 +118,8 @@ export default function generate(directory: Directory, registry: Registry) {
       { name: 'server', type: 'Server' }
     ],
     statements: `
-      ${Array.from(registry.model.values()).map(
-        model => `${model.camelCase}Routes(server);`
+      ${Array.from(schema.models.values()).map(
+        model => `${model.name.camelCase}Routes(server);`
       ).join('\n')}
     `.trim()
   });

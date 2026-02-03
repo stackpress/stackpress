@@ -3,7 +3,7 @@ import { VariableDeclarationKind } from 'ts-morph';
 //root
 import type { IdeaPluginWithProject } from '../../types/index.js';
 //schema
-import Registry from '../../schema/Registry.js';
+import Schema from '../../schema/Schema.js';
 //local
 import generateConfig from './config.js';
 import generatePackage from './package.js';
@@ -86,7 +86,7 @@ import generatePackage from './package.js';
  * | - index.ts
  * - config.json
  * - index.ts
- * - registry.ts
+ * - schema.ts
  */
 
 /**
@@ -96,22 +96,22 @@ export default function generate(props: IdeaPluginWithProject) {
   //-----------------------------//
   // 1. Config
   //extract props
-  const { cli, schema, project } = props;
-  const registry = new Registry(schema);
+  const { cli, schema: config, project } = props;
+  const schema = Schema.make(config);
   
   //-----------------------------//
   // 2. Generators
   // - profile/config.ts
   // - address/config.ts
   // - config.ts
-  generateConfig(project, schema, registry, cli.server);
+  generateConfig(project, config, schema, cli.server);
   // - package.json
-  generatePackage(project, schema, cli.server);
+  generatePackage(project, config, cli.server);
 
   //-----------------------------//
   // 3. profile/index.ts
-  for (const model of registry.model.values()) {
-    const filepath = `${model.name}/index.ts`;
+  for (const model of schema.models.values()) {
+    const filepath = model.name.toPathName('%/index.ts');
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
@@ -126,8 +126,8 @@ export default function generate(props: IdeaPluginWithProject) {
   
   //-----------------------------//
   // 4. address/index.ts
-  for (const fieldset of registry.fieldset.values()) {
-    const filepath = `${fieldset.name}/index.ts`;
+  for (const fieldset of schema.fieldsets.values()) {
+    const filepath = fieldset.name.toPathName('%/index.ts');
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
@@ -148,26 +148,26 @@ export default function generate(props: IdeaPluginWithProject) {
   //import config from './config.js';
   source.addImportDeclaration({ 
     moduleSpecifier: './config.js', 
-    defaultImport: 'registry',
+    defaultImport: 'schema',
     namedImports: [ 'config' ] 
   });
   //import * as modelProfile from './Profile/index.js';
-  for (const model of registry.model.values()) {
+  for (const model of schema.models.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: `./${model.name}/index.js`,
-      defaultImport: `* as model${model.titleCase}`
+      moduleSpecifier: model.name.toPathName('./%/index.js'),
+      defaultImport: `* as model${model.name.titleCase}`
     });
   }
   //import * as fieldsetAddress from './Profile/index.js';
-  for (const fieldset of registry.fieldset.values()) {
+  for (const fieldset of schema.fieldsets.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: `./${fieldset.name}/index.js`,
-      defaultImport: `* as fieldset${fieldset.titleCase}`
+      moduleSpecifier: fieldset.name.toPathName('./%/index.js'),
+      defaultImport: `* as fieldset${fieldset.name.titleCase}`
     });
   }
-  //export { config, registry };
+  //export { config, schema };
   source.addExportDeclaration({ 
-    namedExports: [ 'config', 'registry' ] 
+    namedExports: [ 'config', 'schema' ] 
   });
   //export const model = {}
   //export const fieldset = {}
@@ -177,15 +177,15 @@ export default function generate(props: IdeaPluginWithProject) {
     declarations: [{
       name: 'model',
       initializer: `{
-        ${Array.from(registry.model.values()).map(
-          model => `${model.camelCase}: model${model.titleCase}`
+        ${Array.from(schema.models.values()).map(
+          model => `${model.name.camelCase}: model${model.name.titleCase}`
         ).join(',\n')}
       }`
     }, {
       name: 'fieldset',
       initializer: `{
-        ${Array.from(registry.fieldset.values()).map(
-          fieldset => `${fieldset.camelCase}: fieldset${fieldset.titleCase}`
+        ${Array.from(schema.fieldsets.values()).map(
+          fieldset => `${fieldset.name.camelCase}: fieldset${fieldset.name.titleCase}`
         ).join(',\n')}
       }`
     }]

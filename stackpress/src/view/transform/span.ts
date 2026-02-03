@@ -1,10 +1,11 @@
 //modules
 import type { Directory } from 'ts-morph';
-//registry
+//stackpress
+import { renderCode } from '../../helpers.js';
+//stackpress/schema
 import type Schema from '../../schema/Schema.js';
 import type Column from '../../schema/column/Column.js';
 import type Model from '../../schema/model/Model.js';
-import { renderCode } from '../../schema/helpers.js';
 
 export default function generate(directory: Directory, schema: Schema) {
   //for each model
@@ -32,8 +33,8 @@ export function generateSpan(
   const props = attribute.component.props;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    model: model.name.toString(),
-    component: column.name.titleCase
+    model: model.name.toPathName(),
+    component: column.name.toComponentName('%sSpanField')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
@@ -91,7 +92,7 @@ export function generateSpan(
 export const TEMPLATE = {
 
 FILE_PATH: 
-'<%model%>/components/span/<%component%>SpanField.tsx',
+'<%model%>/components/span/<%component%>.tsx',
 
 FIELD_FIELD:
 `//props

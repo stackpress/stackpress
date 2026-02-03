@@ -91,6 +91,13 @@ export default class FieldsetName {
   public get titleCase() {
     return this._name;
   }
+  
+  /**
+   * Returns the underscore fieldset name
+   */
+  public get underscoreCase() {
+    return this.dashCase.replaceAll('-', '_');
+  }
 
   /**
    * Sets the name of the fieldset
@@ -101,9 +108,67 @@ export default class FieldsetName {
   }
 
   /**
+   * Way to get (and change) the class naming standards
+   * 
+   * ie. User, ArticleComment
+   */
+  public toClassName(pattern = '%s') {
+    return pattern.replace('%s', this.titleCase);
+  }
+
+  /**
+   * Way to get (and change) the component naming standards
+   * 
+   * ie. UserForm, ArticleCommentList
+   */
+  public toComponentName(pattern = '%s') {
+    return pattern.replaceAll('%s', this.titleCase);
+  }
+
+  /**
+   * Way to get (and change) the method naming standards
+   * 
+   * ie. userActions, articleCommentActions, getUser, getArticleComment
+   */
+  public toMethodName(pattern = '%s', titleCase = false) {
+    if (titleCase) {
+      return pattern.replace('%s', this.titleCase);
+    }
+    return pattern.replace('%s', this.camelCase);
+  }
+
+  /**
+   * Way to get (and change) the file path naming standards
+   * 
+   * ie. /stackpress-client/ArticleComment/
+   * ie. /stackpress-client/user/
+   */
+  public toPathName(pattern = '%s') {
+    return pattern.replace('%s', this.toString());
+  }
+
+  /**
    * Converts name to string
    */
   public toString() {
     return this._name;
+  }
+
+  /**
+   * Way to get (and change) the typescript naming standards
+   * 
+   * ie. UserInput, ArticleCommentExtended
+   */
+  public toTypeName(pattern = '%s') {
+    return pattern.replace('%s', this.titleCase);
+  }
+
+  /**
+   * Way to get (and change) the URL and parameter naming standards
+   * 
+   * ie. /article, /user-profile/
+   */
+  public toURLPath(pattern = '%s') {
+    return pattern.replace('%s', this.dashCase);
   }
 };

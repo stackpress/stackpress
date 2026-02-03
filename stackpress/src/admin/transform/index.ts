@@ -1,7 +1,7 @@
 //root
 import type { IdeaPluginWithProject } from '../../types/index.js';
 //schema
-import Registry from '../../schema/Registry.js';
+import Schema from '../../schema/Schema.js';
 //local
 import generatePages from './pages.js';
 import generateViews from './views/index.js';
@@ -36,8 +36,8 @@ export default function generate(props: IdeaPluginWithProject) {
   //-----------------------------//
   // 1. Config
   //extract props
-  const { schema, project } = props;
-  const registry = new Registry(schema);
+  const { schema: config, project } = props;
+  const registry = Schema.make(config);
 
   //-----------------------------//
   // 2. Generators
@@ -61,8 +61,8 @@ export default function generate(props: IdeaPluginWithProject) {
   //-----------------------------//
   // 3. profile/index.ts
 
-  for (const model of registry.model.values()) {
-    const filepath = `${model.name}/index.ts`;
+  for (const model of registry.models.values()) {
+    const filepath = `${model.name.toString()}/index.ts`;
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });

@@ -18,7 +18,7 @@ export default async function remove<M extends UnknownNest = UnknownNest>(
   ids: Record<string, string|number>
 ): Promise<StatusResponse<M|null>> {
   //action and return response
-  const active = model.active?.name;
+  const active = model.store.active?.name.toString();
   if (active) {
     return await update<M>(model, engine, ids, { [active]: false });
   }
@@ -26,9 +26,9 @@ export default async function remove<M extends UnknownNest = UnknownNest>(
   if (row.code !== 200) {
     return row;
   }
-  const remove = engine.delete(model.snakeCase);
-  for (const column of model.ids) {
-    remove.where(`${column.snakeCase} = ?`, [ ids[column.name] ]);
+  const remove = engine.delete(model.name.snakeCase);
+  for (const column of model.store.ids.values()) {
+    remove.where(`${column.name.snakeCase} = ?`, [ ids[column.name.toString()] ]);
   }
   try {
     await remove;

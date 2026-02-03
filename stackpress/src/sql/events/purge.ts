@@ -31,7 +31,7 @@ export default function purgeEventFactory(model: Model) {
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
     try {
-      await engine.truncate(model.snakeCase);
+      await engine.truncate(model.name.snakeCase);
     } catch (e) {
       const exception = Exception.upgrade(e as Error);
       res.setError(exception.toJSON());
@@ -41,7 +41,7 @@ export default function purgeEventFactory(model: Model) {
     res.fromStatusResponse({
       code: 200,
       status: 'OK',
-      results: model.snakeCase
+      results: model.name.snakeCase
     });
   };
 };

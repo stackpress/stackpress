@@ -1,10 +1,11 @@
 //modules
 import type { Directory } from 'ts-morph';
-//schema
+//stackpress
+import { renderCode } from '../../helpers.js';
+//stackpress/schema
 import type Schema from '../../schema/Schema.js';
 import type Column from '../../schema/column/Column.js';
 import type Model from '../../schema/model/Model.js';
-import { renderCode } from '../../schema/helpers.js';
 
 export default function generate(directory: Directory, schema: Schema) {
   //for each model
@@ -47,8 +48,8 @@ export function generateRelation(
   const props = attribute.component.props;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    model: model.name.toString(),
-    component: column.name.titleCase
+    model: model.name.toPathName(),
+    component: column.name.toComponentName('%sFilterField')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //boolean component?
@@ -91,7 +92,7 @@ export function generateRelation(
   //export function NameFilterField(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FilterField`,
+    name: column.name.toComponentName('%sFilterField'),
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
@@ -104,7 +105,7 @@ export function generateRelation(
   //export function NameFilterFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FilterFieldControl`,
+    name: column.name.toComponentName('%sFilterFieldControl'),
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
@@ -112,11 +113,11 @@ export function generateRelation(
       label: column.name.label,
       hidden: isBoolComponent 
         ? renderCode(TEMPLATE.RELATION_BOOLEAN_HIDDEN_FIELD, {
-          column: column.name.toString(),
+          column: column.name.toURLPath(),
           multiple: column.type.multiple ? '[]': ''
         }) 
         : '',
-      name: column.name.titleCase
+      component: column.name.toComponentName('%sFilterField'),
     })
   });
 };
@@ -137,8 +138,8 @@ export function generateBoolean(
   const props = attribute.component.props;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    model: model.name.toString(),
-    component: column.name.titleCase
+    model: model.name.toPathName(),
+    component: column.name.toComponentName('%sFilterField')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
@@ -169,29 +170,29 @@ export function generateBoolean(
   //export function NameFiter(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FilterField`,
+    name: column.name.toComponentName('%sFilterField'),
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
     statements: renderCode(TEMPLATE.BOOLEAN_FIELD, {
       props: JSON.stringify(props),
       component: component.name,
-      column: column.name.toString(),
+      column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': ''
     })
   });
   //export function NameFilterFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FilterFieldControl`,
+    name: column.name.toComponentName('%sFilterFieldControl'),
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
     statements: renderCode(TEMPLATE.BOOLEAN_CONTROL, {
       label: column.name.label,
-      column: column.name.toString(),
+      column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': '',
-      component: column.name.titleCase,
+      component: column.name.toComponentName('%sFilterField')
     })
   });
 };
@@ -212,8 +213,8 @@ export function generateField(
   const props = attribute.component.props;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    model: model.name.toString(),
-    component: column.name.titleCase
+    model: model.name.toPathName(),
+    component: column.name.toComponentName('%sFilterField')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
@@ -244,27 +245,27 @@ export function generateField(
   //export function NameFiter(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FilterField`,
+    name: column.name.toComponentName('%sFilterField'),
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
     statements: renderCode(TEMPLATE.FIELD_FIELD, {
       props: JSON.stringify(props),
       component: component.name,
-      column: column.name.toString(),
+      column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': ''
     })
   });
   //export function NameFilterControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FilterFieldControl`,
+    name: column.name.toComponentName('%sFilterFieldControl'),
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
     statements: renderCode(TEMPLATE.FIELD_CONTROL, {
       label: column.name.label,
-      component: column.name.titleCase
+      component: column.name.toComponentName('%sFilterField')
     })
   });
 };
@@ -272,7 +273,7 @@ export function generateField(
 export const TEMPLATE = {
 
 FILE_PATH: 
-'<%model%>/components/filter/<%component%>FilterField.tsx',
+'<%model%>/components/filter/<%component%>.tsx',
 
 RELATION_FIELD:
 `//props
@@ -317,7 +318,7 @@ const { _ } = useLanguage();
 return (
   <FieldControl label={_('<%label%>')} error={error} className={className}>
     <%hidden%>
-    <<%column%>FilterField
+    <<%component%>
       error={!!error} 
       value={value} 
       change={change}
@@ -326,7 +327,7 @@ return (
 );`,
 
 RELATION_BOOLEAN_HIDDEN_FIELD:
-'<input type="hidden" name="filter[<%name%>]<%multiple%>" value="0" />',
+'<input type="hidden" name="filter[<%column%>]<%multiple%>" value="0" />',
 
 BOOLEAN_FIELD:
 `//props
@@ -354,7 +355,7 @@ const { _ } = useLanguage();
 return (
   <FieldControl label={_('<%label%>')} error={error} className={className}>
     <input type="hidden" name="filter[<%column%>]<%multiple%>" value="0" />
-    <<%component%>FilterField
+    <<%component%>
       error={!!error} 
       value={value} 
       change={change}
@@ -386,7 +387,7 @@ const { _ } = useLanguage();
 //render
 return (
   <FieldControl label={_('<%label%>')} error={error} className={className}>
-    <<%component%>FilterField
+    <<%component%>
       error={!!error} 
       value={value} 
       change={change}

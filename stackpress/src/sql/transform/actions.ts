@@ -2,11 +2,11 @@
 import type { Directory } from 'ts-morph';
 //schema
 import type Model from '../../schema/model/Model.js';
-import Registry from '../../schema/Registry.js';
+import Schema from '../../schema/Schema.js';
 
-export default function generate(directory: Directory, registry: Registry) {
+export default function generate(directory: Directory, schema: Schema) {
   //loop through models
-  for (const model of registry.model.values()) {
+  for (const model of schema.models.values()) {
     // - profile/actions/batch.ts
     batch(model, directory);
     // - profile/actions/create.ts
@@ -27,7 +27,7 @@ export default function generate(directory: Directory, registry: Registry) {
     upsert(model, directory);
     // - profile/actions/index.ts
     const source = directory.createSourceFile(
-      `${model.name}/actions/index.ts`,
+      `${model.name.toString()}/actions/index.ts`,
       '', 
       { overwrite: true }
     );
@@ -36,7 +36,7 @@ export default function generate(directory: Directory, registry: Registry) {
       isTypeOnly: true,
       moduleSpecifier: '../types.js',
       namedImports: [ 
-        `${model.titleCase}Extended`
+        `${model.name.titleCase}Extended`
       ]
     });
     //import Engine from '@stackpress/inquire/Engine';
@@ -63,7 +63,7 @@ export default function generate(directory: Directory, registry: Registry) {
         //seed?: string
         { name: 'seed', type: 'string', hasQuestionToken: true }
       ],
-      statements: `return new Actions<${model.titleCase}Extended>(config, engine, seed);`
+      statements: `return new Actions<${model.name.titleCase}Extended>(config, engine, seed);`
     });
     //import batch from './batch.js';
     source.addImportDeclaration({
@@ -129,7 +129,7 @@ export default function generate(directory: Directory, registry: Registry) {
 
 export function batch(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/batch.ts`,
+    `${model.name.toString()}/actions/batch.ts`,
     '', 
     { overwrite: true }
   );
@@ -143,7 +143,7 @@ export function batch(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ model.titleCase ]
+    namedImports: [ model.name.titleCase ]
   });
   //import batch from 'stackpress/sql/actions/batch';
   source.addImportDeclaration({
@@ -157,23 +157,23 @@ export function batch(model: Model, directory: Directory) {
   });
   //export default function ProfileBatchAction(engine, rows)
   source.addFunction({
-    name: `${model.titleCase}BatchAction`,
+    name: `${model.name.titleCase}BatchAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
       { name: 'engine', type: 'Engine' },
       //rows: Profile[]
-      { name: 'rows', type: `${model.titleCase}[]` },
+      { name: 'rows', type: `${model.name.titleCase}[]` },
       //seed?: string
       { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return batch<${model.titleCase}>(config, engine, rows, seed);`)
+    statements: (`return batch<${model.name.titleCase}>(config, engine, rows, seed);`)
   });
 };
 
 export function create(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/create.ts`,
+    `${model.name.toString()}/actions/create.ts`,
     '', 
     { overwrite: true }
   );
@@ -193,7 +193,7 @@ export function create(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ model.titleCase ]
+    namedImports: [ model.name.titleCase ]
   });
   //import create from 'stackpress/sql/actions/create';
   source.addImportDeclaration({
@@ -207,7 +207,7 @@ export function create(model: Model, directory: Directory) {
   });
   //export default function ProfileCreateAction(engine, input)
   source.addFunction({
-    name: `${model.titleCase}CreateAction`,
+    name: `${model.name.titleCase}CreateAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
@@ -217,13 +217,13 @@ export function create(model: Model, directory: Directory) {
       //seed?: string
       { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return create<${model.titleCase}>(config, engine, input, seed);`)
+    statements: (`return create<${model.name.titleCase}>(config, engine, input, seed);`)
   });
 };
 
 export function detail(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/detail.ts`,
+    `${model.name.toString()}/actions/detail.ts`,
     '', 
     { overwrite: true }
   );
@@ -237,7 +237,7 @@ export function detail(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ `${model.titleCase}Extended` ]
+    namedImports: [ `${model.name.titleCase}Extended` ]
   });
   //import detail from 'stackpress/sql/actions/detail';
   source.addImportDeclaration({
@@ -251,7 +251,7 @@ export function detail(model: Model, directory: Directory) {
   });
   //export default function ProfileDetailAction(engine, ids)
   source.addFunction({
-    name: `${model.titleCase}DetailAction`,
+    name: `${model.name.titleCase}DetailAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
@@ -263,13 +263,13 @@ export function detail(model: Model, directory: Directory) {
       //seed?: string
       { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return detail<${model.titleCase}Extended>(config, engine, ids, columns);`)
+    statements: (`return detail<${model.name.titleCase}Extended>(config, engine, ids, columns);`)
   });
 };
 
 export function get(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/get.ts`,
+    `${model.name.toString()}/actions/get.ts`,
     '', 
     { overwrite: true }
   );
@@ -283,7 +283,7 @@ export function get(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ `${model.titleCase}Extended` ]
+    namedImports: [ `${model.name.titleCase}Extended` ]
   });
   //import get from 'stackpress/sql/actions/get';
   source.addImportDeclaration({
@@ -297,7 +297,7 @@ export function get(model: Model, directory: Directory) {
   });
   //export default function ProfileGetAction(engine, key, value)
   source.addFunction({
-    name: `${model.titleCase}GetAction`,
+    name: `${model.name.titleCase}GetAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
@@ -311,13 +311,13 @@ export function get(model: Model, directory: Directory) {
       //seed?: string
       { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return get<${model.titleCase}Extended>(config, engine, key, value, columns, seed);`)
+    statements: (`return get<${model.name.titleCase}Extended>(config, engine, key, value, columns, seed);`)
   });
 };
 
 export function remove(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/remove.ts`,
+    `${model.name.toString()}/actions/remove.ts`,
     '', 
     { overwrite: true }
   );
@@ -331,7 +331,7 @@ export function remove(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ `${model.titleCase}Extended` ]
+    namedImports: [ `${model.name.titleCase}Extended` ]
   });
   //import remove from 'stackpress/sql/actions/remove';
   source.addImportDeclaration({
@@ -345,7 +345,7 @@ export function remove(model: Model, directory: Directory) {
   });
   //export default function ProfileRemoveAction(engine, ids)
   source.addFunction({
-    name: `${model.titleCase}RemoveAction`,
+    name: `${model.name.titleCase}RemoveAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
@@ -353,13 +353,13 @@ export function remove(model: Model, directory: Directory) {
       //ids: Record<string, string|number>
       { name: 'ids', type: 'Record<string, string|number>' }
     ],
-    statements: (`return remove<${model.titleCase}Extended>(config, engine, ids);`)
+    statements: (`return remove<${model.name.titleCase}Extended>(config, engine, ids);`)
   });
 };
 
 export function restore(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/restore.ts`,
+    `${model.name.toString()}/actions/restore.ts`,
     '', 
     { overwrite: true }
   );
@@ -373,7 +373,7 @@ export function restore(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ `${model.titleCase}Extended` ]
+    namedImports: [ `${model.name.titleCase}Extended` ]
   });
   //import restore from 'stackpress/sql/actions/restore';
   source.addImportDeclaration({
@@ -387,7 +387,7 @@ export function restore(model: Model, directory: Directory) {
   });
   //export default function ProfileRestoreAction(engine, ids)
   source.addFunction({
-    name: `${model.titleCase}RestoreAction`,
+    name: `${model.name.titleCase}RestoreAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
@@ -395,13 +395,13 @@ export function restore(model: Model, directory: Directory) {
       //ids: Record<string, string|number>
       { name: 'ids', type: 'Record<string, string|number>' }
     ],
-    statements: (`return restore<${model.titleCase}Extended>(config, engine, ids);`)
+    statements: (`return restore<${model.name.titleCase}Extended>(config, engine, ids);`)
   });
 };
 
 export function search(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/search.ts`,
+    `${model.name.toString()}/actions/search.ts`,
     '', 
     { overwrite: true }
   );
@@ -421,7 +421,7 @@ export function search(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ `${model.titleCase}Extended` ]
+    namedImports: [ `${model.name.titleCase}Extended` ]
   });
   //import search from 'stackpress/sql/actions/search';
   source.addImportDeclaration({
@@ -435,7 +435,7 @@ export function search(model: Model, directory: Directory) {
   });
   //export default function ProfileSearchAction(engine, params)
   source.addFunction({
-    name: `${model.titleCase}SearchAction`,
+    name: `${model.name.titleCase}SearchAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
@@ -445,13 +445,13 @@ export function search(model: Model, directory: Directory) {
       //seed?: string
       { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return search<${model.titleCase}Extended>(config, engine, params, seed);`)
+    statements: (`return search<${model.name.titleCase}Extended>(config, engine, params, seed);`)
   });
 };
 
 export function update(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/update.ts`,
+    `${model.name.toString()}/actions/update.ts`,
     '', 
     { overwrite: true }
   );
@@ -471,7 +471,7 @@ export function update(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ `${model.titleCase}Extended` ]
+    namedImports: [ `${model.name.titleCase}Extended` ]
   });
   //import update from 'stackpress/sql/actions/update';
   source.addImportDeclaration({
@@ -485,7 +485,7 @@ export function update(model: Model, directory: Directory) {
   });
   //export default function ProfileUpdateAction(engine, ids, input)
   source.addFunction({
-    name: `${model.titleCase}UpdateAction`,
+    name: `${model.name.titleCase}UpdateAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
@@ -497,13 +497,13 @@ export function update(model: Model, directory: Directory) {
       //seed?: string
       { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return update<${model.titleCase}Extended>(config, engine, ids, input, seed);`)
+    statements: (`return update<${model.name.titleCase}Extended>(config, engine, ids, input, seed);`)
   });
 };
 
 export function upsert(model: Model, directory: Directory) {
   const source = directory.createSourceFile(
-    `${model.name}/actions/upsert.ts`,
+    `${model.name.toString()}/actions/upsert.ts`,
     '', 
     { overwrite: true }
   );
@@ -523,7 +523,7 @@ export function upsert(model: Model, directory: Directory) {
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../types.js',
-    namedImports: [ `${model.titleCase}Extended` ]
+    namedImports: [ `${model.name.titleCase}Extended` ]
   });
   //import upsert from 'stackpress/sql/actions/upsert';
   source.addImportDeclaration({
@@ -537,7 +537,7 @@ export function upsert(model: Model, directory: Directory) {
   });
   //export default function ProfileCreateAction(engine, input)
   source.addFunction({
-    name: `${model.titleCase}CreateAction`,
+    name: `${model.name.titleCase}CreateAction`,
     isDefaultExport: true,
     parameters: [
       //engine: Engine,
@@ -547,6 +547,6 @@ export function upsert(model: Model, directory: Directory) {
       //seed?: string
       { name: 'seed', type: 'string', hasQuestionToken: true }
     ],
-    statements: (`return upsert<${model.titleCase}Extended>(config, engine, input, seed);`)
+    statements: (`return upsert<${model.name.titleCase}Extended>(config, engine, input, seed);`)
   });
 };

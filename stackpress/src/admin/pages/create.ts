@@ -57,7 +57,7 @@ export default function AdminCreatePageFactory(model: Model) {
     if (req.method === 'POST') {
       //emit the create event
       const response = await ctx.resolve<UnknownNest>(
-        `${model.dashCase}-create`, 
+        `${model.name.dashCase}-create`, 
         req, 
         res
       );
@@ -66,13 +66,13 @@ export default function AdminCreatePageFactory(model: Model) {
         return;
       }
       //get id from url params
-      const ids = model.ids.map(
-        column => (response.results || {})[column.name]
+      const ids = model.store.ids.toArray().map(
+        column => (response.results || {})[column.name.toString()]
       ).filter(Boolean);
       //redirect
       const base = admin.base || '/admin';
       res.redirect(
-        `${base}/${model.dashCase}/detail/${ids.join('/')}`
+        `${base}/${model.name.dashCase}/detail/${ids.join('/')}`
       );
     }
   };

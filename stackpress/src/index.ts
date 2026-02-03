@@ -245,8 +245,7 @@ export {
   encrypt, 
   hash,
   lowerize,
-  snakerize,
-  render
+  snakerize
 } from './schema/helpers.js';
 
 export {

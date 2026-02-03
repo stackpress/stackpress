@@ -54,13 +54,13 @@ export default function AdminDetailSearchPageFactory(model: Model) {
       menu: admin.menu || []
     });
     //get id from url params
-    const ids = model.ids.map(
-      column => req.data(column.name)
+    const ids = model.store.ids.toArray().map(
+      column => req.data(column.name.toString())
     ).filter(Boolean);
-    if (ids.length === model.ids.length) {
+    if (ids.length === model.store.ids.size) {
       //emit detail event
       const response = await ctx.resolve<UnknownNest>(
-        `${model.dashCase}-detail`, 
+        `${model.name.dashCase}-detail`, 
         req, 
         res
       );

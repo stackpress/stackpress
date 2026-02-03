@@ -2,7 +2,7 @@
 import type Engine from '@stackpress/inquire/Engine';
 //schema
 import type Model from '../schema/model/Model.js';
-import type Column from '../schema/spec/Column.js';
+import type Column from '../schema/column/Column.js';
 
 export type {
   Field,

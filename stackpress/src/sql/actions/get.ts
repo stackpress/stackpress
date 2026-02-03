@@ -18,8 +18,8 @@ export default async function get<M extends UnknownNest = UnknownNest>(
   seed?: string
 ): Promise<StatusResponse<M|null>> {
   const filter: Record<string, string|number|boolean> = { [key]: value };
-  if (model.active) {
-    filter[model.active.name] = -1;
+  if (model.store.active) {
+    filter[model.store.active.name.toString()] = -1;
   }
   const response = await search<M>(
     model, 

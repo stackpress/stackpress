@@ -31,10 +31,10 @@ export default function removeEventFactory(model: Model) {
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
 
-    const ids = Object.fromEntries(model.ids
-      .map(column => [ column.name, req.data(column.name) ])
-      .filter(entry => Boolean(entry[1]))
-    ) as Record<string, string | number>;
+    const ids = model.store.ids
+      .map(column => req.data<string | number>(column.name.toString()))
+      .filter(value => typeof value !== 'undefined' && value !== null)
+      .toObject();
     const response = await remove(model, engine, ids);
     res.fromStatusResponse(response);
   };

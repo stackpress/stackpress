@@ -36,12 +36,12 @@ export default async function push(
   if (!from && to) {
     cli?.verbose && cli.control.system('  with DROP/CREATE ...');
     //get models
-    const models = Array.from(to.registry.model.values());
+    const models = Array.from(to.schema.models.values());
     //there's an order to creating and dropping tables
     const order = sequence(models);
     //add drop queries
     for (const model of order) {
-      queries.push(database.dialect.drop(model.snakeCase));
+      queries.push(database.dialect.drop(model.name.snakeCase));
     }
     //add create queries
     for (const model of order.reverse()) {
@@ -67,11 +67,11 @@ export default async function push(
   } else if (from && to) {
     cli?.verbose && cli.control.system('  with ALTER ...');
     //create a registry from the history
-    const previous = Array.from(from.registry.model.values()).map(
+    const previous = Array.from(from.schema.models.values()).map(
       model => create(model)
     );
     //create a registry from the new generated schema
-    const current = Array.from(to.registry.model.values()).map(
+    const current = Array.from(to.schema.models.values()).map(
       model => create(model)
     );
     //this is where we are going to store all the queries

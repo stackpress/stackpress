@@ -31,11 +31,11 @@ export default function updateEventFactory(model: Model) {
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
     //remove values that are not columns
-    const input = model.input(req.data(), false);
-    const ids = Object.fromEntries(model.ids
-      .map(column => [ column.name, req.data(column.name) ])
-      .filter(entry => Boolean(entry[1]))
-    ) as Record<string, string | number>;
+    const input = model.runtime.inputValues(req.data(), false);
+    const ids = model.store.ids
+      .map(column => req.data<string | number>(column.name.toString()))
+      .filter(value => typeof value !== 'undefined' && value !== null)
+      .toObject();
     //get the database seed (for encrypting)
     const seed = ctx.config.path<string|undefined>('database.seed');
     const response = await update(model, engine, ids, input, seed);

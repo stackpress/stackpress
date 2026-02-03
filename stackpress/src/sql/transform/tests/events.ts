@@ -1,9 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Column from '../../../schema/spec/Column.js';
-import type Model from '../../../schema/model/Model.js';
-import Registry from '../../../schema/Registry.js';
+import Schema from '../../../schema/Schema.js';
 //sql
 import { sequence } from '../../helpers.js';
 
@@ -46,46 +44,46 @@ const samples = [
   }
 ];
 
-export default function generate(directory: Directory, registry: Registry) {
-  const models = Array.from(registry.model.values());
+export default function generate(directory: Directory, schema: Schema) {
+  const models = schema.models.toArray();
   const order = sequence(models);
   //loop through models
   for (const model of order.reverse()) {
     //does any of the existing tables depend on this table?
-    const dependents = model.parentRelations
-      .filter(column => column.model)
+    const dependents = model.store.foreignRelationships
+      .filter(column => Boolean(column.type.model))
       .map(column => {
-        const relation = column.parentRelation;
+        const relation = column.store.foreignRelationship!;
         return {
-          foreign: relation?.parent.key as Column,
-          local: relation?.child.key as Column,
-          model: column.model as Model
+          foreign: relation.foreign.key,
+          local: relation.local.key,
+          model: column.type.model
         };
       });
     const inputs = samples.map(sample => {
       const input: Record<string, unknown> = {};
-      model.fields.forEach(column => {
-        const type = column.multiple
+      model.component.formFields.forEach(column => {
+        const type = column.type.multiple
           ? 'array'
-          : column.type === 'Json'
+          : column.type.name === 'Json'
           ? 'object' 
-          : column.type === 'Hash'
+          : column.type.name === 'Hash'
           ? 'object' 
-          : column.type === 'Object'
+          : column.type.name === 'Object'
           ? 'object' 
-          : column.type === 'Number'
+          : column.type.name === 'Number'
           ? 'number'
-          : column.type === 'Boolean'
+          : column.type.name === 'Boolean'
           ? 'boolean'
-          : column.type === 'Date'
+          : column.type.name === 'Date'
           ? 'date'
           : 'string';
-        input[column.name] = sample[type];
+        input[column.name.toString()] = sample[type];
       });
       return input;
     });
     const source = directory.createSourceFile(
-      `${model.name}/tests/events.ts`,
+      `${model.name.toString()}/tests/events.ts`,
       '', 
       { overwrite: true }
     );
@@ -108,133 +106,141 @@ export default function generate(directory: Directory, registry: Registry) {
     //export default function ProfileEventTests(emitter: EventEmitter) {}
     source.addFunction({
       isDefaultExport: true,
-      name: `${model.titleCase}EventTests`,
+      name: `${model.name.titleCase}EventTests`,
       parameters: [{ name: 'server', type: 'HttpServer' }],
       statements: (`
-        describe('${model.titleCase} Events', async () => {
+        describe('${model.name.titleCase} Events', async () => {
           before(async () => {
-            await server.resolve('${model.lowerCase}-purge');
+            await server.resolve('${model.name.lowerCase}-purge');
           });
-          ${dependents.length > 0 ? (`
+          ${dependents.size > 0 ? (`
             const dependents: Record<string, any[]> = {};
             before(async () => {
-              ${dependents.map(dependent => {
-                const name = dependent.local.name;
-                const event = `'${dependent.model.lowerCase}-search'`;
+              ${dependents.toArray().map(dependent => {
+                const name = dependent.local.name.toString();
+                const event = `'${dependent.model!.name.lowerCase}-search'`;
                 return `dependents.${name} = ((await server.resolve(${event})).results as any[]) || [];`;
               }).join('\n')}
             });
           `): ''}
-          it('should create ${model.titleCase}', async () => {
-            ${dependents.length > 0 
+          it('should create ${model.name.titleCase}', async () => {
+            ${dependents.size > 0 
               ? (`
                 const ids: Record<string, any> = {};
-                ${dependents.map(dependent => {
-                  const local = dependent.local.name;
-                  const foreign = dependent.foreign.name;
+                ${dependents.toArray().map(dependent => {
+                  const local = dependent.local.name.toString();
+                  const foreign = dependent.foreign.name.toString();
                   return `ids.${local} = dependents.${local}[0].${foreign};`;
                 }).join('\n')}
                 const input = Object.assign({}, ${JSON.stringify(inputs[0])}, ids);
               `)
               : `const input = ${JSON.stringify(inputs[0])};`
             }
-            const actual = await server.resolve('${model.lowerCase}-create', input);
+            const actual = await server.resolve('${model.name.lowerCase}-create', input);
             expect(actual.code).to.equal(200);
             expect(actual.status).to.equal('OK');
           });
-          ${dependents.length < 2 ? (` 
-            it('should batch ${model.titleCase}', async () => {
+          ${dependents.size < 2 ? (` 
+            it('should batch ${model.name.titleCase}', async () => {
               const rows = ${JSON.stringify(inputs.slice(2))};
-              ${dependents.map(dependent => {
-                const local = dependent.local.name;
-                const foreign = dependent.foreign.name;
+              ${dependents.toArray().map(dependent => {
+                const local = dependent.local.name.toString();
+                const foreign = dependent.foreign.name.toString();
                 return `
                   rows[0].${local} = dependents.${local}[2].${foreign};
                   rows[1].${local} = dependents.${local}[3].${foreign};
                 `;
               }).join('\n')}
-              const actual = await server.resolve('${model.lowerCase}-batch', { rows });
+              const actual = await server.resolve('${model.name.lowerCase}-batch', { rows });
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
           `) : ''}
-          it('should search ${model.titleCase}', async () => {
-            const actual = await server.resolve('${model.lowerCase}-search');
+          it('should search ${model.name.titleCase}', async () => {
+            const actual = await server.resolve('${model.name.lowerCase}-search');
             expect(actual.code).to.equal(200);
             expect(actual.status).to.equal('OK');
             expect(Array.isArray(actual.results)).to.be.true;
           });
-          ${model.ids.length ? (`
-            it('should get ${model.titleCase}', async () => {
-              const response = await server.resolve('${model.lowerCase}-search');
+          ${model.store.ids.size ? (`
+            it('should get ${model.name.titleCase}', async () => {
+              const response = await server.resolve('${model.name.lowerCase}-search');
               const row = response.results?.[0];
 
-              const key = '${model.ids[0].name}';
+              const key = '${model.store.ids.toArray()[0].name}';
               const value = row[key];
 
-              const actual = await server.resolve('${model.lowerCase}-get', { key, value });
+              const actual = await server.resolve('${model.name.lowerCase}-get', { key, value });
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should get ${model.titleCase} with ids', async () => {
-              const response = await server.resolve('${model.lowerCase}-search');
+            it('should get ${model.name.titleCase} with ids', async () => {
+              const response = await server.resolve('${model.name.lowerCase}-search');
               const row = response.results?.[0];
 
               const ids = { ${
-                model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
+                model.store.ids.toArray().map(
+                  column => `${column.name.toString()}: row.${column.name.toString()}`
+                ).join(', ')
               } };
 
-              const actual = await server.resolve('${model.lowerCase}-detail', ids);
+              const actual = await server.resolve('${model.name.lowerCase}-detail', ids);
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should update ${model.titleCase}', async () => {
-              const response = await server.resolve('${model.lowerCase}-search');
+            it('should update ${model.name.titleCase}', async () => {
+              const response = await server.resolve('${model.name.lowerCase}-search');
               const row = response.results?.[0];
 
               const ids = { ${
-                model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
+                model.store.ids.toArray().map(
+                  column => `${column.name.toString()}: row.${column.name.toString()}`
+                ).join(', ')
               } };
               const input: Partial<Record<string, any>> = ${JSON.stringify(inputs[1])};
               Object.keys(ids).forEach(key => {
                 delete input[key];
               });
-              ${dependents.map(
+              ${dependents.toArray().map(
                 dependent => `delete input.${dependent.local.name};`
               ).join('\n')}
 
               const actual = await server.resolve(
-                '${model.lowerCase}-update', 
+                '${model.name.lowerCase}-update', 
                 { ...ids, ...input }
               );
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            it('should remove ${model.titleCase}', async () => {
-              const response = await server.resolve('${model.lowerCase}-search');
+            it('should remove ${model.name.titleCase}', async () => {
+              const response = await server.resolve('${model.name.lowerCase}-search');
               const row = response.results?.[0];
 
               const ids = { ${
-                model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
+                model.store.ids.toArray().map(
+                  column => `${column.name.toString()}: row.${column.name.toString()}`
+                ).join(', ')
               } };
 
-              const actual = await server.resolve('${model.lowerCase}-remove', ids);
+              const actual = await server.resolve('${model.name.lowerCase}-remove', ids);
               expect(actual.code).to.equal(200);
               expect(actual.status).to.equal('OK');
             });
-            ${model.active ? (`
-              it('should restore ${model.titleCase}', async () => {
+            ${model.store.active ? (`
+              it('should restore ${model.name.titleCase}', async () => {
                 const response = await server.resolve(
-                  '${model.lowerCase}-search', 
-                  { filter: { ${model.active.name}: -1 } }
+                  '${model.name.lowerCase}-search', 
+                  { filter: { ${model.store.active.name}: -1 } }
                 );
                 const row = response.results?.[0];
 
                 const ids = { ${
-                  model.ids.map(column => `${column.name}: row.${column.name}`).join(', ')
+                  model.store.ids.toArray().map(
+                    column => `${column.name.toString()}: row.${column.name.toString()}`
+                  ).join(', ')
                 } };
 
-                const actual = await server.resolve('${model.lowerCase}-restore', ids);
+                const actual = await server.resolve('${model.name.lowerCase}-restore', ids);
                 expect(actual.code).to.equal(200);
                 expect(actual.status).to.equal('OK');
               });

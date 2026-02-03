@@ -31,18 +31,18 @@ export default function detailEventFactory(model: Model) {
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
     //collect the ids from the request
-    const ids = Object.fromEntries(model.ids
-      .map(column => [ column.name, req.data(column.name) ])
-      .filter(entry => Boolean(entry[1]))
-    ) as Record<string, string | number>;
+    const ids = model.store.ids
+      .map(column => req.data<string | number>(column.name.toString()))
+      .filter(value => typeof value !== 'undefined' && value !== null)
+      .toObject();
     //if there are no columns from the request
     if (!req.data.has('columns')
       //if there is @query([ "*" ])
-      && Array.isArray(model.query) 
-      && model.query.length
-      && model.query.every(column => typeof column === 'string')
+      && Array.isArray(model.store.query) 
+      && model.store.query.length
+      && model.store.query.every(column => typeof column === 'string')
     ) {
-      req.data.set('columns', model.query)
+      req.data.set('columns', model.store.query)
     }
     //now get the columns from the request
     const columns = req.data<string[]|undefined>('columns');

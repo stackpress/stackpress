@@ -71,18 +71,18 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     const q = engine.dialect.q;
     const column = selector.table.length > 0
       ? `${q}${selector.table}${q}.${q}${selector.column}${q}`
-      : `${q}${model.snakeCase}${q}.${q}${selector.column}${q}`;
+      : `${q}${model.name.snakeCase}${q}.${q}${selector.column}${q}`;
 
     //address.street_name AS user__address__street_name
     return `${column} AS ${q}${selector.alias}${q}`;
   })
 
   //finally, make the select builder
-  const select = engine.select<M>(selectors).from(model.snakeCase);
+  const select = engine.select<M>(selectors).from(model.name.snakeCase);
   //also make the count builder
   const count = engine
     .select<{ total: number }>('COUNT(*) as total')
-    .from(model.snakeCase);
+    .from(model.name.snakeCase);
   //make a joins map
   const joins: SearchJoinMap = {};
   info.forEach(selector => Object.assign(joins, selector.joins));
@@ -112,27 +112,29 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     select.limit(take);
   }
   //searchable
-  if (q && model.searchables.length > 0) {
+  if (q && model.store.searchables.size > 0) {
+    const searchables = model.store.searchables.toArray();
     select.where(
-      model.searchables.map(
-        column => `${column.snakeCase} ILIKE ?`
+      searchables.map(
+        column => `${column.name.snakeCase} ILIKE ?`
       ).join(' OR '), 
-      model.searchables.map(_ => `%${q}%`)
+      searchables.map(_ => `%${q}%`)
     );
     count.where(
-      model.searchables.map(
-        column => `${column.snakeCase} ILIKE ?`
+      searchables.map(
+        column => `${column.name.snakeCase} ILIKE ?`
       ).join(' OR '), 
-      model.searchables.map(_ => `%${q}%`)
+      searchables.map(_ => `%${q}%`)
     );
   }
 
   //default active value
-  if (model.active) {
-    if(typeof filter[model.active.name] === 'undefined') {
-      filter[model.active.name] = true;
-    } else if (filter[model.active.name] == -1) {
-      delete filter[model.active.name];
+  if (model.store.active) {
+    const name = model.store.active.name.toString();
+    if(typeof filter[name] === 'undefined') {
+      filter[name] = true;
+    } else if (filter[name] == -1) {
+      delete filter[name];
     }
   }
   //filters
@@ -140,17 +142,19 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     const info = getColumnInfo(key, model).last;
     if (!info) return;
     const q = engine.dialect.q;
-    const selector = `${q}${info.model.snakeCase}${q}.${q}${info.column.snakeCase}${q}`;
-    value = info.column.serialize(value, seed) as string|number|boolean;
-    const serialized = stringable.includes(info.column.type)
+    const modelName = info.model.name.snakeCase;
+    const columnName = info.column.name.snakeCase;
+    const selector = `${q}${modelName}${q}.${q}${columnName}${q}`;
+    value = info.column.runtime.serialize(value, seed) as string|number|boolean;
+    const serialized = stringable.includes(info.column.type.name)
       ? toSqlString(value)
-      : floatable.includes(info.column.type)
+      : floatable.includes(info.column.type.name)
       ? toSqlFloat(value)
-      : intable.includes(info.column.type)
+      : intable.includes(info.column.type.name)
       ? toSqlInteger(value)
-      : boolable.includes(info.column.type)
+      : boolable.includes(info.column.type.name)
       ? toSqlBoolean(value)
-      : dateable.includes(info.column.type)
+      : dateable.includes(info.column.type.name)
       ? toSqlDate(value)?.toISOString()
       : String(value);
     if (typeof serialized !== 'undefined' && serialized !== '') {
@@ -163,21 +167,23 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     const info = getColumnInfo(key, model).last;
     if (!info) return;
     const q = engine.dialect.q;
-    const selector = `${q}${info.model.snakeCase}${q}.${q}${info.column.snakeCase}${q}`;
+    const modelName = info.model.name.snakeCase;
+    const columnName = info.column.name.snakeCase;
+    const selector = `${q}${modelName}${q}.${q}${columnName}${q}`;
     if (typeof values[0] !== 'undefined'
       && values[0] !== null
       && values[0] !== ''
     ) {
-      const value = info.column.unserialize(values[0], seed);
-      const serialized = stringable.includes(info.column.type)
+      const value = info.column.runtime.unserialize(values[0], seed);
+      const serialized = stringable.includes(info.column.type.name)
         ? toSqlString(value)
-        : floatable.includes(info.column.type)
+        : floatable.includes(info.column.type.name)
         ? toSqlFloat(value)
-        : intable.includes(info.column.type)
+        : intable.includes(info.column.type.name)
         ? toSqlInteger(value)
-        : boolable.includes(info.column.type)
+        : boolable.includes(info.column.type.name)
         ? toSqlBoolean(value)
-        : dateable.includes(info.column.type)
+        : dateable.includes(info.column.type.name)
         ? toSqlDate(value)?.toISOString()
         : String(value);
       if (typeof serialized !== 'undefined' && serialized !== '') {
@@ -189,16 +195,16 @@ export default async function search<M extends UnknownNest = UnknownNest>(
       && values[1] !== null
       && values[1] !== ''
     ) {
-      const value = info.column.unserialize(values[1], seed);
-      const serialized = stringable.includes(info.column.type)
+      const value = info.column.runtime.unserialize(values[1], seed);
+      const serialized = stringable.includes(info.column.type.name)
         ? toSqlString(value)
-        : floatable.includes(info.column.type)
+        : floatable.includes(info.column.type.name)
         ? toSqlFloat(value)
-        : intable.includes(info.column.type)
+        : intable.includes(info.column.type.name)
         ? toSqlInteger(value)
-        : boolable.includes(info.column.type)
+        : boolable.includes(info.column.type.name)
         ? toSqlBoolean(value)
-        : dateable.includes(info.column.type)
+        : dateable.includes(info.column.type.name)
         ? toSqlDate(value)?.toISOString()
         : String(value);
       if (typeof serialized !== 'undefined') {
@@ -218,8 +224,10 @@ export default async function search<M extends UnknownNest = UnknownNest>(
     const info = getColumnInfo(key, model).last;
     if (!info) return;
     const q = engine.dialect.q;
+    const modelName = info.model.name.snakeCase;
+    const columnName = info.column.name.snakeCase;
     //NOTE: inquire already adds the quotes around the column name
-    const selector = `${info.model.snakeCase}${q}.${q}${info.column.snakeCase}${q}`;
+    const selector = `${modelName}${q}.${q}${columnName}${q}`;
     select.order(selector, direction.toUpperCase() as 'ASC' | 'DESC');
   });
 
@@ -249,7 +257,7 @@ export default async function search<M extends UnknownNest = UnknownNest>(
         }
         nest.withPath.set(
           selector.name, 
-          selector.last.column.unserialize(value, seed)
+          selector.last.column.runtime.unserialize(value, seed)
         );
       });
       rows.push(nest.get<M>());

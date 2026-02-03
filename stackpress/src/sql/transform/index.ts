@@ -1,5 +1,5 @@
 //schema
-import Registry from '../../schema/Registry.js';
+import Schema from '../../schema/Schema.js';
 //root
 import type { IdeaPluginWithProject } from '../../types/index.js';
 //local
@@ -49,24 +49,24 @@ export default async function generate(props: IdeaPluginWithProject) {
   //-----------------------------//
   // 1. Config
   //extract props
-  const { schema, project } = props;
-  const registry = new Registry(schema);
+  const { schema: config, project } = props;
+  const schema = Schema.make(config);
 
   //-----------------------------//
   // 2. Generators
   // - profile/actions.ts
-  generateActions(project, registry);
+  generateActions(project, schema);
   // - profile/events.ts
-  generateEvents(project, registry);
+  generateEvents(project, schema);
   // - profile/schema.ts
-  generateSchema(project, registry);
+  generateSchema(project, schema);
   // - profile/tests.ts
-  generateTests(project, registry);
+  generateTests(project, schema);
 
   //-----------------------------//
   // 3. Profile/index.ts
-  for (const model of registry.model.values()) {
-    const filepath = `${model.name}/index.ts`;
+  for (const model of schema.models.values()) {
+    const filepath = `${model.name.toString()}/index.ts`;
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });

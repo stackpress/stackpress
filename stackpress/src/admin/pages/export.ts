@@ -26,14 +26,16 @@ export default function AdminExportPageFactory(model: Model) {
     }>();
     //search using the filters
     const response = await ctx.resolve<UnknownNest[]>(
-      `${model.dashCase}-search`,
+      `${model.name.dashCase}-search`,
       { q, filter, span, sort, take: 0 }
     );
     //if successfully searched
     if (response.code === 200 && response.results) {
       const head: [ string, string ][] = [];
       const body: unknown[][] = [];
-      const relations = model.relations.map(column => column.name);
+      const relations = model.store.foreignRelationships.toArray().map(
+        column => column.name.toString()
+      );
       //loop through the data (row) of each result
       for (const data of response.results) {
         //loop through the columns of the data (row)
@@ -80,7 +82,7 @@ export default function AdminExportPageFactory(model: Model) {
       ].map(row => row.join(',')).join('\n');
       res.headers.set(
         'Content-Disposition', 
-        `attachment; filename=${model.dashCase}-${Date.now()}.csv`
+        `attachment; filename=${model.name.dashCase}-${Date.now()}.csv`
       );
       res.setBody('text/csv', csv);
     }

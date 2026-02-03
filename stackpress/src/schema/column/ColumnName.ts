@@ -51,6 +51,13 @@ export default class ColumnName {
   }
 
   /**
+   * Returns the underscore fieldset name
+   */
+  public get underscoreCase() {
+    return this.dashCase.replaceAll('-', '_');
+  }
+
+  /**
    * Sets the name of the column
    */
   constructor(name: string, column: Column) {
@@ -59,9 +66,67 @@ export default class ColumnName {
   }
 
   /**
+   * Way to get (and change) the class naming standards
+   * 
+   * ie. Name, ProfileID
+   */
+  public toClassName(pattern = '%s') {
+    return pattern.replace('%s', this.titleCase);
+  }
+
+  /**
+   * Way to get (and change) the component naming standards
+   * 
+   * ie. NameFormField, ProfileIdViewFormat
+   */
+  public toComponentName(pattern = '%s') {
+    return pattern.replaceAll('%s', this.titleCase);
+  }
+
+  /**
+   * Way to get (and change) the method naming standards
+   * 
+   * ie. nameActions, profileIdActions, getName, getProfileId
+   */
+  public toMethodName(pattern = '%s', titleCase = false) {
+    if (titleCase) {
+      return pattern.replace('%s', this.titleCase);
+    }
+    return pattern.replace('%s', this.camelCase);
+  }
+
+  /**
+   * Way to get (and change) the file path naming standards
+   * 
+   * ie. /stackpress-client/ArticleComment/name/
+   * ie. /stackpress-client/user/profileId/
+   */
+  public toPathName(pattern = '%s') {
+    return pattern.replace('%s', this.toString());
+  }
+
+  /**
    * Converts name to string
    */
   public toString() {
     return this._name;
+  }
+
+  /**
+   * Way to get (and change) the typescript naming standards
+   * 
+   * ie. name, profileId
+   */
+  public toTypeName(pattern = '%s') {
+    return pattern.replace('%s', this.toString());
+  }
+
+  /**
+   * Way to get (and change) the URL and parameter naming standards
+   * 
+   * ie. /name/, /profile_id/, filter[name], filter[profile_id]
+   */
+  public toURLPath(pattern = '%s') {
+    return pattern.replace('%s', this.underscoreCase);
   }
 };

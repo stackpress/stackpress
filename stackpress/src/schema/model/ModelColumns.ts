@@ -196,6 +196,16 @@ export default class ModelColumns extends Columns {
   }
 
   /**
+   * Returns a specified element from the Map object. If the value that 
+   * is associated to the provided key is an object, then you will get 
+   * a reference to that object and any change made to that object will 
+   * effectively modify it inside the Map.
+   */
+  public get(name: string) {
+    return super.get(name) as ModelColumn | undefined;
+  }
+
+  /**
    * Maps the data map values to a new data map
    */
   public map<T>(callback: DataMapIterator<string, ModelColumn, this, T>) {

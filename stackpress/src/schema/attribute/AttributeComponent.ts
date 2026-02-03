@@ -70,6 +70,15 @@ export default class AttributeComponent {
   }
 
   /**
+   * Returns true if this attribute is a virtual component
+   * (like not really an importable component)
+   */
+  public get isVirtual() {
+    const definition = this.definition;
+    return definition && definition.import.from === definition.name;
+  }
+
+  /**
    * Returns the merged props from the defaults 
    * found in the pre-defined definitions and 
    * the value set in the attribute.

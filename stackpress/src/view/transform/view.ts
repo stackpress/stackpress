@@ -1,10 +1,11 @@
 //modules
 import type { Directory } from 'ts-morph';
-//registry
+//stackpress
+import { renderCode } from '../../helpers.js';
+//stackpress/schema
 import type Schema from '../../schema/Schema.js';
 import type Fieldset from '../../schema/fieldset/Fieldset.js';
 import type Column from '../../schema/column/Column.js';
-import { renderCode } from '../../schema/helpers.js';
 
 const formatType: Record<string, string> = {
   String: 'string',
@@ -74,8 +75,8 @@ export function generateFieldsetTable(
   if (!attribute?.component.defined || !columnFieldset) return;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    fieldset: fieldset.name.toString(),
-    component: column.name.titleCase
+    fieldset: fieldset.name.toPathName(),
+    component: column.name.toComponentName('%sViewFormat')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
 
@@ -98,22 +99,22 @@ export function generateFieldsetTable(
     if (!viewFormat) return;
     source.addImportDeclaration({
       moduleSpecifier: renderCode(TEMPLATE.RELATIVE_VIEW_FORMAT_PATH, {
-        fieldset: columnFieldset.name.toString(),
-        component: column.name.titleCase
+        fieldset: columnFieldset.name.toPathName(),
+        component: column.name.toComponentName('%sViewFormat')
       }),
-      defaultImport: `${column.name.titleCase}ViewFormat`
+      defaultImport: column.name.toComponentName('%sViewFormat')
     });
   }
   //export function AddressViewFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: `${column.name.titleCase}ViewFormat`,
+    name: column.name.toComponentName('%sViewFormat'),
     parameters: [ 
       { 
         name: 'props', 
         type: renderCode(TEMPLATE.VIEW_PROPS, {
-          typename: fieldset.name.titleCase,
-          type: columnFieldset.name.titleCase,
+          data: fieldset.name.toTypeName('%sExtended'),
+          value: columnFieldset.name.toTypeName(),
           multiple: column.type.multiple ? '[]' : ''
         }) 
       } 
@@ -124,12 +125,12 @@ export function generateFieldsetTable(
           label: column.name.label,
           value: column.type.required
             ? renderCode(TEMPLATE.FIELDSET_TABLE_VALUE, {
-              component: column.name.titleCase,
-              column: column.name.toString()
+              component: column.name.toComponentName('%sViewFormat'),
+              column: column.name.toURLPath()
             })
             : renderCode(TEMPLATE.FIELDSET_TABLE_VALUE_OPTIONAL, {
-              component: column.name.titleCase,
-              column: column.name.toString()
+              component: column.name.toComponentName('%sViewFormat'),
+              column: column.name.toURLPath()
             })
         })
       ).join('\n')
@@ -149,8 +150,8 @@ export function generateFieldsetInfo(
   if (!attribute?.component.defined || !columnFieldset) return;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    fieldset: fieldset.name.toString(),
-    component: column.name.titleCase
+    fieldset: fieldset.name.toPathName(),
+    component: column.name.toComponentName('%sViewFormat')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import { useLanguage } from 'r22n';
@@ -167,10 +168,10 @@ export function generateFieldsetInfo(
   columnFieldset.component.viewFormats.forEach(column => {
     source.addImportDeclaration({
       moduleSpecifier: renderCode(TEMPLATE.RELATIVE_VIEW_FORMAT_PATH, { 
-        fieldset: columnFieldset.name.toString(),
-        component: column.name.titleCase
+        fieldset: columnFieldset.name.toPathName(),
+        component: column.name.toComponentName('%sViewFormat')
       }),
-      defaultImport: `${column.name.titleCase}ViewFormat.js`
+      defaultImport: column.name.toComponentName('%sViewFormat')
     });
   });
   //export function AddressViewFormat() {
@@ -181,8 +182,8 @@ export function generateFieldsetInfo(
       { 
         name: 'props', 
         type: renderCode(TEMPLATE.VIEW_PROPS, {
-          typename: fieldset.name.titleCase,
-          type: columnFieldset.name.titleCase,
+          data: fieldset.name.toTypeName('%sExtended'),
+          value: columnFieldset.name.toTypeName(),
           multiple: column.type.multiple ? '[]' : ''
         })
       } 
@@ -193,12 +194,12 @@ export function generateFieldsetInfo(
           label: column.name.label,
           value: column.type.required
             ? renderCode(TEMPLATE.FIELDSET_TABLE_VALUE, {
-              component: column.name.titleCase,
-              column: column.name.toString()
+              component: column.name.toComponentName('%sViewFormat'),
+              column: column.name.toURLPath()
             })
             : renderCode(TEMPLATE.FIELDSET_TABLE_VALUE_OPTIONAL, {
-              component: column.name.titleCase,
-              column: column.name.toString()
+              component: column.name.toComponentName('%sViewFormat'),
+              column: column.name.toURLPath()
             })
         })
       )
@@ -222,8 +223,8 @@ export function generateFormat(
   const props = attribute.component.props;
   //get the path where this should be saved
   const path = renderCode(TEMPLATE.FILE_PATH, {
-    fieldset: fieldset.name.toString(),
-    component: column.name.titleCase
+    fieldset: fieldset.name.toPathName(),
+    component: column.name.toComponentName('%sViewFormat')
   });
   const source = directory.createSourceFile(path, '', { overwrite: true });
   //import Text from 'frui/view/Text';
@@ -238,7 +239,7 @@ export function generateFormat(
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${fieldset.name.titleCase}Extended` ]
+    namedImports: [ fieldset.name.toTypeName('%sExtended') ]
   });
   //import mustache from 'mustache';
   if (component.name === 'Template') {
@@ -249,13 +250,13 @@ export function generateFormat(
     //export function NameFormat() {
     source.addFunction({
       isDefaultExport: true,
-      name: `${column.name.titleCase}Format`,
+      name: column.name.toComponentName('%sFormat'),
       parameters: [
         { 
           name: 'props', 
           type: renderCode(TEMPLATE.VIEW_PROPS, {
-            typename: fieldset.name.titleCase,
-            type: formatType[column.type.name],
+            data: fieldset.name.toTypeName('%sExtended'),
+            value: formatType[column.type.name],
             multiple: column.type.multiple ? '[]' : ''
           })
         }
@@ -275,8 +276,8 @@ export function generateFormat(
       { 
         name: 'props', 
         type: renderCode(TEMPLATE.VIEW_PROPS, {
-          typename: fieldset.name.titleCase,
-          type: formatType[column.type.name],
+          data: fieldset.name.toTypeName('%sExtended'),
+          value: formatType[column.type.name],
           multiple: column.type.multiple ? '[]' : ''
         })
       }
@@ -291,15 +292,15 @@ export function generateFormat(
 export const TEMPLATE = {
 
 FILE_PATH:
-'<%fieldset%>/components/view/<%component%>ViewFormat.tsx',
+'<%fieldset%>/components/view/<%component%>.tsx',
 
 RELATIVE_VIEW_FORMAT_PATH:
-'../../../<%fieldset%>/components/view/<%component%>ViewFormat.js',
+'../../../<%fieldset%>/components/view/<%component%>.js',
 
 VIEW_PROPS:
 `{ 
-  data: <%typename%>Extended,
-  value: <%type%><%multiple%> 
+  data: <%data%>,
+  value: <%value%><%multiple%> 
 }`,
 
 FIELDSET_TABLE:
@@ -326,10 +327,10 @@ FIELDSET_TABLE_ROW:
 </Table.Row>`, 
 
 FIELDSET_TABLE_VALUE:
-`<<%component%>ViewFormat data={value} value={value.<%column%>} />`,
+`<<%component%> data={value} value={value['<%column%>']} />`,
 
 FIELDSET_TABLE_VALUE_OPTIONAL:
-`{value.<%column%> ? (<<%component%>ViewFormat data={value} value={value.<%column%>} />) : ''}`,
+`{value['<%column%>'] ? (<<%component%> data={value} value={value['<%column%>']} />) : ''}`,
 
 FORMAT_TEMPLATE_VIEW:
 `//props

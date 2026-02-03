@@ -54,19 +54,19 @@ export default function AdminUpdatePageFactory(model: Model) {
       menu: admin.menu || []
     });
     //get id from url params
-    const ids = model.ids.map(
-      column => req.data(column.name)
+    const ids = model.store.ids.toArray().map(
+      column => req.data(column.name.toString())
     ).filter(Boolean);
-    if (ids.length === model.ids.length) {
+    if (ids.length === model.store.ids.size) {
       //if form submitted
       if (req.method === 'POST') {
         //emit update with the fixed fields
-        await ctx.emit(`${model.dashCase}-update`, req, res);
+        await ctx.emit(`${model.name.dashCase}-update`, req, res);
         //if error
         if (res.code !== 200) {
           //still need the details for the page...
           const detail = await ctx.resolve<UnknownNest>(
-            `${model.dashCase}-detail`, 
+            `${model.name.dashCase}-detail`, 
             req
           );
           //if error
@@ -80,11 +80,11 @@ export default function AdminUpdatePageFactory(model: Model) {
         }
         //redirect
         const base = admin.base || '/admin';
-        res.redirect(`${base}/${model.dashCase}/detail/${ids.join('/')}`);
+        res.redirect(`${base}/${model.name.dashCase}/detail/${ids.join('/')}`);
         return;
       }
       //not submitted, fetch the data using the id
-      await ctx.emit(`${model.dashCase}-detail`, req, res);
+      await ctx.emit(`${model.name.dashCase}-detail`, req, res);
       //if error
       if (res.code !== 200) {
         //pass straight to error

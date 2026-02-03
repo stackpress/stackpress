@@ -53,12 +53,14 @@ export default function AdminRemovePageFactory(model: Model) {
       menu: admin.menu || []
     });
     //get id from url params
-    const ids = model.ids.map(column => req.data(column.name)).filter(Boolean);
-    if (ids.length === model.ids.length) {
+    const ids = model.store.ids.toArray().map(
+      column => req.data(column.name.toString())
+    ).filter(Boolean);
+    if (ids.length === model.store.ids.size) {
       //if confirmed
       if (req.data('confirmed')) {
         //emit remove event
-        await ctx.emit(`${model.dashCase}-remove`, req, res);
+        await ctx.emit(`${model.name.dashCase}-remove`, req, res);
         //if error
         if (res.code !== 200) {
           //pass straight to error
@@ -67,11 +69,11 @@ export default function AdminRemovePageFactory(model: Model) {
         }
         //redirect
         const base = admin.base || '/admin';
-        res.redirect(`${base}/${model.dashCase}/search`);
+        res.redirect(`${base}/${model.name.dashCase}/search`);
         return;
       }
       //not confirmed, fetch the data using the id
-      await ctx.emit(`${model.dashCase}-detail`, req, res);
+      await ctx.emit(`${model.name.dashCase}-detail`, req, res);
       //if error
       if (res.code !== 200) {
         //pass straight to error

@@ -31,7 +31,7 @@ export default function upsertEventFactory(model: Model) {
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
     //remove values that are not columns
-    const input = model.input(req.data(), false);
+    const input = model.runtime.inputValues(req.data(), false);
     //get the database seed (for encrypting)
     const seed = ctx.config.path('database.seed', 'abc123');
     const response = await upsert(model, engine, input, seed);

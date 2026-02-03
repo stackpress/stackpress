@@ -24,7 +24,7 @@ export default async function drop(
   const order = sequence(models.map(model => model.config));
   //add truncate queries
   for (const model of order) {
-    queries.push(database.dialect.drop(model.snakeCase));
+    queries.push(database.dialect.drop(model.name.snakeCase));
   }
   if (queries.length) {
     cli?.verbose && cli.control.system('Dropping database...');

@@ -1,7 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '../../../schema/Registry.js';
+import type Schema from '../../../schema/Schema.js';
 
 import createView from './create.js';
 import detailView from './detail.js';
@@ -10,13 +10,13 @@ import restoreView from './restore.js';
 import searchView from './search.js';
 import updateView from './update.js';
 
-export default function generate(directory: Directory, registry: Registry) {
-  for (const model of registry.model.values()) {
-    createView(directory, registry, model);
-    detailView(directory, registry, model);
-    removeView(directory, registry, model);
-    restoreView(directory, registry, model);
-    searchView(directory, registry, model);
-    updateView(directory, registry, model);
+export default function generate(directory: Directory, schema: Schema) {
+  for (const model of schema.models.values()) {
+    createView(directory, schema, model);
+    detailView(directory, schema, model);
+    removeView(directory, schema, model);
+    restoreView(directory, schema, model);
+    searchView(directory, schema, model);
+    updateView(directory, schema, model);
   }
 };

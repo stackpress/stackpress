@@ -1,5 +1,7 @@
 //modules
-import Mustache from 'mustache';
+import type { Data } from '@stackpress/idea-parser';
+//stackpress
+import { render as template } from '../../helpers.js';
 //stackpress/schema
 import type { ErrorMap, SerializeOptions } from '../types.js';
 //stackpress/schema/fieldset
@@ -50,6 +52,16 @@ export default class FieldsetRuntime {
   }
 
   /**
+   * Returns all computed default values for the fieldset
+   */
+  public defaultValues() {
+    return this._fieldset.columns
+      .filter(column => typeof column.value.default !== 'undefined')
+      .map(column => column.runtime.defaultValue() as Data | Date)
+      .toObject();
+  }
+
+  /**
    * Removes values that are not columns or (strict) input fields
    */
   public inputValues(values: Record<string, unknown>, strict = true) {
@@ -80,7 +92,7 @@ export default class FieldsetRuntime {
     if (!this._fieldset.name.display) {
       return '';
     }
-    return Mustache.render(this._fieldset.name.display, data);
+    return template(this._fieldset.name.display, data);
   }
 
   /**

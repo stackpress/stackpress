@@ -18,11 +18,12 @@ export default async function upsert<M extends UnknownNest = UnknownNest>(
   seed?: string
 ) {
   const ids: Record<string, string|number> = {};
-  for (const column of model.ids) {
-    if (!input[column.name]) {
+  for (const column of model.store.ids.values()) {
+    const columnName = column.name.toString();
+    if (!input[columnName]) {
       return await create<M>(model, engine, input, seed);
     }
-    ids[column.name] = input[column.name] as string|number;
+    ids[columnName] = input[columnName] as string|number;
   }
   const row = await detail<M>(model, engine, ids, undefined, seed);
   if (row.results) {

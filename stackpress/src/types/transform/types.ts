@@ -1,6 +1,6 @@
 //modules
 import type { Directory, SourceFile } from 'ts-morph';
-//schema
+//stackpress/schema
 import type Model from '../../schema/model/Model.js';
 import type Fieldset from '../../schema/fieldset/Fieldset.js';
 import type Schema from '../../schema/Schema.js';
@@ -28,7 +28,7 @@ export default function generate(directory: Directory, schema: Schema) {
   // 1. profile/types.ts
   //loop through models
   for (const model of schema.models.values()) {
-    const file = `${model.name}/types.ts`;
+    const file = model.name.toPathName('%s/types.ts');
     const source = directory.createSourceFile(file, '', { overwrite: true });
     //generate the model
     generateModel(source, model);
@@ -38,7 +38,7 @@ export default function generate(directory: Directory, schema: Schema) {
   // 2. address/types.ts
   //loop through fieldsets
   for (const fieldset of schema.fieldsets.values()) {
-    const file = `${fieldset.name}/types.ts`;
+    const file = fieldset.name.toPathName('%s/types.ts');
     const source = directory.createSourceFile(file, '', { overwrite: true });
     //generate the fieldset
     generateFieldset(source, fieldset);
@@ -52,11 +52,11 @@ export default function generate(directory: Directory, schema: Schema) {
   for (const model of schema.models.values()) {
     source.addExportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: `./${model.name.toString()}/types.js`,
+      moduleSpecifier: model.name.toPathName('./%s/types.js'),
       namedExports: [ 
-        model.name.titleCase, 
-        `${model.name.titleCase}Input`, 
-        `${model.name.titleCase}Extended` 
+        model.name.toTypeName(),
+        model.name.toTypeName('%sInput'), 
+        model.name.toTypeName('%sExtended')
       ]
     });
   }
@@ -64,10 +64,10 @@ export default function generate(directory: Directory, schema: Schema) {
   for (const fieldset of schema.fieldsets.values()) {
     source.addExportDeclaration({
       isTypeOnly: true,
-      moduleSpecifier: `./${fieldset.name.toString()}/types.js`,
+      moduleSpecifier: fieldset.name.toPathName('./%s/types.js'),
       namedExports: [ 
-        fieldset.name.titleCase, 
-        `${fieldset.name.titleCase}Input` 
+        fieldset.name.toTypeName(),
+        fieldset.name.toTypeName('%sInput')
       ]
     });
   }
@@ -93,8 +93,8 @@ export function generateModel(source: SourceFile, model: Model) {
     if (!model) continue;
     //import type { Profile } from '../Profile/types.js'
     source.addImportDeclaration({
-      moduleSpecifier: `../${model.name.toString()}/types.js`,
-      namedImports: [ model.name.titleCase ]
+      moduleSpecifier: model.name.toPathName('../%s/types.js'),
+      namedImports: [ model.name.toTypeName() ]
     });
   }
   //import all the fieldsets needed for this type definition
@@ -103,8 +103,8 @@ export function generateModel(source: SourceFile, model: Model) {
     if (!fieldset) continue;
     //import { ...} from '../Address/types.js'
     source.addImportDeclaration({
-      moduleSpecifier: `../${fieldset.name.toString()}/types.js`,
-      namedImports: [ fieldset.name.titleCase ]
+      moduleSpecifier: fieldset.name.toPathName('../%s/types.js'),
+      namedImports: [ fieldset.name.toTypeName() ]
     });
   }
   //export type Profile
@@ -119,7 +119,7 @@ export function generateModel(source: SourceFile, model: Model) {
           || !!column.type.fieldset
       ).map(column => (
         //name?: string
-        `${column.name}${
+        `${column.name.toTypeName()}${
           !column.type.required ? '?' : ''
         }: ${typemap[column.type.name] || column.type.name}${
           column.type.multiple ? '[]' : ''
@@ -131,11 +131,11 @@ export function generateModel(source: SourceFile, model: Model) {
   if (model.store.foreignRelationships.size > 0) {
     source.addTypeAlias({
       isExported: true,
-      name: `${model.name.titleCase}Extended`,
-      type: (`${model.name.titleCase} & {
+      name: model.name.toTypeName('%sExtended'),
+      type: (`${model.name.toTypeName()} & {
         ${model.store.foreignRelationships.map(column => (
           //user?: User
-          `${column.name}${
+          `${column.name.toTypeName()}${
             !column.type.required ? '?' : ''
           }: ${column.type.name}${
             column.type.multiple ? '[]' : ''
@@ -146,8 +146,8 @@ export function generateModel(source: SourceFile, model: Model) {
   } else {
     source.addTypeAlias({
       isExported: true,
-      name: `${model.name.titleCase}Extended`,
-      type: model.name.titleCase
+      name: model.name.toTypeName('%sExtended'),
+      type: model.name.toTypeName()
     });
   }
   //gather all the field inputs
@@ -157,10 +157,10 @@ export function generateModel(source: SourceFile, model: Model) {
       //should be a name on the map
       ...Object.keys(typemap.model),
       //...also include enum names
-      ...model.type.enums.map(column => column.type),
+      ...model.type.enums.toArray().map(column => column.type.name),
       //...also include fieldset names
-      ...model.type.fieldsets.map(
-        column => column.type.fieldset?.name.titleCase
+      ...model.type.fieldsets.toArray().map(
+        column => column.type.fieldset?.name.toString()
       )
     ].includes(column.type.name));
   //export type ProfileInput
@@ -170,7 +170,7 @@ export function generateModel(source: SourceFile, model: Model) {
     type: (`{
       ${inputs.map(column => (
         //name?: string
-        `${column.name}${!column.type.required 
+        `${column.name.toTypeName()}${!column.type.required 
           || typeof column.value.default !== 'undefined' ? '?' : ''
         }: ${typemap[column.type.name] || column.type.name}${
           column.type.multiple ? '[]' : ''
@@ -194,10 +194,12 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
     });
   }
   for (const column of fieldset.type.fieldsets.values()) {
+    const fieldset = column.type.fieldset;
+    if (!fieldset) continue;
     //import {} from '../Address/types.js'
     source.addImportDeclaration({
-      moduleSpecifier: `../${column.type.name}/types.js`,
-      namedImports: [ column.type.name ]
+      moduleSpecifier: fieldset.name.toPathName('../%s/types.js'),
+      namedImports: [ fieldset.name.toTypeName() ]
     });
   }
   //export type Profile
@@ -212,7 +214,7 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
           || !!column.type.fieldset
       ).map(column => (
         //name?: string
-        `${column.name}${
+        `${column.name.toTypeName()}${
           !column.type.required ? '?' : ''
         }: ${typemap[column.type.name] || column.type.name}${
           column.type.multiple ? '[]' : ''
@@ -227,20 +229,20 @@ export function generateFieldset(source: SourceFile, fieldset: Fieldset) {
       //should be a name on the map
       ...Object.keys(typemap.model),
       //...also include enum names
-      ...fieldset.type.enums.map(column => column.type),
+      ...fieldset.type.enums.toArray().map(column => column.type.name),
       //...also include fieldset names
-      ...fieldset.type.fieldsets.map(
-        column => column.type.fieldset?.name.titleCase
+      ...fieldset.type.fieldsets.toArray().map(
+        column => column.type.fieldset?.name.toString()
       )
     ].includes(column.type.name));
   //export type ProfileInput
   source.addTypeAlias({
     isExported: true,
-    name: `${fieldset.name.titleCase}Input`,
+    name: fieldset.name.toTypeName('%Input'),
     type: (`{
       ${inputs.map(column => (
         //name?: string
-        `${column.name}${!column.type.required 
+        `${column.name.toTypeName()}${!column.type.required 
           || typeof column.value.default !== 'undefined' ? '?' : ''
         }: ${typemap[column.type.name] || column.type.name}${
           column.type.multiple ? '[]' : ''

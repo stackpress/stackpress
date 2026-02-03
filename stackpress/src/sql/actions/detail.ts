@@ -20,14 +20,11 @@ export default async function detail<M extends UnknownNest = UnknownNest>(
   columns = [ '*' ],
   seed?: string
 ): Promise<StatusResponse<M|null>> {
-  const filter = Object.fromEntries(
-    model.ids.map(column => [ 
-      column.name, 
-      ids[column.name] 
-    ])
-  );
-  if (model.active) {
-    filter[model.active.name] = -1;
+  const filter = model.store.ids.map(
+    column => ids[column.name.toString()]
+  ).toObject();
+  if (model.store.active) {
+    filter[model.store.active.name.toString()] = -1;
   }
   const response = await search<M>(
     model, 

@@ -2,11 +2,11 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //schema
-import type Registry from '../../../schema/Registry.js';
+import type Schema from '../../../schema/Schema.js';
 import type Model from '../../../schema/model/Model.js';
 
-export default function createView(directory: Directory, _registry: Registry, model: Model) {
-  const file = `${model.name}/admin/views/create.tsx`;
+export default function createView(directory: Directory, _schema: Schema, model: Model) {
+  const file = `${model.name.toString()}/admin/views/create.tsx`;
   const source = directory.createSourceFile(file, '', { overwrite: true });
   //import 'frui/frui.css';
   //import 'stackpress/fouc.css';
@@ -27,7 +27,7 @@ export default function createView(directory: Directory, _registry: Registry, mo
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.titleCase}Input`, model.titleCase ]
+    namedImports: [ `${model.name.titleCase}Input`, model.name.titleCase ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -45,35 +45,35 @@ export default function createView(directory: Directory, _registry: Registry, mo
     namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
   });
   //import { ActiveFieldControl } from '../../components/fields/ActiveField.js';
-  model.fields.forEach(column => {
+  model.component.formFields.forEach(column => {
     //skip if no component
-    const field = column.field;
+    const field = column.component.formField;
     if (!field) return;
-    if (field.component === 'Fieldset') {
+    if (field.name === 'Fieldset') {
       //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
       source.addImportDeclaration({
-        moduleSpecifier: `../../components/fields/${column.titleCase}Field.js`,
-        namedImports: [ `${column.titleCase}FieldsetControl` ]
+        moduleSpecifier: `../../components/fields/${column.name.titleCase}Field.js`,
+        namedImports: [ `${column.name.titleCase}FieldsetControl` ]
       });
       return;
     }
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/fields/${column.titleCase}Field.js`,
-      namedImports: [ `${column.titleCase}FieldControl` ]
+      moduleSpecifier: `../../components/fields/${column.name.titleCase}Field.js`,
+      namedImports: [ `${column.name.titleCase}FieldControl` ]
     });
   });
   
   //export function AdminProfileCreateCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.titleCase}CreateCrumbs`,
+    name: `Admin${model.name.titleCase}CreateCrumbs`,
     statements: (`
       //hooks
       const { _ } = useLanguage();
       //variables
       const crumbs = [
         {
-          label: (<span className="admin-crumb">{_('${model.plural}')}</span>),
+          label: (<span className="admin-crumb">{_('${model.name.plural}')}</span>),
           icon: 'user',
           href: 'search'
         },
@@ -88,11 +88,11 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileCreateForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.titleCase}CreateForm`,
+    name: `Admin${model.name.titleCase}CreateForm`,
     parameters: [{ 
       name: 'props', 
       type: `{ 
-        input: Partial<${model.titleCase}Input>, 
+        input: Partial<${model.name.titleCase}Input>, 
         errors: NestedObject<string | string[]> 
       }` 
     }],
@@ -101,21 +101,28 @@ export default function createView(directory: Directory, _registry: Registry, mo
       const { _ } = useLanguage();
       return (
         <form method="post">
-          ${model.fields.map(column => column.field?.component === 'Fieldset' ? (`
-            <${column.titleCase}FieldsetControl 
-              className="control"
-              name="${column.name}"
-              value={input['${column.name}']} 
-              errors={errors['${column.name}']} 
-            />
-          `) : (`
-            <${column.titleCase}FieldControl 
-              className="control"
-              name="${column.name}${column.multiple ? '[]' : ''}"
-              value={input['${column.name}']} 
-              error={errors.${column.name}?.toString()} 
-            />
-          `)).join('\n')}
+          ${model.component.formFields.toArray().map(column => {
+            const attribute = column.component.formField!;
+            const component = attribute.component.definition!;
+            if (component.name === 'Fieldset') {
+              return (`
+                <${column.name.titleCase}FieldsetControl 
+                  className="control"
+                  name="${column.name.toString()}"
+                  value={input['${column.name.toString()}']} 
+                  errors={errors['${column.name.toString()}']} 
+                />
+              `);
+            }
+            return (`
+              <${column.name.titleCase}FieldControl 
+                className="control"
+                name="${column.name.toString()}${column.type.multiple ? '[]' : ''}"
+                value={input['${column.name.toString()}']} 
+                error={errors.${column.name.toString()}?.toString()} 
+              />
+            `);
+          }).join('\n')}
           <Button className="submit" type="submit">
             <i className="icon fas fa-fw fa-save"></i>
             {_('Save')}
@@ -127,12 +134,12 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileCreateBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.titleCase}CreateBody`,
+    name: `Admin${model.name.titleCase}CreateBody`,
     statements: (`
       const { request, response } = useServer<${[
         'AdminConfigProps', 
-        `Partial<${model.titleCase}Input>`,
-        model.titleCase
+        `Partial<${model.name.titleCase}Input>`,
+        model.name.titleCase
       ].join(', ')}>();
       const input = { ...response.results, ...request.data() };
       const errors = response.errors();
@@ -140,10 +147,10 @@ export default function createView(directory: Directory, _registry: Registry, mo
       return (
         <main className="admin-page admin-form-page">
           <div className="admin-crumbs">
-            <Admin${model.titleCase}CreateCrumbs />
+            <Admin${model.name.titleCase}CreateCrumbs />
           </div>
           <div className="admin-form">
-            <Admin${model.titleCase}CreateForm errors={errors} input={input} />
+            <Admin${model.name.titleCase}CreateForm errors={errors} input={input} />
           </div>
         </main>
       );
@@ -152,7 +159,7 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileCreateHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.titleCase}CreateHead`,
+    name: `Admin${model.name.titleCase}CreateHead`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -168,7 +175,7 @@ export default function createView(directory: Directory, _registry: Registry, mo
         : 'image/x-icon';
       return (
         <>
-          <title>{_('Create ${model.singular}')}</title>
+          <title>{_('Create ${model.name.singular}')}</title>
           {favicon && <link rel="icon" type={mimetype} href={favicon} />}
           <link rel="stylesheet" type="text/css" href="/styles/global.css" />
           {styles.map((href, index) => (
@@ -181,7 +188,7 @@ export default function createView(directory: Directory, _registry: Registry, mo
   //export function AdminProfileCreatePage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.titleCase}CreatePage`,
+    name: `Admin${model.name.titleCase}CreatePage`,
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -189,7 +196,7 @@ export default function createView(directory: Directory, _registry: Registry, mo
     statements: (`
       return (
         <LayoutAdmin {...props}>
-          <Admin${model.titleCase}CreateBody />
+          <Admin${model.name.titleCase}CreateBody />
         </LayoutAdmin>
       );  
     `)
@@ -200,9 +207,9 @@ export default function createView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.titleCase}CreateHead`
+      initializer: `Admin${model.name.titleCase}CreateHead`
     }]
   });
   //export default AdminProfileCreatePage;
-  source.addStatements(`export default Admin${model.titleCase}CreatePage;`);
+  source.addStatements(`export default Admin${model.name.titleCase}CreatePage;`);
 }

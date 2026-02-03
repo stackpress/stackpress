@@ -126,6 +126,5 @@ export {
   capitalize,
   dasherize,
   lowerize,
-  snakerize,
-  render
+  snakerize
 } from './schema/helpers.js';

@@ -5,7 +5,7 @@ import { VariableDeclarationKind } from 'ts-morph';
 import type { SchemaConfig } from '@stackpress/idea-parser';
 import type Server from '@stackpress/ingest/Server';
 //schema
-import type Registry from '../../schema/Registry.js';
+import type Schema from '../../schema/Schema.js';
 import Revisions from '../Revisions.js';
 
 /**
@@ -13,14 +13,14 @@ import Revisions from '../Revisions.js';
  */
 export default async function generate(
   directory: Directory, 
-  schema: SchemaConfig, 
-  registry: Registry,
+  config: SchemaConfig, 
+  schema: Schema,
   server: Server
 ) {
   //-----------------------------//
   // 1. Profile/config.ts
-  for (const model of registry.model.values()) {
-    const filepath = `${model.name}/config.ts`;
+  for (const model of schema.models.values()) {
+    const filepath = model.name.toPathName('%/config.ts');
     const source = directory.createSourceFile(filepath, '', { overwrite: true });
     //import type Model from 'stackpress/Model';
     source.addImportDeclaration({
@@ -28,21 +28,23 @@ export default async function generate(
       moduleSpecifier: 'stackpress/Model',
       defaultImport: 'Model'
     });
-    //import 'registry' from '../config.js';
+    //import 'schema' from '../config.js';
     source.addImportDeclaration({
       moduleSpecifier: '../config.js',
-      defaultImport: 'registry'
+      defaultImport: 'schema'
     });
-    //const config = registry.model.get('profile');
-    source.addStatements(`const config = registry.model.get('${model.name}') as Model;`);
+    //const config = schema.model.get('profile');
+    source.addStatements(
+      `const config = schema.model.get('${model.name.toString()}') as Model;`
+    );
     //export default config;
     source.addStatements(`export default config;`);
   }
   
   //-----------------------------//
   // 2. Address/config.ts
-  for (const fieldset of registry.fieldset.values()) {
-    const filepath = `${fieldset.name}/config.ts`;
+  for (const fieldset of schema.fieldsets.values()) {
+    const filepath = fieldset.name.toPathName('%/config.ts');
     const source = directory.createSourceFile(filepath, '', { overwrite: true });
     //import type Fieldset from 'stackpress/Fieldset';
     source.addImportDeclaration({
@@ -50,15 +52,17 @@ export default async function generate(
       moduleSpecifier: 'stackpress/Fieldset',
       defaultImport: 'Fieldset'
     });
-    //import 'registry' from '../config.js';
+    //import 'schema' from '../config.js';
     source.addImportDeclaration({
       moduleSpecifier: '../config.js',
-      defaultImport: 'registry'
+      defaultImport: 'schema'
     });
-    //const config = registry.fieldset.get('profile');
-    source.addStatements(`const config = registry.fieldset.get('${fieldset.name}') as Fieldset;`);
+    //const config = schema.fieldset.get('profile');
+    source.addStatements(
+      `const config = schema.fieldset.get('${fieldset.name.toString()}') as Fieldset;`
+    );
     //export default config;
-    source.addStatements(`export default config;`);
+    source.addStatements('export default config;');
   }
 
   //-----------------------------//
@@ -68,7 +72,7 @@ export default async function generate(
   //if can revision
   if (revisions) {
     //add a new revision
-    Revisions.insert(revisions, server.loader, schema);
+    Revisions.insert(revisions, server.loader, config);
   }
 
   //-----------------------------//
@@ -80,10 +84,10 @@ export default async function generate(
     moduleSpecifier: '@stackpress/idea-parser',
     namedImports: [ 'SchemaConfig' ]
   });
-  //import Registry from 'stackpress/Registry';
+  //import Schema from 'stackpress/Schema';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/Registry',
-    defaultImport: 'Registry'
+    moduleSpecifier: 'stackpress/Schema',
+    defaultImport: 'Schema'
   });
   //export const config = {} as SchemaConfig;
   source.addVariableStatement({
@@ -96,14 +100,14 @@ export default async function generate(
     }]
   });
   
-  //const registry = new Registry(schema);
+  //const schema = new Schema(schema);
   source.addVariableStatement({
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
-      name: 'registry',
-      initializer: 'new Registry(config)'
+      name: 'schema',
+      initializer: 'new Schema(config)'
     }]
   });
   //export default config;
-  source.addStatements(`export default registry;`);
+  source.addStatements(`export default schema;`);
 };

@@ -1,7 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import Registry from '../../../schema/Registry.js';
+import Schema from '../../../schema/Schema.js';
 //sql
 import { sequence } from '../../helpers.js';
 //local
@@ -21,19 +21,19 @@ import generateEvents from './events.js';
 /**
  * This is the The params comes form the cli
  */
-export default function generate(directory: Directory, registry: Registry) {
+export default function generate(directory: Directory, schema: Schema) {
   //-----------------------------//
   // 2. Generators
   // - profile/tests/actions.ts
-  generateActions(directory, registry);
+  generateActions(directory, schema);
   // - profile/tests/events.ts
-  generateEvents(directory, registry);
+  generateEvents(directory, schema);
 
   //-----------------------------//
   // 3. profile/tests/index.ts
-  for (const model of registry.model.values()) {
+  for (const model of schema.models.values()) {
     const source = directory.createSourceFile(
-      `${model.name}/tests/index.ts`,
+      `${model.name.toString()}/tests/index.ts`,
       '', 
       { overwrite: true }
     );
@@ -80,20 +80,20 @@ export default function generate(directory: Directory, registry: Registry) {
     namedImports: [ 'HttpServer' ]
   });
   //import profileTests from './Profile/tests/index.js';
-  for (const model of registry.model.values()) {
+  for (const model of schema.models.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: `./${model.name}/tests/index.js`,
-      defaultImport: `${model.camelCase}Tests`
+      moduleSpecifier: `./${model.name.toString()}/tests/index.js`,
+      defaultImport: `${model.name.camelCase}Tests`
     });
   }
 
-  const models = Array.from(registry.model.values());
+  const models = Array.from(schema.models.values());
   const order = sequence(models);
   //export default function tests(server: HttpServer) {}
   source.addFunction({
     isDefaultExport: true,
     name: 'tests',
     parameters: [{ name: 'server', type: 'HttpServer' }],
-    statements: order.reverse().map(model => `${model.camelCase}Tests(server);`)
+    statements: order.reverse().map(model => `${model.name.camelCase}Tests(server);`)
   });
 };

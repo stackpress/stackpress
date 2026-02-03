@@ -25,7 +25,7 @@ export default async function update<M extends UnknownNest = UnknownNest>(
   seed?: string
 ): Promise<StatusResponse<M>> {
   //collect errors, if any
-  const errors = model.assert(input, false);
+  const errors = model.runtime.assert(input, false);
   //if there were errors
   if (errors) {
     //return the errors
@@ -38,16 +38,17 @@ export default async function update<M extends UnknownNest = UnknownNest>(
 
   //action and return response
   const update = engine
-    .update(model.snakeCase)
-    .set(model.serialize(input, seed) as NestedObject<string>);
-  for (const column of model.ids) {
-    if (!ids[column.name]) {
+    .update(model.name.snakeCase)
+    .set(model.runtime.serialize(input, seed) as NestedObject<string>);
+  for (const column of model.store.ids.values()) {
+    const columnName = column.name.toString();
+    if (!ids[columnName]) {
       return Exception
-        .for('Missing %s', column.name)
+        .for('Missing %s', columnName)
         .withCode(400)
         .toResponse()as StatusResponse<M>;
     }
-    update.where(`${column.snakeCase} = ?`, [ ids[column.name] ]);
+    update.where(`${column.name.snakeCase} = ?`, [ ids[columnName] ]);
   }
   try {
     await update;

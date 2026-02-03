@@ -21,7 +21,7 @@ export default function AdminImportPageFactory(model: Model) {
     if (req.method === 'POST') {
       //emit the batch event
       const response = await ctx.resolve<UnknownNest[]>(
-        `${model.dashCase}-batch`, 
+        `${model.name.dashCase}-batch`, 
         req
       );
       res.fromStatusResponse(response);

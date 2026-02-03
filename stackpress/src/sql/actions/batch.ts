@@ -24,8 +24,8 @@ export default async function batch<M extends UnknownNest = UnknownNest>(
 ) {
   //map rows with actions
   const actions: { row: M, action: Action }[] = rows.map(row => {
-    const action: Action = model.ids.some(
-      column => row[column.name] === undefined
+    const action: Action = model.store.ids.toArray().some(
+      column => row[column.name.toString()] === undefined
     ) ? 'create' : 'check';
     return { row, action };
   });
@@ -34,9 +34,13 @@ export default async function batch<M extends UnknownNest = UnknownNest>(
   //get the db quoter
   const q = engine.dialect.q;
   //get the id names
-  const ids = model.ids.map(column => column.name);
+  const ids = model.store.ids.toArray().map(
+    column => column.name.toString()
+  );
   //make select column names
-  const columns = model.ids.map(column => `${q}${column.snakeCase}${q}`);
+  const columns = model.store.ids.toArray().map(
+    column => `${q}${column.name.snakeCase}${q}`
+  );
   //make the where clauses
   const clauses = columns.map(column => `${column} = ?`).join(' AND ');
   //make the where statement
@@ -56,7 +60,7 @@ export default async function batch<M extends UnknownNest = UnknownNest>(
         //get all the rows that already exists
         const exists = await engine
           .select<Record<string, string|number>>(columns)
-          .from(model.snakeCase)
+          .from(model.name.snakeCase)
           .where(where, values);
         //update the check actions rows to create or update
         for (const action of actions) {

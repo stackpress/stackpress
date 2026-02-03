@@ -1,7 +1,5 @@
 //node
 import crypto from 'node:crypto';
-//modules
-import mustache from 'mustache';
 
 export const generators = [
   'cuid()',
@@ -133,29 +131,6 @@ export function snakerize(string: string) {
     .replace(/([a-z])([A-Z0-9])/g, '$1_$2')
     .toLowerCase();
 };
-
-export function render(
-  template: string, 
-  data: Record<string, any> = {},
-  delimiter?: string //{{=<% %>=}}
-) {
-  if (delimiter) {
-    template = delimiter + template;
-  }
-  return mustache.render(template, data);
-};
-
-/**
- * Used to "transform" a code template string
- * using code safe variable handlers
- */
-export function renderCode(
-  template: string, 
-  data: Record<string, any> = {},
-  delimiter = '{{=<% %>=}}'
-) {
-  return render(template, data, delimiter);
-}
 
 /**
  * Convers an object of attributes to a string

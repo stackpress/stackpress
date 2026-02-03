@@ -1,9 +1,9 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '../../schema/Registry.js';
+import type Schema from '../../schema/Schema.js';
 
-export default function generate(directory: Directory, registry: Registry) {
+export default function generate(directory: Directory, registry: Schema) {
   page('create', directory, registry);
   page('detail', directory, registry);
   page('export', directory, registry);
@@ -14,12 +14,12 @@ export default function generate(directory: Directory, registry: Registry) {
   page('update', directory, registry);
 };
 
-export function page(action: string, directory: Directory, registry: Registry) {
+export function page(action: string, directory: Directory, schema: Schema) {
   const lower = action.toLowerCase();
   const title = action.charAt(0).toUpperCase() + action.slice(1);
   //loop through models
-  for (const model of registry.model.values()) {
-    const file = `${model.name}/admin/pages/${lower}.ts`;
+  for (const model of schema.models.values()) {
+    const file = `${model.name.toString()}/admin/pages/${lower}.ts`;
     const source = directory.createSourceFile(file, '', { overwrite: true });
     // import type Request from '@stackpress/ingest/Request';
     source.addImportDeclaration({
@@ -52,7 +52,7 @@ export function page(action: string, directory: Directory, registry: Registry) {
     });
     // export default function AdminProfileCreatePage(req, res) {} 
     source.addFunction({
-      name: `Admin${model.titleCase}${title}Page`,
+      name: `Admin${model.name.titleCase}${title}Page`,
       isDefaultExport: true,
       parameters: [
         { name: 'req', type: 'Request' }, 

@@ -40,7 +40,7 @@ export default function generate(props: IdeaPluginWithProject) {
   // 3. profile/index.ts
 
   for (const model of schema.models.values()) {
-    const filepath = `${model.name}/index.ts`;
+    const filepath = `${model.name.toString()}/index.ts`;
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });
@@ -52,7 +52,7 @@ export default function generate(props: IdeaPluginWithProject) {
   // 4. address/index.ts
 
   for (const fieldset of schema.fieldsets.values()) {
-    const filepath = `${fieldset.name}/index.ts`;
+    const filepath = `${fieldset.name.toString()}/index.ts`;
     //load profile/index.ts if it exists, if not create it
     const source = project.getSourceFile(filepath) 
       || project.createSourceFile(filepath, '', { overwrite: true });

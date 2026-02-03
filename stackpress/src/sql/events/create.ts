@@ -31,7 +31,7 @@ export default function createEventFactory(model: Model) {
     const engine = ctx.plugin<DatabasePlugin>('database');
     if (!engine) return;
     //remove values that are not columns
-    const input = model.input(req.data(), false);
+    const input = model.runtime.inputValues(req.data(), false);
     //get the database seed (for encrypting)
     const seed = ctx.config.path<string|undefined>('database.seed');
     const response = await create(model, engine, input, seed);

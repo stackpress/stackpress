@@ -22,7 +22,7 @@ export default async function create<M extends UnknownNest = UnknownNest>(
   seed?: string
 ): Promise<StatusResponse<Partial<M>>> {
   //collect errors, if any
-  const errors = model.assert(input, true);
+  const errors = model.runtime.assert(input, true);
   //if there were errors
   if (errors) {
     //return the errors
@@ -33,20 +33,20 @@ export default async function create<M extends UnknownNest = UnknownNest>(
       .toResponse() as StatusResponse<Partial<M>>;
   }
 
-  const data = { ...model.defaults, ...input };
+  const data = { ...model.runtime.defaultValues(), ...input };
   //action and return response
   try {
     const results = await engine
-      .insert<Record<string, any>>(model.snakeCase)
-      .values(model.serialize(data, seed) as NestedObject<string>)
+      .insert<Record<string, any>>(model.name.snakeCase)
+      .values(model.runtime.serialize(data, seed) as NestedObject<string>)
       .returning('*');
     if (results.length) {
       return toResponse(
-        model.unserialize(results[0], seed)
+        model.runtime.unserialize(results[0], seed)
       ) as StatusResponse<Partial<M>>;
     }
   } catch (e) {
     return toErrorResponse(e as Error) as StatusResponse<Partial<M>>;
   }
-  return toResponse(model.unserialize(data)) as StatusResponse<Partial<M>>;
+  return toResponse(model.runtime.unserialize(data)) as StatusResponse<Partial<M>>;
 };

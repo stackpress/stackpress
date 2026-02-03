@@ -81,7 +81,7 @@ export default function AdminSearchPageFactory(model: Model) {
     }
     //search using the filters
     const response = await ctx.resolve(
-      `${model.dashCase}-search`,
+      `${model.name.dashCase}-search`,
       { q, filter, span, sort, skip, take, columns },
       res
     );
