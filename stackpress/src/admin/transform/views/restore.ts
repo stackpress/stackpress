@@ -1,14 +1,15 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
+//stackpress
+import { renderCode } from '../../../helpers.js';
 //stackpress/schema
-import type Schema from '../../../schema/Schema.js';
 import type Model from '../../../schema/model/Model.js';
 //stackpress/admin
 import { render } from '../helpers.js';
 
-export default function removeView(directory: Directory, _schema: Schema, model: Model) {
-  const file = `${model.name.toString()}/admin/views/restore.tsx`;
+export default function removeView(directory: Directory, model: Model) {
+  const file = model.name.toPathName('%s/admin/views/restore.tsx');
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
@@ -39,162 +40,93 @@ export default function removeView(directory: Directory, _schema: Schema, model:
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.name.titleCase}Extended` ]
+    namedImports: [ model.name.toTypeName('%sExtended') ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view/client';
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
+    namedImports: [ 'useServer', 'LayoutAdmin' ]
   });
 
   //export function AdminProfileRestoreCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}RestoreCrumbs`,
+    name: model.name.toComponentName('Admin%sRestoreCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.name.titleCase}Extended }` 
+      type: renderCode(TEMPLATE.RESTORE_CRUMBS_PROPS, { 
+        type: model.name.toTypeName('%sExtended') 
+      }) 
     }],
-    statements: (`
-      const { base, results } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //variables
-      const crumbs = [
-        {
-          label: (
-            <span className="admin-crumb">{_('${model.name.plural}')}</span>
-          ),
-          icon: '${model.name.icon}',
-          href: \`\${base}/${model.name.dashCase}/search\`
-        },
-        {
-          label: (
-            <span className="admin-crumb">
-              {\`${render(model, "${results?.%s || ''}")}\`}
-            </span>
-          ),
-          icon: '${model.name.icon}',
-          href: ${link('detail')}
-        },
-        {
-          label: _('Restore'),
-          icon: 'check-circle'
-        }
-      ];
-      return (<Crumbs crumbs={crumbs} />);
-    `)
+    statements: renderCode(TEMPLATE.RESTORE_CRUMBS_BODY, {
+      search: {
+        label: model.name.plural,
+        icon: model.name.icon
+      },
+      detail: {
+        label: render(model, "${results?.%s || ''}"),
+        href: link('detail')
+      }
+    })
   });
   //export function AdminProfileRestoreForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}RestoreForm`,
+    name: model.name.toComponentName('Admin%sRestoreForm'),
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.name.titleCase}Extended }` 
+      type: renderCode(TEMPLATE.RESTORE_FORM_PROPS, { 
+        type: model.name.toTypeName('%sExtended') 
+      }) 
     }],
-    statements: (`
-      const { base, results } = props;
-      const { _ } = useLanguage();
-      return (
-        <div>
-          <div className="message">
-            <i className="icon fas fa-fw fa-info-circle"></i>
-            <strong className="font-semibold">
-              {_(
-                'Are you sure you want to restore %s?', 
-                \`${render(model, "${results?.%s || ''}")}\`
-              )}
-            </strong> 
-          </div>
-          <div className="actions">
-            <a className="action cancel" href={${link('detail')}}>
-              <i className="icon fas fa-fw fa-arrow-left"></i>
-              <span>Nevermind.</span>
-            </a>
-            <a className="action restore" href="?confirmed=true">
-              <i className="icon fas fa-fw fa-check-circle"></i>
-              <span>{_('Confirmed')}</span>
-            </a>
-          </div>
-        </div>
-      ); 
-    `)
+    statements: renderCode(TEMPLATE.RESTORE_FORM_BODY, { 
+      label: render(model, "${results?.%s || ''}"),
+      href: link('detail')
+    })
   });
   //export function AdminProfileRestoreBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}RestoreBody`,
-    statements: (`
-      const { config, response } = useServer<${[
-        `AdminConfigProps`, 
-        'Partial<SearchParams>', 
-        `${model.name.titleCase}Extended`
-      ].join(', ')}>();
-      const base = config.path('admin.base', '/admin');
-      const results = response.results as ${model.name.titleCase}Extended;
-      //render
-      return (
-        <main className="admin-page admin-confirm-page">
-          <div className="admin-crumbs">
-            <Admin${model.name.titleCase}RestoreCrumbs base={base} results={results} />
-          </div>
-          <div className="admin-confirm">
-            <Admin${model.name.titleCase}RestoreForm base={base} results={results} />
-          </div>
-        </main>
-      );
-    `)
+    name: model.name.toComponentName('Admin%sRestoreBody'),
+    statements: renderCode(TEMPLATE.RESTORE_BODY, {
+      type: model.name.toTypeName('%sExtended'),
+      crumbs: model.name.toComponentName('Admin%sRestoreCrumbs'),
+      form: model.name.toComponentName('Admin%sRestoreForm')
+    })
   });
   //export function AdminProfileRestoreHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}RestoreHead`,
+    name: model.name.toComponentName('Admin%sRestoreHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      const { data, styles = [] } = props;
-      const { favicon = '/favicon.ico' } = data?.brand || {};
-      const { _ } = useLanguage();
-      const mimetype = favicon.endsWith('.png')
-        ? 'image/png'
-        : favicon.endsWith('.svg')
-        ? 'image/svg+xml'
-        : 'image/x-icon';
-      return (
-        <>
-          <title>{_('Restore ${model.name.singular}')}</title>
-          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
-          <link rel="stylesheet" type="text/css" href="/styles/global.css" />
-          {styles.map((href, index) => (
-            <link key={index} rel="stylesheet" type="text/css" href={href} />
-          ))}
-        </>
-      );  
-    `)
+    statements: renderCode(TEMPLATE.RESTORE_HEAD, { 
+      name: model.name.singular 
+    })
   });
   //export function AdminProfileRestorePage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}RestorePage`,
+    name: model.name.toComponentName('Admin%sRestorePage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      return (
-        <LayoutAdmin {...props}>
-          <Admin${model.name.titleCase}RestoreBody />
-        </LayoutAdmin>
-      );
-    `)
+    statements: renderCode(TEMPLATE.RESTORE_PAGE, { 
+      component: model.name.toComponentName('Admin%sRestoreBody') 
+    })
   });
   //export const Head = AdminProfileRestoreHead;
   source.addVariableStatement({
@@ -202,9 +134,110 @@ export default function removeView(directory: Directory, _schema: Schema, model:
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.name.titleCase}RestoreHead`
+      initializer: model.name.toComponentName('Admin%sRestoreHead')
     }]
   });
   //export default AdminProfileRestorePage;
-  source.addStatements(`export default Admin${model.name.titleCase}RestorePage;`);
-}
+  source.addStatements(
+    `export default ${model.name.toComponentName('Admin%sRestorePage')};`
+  );
+};
+
+export const TEMPLATE = {
+
+RESTORE_CRUMBS_PROPS:
+'{ base: string, results: <%type%> }',
+
+RESTORE_CRUMBS_BODY:
+`const { base, results } = props;
+//hooks
+const { _ } = useLanguage();
+return (
+  <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
+    <Bread.Slicer value="›" />
+    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
+      {_('<%search.label%>')}
+    </Bread.Crumb>
+    <Bread.Crumb href="<%detail.href%>">
+      {_('<%detail.label%>')}
+    </Bread.Crumb>
+    <Bread.Crumb icon="check-circle">
+      {_('Restore')}
+    </Bread.Crumb>
+  </Bread>
+);`,
+
+RESTORE_FORM_PROPS:
+'{ base: string, results: <%type%> }',
+
+RESTORE_FORM_BODY:
+`const { base, results } = props;
+const { _ } = useLanguage();
+return (
+  <div>
+    <div className="message">
+      <i className="icon fas fa-fw fa-info-circle"></i>
+      <strong>
+        {_(
+          'Are you sure you want to restore %s?', 
+          \`<%label%>\`
+        )}
+      </strong> 
+    </div>
+    <div className="actions">
+      <a className="action cancel" href={<%href%>}}>
+        <i className="icon fas fa-fw fa-arrow-left"></i>
+        <span>Nevermind.</span>
+      </a>
+      <a className="action restore" href="?confirmed=true">
+        <i className="icon fas fa-fw fa-check-circle"></i>
+        <span>{_('Confirmed')}</span>
+      </a>
+    </div>
+  </div>
+);`,
+
+RESTORE_BODY:
+`const { config, response } = useServer<AdminConfigProps, Partial<SearchParams>, <%type%>>();
+const base = config.path('admin.base', '/admin');
+const results = response.results as <%type%>;
+//render
+return (
+  <main className="admin-page admin-confirm-page">
+    <div className="admin-crumbs">
+      <<%crumbs%> base={base} results={results} />
+    </div>
+    <div className="admin-confirm">
+      <<%form%> base={base} results={results} />
+    </div>
+  </main>
+);`,
+
+RESTORE_HEAD:
+`const { data, styles = [] } = props;
+const { favicon = '/favicon.ico' } = data?.brand || {};
+const { _ } = useLanguage();
+const mimetype = favicon.endsWith('.png')
+  ? 'image/png'
+  : favicon.endsWith('.svg')
+  ? 'image/svg+xml'
+  : 'image/x-icon';
+return (
+  <>
+    <title>{_('Restore <%name%>')}</title>
+    {favicon && <link rel="icon" type={mimetype} href={favicon} />}
+    <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+    {styles.map((href, index) => (
+      <link key={index} rel="stylesheet" type="text/css" href={href} />
+    ))}
+  </>
+);`,
+
+RESTORE_PAGE:
+`return (
+  <LayoutAdmin {...props}>
+    <<%component%> />
+  </LayoutAdmin>
+);`
+
+};

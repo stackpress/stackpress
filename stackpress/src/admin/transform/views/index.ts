@@ -12,11 +12,11 @@ import updateView from './update.js';
 
 export default function generate(directory: Directory, schema: Schema) {
   for (const model of schema.models.values()) {
-    createView(directory, schema, model);
-    detailView(directory, schema, model);
-    removeView(directory, schema, model);
-    restoreView(directory, schema, model);
-    searchView(directory, schema, model);
-    updateView(directory, schema, model);
+    createView(directory, model);
+    detailView(directory, model);
+    removeView(directory, model);
+    restoreView(directory, model);
+    searchView(directory, model);
+    updateView(directory, model);
   }
 };

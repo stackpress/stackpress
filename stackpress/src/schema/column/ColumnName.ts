@@ -98,11 +98,10 @@ export default class ColumnName {
   /**
    * Way to get (and change) the file path naming standards
    * 
-   * ie. /stackpress-client/ArticleComment/name/
-   * ie. /stackpress-client/user/profileId/
+   * ie. /stackpress-client/ArticleComment/NameFormField.tsx
    */
   public toPathName(pattern = '%s') {
-    return pattern.replace('%s', this.toString());
+    return pattern.replace('%s', this.titleCase);
   }
 
   /**

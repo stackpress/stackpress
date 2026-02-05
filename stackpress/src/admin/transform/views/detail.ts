@@ -1,14 +1,15 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
+//stackpress
+import { renderCode } from '../../../helpers.js';
 //stacpress/schema
-import type Schema from '../../../schema/Schema.js';
 import type Model from '../../../schema/model/Model.js';
 //stackpress/admin
 import { render } from '../helpers.js';
 
-export default function detailView(directory: Directory, _schema: Schema, model: Model) {
-  const file = `${model.name.toString()}/admin/views/detail.tsx`;
+export default function detailView(directory: Directory, model: Model) {
+  const file = model.name.toPathName('%s/admin/views/detail.tsx');
   const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
@@ -42,7 +43,7 @@ export default function detailView(directory: Directory, _schema: Schema, model:
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.name.titleCase}Extended` ]
+    namedImports: [ model.name.toTypeName('%sExtended') ]
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -54,213 +55,126 @@ export default function detailView(directory: Directory, _schema: Schema, model:
     moduleSpecifier: 'frui/element/Table',
     namedImports: [ 'Table', 'Trow', 'Tcol' ]
   });
-  //import { useServer, useStripe, Crumbs, LayoutAdmin } from 'stackpress/view/client';
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+  //import { useServer, useStripe, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'useStripe', 'Crumbs', 'LayoutAdmin' ]
+    namedImports: [ 'useServer', 'useStripe', 'LayoutAdmin' ]
   });
   //import CreatedViewFormat from '../../components/views/CreatedViewFormat.js';
   model.component.viewFormats.toArray().forEach(column => {
     //skip if no component
     if (!column.component.viewFormat) return;
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/views/${column.name.titleCase}ViewFormat.js`,
-      defaultImport: `${column.name.titleCase}ViewFormat`
+      moduleSpecifier: column.name.toPathName(
+        '../../components/views/%sViewFormat.js'
+      ),
+      defaultImport: column.name.toComponentName('%sViewFormat')
     });
   });
 
   //export function AdminProfileDetailCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}DetailCrumbs`,
+    name: model.name.toComponentName('Admin%sDetailCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.name.titleCase}Extended }` 
+      type: renderCode(TEMPLATE.DETAIL_CRUMBS_PROPS, { 
+        type: model.name.toTypeName('%sExtended')
+      })
     }],
-    statements: (`
-      //props
-      const { base, results } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //variables
-      const crumbs = [
-        {
-          label: (<span className="admin-crumb">{_('${model.name.plural}')}</span>),
-          icon: '${model.name.icon}',
-          href: \`\${base}/${model.name.dashCase}/search\`
-        },
-        {
-          label: \`${render(model, "${results?.%s || ''}")}\`,
-          icon: '${model.name.icon}'
-        }
-      ];
-      return (<Crumbs crumbs={crumbs} />);
-    `)
+    statements: renderCode(TEMPLATE.DETAIL_CRUMBS_BODY, {
+      search: {
+        label: model.name.plural,
+        icon: model.name.icon
+      },
+      detail: {
+        label: render(model, "${results?.%s || ''}")
+      }
+    })
   });
   //export function AdminProfileDetailActions() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}DetailActions`,
+    name: model.name.toComponentName('Admin%sDetailActions'),
     parameters: [{ 
       name: 'props', 
-      type: `{
-        base: string,
-        results: ${model.name.titleCase}Extended,
-        can: (...permits: SessionPermission[]) => boolean,
-      }` 
+      type: renderCode(TEMPLATE.DETAIL_ACTIONS_PROPS, { 
+        type: model.name.toTypeName('%sExtended') 
+      }) 
     }],
-    statements: (`
-      const { base, results, can } = props;
-      const { _ } = useLanguage();
-      const routes = {
-        update: { 
-          method: 'GET', 
-          route: ${link('update')}
-        },
-        remove: { 
-          method: 'GET', 
-          route: ${link('remove')}
-        },
-        restore: { 
-          method: 'GET', 
-          route: ${link('restore')}
-        },
-      };
-      return (
-        <div className="actions">
-          {can(routes.update) && (
-            <a className="action update" href={routes.update.route}>
-              <i className="icon fas fa-edit"></i>
-              {_('Update')}
-            </a>
-          )}
-          {results.active && can(routes.remove) && (
-            <a className="action remove" href={routes.remove.route}>
-              <i className="icon fas fa-trash"></i>
-              {_('Remove')}
-            </a>
-          )}
-          {!results.active && can(routes.restore) && (
-            <a className="action restore" href={routes.restore.route}>
-              <i className="icon fas fa-check-circle"></i>
-              {_('Restore')}
-            </a>
-          )}
-        </div>
-      );
-    `)
+    statements: renderCode(TEMPLATE.DETAIL_ACTIONS_BODY, {
+      update: link('update'),
+      remove: link('remove'),
+      restore: link('restore')
+    })
   });
   //export function AdminProfileDetailResults() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}DetailResults`,
+    name: model.name.toComponentName('Admin%sDetailResults'),
     parameters: [{ 
       name: 'props', 
-      type: `{ results: ${model.name.titleCase}Extended }` 
+      type: renderCode(
+        `{ results: <%type%> }`, 
+        { type: model.name.toTypeName('%sExtended') } 
+      )
     }],
-    statements: (`
-      const { results } = props;
-      const { _ } = useLanguage();
-      const stripe = useStripe('results-row-1', 'results-row-2');
-      return (
-        <Table>
-          ${model.component.viewFormats.toArray().map(column => {
-            const view = column.component.viewFormat!;
-            return (`
-              <Trow>
-                <Tcol noWrap className={\`results-label \${stripe(true)}\`}>
-                  {_('${column.name.label}')}
-                </Tcol>
-                <Tcol noWrap className={\`results-value \${stripe()}\`}>
-                  ${column.type.required && view.component.isViewFormat
-                    ? `<${column.name.titleCase}ViewFormat data={results} value={results.${column.name.toString()}} />`
-                    : `{results.${column.name.toString()} ? (<${column.name.titleCase}ViewFormat data={results} value={results.${column.name.toString()}} />) : ''}`
-                  }
-                </Tcol>
-              </Trow>
-            `);
-          })}
-        </Table>
-      ); 
-    `)
+    statements: renderCode(TEMPLATE.DETAIL_RESULTS_BODY, {
+      rows: model.component.viewFormats.toArray().map(column => {
+        return renderCode(TEMPLATE.DETAIL_RESULTS_ROW, {
+          label: column.name.label,
+          value: column.type.required
+            ? renderCode(TEMPLATE.DETAIL_RESULTS_VALUE_REQUIRED, { 
+              component: column.name.toComponentName('%sViewFormat'),
+              name: column.name.toString()
+            })
+            : renderCode(TEMPLATE.DETAIL_RESULTS_VALUE_OPTIONAL, {
+              component: column.name.toComponentName('%sViewFormat'),
+              name: column.name.toString()
+            })
+        });
+      }).join('\n')
+    })
   });
   //export function AdminProfileDetailBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}DetailBody`,
-    statements: (`
-      const { config, session, response } = useServer<${[
-        `AdminConfigProps`, 
-        'Partial<SearchParams>', 
-        `${model.name.titleCase}Extended`
-      ].join(', ')}>();
-      const can = session.can.bind(session);
-      const base = config.path('admin.base', '/admin');
-      const results = response.results as ${model.name.titleCase}Extended;
-      //render
-      return (
-        <main className="admin-detail-page admin-page">
-          <div className="admin-crumbs">
-            <Admin${model.name.titleCase}DetailCrumbs base={base} results={results} />
-          </div>
-          <div className="admin-actions">
-            <Admin${model.name.titleCase}DetailActions 
-              can={can} 
-              base={base} 
-              results={results} 
-            />
-          </div>
-          <div className="admin-results">
-            <Admin${model.name.titleCase}DetailResults results={results} />
-          </div>
-        </main>
-      );  
-    `)
+    name: model.name.toComponentName('Admin%sDetailBody'),
+    statements: renderCode(TEMPLATE.DETAIL_BODY, {
+      type: model.name.toTypeName('%sExtended'),
+      crumbs: model.name.toComponentName('Admin%sDetailCrumbs'),
+      actions: model.name.toComponentName('Admin%sDetailActions'),
+      results: model.name.toComponentName('Admin%sDetailResults')
+    })
   });
   //export function AdminProfileDetailHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}DetailHead`,
+    name: model.name.toComponentName('Admin%sDetailHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      const { data, styles = [] } = props;
-      const { favicon = '/favicon.ico' } = data?.brand || {};
-      const { _ } = useLanguage();
-      const mimetype = favicon.endsWith('.png')
-        ? 'image/png'
-        : favicon.endsWith('.svg')
-        ? 'image/svg+xml'
-        : 'image/x-icon';
-      return (
-        <>
-          <title>{_('${model.name.singular} Detail')}</title>
-          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
-          <link rel="stylesheet" type="text/css" href="/styles/global.css" />
-          {styles.map((href, index) => (
-            <link key={index} rel="stylesheet" type="text/css" href={href} />
-          ))}
-        </>
-      );  
-    `)
+    statements: renderCode(TEMPLATE.DETAIL_HEAD, { 
+      name: model.name.singular 
+    })
   });
   //export function AdminProfileDetailPage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.name.titleCase}DetailPage`,
+    name: model.name.toComponentName('Admin%sDetailPage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      return (
-        <LayoutAdmin {...props}>
-          <Admin${model.name.titleCase}DetailBody />
-        </LayoutAdmin>
-      );
-    `)
+    statements: renderCode(TEMPLATE.DETAIL_PAGE, { 
+      component: model.name.toComponentName('Admin%sDetailBody')
+    })
   });
   //export const Head = AdminProfileDetailHead;
   source.addVariableStatement({
@@ -268,9 +182,162 @@ export default function detailView(directory: Directory, _schema: Schema, model:
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.name.titleCase}DetailHead`
+      initializer: `${model.name.toComponentName('Admin%sDetailHead')}`
     }]
   });
   //export default AdminProfileDetailPage;
-  source.addStatements(`export default Admin${model.name.titleCase}DetailPage;`);
-}
+  source.addStatements(
+    `export default ${model.name.toComponentName('Admin%sDetailPage')};`
+  );
+};
+
+export const TEMPLATE = {
+
+DETAIL_CRUMBS_PROPS:
+'{ base: string, results: <%type%> }',
+
+DETAIL_CRUMBS_BODY:
+`//props
+const { base, results } = props;
+//hooks
+const { _ } = useLanguage();
+return (
+  <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
+    <Bread.Slicer value="›" />
+    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
+      {_('<%search.label%>')}
+    </Bread.Crumb>
+    <Bread.Crumb>
+      {_('<%detail.label%>')}
+    </Bread.Crumb>
+  </Bread>
+);`,
+
+DETAIL_ACTIONS_PROPS:
+`{
+  base: string,
+  results: <%type%>,
+  can: (...permits: SessionPermission[]) => boolean,
+}`,
+
+DETAIL_ACTIONS_BODY:
+`const { base, results, can } = props;
+const { _ } = useLanguage();
+const routes = {
+  update: { 
+    method: 'GET', 
+    route: <%update%>
+  },
+  remove: { 
+    method: 'GET', 
+    route: <%remove%>
+  },
+  restore: { 
+    method: 'GET', 
+    route: <%restore%>
+  },
+};
+return (
+  <div className="actions">
+    {can(routes.update) && (
+      <a className="action update" href={routes.update.route}>
+        <i className="icon fas fa-edit"></i>
+        {_('Update')}
+      </a>
+    )}
+    {results.active && can(routes.remove) && (
+      <a className="action remove" href={routes.remove.route}>
+        <i className="icon fas fa-trash"></i>
+        {_('Remove')}
+      </a>
+    )}
+    {!results.active && can(routes.restore) && (
+      <a className="action restore" href={routes.restore.route}>
+        <i className="icon fas fa-check-circle"></i>
+        {_('Restore')}
+      </a>
+    )}
+  </div>
+);`,
+
+DETAIL_RESULTS_VALUE_REQUIRED:
+'<<%component%> data={results} value={results.<%name%>} />',
+
+DETAIL_RESULTS_VALUE_OPTIONAL:
+`{results.<%name%>} ? (<<%component%> data={results} value={results.<%name%>} />) : ''}`,
+
+DETAIL_RESULTS_ROW:
+`<Trow>
+  <Tcol noWrap addClassName="results-label">
+    {_('<%label%>')}
+  </Tcol>
+  <Tcol noWrap addClassName="results-value">
+    <%value%>
+  </Tcol>
+</Trow>`,
+
+DETAIL_RESULTS_BODY:
+`const { results } = props;
+const { _ } = useLanguage();
+return (
+  <Table
+    className="w-full"
+    column={[ 'theme-bg-2', 'theme-bg-1' ]}
+    head="theme-bg-3"
+  >
+    <%rows%>
+  </Table>
+);`,
+
+DETAIL_BODY:
+`const { config, session, response } = useServer<AdminConfigProps, Partial<SearchParams>, <%type%>}>();
+const can = session.can.bind(session);
+const base = config.path('admin.base', '/admin');
+const results = response.results as <%type%>;
+//render
+return (
+  <main className="admin-detail-page admin-page">
+    <div className="admin-crumbs">
+      <<%crumbs%> base={base} results={results} />
+    </div>
+    <div className="admin-actions">
+      <<%actions%>
+        can={can} 
+        base={base} 
+        results={results} 
+      />
+    </div>
+    <div className="admin-results">
+      <<%results%> results={results} />
+    </div>
+  </main>
+);`,
+
+DETAIL_HEAD:
+`const { data, styles = [] } = props;
+const { favicon = '/favicon.ico' } = data?.brand || {};
+const { _ } = useLanguage();
+const mimetype = favicon.endsWith('.png')
+  ? 'image/png'
+  : favicon.endsWith('.svg')
+  ? 'image/svg+xml'
+  : 'image/x-icon';
+return (
+  <>
+    <title>{_('<%name%> Detail')}</title>
+    {favicon && <link rel="icon" type={mimetype} href={favicon} />}
+    <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+    {styles.map((href, index) => (
+      <link key={index} rel="stylesheet" type="text/css" href={href} />
+    ))}
+  </>
+);`,
+
+DETAIL_PAGE:
+`return (
+  <LayoutAdmin {...props}>
+    <<%component%> />
+  </LayoutAdmin>
+);`
+
+};
