@@ -47,35 +47,39 @@ export const samples = [
 ];
 
 export default function generate(directory: Directory, model: Model) {
-  const filepath = model.name.toPathName('%s/tests/events.test.ts');
+  const filepath = model.name.toPathName('%s/tests/%sStore.test.ts');
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
-
-  //import type { HttpServer } from '@stackpress/ingest';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/ingest',
-    namedImports: [ 'HttpServer' ]
-  });
-  //import { describe, it, before } from 'mocha';
+  
+  //import { describe, it } from 'mocha';
   source.addImportDeclaration({
     moduleSpecifier: 'mocha',
-    namedImports: [ 'describe', 'it', 'before' ]
+    namedImports: ['describe', 'it']
   });
   //import { expect } from 'chai';
   source.addImportDeclaration({
     moduleSpecifier: 'chai',
     namedImports: [ 'expect' ]
   });
+  //import type Engine from '@stackpress/inquire/Engine';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '@stackpress/inquire/Engine',
+    defaultImport: 'Engine'
+  });
+  //import ProfileStore from '../ProfileStore.js';
+  source.addImportDeclaration({
+    moduleSpecifier: model.name.toPathName('../%sStore.js'),
+    defaultImport: model.name.toClassName('%sStore')
+  });
 
-  //export default function ProfileEventsTests(server: HttpServer) {}
+  //export default function ProfileStoreTests(engine: Engine) {}
   source.addFunction({
     isDefaultExport: true,
-    name: model.name.toClassName('%sEventsTests'),
-    parameters: [{ name: 'server', type: 'HttpServer' }],
+    name: model.name.toClassName('%sStoreTests'),
+    parameters: [{ name: 'engine', type: 'Engine' }],
     statements: renderCode(TEMPLATE.DESCRIBE, {
       model: model.name.toClassName(),
-      event: model.name.toEventName()
     })
   });
 };
@@ -83,17 +87,14 @@ export default function generate(directory: Directory, model: Model) {
 export const TEMPLATE = {
 
 DESCRIBE:
-`describe('<%model%> Events', async () => {
-  before(async () => {
-    await server.resolve('<%event%>-purge');
-  });
-  it('should create <%event%>', async () => {});
-  it('should batch <%event%>', async () => {});
-  it('should search <%event%>', async () => {});
-  it('should get <%event%>', async () => {});
-  it('should update <%event%>', async () => {});
-  it('should remove <%event%>', async () => {});
-  it('should restore <%event%>', async () => {});
+`describe('<%model%> Store', async () => {
+  it('should make count query', async () => {});
+  it('should make alter query', async () => {});
+  it('should make delete query', async () => {});
+  it('should make insert query', async () => {});
+  it('should make select query', async () => {});
+  it('should make update query', async () => {});
+  it('should make where clause', async () => {});
 });`,
 
 };

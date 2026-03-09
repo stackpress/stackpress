@@ -23,7 +23,7 @@ export default function plugin(ctx: Server) {
       //loop through all the models
       for (const model of Object.values(client.model)) {
         //register all the model events
-        ctx.use(model.events);
+        model.listen(ctx);
       }
     } catch(e) {}
   });

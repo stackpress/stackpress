@@ -1,6 +1,5 @@
-import actions, { Actions } from './actions/index.js';
-
 export type {
+  //inquire types
   Field,
   Relation,
   ForeignKey,
@@ -21,10 +20,19 @@ export type {
   QueryObject,
   Transaction,
   Connection,
-  SearchParams,
-  SearchJoin,
-  SearchJoinMap,
-  SearchPath,
+  //for store interface
+  ValueScalar,
+  ValuePrimitive,
+  StoreRelation,
+  StoreSelectColumnPath,
+  StoreSelectRelation,
+  StoreSelectRelationMap,
+  StoreSelectJoin,
+  StoreSelectJoinMap,
+  StoreSelectFilters,
+  StoreSelectQuery,
+  StoreSearchQuery,
+  //for ingest
   DatabaseConfig,
   DatabasePlugin
 } from './types.js';
@@ -45,24 +53,16 @@ export {
 } from '@stackpress/inquire';
 
 export {
-  stringable,
-  floatable,
-  dateable,
-  boolable,
-  intable,
-  toErrorResponse,
-  toResponse,
   toSqlString,
   toSqlBoolean,
   toSqlDate,
   toSqlInteger,
   toSqlFloat,
-  sequence,
-  getColumns,
-  getColumnInfo,
-  getColumnPath,
-  getColumnJoins,
   getAlias
 } from './helpers.js';
 
-export { actions, Actions };
+import AbstractActions from './interface/AbstractActions.js';
+import ActionsInterface from './interface/ActionsInterface.js';
+import StoreInterface from './interface/StoreInterface.js';
+
+export type { AbstractActions, ActionsInterface, StoreInterface };
