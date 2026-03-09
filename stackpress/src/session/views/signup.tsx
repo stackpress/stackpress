@@ -8,7 +8,7 @@ import PasswordInput from 'frui/form/PasswordInput';
 import type { 
   NestedObject, 
   ServerPageProps 
-} from '../../types/index.js';
+} from '../../types.js';
 import LayoutBlank from '../../view/layout/LayoutBlank.js';
 import { useServer } from '../../view/server/hooks.js';
 //session

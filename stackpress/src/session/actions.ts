@@ -1,18 +1,21 @@
-//stackpress
-import type { 
-  StatusResponse,
-  ErrorResponse
-} from '@stackpress/lib/types';
+//modules
 import type Engine from '@stackpress/inquire/Engine';
-//schema
-import { email } from '../schema/assert.js';
-import { hash, encrypt } from '../schema/helpers.js';
-//root
-import type { Auth, AuthExtended, Profile, ProfileAuth } from '../types/index.js';
-//client
+import Exception from '../Exception.js';
+import { email } from '../assert.js';
+//stackpress/schema
+import { hash } from '../schema/helpers.js';
+//stackpress/client
 import { ClientPlugin } from '../client/types.js';
-//local
-import type { SignupInput, SigninType, SigninInput } from './types.js';
+//stackpress/session
+import type { 
+  Auth, 
+  AuthExtended, 
+  Profile, 
+  ProfileAuth, 
+  SignupInput, 
+  SigninType, 
+  SigninInput 
+} from './types.js';
 
 /**
  * Signup action
@@ -22,74 +25,59 @@ export async function signup(
   seed: string,
   engine: Engine,
   client: ClientPlugin
-): Promise<Partial<StatusResponse<ProfileAuth>>> {
+): Promise<Partial<ProfileAuth>> {
   //validate input
   const errors = assert(input);
   //if there are errors
   if (errors) {
-    //return the errors
-    return { code: 400, error: 'Invalid Parameters', errors };
+    throw Exception.for('Invalid Parameters')
+      .withErrors(errors)
+      .withCode(400);
   }
   //create profile
-  const profile = client.model.profile;
-  const response = await profile.actions(engine, seed).create({
+  const { Actions: ProfileActions } = client.model.profile;
+  const profileActions = new ProfileActions(engine, seed);
+  const results = await profileActions.create({
     name: input.name as string,
     type: input.type || 'person',
     roles: input.roles || []
-  });
-  //if error, return response
-  if (response.code !== 200) {
-    return response as ErrorResponse;
-  }
-  const results = response.results as Profile & { 
-    auth: Record<string, Auth> 
-  };
+  }) as Profile & { auth: Record<string, Auth> };
+
   results.auth = {};
-  const actions = client.model.auth.actions(engine, seed);
+  const { Actions: AuthActions } = client.model.auth;
+  const authActions = new AuthActions(engine, seed);
   //if email
   if (input.email) {
     //create email auth
-    const auth = await actions.create({
+    results.auth.email = await authActions.create({
       profileId: results.id,
       type: 'email',
       token: String(input.email),
       secret: String(input.secret)
-    });
-    if (auth.code !== 200) {
-      return auth as StatusResponse<ProfileAuth>;
-    }
-    results.auth.email = auth.results as Auth;
+    }) as Auth;
   } 
   //if phone
   if (input.phone) {
     //create phone auth
-    const auth = await actions.create({
+    results.auth.phone = await authActions.create({
       profileId: results.id,
       type: 'phone',
       token: String(input.phone),
       secret: String(input.secret)
-    });
-    if (auth.code !== 200) {
-      return auth as StatusResponse<ProfileAuth>;
-    }
-    results.auth.phone = auth.results as Auth;
+    }) as Auth;
   }
   //if username
   if (input.username) {
     //create username auth
-    const auth = await actions.create({
+    results.auth.username = await authActions.create({
       profileId: results.id,
       type: 'username',
       token: String(input.username),
       secret: String(input.secret)
-    });
-    if (auth.code !== 200) {
-      return auth as StatusResponse<ProfileAuth>;
-    }
-    results.auth.username = auth.results as Auth;
+    }) as Auth;
   }
 
-  return { ...response, results };
+  return results;
 };
 
 /**
@@ -102,48 +90,31 @@ export async function signin(
   engine: Engine,
   client: ClientPlugin,
   password = true
-): Promise<Partial<StatusResponse<AuthExtended>>> {
-  const actions = client.model.auth.actions(engine);
-  const token = encrypt(String(input[type]), seed);
+): Promise<Partial<AuthExtended> | null> {
+  const { Actions: AuthActions } = client.model.auth;
+  const authActions = new AuthActions(engine, seed);
   //get form body
-  const response = await actions.search({
+  const results = await authActions.find({
     columns: [ '*', 'profile.*' ],
-    filter: { type, token }
-  });
-  //get the first result
-  const results = response.results?.[0] as AuthExtended;
-  //if there is an error
-  if (response.code !== 200) {
-    return { ...response, results };
-  //if no results
-  } else if (!results) {
-    return { 
-      code: 404, 
-      status: 'Not Found', 
-      error: 'User Not Found' 
-    };
+    filter: { type, token: String(input[type]) }
+  }) as AuthExtended | null;
+  //if null (no user found)
+  if (results === null) {
+    return null;
   //if use password
   //NOTE: passwordless can occur if OTP or magic link is used
   } else if (password) {
     const secret = hash(String(input.secret));
     if (secret !== String(results.secret)) {
-      return { 
-        code: 401, 
-        status: 'Unauthorized', 
-        error: 'Invalid Password' 
-      };
+      throw Exception.for('Invalid Password').withCode(401);
     }
   }
   //update consumed
-  await actions.update({ id: results.id }, {
-    consumed: new Date()
-  });
-  return {
-    code: 200,
-    status: 'OK',
-    results: results,
-    total: 1
-  };
+  await authActions.update(
+    { filter: { id: results.id } }, 
+    { consumed: new Date() }
+  );
+  return results;
 };
 
 /**
