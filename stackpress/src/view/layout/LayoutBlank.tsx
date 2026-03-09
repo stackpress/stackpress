@@ -1,19 +1,20 @@
 //modules
 import { useEffect } from 'react';
 import Notifier, { unload } from 'frui/Notifier';
-//theme
-import { useTheme } from '../theme/hooks.js';
-//client
+//stackpress/view
 import type { 
   ServerConfigProps, 
   BlankAppProps, 
   LayoutBlankProps 
 } from '../types.js';
+//stackpress/view/theme
+import { useTheme } from '../theme/hooks.js';
+//stackpress/view/server
 import { useConfig } from '../server/hooks.js';
-//components
+//stackpress/view/layout/components
 import LayoutHead from './components/LayoutHead.js';
 import LayoutMain from './components/LayoutMain.js';
-//layout
+//stackpress/view/layout
 import LayoutProvider from './LayoutProvider.js';
 
 export function BlankApp({ head = true, children }: BlankAppProps) {

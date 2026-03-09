@@ -35,3 +35,14 @@ export function filter(name: string, value: any) {
   //redirect
   window.location.href = url.href;
 };
+
+/**
+ * Adds a default host to invalid URLs
+ */
+export function withUnknownHost(url: string) {
+  if (url.indexOf('/') !== 0) {
+    url = '/' + url;
+  }
+
+  return `http://unknownhost${url}`;
+};

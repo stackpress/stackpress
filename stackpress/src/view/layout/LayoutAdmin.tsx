@@ -3,21 +3,21 @@ import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import { useLanguage } from 'r22n';
 import Notifier, { unload } from 'frui/Notifier';
-//admin
+//stackpress/admin
 import type { AdminConfigProps } from '../../admin/types.js';
-//views
+//stackpress/view
 import type { LayoutProviderProps } from '../types.js';
-//theme
+//stackpress/view/theme
 import { useTheme } from '../theme/hooks.js';
-//client
+//stackpress/view/server
 import { useConfig, useSession, useRequest } from '../server/hooks.js';
-//components
+//stackpress/view/layout/components
 import LayoutHead from './components/LayoutHead.js';
 import LayoutLeft from './components/LayoutLeft.js';
 import LayoutMain from './components/LayoutMain.js';
 import LayoutMenu from './components/LayoutMenu.js';
 import LayoutRight from './components/LayoutRight.js';
-//layout
+//stackpress/view/layout
 import LayoutProvider from './LayoutProvider.js';
 import { useToggle } from './hooks.js';
 

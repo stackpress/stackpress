@@ -22,12 +22,11 @@ import type {
 import type { ToastOptions } from 'frui/Notifier';
 import type ReactusPreview from 'reactus/server/Server';
 import type { CookieOptions } from '@stackpress/lib';
-//stackpress
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type { IM, SR, Method } from '@stackpress/ingest/types';
-//language
+//stackpress/language
 import { LanguageConfig } from '../language/types.js';
-//session
+//stackpress/session
 import type { SessionTokenData } from '../session/types.js';
 
 //--------------------------------------------------------------------//

@@ -3,12 +3,11 @@ import { IncomingMessage, ServerResponse } from 'node:http';
 //modules
 import type { ServerConfig } from 'reactus';
 import reactus, { Server as ReactusServer } from 'reactus';
-//stackpress
 import type { ResponseStatus } from '@stackpress/lib/types';
 import type { IM, SR } from '@stackpress/ingest/types';
 import type Server from '@stackpress/ingest/Server';
 import Status from '@stackpress/lib/Status';
-//view
+//stackpress/view
 import type { ViewPlugin } from '../types.js';
 
 export function config(server: Server) {

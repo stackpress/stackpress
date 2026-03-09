@@ -1,6 +1,5 @@
-//stackpress
+//modules
 import type { StatusResponse, UnknownNest } from '@stackpress/lib/types';
-//view
 
 export type CSVParseError = {
   code: string,

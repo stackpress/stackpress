@@ -1,10 +1,11 @@
 //modules
 import { R22nProvider } from 'r22n';
 import Notifier from 'frui/Notifier';
-//views
+//stackpress/view
 import type { LayoutProviderProps } from '../types.js';
-//providers
+//stackpress/view/server
 import ServerProvider from '../server/ServerProvider.js';
+//stackpress/view/theme
 import ThemeProvider from '../theme/ThemeProvider.js';
 
 export default function LayoutProvider(props: LayoutProviderProps) {

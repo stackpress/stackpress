@@ -1,6 +1,6 @@
 //modules
 import { createContext } from 'react';
-//views
+//stackpress/view
 import type { ThemeContextProps } from '../types.js';
 
 const ThemeContext = createContext<ThemeContextProps>({
