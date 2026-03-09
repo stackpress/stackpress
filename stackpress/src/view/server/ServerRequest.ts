@@ -1,4 +1,4 @@
-//stackpress
+//modules
 import type { 
   Method, 
   UnknownNest,
@@ -7,7 +7,7 @@ import type {
 } from '@stackpress/lib/types';
 import { map } from '@stackpress/lib/Map';
 import { nest } from '@stackpress/lib/Nest';
-//views
+//stackpress/view
 import type { ServerRequestProps } from '../types.js';
 
 /**

@@ -1,4 +1,4 @@
-//session
+//stackpress/view
 import type { SessionRoute } from '../types.js';
 
 export const isRegExp = /^\/.+\/[igmsuy]*$/;

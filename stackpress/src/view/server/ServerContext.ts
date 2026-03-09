@@ -1,8 +1,7 @@
 //modules
 import { createContext } from 'react';
-//stackpress
-import { withUnknownHost } from '@stackpress/lib/Request';
-//view
+import { withUnknownHost } from '../helpers.js';
+//stackpress/view
 import type { ServerContextProps } from '../types.js';
 
 export const unknownHost = new URL(withUnknownHost('/'));
