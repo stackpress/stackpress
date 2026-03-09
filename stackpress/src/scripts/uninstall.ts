@@ -6,18 +6,16 @@ import type { ClientPlugin } from '../client/types.js';
 //stackpress/terminal
 import Terminal from '../terminal/Terminal.js';
 
-export default async function purge(
+export default async function uninstall(
   server: Server<any, any, any>, 
   database: Engine,
   terminal?: Terminal
 ) {
   //get client
   const client = server.plugin<ClientPlugin>('client') || {};
-
-  terminal?.verbose && terminal.control.system('Purging database...');
+  terminal?.verbose && terminal.control.system('Dropping database...');
   await database.transaction(async () => {
-    //uninstall first to drop tables and such
-    await client.scripts.purge(database);
+    await client.scripts.uninstall(database);
   });
-  terminal?.verbose && terminal.control.success('Database Purged.');
+  terminal?.verbose && terminal.control.success('Database Dropped.');
 };

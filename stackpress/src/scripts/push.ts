@@ -1,123 +1,34 @@
-//stackpress
-import type { QueryObject } from '@stackpress/inquire/types';
+//modules
 import type Engine from '@stackpress/inquire/Engine';
 import type Server from '@stackpress/ingest/Server';
-//client
+//stackpress/client
 import type { ClientConfig } from '../client/types.js';
-//schema
 import Revisions from '../client/Revisions.js';
-//sql
-import { sequence } from '../sql/helpers.js';
-//terminal
+//stackpress/terminal
 import Terminal from '../terminal/Terminal.js';
-//plugins
-import create from '../sql/schema.js';
+//stackpress/scripts
+import install from './install.js';
+import upgrade from './upgrade.js';
 
 export default async function push(
   server: Server<any, any, any>, 
   database: Engine,
-  cli?: Terminal
+  terminal?: Terminal
 ) {
   //get config
   const config = server.config<ClientConfig>('client') || {}; 
-  //if there is a revisions folder
-  if (!config.revisions) {
-    return;
-  }
-  //this is where we are going to store all the queries
-  const queries: QueryObject[] = [];
+  //if there is no revisions folder
+  if (!config.revisions) return;
+  
   const revisions = new Revisions(config.revisions, server.loader);
   //get the last last revision
   const from = await revisions.last(-1);
   //get the last revision
   const to = await revisions.last();
-  cli?.verbose && cli.control.system('Updating database...');
   //if no previous revision
-  if (!from && to) {
-    cli?.verbose && cli.control.system('  with DROP/CREATE ...');
-    //get models
-    const models = Array.from(to.schema.models.values());
-    //there's an order to creating and dropping tables
-    const order = sequence(models);
-    //add drop queries
-    for (const model of order) {
-      queries.push(database.dialect.drop(model.name.snakeCase));
-    }
-    //add create queries
-    for (const model of order.reverse()) {
-      const exists = models.find(map => map.name === model.name);
-      if (exists) {
-        const schema = create(exists);
-        //set the engine to determine the dialect
-        schema.engine = database;
-        queries.push(...schema.query());
-      }
-    }
-    if (queries.length) {
-      //start a new transaction
-      await database.transaction(async connection => {
-        //loop through all the queries
-        for (const query of queries) {
-          //execute the query
-          cli?.verbose && cli.control.info(query.query);
-          await connection.query(query);
-        }
-      });
-    }
+  if (!from || !to) {
+    await install(server, database, terminal);
   } else if (from && to) {
-    cli?.verbose && cli.control.system('  with ALTER ...');
-    //create a registry from the history
-    const previous = Array.from(from.schema.models.values()).map(
-      model => create(model)
-    );
-    //create a registry from the new generated schema
-    const current = Array.from(to.schema.models.values()).map(
-      model => create(model)
-    );
-    //this is where we are going to store all the queries
-    const queries: QueryObject[] = [];
-    //loop through all 'current' the models
-    for (const schema of current) {
-      const name = schema.build().table;
-      const before = previous.find(from => from.build().table === name);
-      //if the schema wasn't there before
-      if (!before) {
-        //set the engine to determine the dialect
-        schema.engine = database;
-        //add to the queries
-        queries.push(...schema.query());
-        continue;
-      }
-      //the model was there before...
-      try {
-        //this could error if there were no differences found.
-        //push all the alter statements
-        queries.push(...database.diff(before, schema).query());
-      } catch(e) {}
-    }
-    //loop through all 'previous' the models
-    for (const schema of previous) {
-      const name = schema.build().table;
-      const after = current.find(to => to.build().table === name);
-      //if the model is not there now
-      if (!after) {
-        //we need to drop this table
-        queries.push(database.dialect.drop(name));
-        continue;
-      }
-    }
-    //if there are queries to be made...
-    if (queries.length) {
-      //start a new transaction
-      await database.transaction(async connection => {
-        //loop through all the queries
-        for (const query of queries) {
-          //execute the query
-          cli?.verbose && cli.control.info(query.query);
-          await connection.query(query);
-        }
-      });
-    }
+    await upgrade(server, database, terminal);
   }
-  cli?.verbose && cli.control.success('Database Updated.');
 };

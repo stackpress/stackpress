@@ -1,14 +1,13 @@
-//reactus
+//modules
 import type { BuildStatus } from 'reactus/types';
-import * as reactus from 'reactus';
-//stackpress
 import type Server from '@stackpress/ingest/Server';
-//terminal
+import * as reactus from 'reactus';
+//stackpress/terminal
 import Terminal from '../terminal/Terminal.js';
 
 export default async function build(
   server: Server<any, any, any>,
-  cli?: Terminal
+  terminal?: Terminal
 ) {
   //get current working directory
   const cwd = server.config.path('server.cwd', process.cwd());
@@ -45,19 +44,19 @@ export default async function build(
 
   const responses: BuildStatus[] = [];
   if (clientPath) {
-    cli?.verbose && cli.control.system('Building clients...');
+    terminal?.verbose && terminal.control.system('Building clients...');
     responses.push(await engine.buildAllClients() as BuildStatus);
-    cli?.verbose && cli.control.success('Clients built.');
+    terminal?.verbose && terminal.control.success('Clients built.');
   }
   if (assetPath) {
-    cli?.verbose && cli.control.system('Building assets...');
+    terminal?.verbose && terminal.control.system('Building assets...');
     responses.push(await engine.buildAllAssets() as BuildStatus);
-    cli?.verbose && cli.control.success('Assets built.');
+    terminal?.verbose && terminal.control.success('Assets built.');
   }
   if (pagePath) {
-    cli?.verbose && cli.control.system('Building pages...');
+    terminal?.verbose && terminal.control.system('Building pages...');
     responses.push(await engine.buildAllPages() as BuildStatus);
-    cli?.verbose && cli.control.success('Pages built.');
+    terminal?.verbose && terminal.control.success('Pages built.');
   }
 
   return responses.map(response => {

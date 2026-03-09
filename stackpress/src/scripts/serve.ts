@@ -1,4 +1,4 @@
-//stackpress
+//modules
 import type Server from '@stackpress/ingest/Server';
 
 export default async function serve(

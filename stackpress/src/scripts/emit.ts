@@ -1,4 +1,4 @@
-//stackpress
+//modules
 import type Server from '@stackpress/ingest/Server';
 import Terminal from '@stackpress/lib/Terminal';
 
