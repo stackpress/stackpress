@@ -4,8 +4,8 @@
 //just a general information of an entity.
 
 model Profile
-  @label("Profile" "Profiles") 
-  @template("{{name}}") 
+  @labels("Profile" "Profiles") 
+  @display("{{name}}") 
   @icon("user") 
 {
   id          String    @label("ID") 
@@ -13,15 +13,6 @@ model Profile
                         @list.overflow({ length 10 hellip true })
                         @description("Unique generated identifier.")
                         @example("pjfdz7tg8bcf7e2lig3iuej3")
-  
-  name        String    @label("Name") 
-                        @searchable
-                        @field.text({ required true })
-                        @is.required("Required")
-                        @is.notempty("Cannot be empty")
-                        @list.text @view.text
-                        @description("Full name (first middle last).")
-                        @example("John Doe")
 
   image       String?   @label("Image") 
                         @field.url
@@ -29,19 +20,28 @@ model Profile
                         @description("Profile image URL.")
                         @example("https://example.com/image.jpg")
   
+  name        String    @label("Name") 
+                        @searchable
+                        @field.string({ required true })
+                        @is.required("Required")
+                        @is.notempty("Cannot be empty")
+                        @list.string @view.string
+                        @description("Full name (first middle last).")
+                        @example("John Doe")
+  
   type        String    @label("Type") 
                         @default("person") 
-                        @filter.text
-                        @field.text({ required true })
+                        @filter.string
+                        @field.string({ required true })
                         @is.notempty("Cannot be empty")
-                        @list.text({ lower true }) 
-                        @view.text({ lower true })
+                        @list.string({ lower true }) 
+                        @view.string({ lower true })
                         @description("Type of profile (ie. person, company, etc.).")
                         @example("person")
   
   roles       String[]  @label("Roles") 
                         @default([])
-                        @field.textlist({ add "Add Role" })
+                        @field.stringlist({ add "Add Role" })
                         @list.hide @view.taglist({ warning true })
                         @description("Roles held by the profile. This is used with sessions to determine access levels of the app.")
                         @example(["admin" "user" "gues"])
@@ -91,10 +91,10 @@ model Profile
 
 //Auth is used to authenticate a profile and create a session.
 model Auth 
-  @label("Auth" "Auth") 
-  @template("{{token}}") 
+  @labels("Auth" "Auth") 
+  @display("{{token}}") 
   @icon("lock")
-  @query([ "*" "profile.*" ])
+  @query("*" "profile.*")
 {
   id        String   @label("ID") 
                      @id @default("cuid()")
@@ -122,24 +122,24 @@ model Auth
                      
   type      String   @label("Type") 
                      @default("username") 
-                     @field.text({ required true }) @filter.text
+                     @field.string({ required true }) @filter.string
                      @is.required("Required")
                      @is.notempty("Cannot be empty")
-                     @list.text @view.text
+                     @list.string @view.string
                      @description("Type of authentication method (username, email, phone).")
                      @example("username")
   
   token     String   @label("Token")
                      @unique @encrypted
-                     @field.text({ required true })
+                     @field.string({ required true })
                      @is.required("Required") 
                      @is.cge(5 "Must be at least 5 characters")
-                     @list.text @view.text
+                     @list.string @view.string
                      @description("The actual username, email, or phone (depending on type)")
                      @example("john@doe.com")
   
   secret    String   @label("Secret") 
-                     @hash @secret
+                     @hashed @secret
                      @field.password
                      @is.required("Required")
                      @is.notempty("Cannot be empty")
@@ -186,10 +186,10 @@ model Auth
 }
 
 model Application 
-  @label("App" "Apps") 
-  @template("{{name}}") 
+  @labels("App" "Apps") 
+  @display("{{name}}") 
   @icon("laptop") 
-  @query([ "*" "profile.*" ])
+  @query("*" "profile.*")
 {
   id        String @label("ID") 
                    @id @default("cuid()")
@@ -216,9 +216,9 @@ model Application
 
   name    String   @label("Name") 
                    @searchable
-                   @field.text({ required true })
+                   @field.string({ required true })
                    @is.required("Required")
-                   @list.text @view.text
+                   @list.string @view.string
                    @description("Arbitrary name of the application. Used in 3-legged OAuth flows.")
                    @example("My Awesome App")
 
@@ -283,10 +283,10 @@ model Application
 }
 
 model Session 
-  @label("Session" "Sessions") 
-  @template("{{profile.name}}") 
+  @labels("Session" "Sessions") 
+  @display("{{profile.name}}") 
   @icon("coffee") 
-  @query([ "*" "profile.*" "application.*" ])
+  @query("*" "profile.*" "application.*")
 {
   id            String   @label("ID") 
                          @id @default("cuid()")

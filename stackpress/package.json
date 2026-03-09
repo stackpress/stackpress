@@ -49,14 +49,6 @@
   "module": "./esm/index.js",
   "types": "./cjs/index.d.ts",
   "exports": {
-    "./admin/pages/detail/*": {
-      "require": "./cjs/admin/pages/detail/*.js",
-      "import": "./esm/admin/pages/detail/*.js"
-    },
-    "./admin/pages/*": {
-      "require": "./cjs/admin/pages/*.js",
-      "import": "./esm/admin/pages/*.js"
-    },
     "./admin/plugin": {
       "require": "./cjs/admin/plugin.js",
       "import": "./esm/admin/plugin.js"
@@ -138,29 +130,149 @@
       "import": "./esm/language/index.js"
     },
 
+    "./AbstractSchema": {
+      "require": "./cjs/schema/interface/AbstractSchema.js",
+      "import": "./esm/schema/interface/AbstractSchema.js"
+    },
+    "./ColumnInterface": {
+      "require": "./cjs/schema/interface/ColumnInterface.js",
+      "import": "./esm/schema/interface/ColumnInterface.js"
+    },
+    "./DefinitionInterface": {
+      "require": "./cjs/schema/interface/DefinitionInterface.js",
+      "import": "./esm/schema/interface/DefinitionInterface.js"
+    },
+    "./SchemaInterface": {
+      "require": "./cjs/schema/interface/SchemaInterface.js",
+      "import": "./esm/schema/interface/SchemaInterface.js"
+    },
     "./Attribute": {
-      "require": "./cjs/schema/spec/Attribute.js",
-      "import": "./esm/schema/spec/Attribute.js"
+      "require": "./cjs/schema/Attribute.js",
+      "import": "./esm/schema/Attribute.js"
+    },
+    "./AttributeAssertion": {
+      "require": "./cjs/schema/attribute/AttributeAssertion.js",
+      "import": "./esm/schema/attribute/AttributeAssertion.js"
+    },
+    "./AttributeComponent": {
+      "require": "./cjs/schema/attribute/AttributeComponent.js",
+      "import": "./esm/schema/attribute/AttributeComponent.js"
+    },
+    "./AttributeReference": {
+      "require": "./cjs/schema/attribute/AttributeReference.js",
+      "import": "./esm/schema/attribute/AttributeReference.js"
+    },
+    "./Attributes": {
+      "require": "./cjs/schema/attribute/Attributes.js",
+      "import": "./esm/schema/attribute/Attributes.js"
     },
     "./Column": {
-      "require": "./cjs/schema/spec/Column.js",
-      "import": "./esm/schema/spec/Column.js"
+      "require": "./cjs/schema/Column.js",
+      "import": "./esm/schema/Column.js"
+    },
+    "./ColumnAssertion": {
+      "require": "./cjs/schema/column/ColumnAssertion.js",
+      "import": "./esm/schema/column/ColumnAssertion.js"
+    },
+    "./ColumnComponent": {
+      "require": "./cjs/schema/column/ColumnComponent.js",
+      "import": "./esm/schema/column/ColumnComponent.js"
+    },
+    "./ColumnDocument": {
+      "require": "./cjs/schema/column/ColumnDocument.js",
+      "import": "./esm/schema/column/ColumnDocument.js"
+    },
+    "./ColumnName": {
+      "require": "./cjs/schema/column/ColumnName.js",
+      "import": "./esm/schema/column/ColumnName.js"
+    },
+    "./ColumnNumber": {
+      "require": "./cjs/schema/column/ColumnNumber.js",
+      "import": "./esm/schema/column/ColumnNumber.js"
+    },
+    "./Columns": {
+      "require": "./cjs/schema/column/Columns.js",
+      "import": "./esm/schema/column/Columns.js"
+    },
+    "./ColumnStore": {
+      "require": "./cjs/schema/column/ColumnStore.js",
+      "import": "./esm/schema/column/ColumnStore.js"
+    },
+    "./ColumnType": {
+      "require": "./cjs/schema/column/ColumnType.js",
+      "import": "./esm/schema/column/ColumnType.js"
+    },
+    "./ColumnValue": {
+      "require": "./cjs/schema/column/ColumnValue.js",
+      "import": "./esm/schema/column/ColumnValue.js"
     },
     "./Fieldset": {
-      "require": "./cjs/schema/spec/Fieldset.js",
-      "import": "./esm/schema/spec/Fieldset.js"
+      "require": "./cjs/schema/Fieldset.js",
+      "import": "./esm/schema/Fieldset.js"
+    },
+    "./FieldsetAssertion": {
+      "require": "./cjs/schema/fieldset/FieldsetAssertion.js",
+      "import": "./esm/schema/fieldset/FieldsetAssertion.js"
+    },
+    "./FieldsetComponent": {
+      "require": "./cjs/schema/fieldset/FieldsetComponent.js",
+      "import": "./esm/schema/fieldset/FieldsetComponent.js"
+    },
+    "./FieldsetDocument": {
+      "require": "./cjs/schema/fieldset/FieldsetDocument.js",
+      "import": "./esm/schema/fieldset/FieldsetDocument.js"
+    },
+    "./FieldsetName": {
+      "require": "./cjs/schema/fieldset/FieldsetName.js",
+      "import": "./esm/schema/fieldset/FieldsetName.js"
+    },
+    "./FieldsetType": {
+      "require": "./cjs/schema/fieldset/FieldsetType.js",
+      "import": "./esm/schema/fieldset/FieldsetType.js"
+    },
+    "./FieldsetValue": {
+      "require": "./cjs/schema/fieldset/FieldsetValue.js",
+      "import": "./esm/schema/fieldset/FieldsetValue.js"
     },
     "./Model": {
-      "require": "./cjs/schema/spec/Model.js",
-      "import": "./esm/schema/spec/Model.js"
+      "require": "./cjs/schema/Model.js",
+      "import": "./esm/schema/Model.js"
     },
-    "./assert": {
-      "require": "./cjs/schema/assert.js",
-      "import": "./esm/schema/assert.js"
+    "./ModelStore": {
+      "require": "./cjs/schema/model/ModelStore.js",
+      "import": "./esm/schema/model/ModelStore.js"
     },
-    "./Registry": {
-      "require": "./cjs/schema/Registry.js",
-      "import": "./esm/schema/Registry.js"
+    "./Schema": {
+      "require": "./cjs/schema/Schema.js",
+      "import": "./esm/schema/Schema.js"
+    },
+    "./schema/config/attributes": {
+      "require": "./cjs/schema/config/attributes.js",
+      "import": "./esm/schema/config/attributes.js"
+    },
+    "./schema/config/definitions": {
+      "require": "./cjs/schema/config/definitions.js",
+      "import": "./esm/schema/config/definitions.js"
+    },
+    "./schema/config/typemaps": {
+      "require": "./cjs/schema/config/typemaps.js",
+      "import": "./esm/schema/config/typemaps.js"
+    },
+    "./schema/transform/helpers": {
+      "require": "./cjs/schema/transform/helpers.js",
+      "import": "./esm/schema/transform/helpers.js"
+    },
+    "./schema/transform": {
+      "require": "./cjs/schema/transform/index.js",
+      "import": "./esm/schema/transform/index.js"
+    },
+    "./schema/dictionary": {
+      "require": "./cjs/schema/dictionary.js",
+      "import": "./esm/schema/dictionary.js"
+    },
+    "./schema/helpers": {
+      "require": "./cjs/schema/helpers.js",
+      "import": "./esm/schema/helpers.js"
     },
     "./schema/types": {
       "require": "./cjs/schema/types.js",
@@ -188,7 +300,6 @@
       "require": "./cjs/server/whatwg.js",
       "import": "./esm/server/whatwg.js"
     },
-
     "./server/types": {
       "require": "./cjs/server/types.js",
       "import": "./esm/server/types.js"
@@ -215,21 +326,38 @@
       "import": "./esm/session/index.js"
     },
     
-    "./sql/actions/*": {
-      "require": "./cjs/sql/actions/*.js",
-      "import": "./esm/sql/actions/*.js"
+    
+    "./sql/AbstractActions": {
+      "require": "./cjs/sql/interface/AbstractActions.js",
+      "import": "./esm/sql/interface/AbstractActions.js"
     },
-    "./sql/actions": {
-      "require": "./cjs/sql/actions/index.js",
-      "import": "./esm/sql/actions/index.js"
+    "./sql/ActionsInterface": {
+      "require": "./cjs/sql/interface/ActionsInterface.js",
+      "import": "./esm/sql/interface/ActionsInterface.js"
     },
-    "./sql/events/*": {
-      "require": "./cjs/sql/events/*.js",
-      "import": "./esm/sql/events/*.js"
+    "./sql/StoreInterface": {
+      "require": "./cjs/sql/interface/StoreInterface.js",
+      "import": "./esm/sql/interface/StoreInterface.js"
     },
-    "./sql/events": {
-      "require": "./cjs/sql/events/index.js",
-      "import": "./esm/sql/events/index.js"
+    "./sql/plugin": {
+      "require": "./cjs/sql/plugin.js",
+      "import": "./esm/sql/plugin.js"
+    },
+    "./sql/transform": {
+      "require": "./cjs/sql/transform/index.js",
+      "import": "./esm/sql/transform/index.js"
+    },
+    "./sql/helpers": {
+      "require": "./cjs/sql/helpers.js",
+      "import": "./esm/sql/helpers.js"
+    },
+    "./sql/types": {
+      "require": "./cjs/sql/types.js",
+      "import": "./esm/sql/types.js"
+    },
+    "./sql": {
+      "require": "./cjs/sql/index.js",
+      "import": "./esm/sql/index.js"
     },
     "./mysql": {
       "require": "./cjs/sql/mysql.js",
@@ -246,22 +374,6 @@
     "./sqlite": {
       "require": "./cjs/sql/sqlite.js",
       "import": "./esm/sql/sqlite.js"
-    },
-    "./sql/transform": {
-      "require": "./cjs/sql/transform/index.js",
-      "import": "./esm/sql/transform/index.js"
-    },
-    "./sql/plugin": {
-      "require": "./cjs/sql/plugin.js",
-      "import": "./esm/sql/plugin.js"
-    },
-    "./sql/types": {
-      "require": "./cjs/sql/types.js",
-      "import": "./esm/sql/types.js"
-    },
-    "./sql": {
-      "require": "./cjs/sql/index.js",
-      "import": "./esm/sql/index.js"
     },
 
     "./terminal/events/*": {
@@ -288,27 +400,22 @@
       "require": "./cjs/terminal/index.js",
       "import": "./esm/terminal/index.js"
     },
-
-    "./types/transform": {
-      "require": "./cjs/types/transform/index.js",
-      "import": "./esm/types/transform/index.js"
-    },
-    "./types/plugin": {
-      "require": "./cjs/types/plugin.js",
-      "import": "./esm/types/plugin.js"
-    },
-    "./types": {
-      "require": "./cjs/types/index.js",
-      "import": "./esm/types/index.js"
-    },
     
-    "./view/import": {
-      "require": "./cjs/view/import.js",
-      "import": "./esm/view/import.js"
-    },
     "./view/transform": {
       "require": "./cjs/view/transform/index.js",
       "import": "./esm/view/transform/index.js"
+    },
+    "./view/client": {
+      "require": "./cjs/view/client.js",
+      "import": "./esm/view/client.js"
+    },
+    "./view/helpers": {
+      "require": "./cjs/view/helpers.js",
+      "import": "./esm/view/helpers.js"
+    },
+    "./view/import": {
+      "require": "./cjs/view/import.js",
+      "import": "./esm/view/import.js"
     },
     "./view/plugin": {
       "require": "./cjs/view/plugin.js",
@@ -318,14 +425,11 @@
       "require": "./cjs/view/types.js",
       "import": "./esm/view/types.js"
     },
-    "./view/client": {
-      "require": "./cjs/view/client.js",
-      "import": "./esm/view/client.js"
-    },
     "./view": {
       "require": "./cjs/view/index.js",
       "import": "./esm/view/index.js"
     },
+
     "./api/views/*": {
       "require": "./cjs/api/views/*.js",
       "import": "./esm/api/views/*.js"
@@ -343,6 +447,10 @@
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
     },
+    "./assert": {
+      "require": "./cjs/assert.js",
+      "import": "./esm/assert.js"
+    },
     "./lib": {
       "require": "./cjs/lib.js",
       "import": "./esm/lib.js"
@@ -350,6 +458,10 @@
     "./plugin": {
       "require": "./cjs/plugin.js",
       "import": "./esm/plugin.js"
+    },
+    "./types": {
+      "require": "./cjs/types.js",
+      "import": "./esm/types.js"
     },
     "./unocss": {
       "require": "./cjs/unocss.js",
@@ -368,10 +480,8 @@
   },
   "typesVersions": {
     "*": {
-      "admin/pages/detail/*": [ "./cjs/admin/pages/detail/*.d.ts" ],
-      "admin/pages/*": [ "./cjs/admin/pages/*.d.ts" ],
-      "admin/transform": [ "./cjs/admin/transform/index.d.ts" ],
       "admin/plugin": [ "./cjs/admin/plugin.d.ts" ],
+      "admin/transform": [ "./cjs/admin/transform/index.d.ts" ],
       "admin/types": [ "./cjs/admin/types.d.ts" ],
       "admin": [ "./cjs/admin/index.d.ts" ],
 
@@ -384,7 +494,7 @@
       "client/plugin": [ "./cjs/client/plugin.d.ts" ],
       "client/types": [ "./cjs/client/types.d.ts" ],
       "client": [ "./cjs/client/index.d.ts" ],
-      
+
       "email/plugin": [ "./cjs/email/plugin.d.ts" ],
       "email/types": [ "./cjs/email/types.d.ts" ],
       "email": [ "./cjs/email/index.d.ts" ],
@@ -394,58 +504,86 @@
       "language/types": [ "./cjs/language/types.d.ts" ],
       "language": [ "./cjs/language/index.d.ts" ],
 
-      "Attribute": [ "./cjs/schema/spec/Attribute.d.ts" ],
-      "Column": [ "./cjs/schema/spec/Column.d.ts" ],
-      "Fieldset": [ "./cjs/schema/spec/Fieldset.d.ts" ],
-      "Model": [ "./cjs/schema/spec/Model.d.ts" ],
-      "assert": [ "./cjs/schema/assert.d.ts" ],
-      "Registry": [ "./cjs/schema/Registry.d.ts" ],
+      "AbstractSchema": [ "./cjs/schema/interface/AbstractSchema.d.ts" ],
+      "ColumnInterface": [ "./cjs/schema/interface/ColumnInterface.d.ts" ],
+      "DefinitionInterface": [ "./cjs/schema/interface/DefinitionInterface.d.ts" ],
+      "SchemaInterface": [ "./cjs/schema/interface/SchemaInterface.d.ts" ],
+      "Attribute": [ "./cjs/schema/attribute/Attribute.d.ts" ],
+      "AttributeAssertion": [ "./cjs/schema/attribute/AttributeAssertion.d.ts" ],
+      "AttributeComponent": [ "./cjs/schema/attribute/AttributeComponent.d.ts" ],
+      "AttributeReference": [ "./cjs/schema/attribute/AttributeReference.d.ts" ],
+      "Attributes": [ "./cjs/schema/attribute/Attributes.d.ts" ],
+      "Column": [ "./cjs/schema/column/Column.d.ts" ],
+      "ColumnAssertion": [ "./cjs/schema/column/ColumnAssertion.d.ts" ],
+      "ColumnComponent": [ "./cjs/schema/column/ColumnComponent.d.ts" ],
+      "ColumnDocument": [ "./cjs/schema/column/ColumnDocument.d.ts" ],
+      "ColumnName": [ "./cjs/schema/column/ColumnName.d.ts" ],
+      "ColumnNumber": [ "./cjs/schema/column/ColumnNumber.d.ts" ],
+      "Columns": [ "./cjs/schema/column/Columns.d.ts" ],
+      "ColumnStore": [ "./cjs/schema/column/ColumnStore.d.ts" ],
+      "ColumnType": [ "./cjs/schema/column/ColumnType.d.ts" ],
+      "ColumnValue": [ "./cjs/schema/column/ColumnValue.d.ts" ],
+      "Fieldset": [ "./cjs/schema/fieldset/Fieldset.d.ts" ],
+      "FieldsetAssertion": [ "./cjs/schema/fieldset/FieldsetAssertion.d.ts" ],
+      "FieldsetComponent": [ "./cjs/schema/fieldset/FieldsetComponent.d.ts" ],
+      "FieldsetDocument": [ "./cjs/schema/fieldset/FieldsetDocument.d.ts" ],
+      "FieldsetName": [ "./cjs/schema/fieldset/FieldsetName.d.ts" ],
+      "FieldsetType": [ "./cjs/schema/fieldset/FieldsetType.d.ts" ],
+      "FieldsetValue": [ "./cjs/schema/fieldset/FieldsetValue.d.ts" ],
+      "Model": [ "./cjs/schema/model/Model.d.ts" ],
+      "ModelStore": [ "./cjs/schema/model/ModelStore.d.ts" ],
+      "Schema": [ "./cjs/schema/Schema.d.ts" ],
+      "schema/config/attributes": [ "./cjs/schema/config/attributes.d.ts" ],
+      "schema/config/definitions": [ "./cjs/schema/config/definitions.d.ts" ],
+      "schema/config/typemaps": [ "./cjs/schema/config/typemaps.d.ts" ],
+      "schema/transform/helpers": [ "./cjs/schema/transform/helpers.d.ts" ],
+      "schema/transform": [ "./cjs/schema/transform/index.d.ts" ],
+      "schema/dictionary": [ "./cjs/schema/dictionary.d.ts" ],
+      "schema/helpers": [ "./cjs/schema/helpers.d.ts" ],
       "schema/types": [ "./cjs/schema/types.d.ts" ],
       "schema": [ "./cjs/schema/index.d.ts" ],
-      
+
       "scripts/*": [ "./cjs/scripts/*.d.ts" ],
       "scripts": [ "./cjs/scripts/index.d.ts" ],
-      
+
       "http": [ "./cjs/server/http.d.ts" ],
       "whatwg": [ "./cjs/server/whatwg.d.ts" ],
       "server/types": [ "./cjs/server/types.d.ts" ],
       "server": [ "./cjs/server/index.d.ts" ],
-      
+
       "Session": [ "./cjs/session/Session.d.ts" ],
       "session/plugin": [ "./cjs/session/plugin.d.ts" ],
       "session/types": [ "./cjs/session/types.d.ts" ],
       "session": [ "./cjs/session/index.d.ts" ],
       
-      "sql/actions/*": [ "./cjs/sql/actions/*.d.ts" ],
-      "sql/actions": [ "./cjs/sql/actions/index.d.ts" ],
-      "sql/events/*": [ "./cjs/sql/events/*.d.ts" ],
-      "sql/events": [ "./cjs/sql/events/index.d.ts" ],
+      "sql/AbstractActions": [ "./cjs/sql/interface/AbstractActions.d.ts" ],
+      "sql/ActionsInterface": [ "./cjs/sql/interface/ActionsInterface.d.ts" ],
+      "sql/StoreInterface": [ "./cjs/sql/interface/StoreInterface.d.ts" ],
+      "sql/plugin": [ "./cjs/sql/plugin.d.ts" ],
+      "sql/transform": [ "./cjs/sql/transform/index.d.ts" ],
+      "sql/helpers": [ "./cjs/sql/helpers.d.ts" ],
+      "sql/types": [ "./cjs/sql/types.d.ts" ],
+      "sql": [ "./cjs/sql/index.d.ts" ],
       "mysql": [ "./cjs/sql/mysql.d.ts" ],
       "pglite": [ "./cjs/sql/pglite.d.ts" ],
       "pgsql": [ "./cjs/sql/pgsql.d.ts" ],
       "sqlite": [ "./cjs/sql/sqlite.d.ts" ],
-      "sql/transform": [ "./cjs/sql/transform/index.d.ts" ],
-      "sql/plugin": [ "./cjs/sql/plugin.d.ts" ],
-      "sql/types": [ "./cjs/sql/types.d.ts" ],
-      "sql": [ "./cjs/sql/index.d.ts" ],
-      
+
       "terminal/events/*": [ "./cjs/terminal/events/*.d.ts" ],
       "terminal/events": [ "./cjs/terminal/events/index.d.ts" ],
       "Terminal": [ "./cjs/terminal/Terminal.d.ts" ],
       "terminal/plugin": [ "./cjs/terminal/plugin.d.ts" ],
       "terminal/types": [ "./cjs/terminal/types.d.ts" ],
       "terminal": [ "./cjs/terminal/index.d.ts" ],
-
-      "types/transform": [ "./cjs/types/transform/index.d.ts" ],
-      "types/plugin": [ "./cjs/types/plugin.d.ts" ],
-      "types": [ "./cjs/types/index.d.ts" ],
       
-      "view/import": [ "./cjs/view/import.d.ts" ],
       "view/transform": [ "./cjs/view/transform/index.d.ts" ],
+      "view/client": [ "./cjs/view/client.d.ts" ],
+      "view/helpers": [ "./cjs/view/helpers.d.ts" ],
+      "view/import": [ "./cjs/view/import.d.ts" ],
       "view/plugin": [ "./cjs/view/plugin.d.ts" ],
       "view/types": [ "./cjs/view/types.d.ts" ],
-      "view/client": [ "./cjs/view/client.d.ts" ],
       "view": [ "./cjs/view/index.d.ts" ],
+
       "api/views/*": [ "./cjs/api/views/*.d.ts" ],
       "session/views/*": [ "./cjs/session/views/*.d.ts" ],
       "esm/api/views/*": [ "./esm/api/views/*.d.ts" ],
@@ -454,8 +592,10 @@
       "cjs/session/views/*": [ "./cjs/session/views/*.d.ts" ],
 
       "Exception": [ "./cjs/Exception.d.ts" ],
+      "assert": [ "./cjs/assert.d.ts" ],
       "lib": [ "./cjs/lib.d.ts" ],
       "plugin": [ "./cjs/plugin.d.ts" ],
+      "types": [ "./cjs/types.d.ts" ],
       "unocss": [ "./cjs/unocss.d.ts" ],
       ".": [ "./cjs/index.d.ts" ]
     }
@@ -485,49 +625,52 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@paralleldrive/cuid2": "3.1.0",
-    "@stackpress/idea-transformer": "0.6.11",
-    "@stackpress/ingest": "0.6.11",
-    "@stackpress/inquire": "0.6.11",
-    "@stackpress/lib": "0.6.11",
-    "jose": "6.1.3",
+    "@paralleldrive/cuid2": "3.3.0",
+    "@stackpress/idea-transformer": "0.6.14",
+    "@stackpress/ingest": "0.6.14",
+    "@stackpress/inquire": "0.6.14",
+    "@stackpress/lib": "0.6.14",
+    "html-entities": "2.6.0",
+    "jose": "6.2.0",
+    "moment": "2.30.1",
     "mustache": "4.2.0",
     "nanoid": "5.1.6",
-    "nodemailer": "7.0.11",
+    "nodemailer": "7.0.13",
     "papaparse": "5.5.3",
     "r22n": "1.0.10",
     "react-toastify": "11.0.5",
-    "reactus": "0.6.11",
-    "universal-cookie": "8.0.1"
+    "reactus": "0.6.14",
+    "universal-cookie": "8.0.1",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",
     "@types/chai": "4.3.20",
     "@types/mocha": "10.0.10",
     "@types/mustache": "4.2.6",
-    "@types/nodemailer": "7.0.4",
-    "@types/node": "25.0.3",
+    "@types/nodemailer": "7.0.11",
+    "@types/node": "25.3.5",
     "@types/papaparse": "5.5.2",
-    "@types/react": "19.2.7",
+    "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "chai": "4.5.0",
     "fast-glob": "3.3.3",
-    "frui": "0.2.2",
+    "frui": "0.2.3",
     "mocha": "10.8.2",
     "mocha-lcov-reporter": "1.3.0",
     "nyc": "17.1.0",
-    "prettier": "3.7.4",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
+    "prettier": "3.8.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
     "ts-mocha": "10.0.0",
     "ts-node": "10.9.2",
     "ts-morph": "27.0.2",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
-    "unocss": "66.5.10"
+    "unocss": "66.6.6"
   },
   "peerDevDependencies": {
-    "@stackpress/idea-transformer": "0.6.11",
+    "@stackpress/idea-transformer": "0.6.14",
     "@vitejs/plugin-react": "4.3.4",
     "fast-glob": "^3.3",
     "prettier": "^3",
