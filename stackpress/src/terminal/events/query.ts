@@ -1,7 +1,7 @@
-//stackpress
+//modules
 import type Engine from '@stackpress/inquire/Engine';
 import { action } from '@stackpress/ingest/Server';
-//terminal
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
 export default action(async function QueryScript(_req, res, ctx) {

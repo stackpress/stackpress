@@ -1,8 +1,8 @@
-//stackpress
+//modules
 import { action } from '@stackpress/ingest/Server';
-//scripts
+//stackpress/scripts
 import serve from '../../scripts/serve.js';
-//terminal
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
 export default action(async function ServeScript(_req, res, ctx) {

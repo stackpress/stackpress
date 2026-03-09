@@ -1,12 +1,12 @@
-//stackpress
+//modules
 import type Engine from '@stackpress/inquire/Engine';
 import { action } from '@stackpress/ingest/Server';
-//scripts
-import drop from '../../scripts/drop.js';
-//terminal
+//stackpress/scripts
+import upgrade from '../../scripts/upgrade.js';
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
-export default action(async function DropScript(_req, res, ctx) {
+export default action(async function UpgradeScript(_req, res, ctx) {
   //get terminal
   const cli = ctx.plugin<CLIPlugin>('cli');
   //get database
@@ -16,7 +16,7 @@ export default action(async function DropScript(_req, res, ctx) {
     res.setError('No database found');
     return;
   }
-  await drop(ctx, database, cli);
+  await upgrade(ctx, database, cli);
   //OK
   res.setStatus(200);
 });

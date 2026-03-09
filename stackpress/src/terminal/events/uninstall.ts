@@ -2,11 +2,11 @@
 import type Engine from '@stackpress/inquire/Engine';
 import { action } from '@stackpress/ingest/Server';
 //stackpress/scripts
-import push from '../../scripts/push.js';
+import uninstall from '../../scripts/uninstall.js';
 //stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
-export default action(async function PushScript(_req, res, ctx) {
+export default action(async function UninstallScript(_req, res, ctx) {
   //get terminal
   const cli = ctx.plugin<CLIPlugin>('cli');
   //get database
@@ -16,7 +16,7 @@ export default action(async function PushScript(_req, res, ctx) {
     res.setError('No database found');
     return;
   }
-  await push(ctx, database, cli);
+  await uninstall(ctx, database, cli);
   //OK
   res.setStatus(200);
 });

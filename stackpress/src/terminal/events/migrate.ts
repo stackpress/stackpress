@@ -1,9 +1,9 @@
-//stackpress
+//modules
 import type Engine from '@stackpress/inquire/Engine';
 import { action } from '@stackpress/ingest/Server';
-//scripts
+//stackpress/scripts
 import migrate from '../../scripts/migrate.js';
-//terminal
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
 export default action(async function MigrateScript(_req, res, ctx) {

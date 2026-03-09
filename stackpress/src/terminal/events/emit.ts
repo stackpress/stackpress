@@ -1,8 +1,8 @@
-//stackpress
+//modules
 import { action } from '@stackpress/ingest/Server';
-//scripts
+//stackpress/scripts
 import emit from '../../scripts/emit.js';
-//terminal
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
 export default action(async function EmitScript(_req, res, ctx) {

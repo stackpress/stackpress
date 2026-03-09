@@ -1,8 +1,7 @@
-//stackpress
+//modules
 import { server } from '@stackpress/ingest/Server';
-//local
+//stackpress/terminal/events
 import build from './build.js';
-import drop from './drop.js';
 import emit from './emit.js';
 import generate from './generate.js';
 import install from './install.js';
@@ -11,10 +10,11 @@ import purge from './purge.js';
 import push from './push.js';
 import query from './query.js';
 import serve from './serve.js';
+import uninstall from './uninstall.js';
+import upgrade from './upgrade.js';
 
 export {
   build,
-  drop,
   emit,
   generate,
   install,
@@ -22,13 +22,14 @@ export {
   purge,
   push,
   query,
-  serve
+  serve,
+  uninstall,
+  upgrade
 };
 
 export default function listen() {
   const emitter = server();
   emitter.on('build', build);
-  emitter.on('drop', drop);
   emitter.on('emit', emit);
   emitter.on('generate', generate);
   emitter.on('install', install);
@@ -37,5 +38,7 @@ export default function listen() {
   emitter.on('push', push);
   emitter.on('query', query);
   emitter.on('serve', serve);
+  emitter.on('uninstall', uninstall);
+  emitter.on('upgrade', upgrade);
   return emitter;
 };
