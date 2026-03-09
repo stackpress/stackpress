@@ -1,5 +1,7 @@
 //node
 import path from 'node:path';
+//modules
+import type { ToastPosition } from 'react-toastify';
 //types
 import type { Method, APIType } from 'stackpress/types';
 export type { Config } from 'stackpress/types';
@@ -287,7 +289,7 @@ export const view = {
   base: '/',
   //frontend notification display settings
   notify: {
-    position: 'bottom-center',
+    position: 'bottom-center' as ToastPosition,
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,

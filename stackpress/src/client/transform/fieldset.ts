@@ -19,15 +19,15 @@ export default function generate(directory: Directory, fieldset: Fieldset) {
     moduleSpecifier: fieldset.name.toPathName('./%sSchema.js'),
     defaultImport: fieldset.name.toClassName('%sSchema')
   });
-  //import { NameSchema } from './columns/index.js';
+  //import { NameColumn } from './columns/index.js';
   source.addImportDeclaration({
     moduleSpecifier: './columns/index.js',
     namedImports: columns.map(
-      column => column.name.toClassName('%sSchema')
+      column => column.name.toClassName('%sColumn')
     ).toArray()
   });
 
-  //const columns = { name: NameSchema, ... };
+  //const columns = { name: NameColumn, ... };
   source.addVariableStatement({
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
@@ -36,7 +36,7 @@ export default function generate(directory: Directory, fieldset: Fieldset) {
         ${columns.map(
           column => [ 
             column.name.toString(),
-            column.name.toClassName('%sSchema')
+            column.name.toClassName('%sColumn')
           ].join(': ')
         ).toArray().join(',\n')}
       }`

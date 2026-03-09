@@ -13,6 +13,7 @@
     "dev": "dotenv -e .env -- stackpress serve --b config/develop -v",
     "emit": "dotenv -e .env -- stackpress emit",
     "generate": "stackpress generate --b config/develop -v",
+    "generate:client": "stackpress generate --b config/client -v",
     "migrate": "dotenv -e .env -- stackpress migrate --b config/develop -v",
     "populate": "dotenv -e .env -- stackpress populate --b config/develop -v",
     "preview": "dotenv -e .env -- stackpress serve --b config/preview -v",

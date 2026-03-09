@@ -65,7 +65,7 @@ export default function generate(directory: Directory, column: Column) {
   const forNano = String(defaults).match(/^nanoid\(([0-9]+)\)$/);
 
   //NOTE: column would never be model or fieldset. see schema.ts.
-  const filepath = renderCode('<%fieldset%>/columns/<%column%>Schema.ts', {
+  const filepath = renderCode('<%fieldset%>/columns/<%column%>Column.ts', {
     fieldset: column.parent.name.toPathName(),
     column: column.name.toPathName(),
   });
@@ -115,10 +115,10 @@ export default function generate(directory: Directory, column: Column) {
       namedImports: [ column.type.name ]
     });
   }
-  //export default class StreetSchema implements ColumnInterface<D, S, U, Z> {};
+  //export default class StreetColumn implements ColumnInterface<D, S, U, Z> {};
   const definition = source.addClass({
     isDefaultExport: true,
-    name: column.name.toClassName('%sSchema'),
+    name: column.name.toClassName('%sColumn'),
     implements: [
       `ColumnInterface<${[
         //default type

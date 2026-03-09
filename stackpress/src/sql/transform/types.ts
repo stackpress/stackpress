@@ -57,8 +57,8 @@ export default function generate(directory: Directory, model: Model) {
           columns.map(
             column => `${column.name.toString()}: ${
               column.type.fieldset 
-                ? column.type.fieldset.name.toClassName('%sSchema')
-                : column.name.toClassName('%sSchema')
+                ? column.type.fieldset.name.toClassName('%sColumn')
+                : column.name.toClassName('%sColumn')
             }`
           ).toArray().join(', ')
         }}`,
@@ -90,8 +90,8 @@ export default function generate(directory: Directory, model: Model) {
           columns.map(
             column => `${column.name.toString()}: ${
               column.type.fieldset 
-                ? column.type.fieldset.name.toClassName('%sSchema')
-                : column.name.toClassName('%sSchema')
+                ? column.type.fieldset.name.toClassName('%sColumn')
+                : column.name.toClassName('%sColumn')
             }`
           ).toArray().join(', ')
         }}`,

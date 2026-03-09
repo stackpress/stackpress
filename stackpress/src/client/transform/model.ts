@@ -28,11 +28,11 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: model.name.toPathName('./%sActions.js'),
     defaultImport: model.name.toClassName('%sActions')
   });
-  //import { NameSchema } from './columns/index.js';
+  //import { NameColumn } from './columns/index.js';
   source.addImportDeclaration({
     moduleSpecifier: './columns/index.js',
     namedImports: columns.map(
-      column => column.name.toClassName('%sSchema')
+      column => column.name.toClassName('%sColumn')
     ).toArray()
   });
   //import listen from './events/index.js';
@@ -62,7 +62,7 @@ export default function generate(directory: Directory, model: Model) {
     defaultImport: 'admin'
   });
 
-  //const columns = { name: NameSchema, ... };
+  //const columns = { name: NameColumn, ... };
   source.addVariableStatement({
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
@@ -71,7 +71,7 @@ export default function generate(directory: Directory, model: Model) {
         ${columns.map(
           column => [ 
             column.name.toString(),
-            column.name.toClassName('%sSchema')
+            column.name.toClassName('%sColumn')
           ].join(': ')
         ).toArray().join(',\n')}
       }`

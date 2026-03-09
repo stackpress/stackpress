@@ -62,7 +62,7 @@ export default function generate(directory: Directory, model: Fieldset) {
     defaultImport: model.name.toClassName('%sSchema')
   });
   //import AddressSchema from '../Address/AddressSchema.js';
-  //import StreetSchema from './columns/StreetSchema.js';
+  //import StreetColumn from './columns/StreetColumn.js';
   for (const column of columns.values()) {
     if (column.type.fieldset) {
       //import AddressSchema from '../Address/AddressSchema.js';
@@ -72,10 +72,10 @@ export default function generate(directory: Directory, model: Fieldset) {
       });
     } else {
       generateColumnTests(directory, model, column);
-      //import StreetSchema from '../columns/StreetSchema.js';
+      //import StreetColumn from './columns/StreetColumn.js';
       source.addImportDeclaration({
-        moduleSpecifier: column.name.toPathName('../columns/%sSchema.js'),
-        defaultImport: column.name.toClassName('%sSchema')
+        moduleSpecifier: column.name.toPathName('../columns/%sColumn.js'),
+        defaultImport: column.name.toClassName('%sColumn')
       });
     }
   }
@@ -91,7 +91,7 @@ export default function generate(directory: Directory, model: Fieldset) {
       name: model.name.toString(),
       columns: columns.map(column => ({
         column: column.name.toPropertyName(),
-        schema: column.name.toClassName('%sSchema')
+        schema: column.name.toClassName('%sColumn')
       })).toArray(),
       defaults: columns.map(column => {
         const defaults = column.value.default;
@@ -253,7 +253,7 @@ DESCRIBE:
     expect(schema.filter(input)).to.not.have.property('__FOO__');
   });
   it('should populate', async () => {
-    const schema = new PlaceSchema();
+    const schema = new <%classname%>();
     const actual = schema.populate({ __FOO__: true });
     expect(actual.__FOO__).to.be.true;
     <%#populate%>

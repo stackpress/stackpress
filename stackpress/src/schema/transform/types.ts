@@ -82,11 +82,11 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
         defaultImport: column.type.fieldset.name.toClassName('%sSchema')
       });
     } else {
-      //import type StreetSchema from './columns/StreetSchema.js';
+      //import type StreetColumn from './columns/StreetColumn.js';
       source.addImportDeclaration({
         isTypeOnly: true,
-        moduleSpecifier: column.name.toPathName('./columns/%sSchema.js'),
-        defaultImport: column.name.toClassName('%sSchema')
+        moduleSpecifier: column.name.toPathName('./columns/%sColumn.js'),
+        defaultImport: column.name.toClassName('%sColumn')
       });
     }
   }
@@ -146,7 +146,7 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
           column => `${column.name.toString()}: ${
             column.type.fieldset 
               ? column.type.fieldset.name.toClassName('%sSchema')
-              : column.name.toClassName('%sSchema')
+              : column.name.toClassName('%sColumn')
           }`
         ).join(', ')
       }}>`

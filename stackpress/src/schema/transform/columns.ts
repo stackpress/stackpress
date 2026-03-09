@@ -19,16 +19,16 @@ export default function generate(directory: Directory, model: Fieldset) {
   for (const column of columns.values()) {
     //Address/columns/StreetSchema.ts
     generateColumn(directory, column);
-    //import StreetSchema from './columns/StreetSchema.js';
+    //import StreetColumn from './columns/StreetColumn.js';
     source.addImportDeclaration({
-      moduleSpecifier: column.name.toPathName('./%sSchema.js'),
-      defaultImport: column.name.toClassName('%sSchema')
+      moduleSpecifier: column.name.toPathName('./%sColumn.js'),
+      defaultImport: column.name.toClassName('%sColumn')
     });
   }
-  //export { StreetSchema };
+  //export { StreetColumn };
   source.addExportDeclaration({
     namedExports: columns.map(
-      column => column.name.toClassName('%sSchema')
+      column => column.name.toClassName('%sColumn')
     ).toArray()
   });
 };

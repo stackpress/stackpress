@@ -42,7 +42,7 @@ export default function generate(directory: Directory, model: Fieldset) {
     ]
   });
   //import AddressSchema from '../Address/AddressSchema.js';
-  //import StreetSchema from './columns/StreetSchema.js';
+  //import StreetColumn from './columns/StreetColumn.js';
   for (const column of columns.values()) {
     if (column.type.fieldset) {
       //import AddressSchema from '../Address/AddressSchema.js';
@@ -51,10 +51,10 @@ export default function generate(directory: Directory, model: Fieldset) {
         defaultImport: column.type.fieldset.name.toClassName('%sSchema')
       });
     } else {
-      //import StreetSchema from './columns/StreetSchema.js';
+      //import StreetColumn from './columns/StreetColumn.js';
       source.addImportDeclaration({
-        moduleSpecifier: column.name.toPathName('./columns/%sSchema.js'),
-        defaultImport: column.name.toClassName('%sSchema')
+        moduleSpecifier: column.name.toPathName('./columns/%sColumn.js'),
+        defaultImport: column.name.toClassName('%sColumn')
       });
     }
   }
@@ -69,7 +69,7 @@ export default function generate(directory: Directory, model: Fieldset) {
         column => `${column.name.toString()}: ${
           column.type.fieldset 
             ? column.type.fieldset.name.toClassName('%sSchema')
-            : column.name.toClassName('%sSchema')
+            : column.name.toClassName('%sColumn')
         }`
       ).toArray().join(', ')
     }}>`,
@@ -113,7 +113,7 @@ export default function generate(directory: Directory, model: Fieldset) {
     statements: renderCode(TEMPLATE.CONSTRUCTOR, {
       columns: columns.map(column => ({ 
         column: column.name.toPropertyName(), 
-        classname: column.name.toClassName('%sSchema'),
+        classname: column.name.toClassName('%sColumn'),
         seed: column.value.encrypted ? 'seed': ''
       })).toArray()
     })
