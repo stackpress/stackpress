@@ -1,20 +1,20 @@
-//stackpress
+//modules
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { Session } from '../../types/index.js';
-//session
+//stackpress/types
+import type { Session } from '../../types.js';
+//stackpress/session
 import type { 
   SessionData, 
   SessionTokenData 
 } from '../../session/types.js';
-//view
+//stackpress/view
 import type { 
   ViewConfig, 
   BrandConfig 
 } from '../../view/types.js';
-//api
+//stackpress/api
 import type { ApiConfig } from '../types.js';
 import { unauthorized } from '../helpers.js';
 

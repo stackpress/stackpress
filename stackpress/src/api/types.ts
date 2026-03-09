@@ -1,11 +1,11 @@
-//stackpress
+//modules
 import type { Method, UnknownNest } from '@stackpress/lib/types';
 import type { Data } from '@stackpress/idea-parser/types';
-//language
+//stackpress/language
 import type { LanguageConfig } from '../language/types.js';
-//views
+//stackpress/view
 import type { ViewConfig, BrandConfig } from '../view/types.js';
-//session
+//stackpress/session
 import type { Profile } from '../session/types.js';
 
 export type ApiType = 'public' | 'app' | 'session';

@@ -1,9 +1,9 @@
-//stackpress
+//modules
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
-//root
-import type { Scalar } from '../types/index.js';
-//language
+//stackpress/types
+import type { Scalar } from '../types.js';
+//stackpress/language
 import type { LanguageMap } from './types.js';
 
 export default class Language {

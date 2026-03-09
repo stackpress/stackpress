@@ -1,6 +1,6 @@
-//stackpress
+//modules
 import type Server from '@stackpress/ingest/Server';
-//language
+//stackpress/language
 import type { LanguageMap, LanguagePlugin } from './types.js';
 import Language from './Language.js';
 

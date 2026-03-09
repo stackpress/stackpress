@@ -1,10 +1,10 @@
-//stackpress
+//modules
 import type Server from '@stackpress/ingest/Server';
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
-//root
-import type { Application, Session } from '../types/index.js';
-//api
+//stackpress/types
+import type { Application, Session } from '../types.js';
+//stackpress/api
 import type { ApiConfig, ApiEndpoint } from './types.js';
 import { authorize, unauthorized, validData } from './helpers.js';
 

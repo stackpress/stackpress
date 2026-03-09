@@ -1,6 +1,6 @@
-//stackpress
+//modules
 import type Server from '@stackpress/ingest/Server';
-//email
+//stackpress/email
 import emitter from './events.js';
 
 /**
