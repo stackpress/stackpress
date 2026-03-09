@@ -1,25 +1,26 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress
-import { renderCode } from '../../../helpers.js';
-//stacpress/schema
-import type Model from '../../../schema/model/Model.js';
+//stackpress/schema
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
 //stackpress/admin
 import { render } from '../helpers.js';
 
 export default function detailView(directory: Directory, model: Model) {
-  const file = model.name.toPathName('%s/admin/views/detail.tsx');
-  const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
   const link = (
     action: string,
     extras = ''
   ) => `\`\${base}/${model.name.dashCase}/${action}/${path}${extras}\``;
-  
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+
+  const filepath = model.name.toPathName('%s/admin/views/detail.tsx');
+  //load Profile/admin/views/detail.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { ServerPageProps, AdminConfigProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -33,11 +34,11 @@ export default function detailView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
-  //import type { SearchParams } from 'stackpress/sql';
+  //import type { StoreSearchQuery } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql',
-    namedImports: [ 'SearchParams' ]
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSearchQuery' ]
   });
   //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
@@ -50,28 +51,26 @@ export default function detailView(directory: Directory, model: Model) {
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import { Table, Trow, Tcol } from 'frui/element/Table';
+  //import Table from 'frui/Table';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Table',
-    namedImports: [ 'Table', 'Trow', 'Tcol' ]
+    moduleSpecifier: 'frui/Table',
+    defaultImport: 'Table'
   });
   //import Bread from 'frui/Bread';
   source.addImportDeclaration({
     moduleSpecifier: 'frui/Bread',
     defaultImport: 'Bread'
   });
-  //import { useServer, useStripe, LayoutAdmin } from 'stackpress/view/client';
+  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'useStripe', 'LayoutAdmin' ]
+    namedImports: [ 'useServer', 'LayoutAdmin' ]
   });
-  //import CreatedViewFormat from '../../components/views/CreatedViewFormat.js';
+  //import CreatedViewFormat from '../../components/view/CreatedViewFormat.js';
   model.component.viewFormats.toArray().forEach(column => {
-    //skip if no component
-    if (!column.component.viewFormat) return;
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
-        '../../components/views/%sViewFormat.js'
+        '../../components/view/%sViewFormat.js'
       ),
       defaultImport: column.name.toComponentName('%sViewFormat')
     });
@@ -89,7 +88,7 @@ export default function detailView(directory: Directory, model: Model) {
     }],
     statements: renderCode(TEMPLATE.DETAIL_CRUMBS_BODY, {
       search: {
-        label: model.name.plural,
+        label: model.name.plural || model.name.titleCase,
         icon: model.name.icon
       },
       detail: {
@@ -208,7 +207,7 @@ return (
       {_('<%search.label%>')}
     </Bread.Crumb>
     <Bread.Crumb>
-      {_('<%detail.label%>')}
+      {_(\`<%detail.label%>\`)}
     </Bread.Crumb>
   </Bread>
 );`,
@@ -264,17 +263,17 @@ DETAIL_RESULTS_VALUE_REQUIRED:
 '<<%component%> data={results} value={results.<%name%>} />',
 
 DETAIL_RESULTS_VALUE_OPTIONAL:
-`{results.<%name%>} ? (<<%component%> data={results} value={results.<%name%>} />) : ''}`,
+`{results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}`,
 
 DETAIL_RESULTS_ROW:
-`<Trow>
-  <Tcol noWrap addClassName="results-label">
+`<Table.Row>
+  <Table.Col noWrap addClassName="results-label">
     {_('<%label%>')}
-  </Tcol>
-  <Tcol noWrap addClassName="results-value">
+  </Table.Col>
+  <Table.Col noWrap addClassName="results-value">
     <%value%>
-  </Tcol>
-</Trow>`,
+  </Table.Col>
+</Table.Row>`,
 
 DETAIL_RESULTS_BODY:
 `const { results } = props;
@@ -290,7 +289,7 @@ return (
 );`,
 
 DETAIL_BODY:
-`const { config, session, response } = useServer<AdminConfigProps, Partial<SearchParams>, <%type%>}>();
+`const { config, session, response } = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
 const can = session.can.bind(session);
 const base = config.path('admin.base', '/admin');
 const results = response.results as <%type%>;

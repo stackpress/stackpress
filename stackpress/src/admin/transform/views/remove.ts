@@ -1,22 +1,23 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress
-import { renderCode } from '../../../helpers.js';
 //stackpress/schema
-import type Model from '../../../schema/model/Model.js';
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
 //stackpress/admin
 import { render } from '../helpers.js';
 
 export default function removeView(directory: Directory, model: Model) {
-  const file = model.name.toPathName('%s/admin/views/remove.tsx');
-  const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
   const link = (action: string) => `\`\${base}/${model.name.dashCase}/${action}/${path}\``;
-  
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+
+  const filepath = model.name.toPathName('%s/admin/views/remove.tsx');
+  //load Profile/admin/views/remove.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -30,11 +31,11 @@ export default function removeView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
-  //import type { SearchParams } from 'stackpress/sql';
+  //import type { StoreSearchQuery } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql',
-    namedImports: [ 'SearchParams' ]
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSearchQuery' ]
   });
   //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
@@ -70,7 +71,7 @@ export default function removeView(directory: Directory, model: Model) {
     }],
     statements: renderCode(TEMPLATE.REMOVE_CRUMBS_BODY, {
       search: {
-        label: model.name.plural,
+        label: model.name.plural || model.name.titleCase,
         icon: model.name.icon
       },
       detail: {
@@ -158,8 +159,8 @@ return (
     <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
       {_('<%search.label%>')}
     </Bread.Crumb>
-    <Bread.Crumb href="<%detail.href%>">
-      {_('<%detail.label%>')}
+    <Bread.Crumb href={<%detail.href%>}>
+      {_(\`<%detail.label%>\`)}
     </Bread.Crumb>
     <Bread.Crumb icon="trash">
       {_('Remove')}
@@ -187,7 +188,7 @@ return (
       <em>{_('(Thats a real long time)')}</em>
     </div>
     <div className="actions">
-      <a className="action cancel" href={<%href%>}}>
+      <a className="action cancel" href={<%href%>}>
         <i className="icon fas fa-fw fa-arrow-left"></i>
         <span>Nevermind.</span>
       </a>
@@ -200,7 +201,7 @@ return (
 );`,
 
 REMOVE_BODY:
-`const { config, response } = useServer<AdminConfigProps, Partial<SearchParams>, <%type%>>();
+`const { config, response } = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
 const base = config.path('admin.base', '/admin');
 const results = response.results as <%type%>;
 //render

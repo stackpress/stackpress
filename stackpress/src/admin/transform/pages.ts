@@ -2,25 +2,35 @@
 import type { Directory } from 'ts-morph';
 //schema
 import type Schema from '../../schema/Schema.js';
+import { loadProjectFile } from '../../schema/transform/helpers.js';
+
+export const idActions = [ 'detail', 'remove', 'restore', 'update' ];
 
 export default function generate(directory: Directory, registry: Schema) {
-  page('create', directory, registry);
-  page('detail', directory, registry);
-  page('export', directory, registry);
-  page('import', directory, registry);
-  page('remove', directory, registry);
-  page('restore', directory, registry);
-  page('search', directory, registry);
-  page('update', directory, registry);
+  generatePage('create', directory, registry);
+  generatePage('detail', directory, registry);
+  generatePage('export', directory, registry);
+  generatePage('import', directory, registry);
+  generatePage('remove', directory, registry);
+  generatePage('restore', directory, registry);
+  generatePage('search', directory, registry);
+  generatePage('update', directory, registry);
 };
 
-export function page(action: string, directory: Directory, schema: Schema) {
+export function generatePage(action: string, directory: Directory, schema: Schema) {
   const lower = action.toLowerCase();
   const title = action.charAt(0).toUpperCase() + action.slice(1);
   //loop through models
   for (const model of schema.models.values()) {
-    const file = `${model.name.toString()}/admin/pages/${lower}.ts`;
-    const source = directory.createSourceFile(file, '', { overwrite: true });
+    const ids = model.store.ids;
+    if (ids.size === 0 && idActions.includes(lower)) {
+      continue;
+    }
+
+    const filepath = model.name.toPathName(`%s/admin/pages/${lower}.ts`);
+    //load Profile/index.ts if it exists, if not create it
+    const source = loadProjectFile(directory, filepath);
+    
     // import type Request from '@stackpress/ingest/Request';
     source.addImportDeclaration({
       isTypeOnly: true,

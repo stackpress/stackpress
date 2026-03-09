@@ -1,9 +1,10 @@
-//root
-import type { IdeaPluginWithProject } from '../../types/index.js';
-//schema
+//stackpress
+import type { IdeaProjectPluginProps } from '../../types.js';
+//stackpress/schema
 import Schema from '../../schema/Schema.js';
-//local
-import generatePages from './pages.js';
+import { loadProjectFile } from '../../schema/transform/helpers.js';
+//stackpress/admin
+import generatePages from './pages/index.js';
 import generateViews from './views/index.js';
 import generateRoutes from './routes.js';
 
@@ -29,49 +30,65 @@ import generateRoutes from './routes.js';
  * - admin.ts
  */
 
-/**
- * This is the The params comes form the cli
- */
-export default function generate(props: IdeaPluginWithProject) {
-  //-----------------------------//
+export default async function generate(props: IdeaProjectPluginProps) {
+  //------------------------------------------------------------------//
   // 1. Config
-  //extract props
-  const { schema: config, project } = props;
-  const registry = Schema.make(config);
+
+  const schema = Schema.make(props.schema);
+  const directory = props.directory;
 
   //-----------------------------//
   // 2. Generators
-  // - profile/admin/pages/create.ts
-  // - profile/admin/pages/detail.ts
-  // - profile/admin/pages/remove.ts
-  // - profile/admin/pages/restore.ts
-  // - profile/admin/pages/search.ts
-  // - profile/admin/pages/update.ts
-  generatePages(project, registry);
-  // - profile/admin/views/create.tsx
-  // - profile/admin/views/detail.tsx
-  // - profile/admin/views/remove.tsx
-  // - profile/admin/views/restore.tsx
-  // - profile/admin/views/search.tsx
-  // - profile/admin/views/update.tsx
-  generateViews(project, registry);
-  // - profile/admin/routes.ts
-  generateRoutes(project, registry);
+
+  for (const model of schema.models.values()) {
+    // - profile/admin/routes.ts
+    generateRoutes(directory, model);
+    // - profile/admin/pages/create.ts
+    // - profile/admin/pages/detail.ts
+    // - profile/admin/pages/remove.ts
+    // - profile/admin/pages/restore.ts
+    // - profile/admin/pages/search.ts
+    // - profile/admin/pages/update.ts
+    generatePages(directory, model);
+    // - profile/admin/views/create.tsx
+    // - profile/admin/views/detail.tsx
+    // - profile/admin/views/remove.tsx
+    // - profile/admin/views/restore.tsx
+    // - profile/admin/views/search.tsx
+    // - profile/admin/views/update.tsx
+    generateViews(directory, model);
+  }
 
   //-----------------------------//
-  // 3. profile/index.ts
+  // 2. admin.ts
 
-  for (const model of registry.models.values()) {
-    const filepath = `${model.name.toString()}/index.ts`;
-    //load profile/index.ts if it exists, if not create it
-    const source = project.getSourceFile(filepath) 
-      || project.createSourceFile(filepath, '', { overwrite: true });
-    //import admin from './admin/routes.js';
+  //load admin.ts if it exists, if not create it
+  const source = loadProjectFile(directory, 'admin.ts');
+  
+  //import Server from '@stackpress/ingest/Server';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/ingest/Server',
+    defaultImport: 'Server'
+  });
+  //import profileRoutes from './profile/admin/routes.js';
+  for (const model of schema.models.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: './admin/routes.js',
-      defaultImport: 'admin'
+      moduleSpecifier: `./${model.name.toString()}/admin/routes.js`,
+      defaultImport: `${model.name.camelCase}Routes`
     });
-    //export { admin };
-    source.addExportDeclaration({ namedExports: [ 'admin' ] });
   }
+
+  //export default function route(router: MethodRouter) {}
+  source.addFunction({
+    isDefaultExport: true,
+    name: 'admin',
+    parameters: [
+      { name: 'server', type: 'Server' }
+    ],
+    statements: `
+      ${Array.from(schema.models.values()).map(
+        model => `${model.name.camelCase}Routes(server);`
+      ).join('\n')}
+    `.trim()
+  });
 };

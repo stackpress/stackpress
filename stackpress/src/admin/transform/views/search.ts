@@ -1,19 +1,20 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress
-import { renderCode } from '../../../helpers.js';
 //stackpress/schema
-import type Model from '../../../schema/model/Model.js';
-import type ModelColumns from '../../../schema/model/ModelColumns.js';
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
 
 export default function searchView(directory: Directory, model: Model) {
-  const file = model.name.toPathName('%s/admin/views/search.tsx');
-  const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${row.${name}}`).join('/');
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+
+  const filepath = model.name.toPathName('%s/admin/views/search.tsx');
+  //load Profile/admin/views/search.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { ChangeEvent, MouseEventHandler, SetStateAction } from 'react';
   source.addImportDeclaration({
@@ -21,11 +22,11 @@ export default function searchView(directory: Directory, model: Model) {
     moduleSpecifier: 'react',
     namedImports: [ 'ChangeEvent', 'MouseEventHandler', 'SetStateAction' ]
   });
-  //import type { SearchParams } from 'stackpress/sql';
+  //import type { StoreSearchQuery } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql',
-    namedImports: [ 'SearchParams' ]
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSearchQuery' ]
   });
   //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -70,31 +71,34 @@ export default function searchView(directory: Directory, model: Model) {
     moduleSpecifier: 'frui/Button',
     defaultImport: 'Button'
   });
-  //import Pagination from 'frui/Pagination';
+  //import Pager from 'frui/Pager';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/Pagination',
-    defaultImport: 'Pagination'
+    moduleSpecifier: 'frui/Pager',
+    defaultImport: 'Pager'
   });
   //import Table from 'frui/Table';
   source.addImportDeclaration({
     moduleSpecifier: 'frui/Table',
     defaultImport: 'Table'
   });
+  //import { notify, flash } from 'frui/Notifier';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Notifier',
+    namedImports: [ 'notify', 'flash' ]
+  });
   //import Input from 'frui/form/Input';
   source.addImportDeclaration({
     moduleSpecifier: 'frui/form/Input',
     defaultImport: 'Input'
   });
-  //import { paginate, filter, order, notify, flash, useServer, 
-  //Pagination, LayoutAdmin } from 'stackpress/view/client';
+  //import { paginate, filter, order, useServer, 
+  // LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [
       'paginate',
       'filter',
       'order',
-      'notify',
-      'flash',
       'useServer',
       'LayoutAdmin'
     ]
@@ -104,40 +108,40 @@ export default function searchView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/view/import',
     namedImports: [ 'batchAndSend' ]
   });
-  //import CreatedListFormat from '../../components/lists/CreatedListFormat.js';
+  //import CreatedListFormat from '../../components/list/CreatedListFormat.js';
   model.component.listFormats.toArray().forEach(column => {
     const attribute = column.component.listFormat!;
     //skip if virtual component definition
     if (attribute.component.isVirtual) return;
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
-        '../../components/lists/%sListFormat.js'
+        '../../components/list/%sListFormat.js'
       ),
       defaultImport: column.name.toComponentName('%sListFormat')
     });
   });
-  //import { ActiveFilterControl } from '../../components/filters/ActiveFilter.js';
+  //import { ActiveFilterControl } from '../../components/filter/ActiveFilterField.js';
   model.component.filterFields.toArray().forEach(column => {
     const attribute = column.component.filterField!;
     //skip if virtual component definition
     if (attribute.component.isVirtual) return;
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
-        '../../components/filters/%sFilter.js'
+        '../../components/filter/%sFilterField.js'
       ),
-      namedImports: [ column.name.toComponentName('%sFilterControl') ]
+      namedImports: [ column.name.toComponentName('%sFilterFieldControl') ]
     });
   });
-  //import { ActiveSpanControl } from '../../components/spans/ActiveSpan.js';
+  //import { ActiveSpanControl } from '../../components/span/ActiveSpanField.js';
   model.component.spanFields.toArray().forEach(column => {
     const attribute = column.component.spanField!;
     //skip if virtual component definition
     if (attribute.component.isVirtual) return;
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
-        '../../components/spans/%sSpan.js'
+        '../../components/span/%sSpanField.js'
       ),
-      namedImports: [ column.name.toComponentName('%sSpanControl') ]
+      namedImports: [ column.name.toComponentName('%sSpanFieldControl') ]
     });
   });
 
@@ -147,7 +151,7 @@ export default function searchView(directory: Directory, model: Model) {
     name: model.name.toComponentName('Admin%sSearchCrumbs'),
     statements: renderCode(TEMPLATE.SEARCH_CRUMBS, {
       search: {
-        label: model.name.plural,
+        label: model.name.plural || model.name.titleCase,
         icon: model.name.icon
       }
     })
@@ -159,7 +163,7 @@ export default function searchView(directory: Directory, model: Model) {
     parameters: [{ 
       name: 'props', 
       type: `{ 
-        query: SearchParams, 
+        query: StoreSearchQuery, 
         close: MouseEventHandler<HTMLElement> 
       }` 
     }],
@@ -167,12 +171,12 @@ export default function searchView(directory: Directory, model: Model) {
       fields: Array.from(model.columns.values()).map(column => {
         if (column.component.filterField?.component) {
           return renderCode(TEMPLATE.SEARCH_FILTERS_FIELD, {
-            component: column.name.toComponentName('%sFilterControl'),
+            component: column.name.toComponentName('%sFilterFieldControl'),
             column: column.name.toString()
           });
         } else if (column.component.spanField?.component) {
           return renderCode(TEMPLATE.SEARCH_FILTERS_FIELD, {
-            component: column.name.toComponentName('%sSpanControl'),
+            component: column.name.toComponentName('%sSpanFieldControl'),
             column: column.name.toString()
           });
         }
@@ -195,9 +199,9 @@ export default function searchView(directory: Directory, model: Model) {
     }],
     statements: renderCode(TEMPLATE.SEARCH_FORM_BODY, {
       searchable: model.store.searchables.size > 0,
-      export: model.name.toURLPath('`${base/%s/export}`'),
-      import: model.name.toURLPath('`${base/%s/import}`'),
-      create: model.name.toURLPath('`${base/%s/create}`')
+      export: model.name.toURLPath("'base/%s/export'"),
+      import: model.name.toURLPath("'base/%s/import'"),
+      create: model.name.toURLPath("'base/%s/create'")
     })
   });
   //export function AdminProfileSearchResults() {}
@@ -208,14 +212,14 @@ export default function searchView(directory: Directory, model: Model) {
       name: 'props', 
       type: `{ 
         base: string,
-        query: Partial<SearchParams>, 
-        results: ProfileExtended[], 
+        query: Partial<StoreSearchQuery>, 
+        results: ${model.name.toTypeName('%sExtended')}[], 
         can: (...permits: SessionPermission[]) => boolean 
       }`
     }],
     statements: renderCode(TEMPLATE.SEARCH_RESULTS_BODY, {
       headers: (
-        model.component.listFormats as ModelColumns
+        model.component.listFormats
       ).toArray().filter(column => {
         const attribute = column.component.listFormat!;
         return !attribute.component.isVirtual;
@@ -229,7 +233,7 @@ export default function searchView(directory: Directory, model: Model) {
         }
       )).join('\n'),
       columns: (
-        model.component.listFormats as ModelColumns
+        model.component.listFormats
       ).toArray().filter(column => {
         const attribute = column.component.listFormat!;
         return !attribute.component.isVirtual;
@@ -398,10 +402,10 @@ return (
 
 SEARCH_RESULTS_TABLE_HEAD_SORTABLE:
 `<Table.Head noWrap stickyTop addClassName="results-label sortable">
-  <span onClick={() => order('sort[<%column%>}]')}>
+  <span onClick={() => order('sort[<%column%>]')}>
     {_('<%label%>')}
   </span>
-  {!sort.<%column%>} ? (
+  {!sort.<%column%> ? (
     <i className="icon fas fa-sort"></i>
   ) : null}
   {sort.<%column%> === 'asc' ? (
@@ -450,17 +454,21 @@ return (
     head="theme-bg-3"
   >
     <%headers%>
-    <Table.Head stickyTop stickyRight className="results-label" />
+    <%#path%>
+      <Table.Head stickyTop stickyRight className="results-label" />
+    <%/path%>
     {results.map((row, index) => (
       <Table.Row key={index}>
         <%columns%>
-        <Tcol stickyRight className="results-value center">
-          {can({ method: 'GET', route: \`\${base}/<%model%>/detail/<%path%>\`}) ? (
-            <Button info className="detail" href={\`detail/\${row.id}\`}>
-              <i className="fas fa-fw fa-caret-right"></i>
-            </Button>
-          ) : null}
-        </Table.Col>
+        <%#path%>
+          <Table.Col stickyRight className="results-value center">
+            {can({ method: 'GET', route: \`\${base}/<%model%>/detail/<%path%>\`}) ? (
+              <Button info className="detail" href={\`detail/<%path%>\`}>
+                <i className="fas fa-fw fa-caret-right"></i>
+              </Button>
+            ) : null}
+          </Table.Col>
+        <%/path%>
       </Table.Row>
     ))}
   </Table>
@@ -468,13 +476,13 @@ return (
 
 SEARCH_BODY:
 `//props
-const { config, session, request, response } = useServer<AdminConfigProps, Partial<SearchParams>, <%type%>>();
+const { config, session, request, response } = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
 const base = config.path('admin.base', '/admin');
 const can = session.can.bind(session);
 const query = request.data();
 const skip = query.skip || 0;
 const take = query.take || 50;
-const results = response.results as <%type%>};
+const results = response.results as <%type%>;
 const total = response.total || 0;
 //hooks
 const { _ } = useLanguage();
@@ -521,11 +529,11 @@ return (
         />
       )}
     </div>
-    <Pagination 
+    <Pager
       total={total} 
       take={take} 
       skip={skip} 
-      paginate={page} 
+      onUpdate={page} 
     />
   </main>
 );`,

@@ -1,22 +1,23 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress
-import { renderCode } from '../../../helpers.js';
 //stackpress/schema
-import type Model from '../../../schema/model/Model.js';
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
 //stackpress/admin
 import { render } from '../helpers.js';
 
 export default function updateView(directory: Directory, model: Model) {
-  const file = model.name.toPathName('%s/admin/views/update.tsx');
-  const source = directory.createSourceFile(file, '', { overwrite: true });
   const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
   const link = (action: string) => `\`\${base}/${model.name.dashCase}/${action}/${path}\``;
 
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+  const filepath = model.name.toPathName('%s/admin/views/update.tsx');
+  //load Profile/admin/views/update.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -59,27 +60,20 @@ export default function updateView(directory: Directory, model: Model) {
     moduleSpecifier: 'frui/Button',
     defaultImport: 'Button'
   });
-  //import { ActiveFieldControl } from '../../components/fields/ActiveField.js';
+  //import { ActiveFieldControl } from '../../components/form/ActiveField.js';
   model.component.formFields.forEach(column => {
     const field = column.component.formField!;
     const component = field.component.definition!;
-    if (component.name === 'Fieldset') {
-      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
-      source.addImportDeclaration({
-        moduleSpecifier: column.name.toPathName(
-          '../../components/fields/%sField.js'
-        ),
-        namedImports: [ 
-          column.name.toComponentName('%sFieldsetControl') 
-        ]
-      });
-      return;
-    }
+    //import { ActiveFieldsetControl } from '../../components/form/ActiveField.js';
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
-        '../../components/fields/%sField.js'
+        '../../components/form/%sFormField.js'
       ),
-      namedImports: [ column.name.toComponentName('%sFieldControl') ]
+      namedImports: [ 
+        component.name === 'Fieldset'
+          ? column.name.toComponentName('%sFormFieldsetControl') 
+          : column.name.toComponentName('%sFormFieldControl') 
+      ]
     });
   });
 
@@ -95,7 +89,7 @@ export default function updateView(directory: Directory, model: Model) {
     }],
     statements: renderCode(TEMPLATE.UPDATE_CRUMBS_BODY, {
       search: {
-        label: model.name.plural,
+        label: model.name.plural || model.name.titleCase,
         icon: model.name.icon
       },
       detail: {
@@ -120,27 +114,16 @@ export default function updateView(directory: Directory, model: Model) {
         const component = attribute.component.definition!;
         if (component.name === 'Fieldset') {
           return renderCode(TEMPLATE.UPDATE_FORM_FIELDSET, {
-            component: column.name.toComponentName('%sFieldsetControl'),
+            component: column.name.toComponentName('%sFormFieldsetControl'),
             column: column.name.toURLPath()
           });
         }
         return renderCode(TEMPLATE.UPDATE_FORM_FIELD, {
-          component: column.name.toComponentName('%sFieldControl'),
+          component: column.name.toComponentName('%sFormFieldControl'),
           column: column.name.toURLPath(),
           multiple: column.type.multiple ? '[]' : ''
         });
       }).join('\n')
-    })
-  });
-  //export function AdminProfileUpdateBody() {}
-  source.addFunction({
-    isExported: true,
-    name: model.name.toComponentName('Admin%sUpdateBody'),
-    statements: renderCode(TEMPLATE.UPDATE_BODY, {
-      input: model.name.toTypeName('%sInput'),
-      type: model.name.toTypeName('%sExtended'),
-      crumbs: model.name.toComponentName('Admin%sUpdateCrumbs'),
-      form: model.name.toComponentName('Admin%sUpdateForm')
     })
   });
   //export function AdminProfileUpdateBody() {}
@@ -208,8 +191,8 @@ return (
     <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
       {_('<%search.label%>')}
     </Bread.Crumb>
-    <Bread.Crumb href="<%detail.href%>">
-      {_('<%detail.label%>')}
+    <Bread.Crumb href={<%detail.href%>}>
+      {_(\`<%detail.label%>\`)}
     </Bread.Crumb>
     <Bread.Crumb icon="edit">
       {_('Update')}
@@ -253,7 +236,7 @@ UPDATE_FORM_FIELD:
 />`,
 
 UPDATE_BODY:
-`const { request, response } = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
+`const { config, request, response } = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
 const base = config.path('admin.base', '/admin');
 const input = { ...response.results, ...request.data() };
 const errors = response.errors();

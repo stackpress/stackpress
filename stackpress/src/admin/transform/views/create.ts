@@ -1,16 +1,17 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress
-import { renderCode } from '../../../helpers.js';
 //stackpress/schema
-import type Model from '../../../schema/model/Model.js';
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
 
 export default function createView(directory: Directory, model: Model) {
-  const file = `${model.name.toString()}/admin/views/create.tsx`;
-  const source = directory.createSourceFile(file, '', { overwrite: true });
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+  const filepath = model.name.toPathName('%s/admin/views/create.tsx');
+  //load Profile/admin/views/create.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -53,28 +54,20 @@ export default function createView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useServer', 'LayoutAdmin' ]
   });
-  //import { ActiveFieldControl } from '../../components/fields/ActiveField.js';
+  //import { ActiveFieldControl } from '../../components/form/ActiveField.js';
   model.component.formFields.forEach(column => {
-    //skip if no component
-    const field = column.component.formField;
-    if (!field) return;
-    if (field.name === 'Fieldset') {
-      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
-      source.addImportDeclaration({
-        moduleSpecifier: column.name.toPathName(
-          '../../components/fields/%sField.js'
-        ),
-        namedImports: [ 
-          column.name.toComponentName('%sFieldsetControl') 
-        ]
-      });
-      return;
-    }
+    const field = column.component.formField!;
+    const component = field.component.definition!;
+    //import { ActiveFieldsetControl } from '../../components/form/ActiveField.js';
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
-        '../../components/fields/%sField.js'
+        '../../components/form/%sFormField.js'
       ),
-      namedImports: [ column.name.toComponentName('%sFieldControl') ]
+      namedImports: [ 
+        component.name === 'Fieldset'
+          ? column.name.toComponentName('%sFormFieldsetControl') 
+          : column.name.toComponentName('%sFormFieldControl') 
+      ]
     });
   });
   
@@ -84,7 +77,7 @@ export default function createView(directory: Directory, model: Model) {
     name: model.name.toComponentName('Admin%sCreateCrumbs'),
     statements: renderCode(TEMPLATE.CREATE_CRUMBS, { 
       search: {
-        label: model.name.plural,
+        label: model.name.plural || model.name.titleCase,
         icon: model.name.icon
       }
     })
@@ -105,12 +98,12 @@ export default function createView(directory: Directory, model: Model) {
         const component = attribute.component.definition!;
         if (component.name === 'Fieldset') {
           return renderCode(TEMPLATE.CREATE_FORM_FIELDSET, {
-            component: column.name.toComponentName('%sFieldsetControl'),
+            component: column.name.toComponentName('%sFormFieldsetControl'),
             column: column.name.toURLPath()
           });
         }
         return renderCode(TEMPLATE.CREATE_FORM_FIELD, {
-          component: column.name.toComponentName('%sFieldControl'),
+          component: column.name.toComponentName('%sFormFieldControl'),
           column: column.name.toURLPath(),
           multiple: column.type.multiple ? '[]' : ''
         });
