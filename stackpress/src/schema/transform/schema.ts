@@ -1,0 +1,216 @@
+//modules
+import type { Directory } from 'ts-morph';
+import { Scope } from 'ts-morph';
+//stackpress/schema
+import type Fieldset from '../Fieldset.js';
+//stackpress/schema/transform
+import { loadProjectFile, renderCode } from './helpers.js';
+
+export default function generate(directory: Directory, model: Fieldset) {
+  //dont include columns that are models 
+  //(those are more of relational information)
+  const columns = model.columns.filter(
+    column => !column.type.model
+  );
+
+  const filepath = model.name.toPathName('%s/%sSchema.ts');
+  //load Profile/ProfileSchema.ts if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
+  //import * as z from 'zod';
+  source.addImportDeclaration({
+    moduleSpecifier: 'zod',
+    namespaceImport: 'z'
+  });
+  //import AbstractSchema from 'stackpress/AbstractSchema';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/AbstractSchema',
+    defaultImport: 'AbstractSchema'
+  });
+  //import { removeUndefined } from 'stackpress/schema/helpers';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/schema/helpers',
+    namedImports: [ 'removeUndefined' ]
+  });
+  //import type { Profile, ProfileSchemaInterface } from './types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: './types.js',
+    namedImports: [ 
+      model.name.toTypeName(), 
+      model.name.toClassName('%sSchemaInterface') 
+    ]
+  });
+  //import AddressSchema from '../Address/AddressSchema.js';
+  //import StreetSchema from './columns/StreetSchema.js';
+  for (const column of columns.values()) {
+    if (column.type.fieldset) {
+      //import AddressSchema from '../Address/AddressSchema.js';
+      source.addImportDeclaration({
+        moduleSpecifier: column.type.fieldset.name.toPathName('../%s/%sSchema.js'),
+        defaultImport: column.type.fieldset.name.toClassName('%sSchema')
+      });
+    } else {
+      //import StreetSchema from './columns/StreetSchema.js';
+      source.addImportDeclaration({
+        moduleSpecifier: column.name.toPathName('./columns/%sSchema.js'),
+        defaultImport: column.name.toClassName('%sSchema')
+      });
+    }
+  }
+
+  //export default class AddressSchema {};
+  const definition = source.addClass({
+    isDefaultExport: true,
+    name: model.name.toClassName('%sSchema'),
+    //extends AbstractSchema<Address, { ColumnSchema, ... }>
+    extends: `AbstractSchema<${model.name.toTypeName()}, {${
+      columns.map(
+        column => `${column.name.toString()}: ${
+          column.type.fieldset 
+            ? column.type.fieldset.name.toClassName('%sSchema')
+            : column.name.toClassName('%sSchema')
+        }`
+      ).toArray().join(', ')
+    }}>`,
+    //implements ProfileSchemaInterface
+    implements: [ model.name.toClassName('%sSchemaInterface') ]
+  });
+  //public readonly name = 'StreetAddress';
+  definition.addProperty({
+    scope: Scope.Public,
+    isReadonly: true,
+    name: 'name',
+    initializer: JSON.stringify(model.name.toString())
+  });
+  //public readonly column;
+  //(done this way to prevent namespace issues)
+  definition.addProperty({
+    scope: Scope.Public,
+    isReadonly: true,
+    name: 'columns'
+  });
+  //public readonly shape;
+  definition.addProperty({
+    scope: Scope.Public,
+    isReadonly: true,
+    name: 'shape'
+  });
+  //public get defaults() {}
+  definition.addGetAccessor({
+    scope: Scope.Public,
+    name: 'defaults',
+    statements: renderCode(TEMPLATE.DEFAULTS, {
+      columns: columns.map(column => ({
+        column: column.name.toString()
+      })).toArray()
+    })
+  });
+  //public constructor(seed = '') {}
+  definition.addConstructor({
+    scope: Scope.Public,
+    parameters: [{ name: 'seed', initializer: "''" }],
+    statements: renderCode(TEMPLATE.CONSTRUCTOR, {
+      columns: columns.map(column => ({ 
+        column: column.name.toPropertyName(), 
+        classname: column.name.toClassName('%sSchema'),
+        seed: column.value.encrypted ? 'seed': ''
+      })).toArray()
+    })
+  });
+  //public assert(value: Record<string, any>, required = false) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    name: 'assert',
+    parameters: [
+      { name: 'value', type: 'Record<string, any>' },
+      { name: 'required', initializer: 'false' }
+    ],
+    statements: renderCode(TEMPLATE.ASSERT, {
+      columns: columns.map(column => ({
+        column: column.name.toString(),
+      })).toArray()
+    })
+  });
+  //public serialize(value: Record<string, any>) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    name: 'serialize',
+    parameters: [{ name: 'value', type: 'Record<string, any>' }],
+    statements: renderCode(TEMPLATE.SERIALIZE, {
+      columns: columns.map(column => ({
+        scalar: !column.type.fieldset && !column.type.multiple,
+        column: column.name.toString(),
+      })).toArray()
+    })
+  });
+  //public unserialize(value: Record<string, any>) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    name: 'unserialize',
+    parameters: [{ name: 'value', type: 'Record<string, any>' }],
+    statements: renderCode(TEMPLATE.UNSERIALIZE, {
+      columns: columns.map(column => ({
+        column: column.name.toString(),
+      })).toArray()
+    })
+  });
+  return definition;
+};
+
+export const TEMPLATE = {
+
+DEFAULTS:
+`return {
+  <%#columns%>
+    <%column%>: this.columns.<%column%>.defaults,
+  <%/columns%>
+};`,
+
+CONSTRUCTOR:
+`super(seed);
+this.columns = {
+  <%#columns%>
+    <%column%>: new <%classname%>(<%seed%>),
+  <%/columns%>
+};
+this.shape = z.object({
+  <%#columns%>
+    <%column%>: this.columns.<%column%>.shape,
+  <%/columns%>
+});`,
+
+ASSERT:
+`const errors = {
+  <%#columns%>
+    <%column%>: required || typeof value.<%column%> !== 'undefined' 
+      ? (this.columns.<%column%>.assert(value.<%column%>) || undefined)
+      : undefined,
+  <%/columns%>
+};
+return Object.values(errors).some(Boolean) 
+  ? removeUndefined(errors) 
+  : null;`,
+
+SERIALIZE:
+`return removeUndefined({
+  <%#columns%>
+    <%#scalar%>
+      <%column%>: this.columns.<%column%>.serialize(value.<%column%>),
+    <%/scalar%>
+    <%^scalar%>
+      <%column%>: JSON.stringify(
+        this.columns.<%column%>.serialize(value.<%column%>)
+      ),
+    <%/scalar%>
+  <%/columns%>
+});`,
+
+UNSERIALIZE:
+`return removeUndefined({
+  <%#columns%>
+    <%column%>: this.columns.<%column%>.unserialize(value.<%column%>),
+  <%/columns%>
+});`
+
+};

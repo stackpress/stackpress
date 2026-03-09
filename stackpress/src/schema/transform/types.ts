@@ -1,0 +1,203 @@
+//modules
+import type { Directory } from 'ts-morph';
+//stackpress/schema
+import type Fieldset from '../Fieldset.js';
+import type Model from '../Model.js';
+//stackpress/schema/transform
+import { loadProjectFile } from './helpers.js';
+
+const objects = [ 'Json', 'Object', 'Hash' ];
+
+const typemap: Record<string, string> = {
+  String: 'string',
+  Text: 'string',
+  Number: 'number',
+  Integer: 'number',
+  Float: 'number',
+  Boolean: 'boolean',
+  Date: 'Date',
+  Time: 'Date',
+  Datetime: 'Date',
+  Json: 'Record<string, ScalarInput>',
+  Object: 'Record<string, ScalarInput>',
+  Hash: 'Record<string, ScalarInput>'
+};
+
+export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) {
+  const columns = fieldset.columns.filter(
+    column => !column.type.model
+  ).toArray();
+  const enums = fieldset.type.enums.toArray().map(column => column.type);
+  const fieldsets = fieldset.type.fieldsets
+    .map(column => column.type.fieldset!)
+    .toArray()
+    .filter((value, index, self) => self.findIndex(
+      fieldset => fieldset.name.toString() === value.name.toString()
+    ) === index);
+  const inputs = columns
+    .filter(column => !column.value.generated)
+    .filter(column => [ 
+      //should be a name on the map
+      ...Object.keys(typemap),
+      //...also include enum names
+      ...fieldset.type.enums.toArray().map(column => column.type.name),
+      //...also include fieldset names
+      ...fieldset.type.fieldsets.toArray().map(
+        column => column.type.fieldset?.name.toString()
+      )
+    ].includes(column.type.name));
+
+  const filepath = fieldset.name.toPathName('%s/types.ts');
+  //load Address/types.ts if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
+  //import type { ScalarInput } from '@stackpress/lib/types';
+  if (columns.some(column => objects.includes(column.type.name))) {
+    source.addImportDeclaration({
+      moduleSpecifier: '@stackpress/lib/types',
+      namedImports: [ 'ScalarInput' ]
+    });
+  }
+  //import SchemaInterface from 'stackpress/SchemaInterface';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/SchemaInterface',
+    defaultImport: 'SchemaInterface'
+  });
+  //import type { Address } from '../Address/types.js'
+  for (const fieldset of fieldsets) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: fieldset.name.toPathName('../%s/types.js'),
+      namedImports: [ fieldset.name.toTypeName() ]
+    });
+  }
+  //import type AddressSchema from '../Address/AddressSchema.js';
+  //import type StreetSchema from './columns/StreetSchema.js';
+  for (const column of columns.values()) {
+    if (column.type.fieldset) {
+      //import type AddressSchema from '../Address/AddressSchema.js';
+      source.addImportDeclaration({
+        isTypeOnly: true,
+        moduleSpecifier: column.type.fieldset.name.toPathName('../%s/%sSchema.js'),
+        defaultImport: column.type.fieldset.name.toClassName('%sSchema')
+      });
+    } else {
+      //import type StreetSchema from './columns/StreetSchema.js';
+      source.addImportDeclaration({
+        isTypeOnly: true,
+        moduleSpecifier: column.name.toPathName('./columns/%sSchema.js'),
+        defaultImport: column.name.toClassName('%sSchema')
+      });
+    }
+  }
+  //import { Roles } from '../enums.js'
+  if (enums.length > 0) {
+    source.addImportDeclaration({
+      moduleSpecifier: '../enums.js',
+      //filter out duplicate enums
+      namedImports: enums.filter((value, index, self) => self.findIndex(
+        enumType => enumType.name === value.name) === index
+      )
+    });
+  }
+
+  //export type Address
+  source.addTypeAlias({
+    isExported: true,
+    name: fieldset.name.titleCase,
+    type: (`{
+      ${columns.filter(
+        //filter out columns that are not in the map
+        column => !!typemap[column.type.name] 
+          || !!column.type.enum 
+          || !!column.type.fieldset
+      ).map(column => (
+        //name?: string
+        `${column.name.toTypeName()}: ${
+          typemap[column.type.name] || column.type.name
+        }${
+          column.type.multiple ? '[]' : ''
+        }${!column.type.required ? ' | null' : ''}`
+      )).join(',\n')}
+    }`)
+  });
+  //export type AddressInput
+  source.addTypeAlias({
+    isExported: true,
+    name: fieldset.name.toTypeName('%sInput'),
+    type: (`{
+      ${inputs.map(column => (
+        //name?: string
+        `${column.name.toTypeName()}${!column.type.required 
+          || typeof column.value.default !== 'undefined' ? '?' : ''
+        }: ${typemap[column.type.name] || column.type.name}${
+          column.type.multiple ? '[]' : ''
+        }${!column.type.required ? ' | null' : ''}`
+      )).join(',\n')}
+    }`)
+  });
+  //export interface ProfileSchemaInterface extends SchemaInterface<T, C> {};
+  source.addInterface({
+    isExported: true,
+    name: `${fieldset.name.toClassName()}SchemaInterface`,
+    extends: [
+      `SchemaInterface<${fieldset.name.toTypeName()}, {${
+        columns.map(
+          column => `${column.name.toString()}: ${
+            column.type.fieldset 
+              ? column.type.fieldset.name.toClassName('%sSchema')
+              : column.name.toClassName('%sSchema')
+          }`
+        ).join(', ')
+      }}>`
+    ]
+  });
+
+  return source;
+};
+
+export function generateModelTypes(directory: Directory, model: Model) {
+  const models = model.store.foreignRelationships
+    .map(column => column.type.model!)
+    .toArray()
+    .filter((value, index, self) => self.findIndex(
+      model => model.name.toString() === value.name.toString()
+    ) === index);
+
+  //load profile/types.ts if it exists, if not create it
+  const source = generateFieldsetTypes(directory, model);
+
+  //import type { Profile } from '../Profile/types.js'
+  for (const model of models) {
+    source.addImportDeclaration({
+      moduleSpecifier: model.name.toPathName('../%s/types.js'),
+      namedImports: [ model.name.toTypeName() ]
+    });
+  }
+
+  //export type ProfileExtended
+  if (model.store.foreignRelationships.size > 0) {
+    source.addTypeAlias({
+      isExported: true,
+      name: model.name.toTypeName('%sExtended'),
+      type: (`${model.name.toTypeName()} & {
+        ${model.store.foreignRelationships.map(column => (
+          //user?: User
+          `${column.name.toTypeName()}${
+            !column.type.required ? '?' : ''
+          }: ${column.type.name}${
+            column.type.multiple ? '[]' : ''
+          }`
+        )).toArray().join(',\n')}
+      }`)
+    });
+  } else {
+    source.addTypeAlias({
+      isExported: true,
+      name: model.name.toTypeName('%sExtended'),
+      type: model.name.toTypeName()
+    });
+  }
+
+  
+};
