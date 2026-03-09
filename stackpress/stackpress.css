@@ -2,215 +2,11 @@
 
 :root { display: initial; }
 
-/* Crumbs */
-
-.crumbs {
-  align-items: center;
-  display: flex; 
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.crumbs-header {
-  align-items: center;
-  display: none;
-  overflow-x: hidden;
-  white-space: nowrap;
-}
-
-a.crumbs-header {
-  cursor: pointer;
-}
-
-.crumbs-header .back {
-  color: var(--tx2);
-  font-size: 20px;
-  margin-right: 5px;
-}
-
-.crumbs-header .icon {
-  font-size: 14px;
-  margin-right: 2px;
-}
-
-.crumbs-header .label {
-  font-weight: bold;
-}
-
-.crumbs .crumb {
-  align-items: center;
-  color: var(--tx1);
-  display: inline-flex;
-}
-
-.crumbs a.crumb {
-  color: var(--info);
-  font-weight: bold;
-}
-
-.crumbs .icon {
-  color: var(--tx1);
-  display: inline-block;
-  margin-right: 5px;
-}
-
-.crumbs .next {
-  color: var(--tx1);
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-@media (max-width: 767px) {
-  .crumbs {
-    display: none;
-  }
-  .crumbs .header {
-    display: flex;
-  }
-}
-
-/* Pagination */
-
-.pagination {
-  background-color: var(--bg1);
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  padding-bottom: 12px;
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 12px;
-}
-
-.pagination .prev, .pagination .next {
-  background-color: var(--bg2);
-  border-color: var(--bd1);
-  border-style: solid;
-  border-width: 1px;
-  color: var(--tx1);
-  font-size: 14px;
-  font-weight: normal;
-  padding-bottom: 8px;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  position: relative;
-}
-
-.pagination .page {
-  align-items: center;
-  background-color: var(--bg2);
-  border-color: var(--bd1);
-  border-style: solid;
-  border-width: 1px;
-  color: var(--tx1);
-  display: inline-flex;
-  font-size: 14px;
-  font-weight: bold;
-  padding-bottom: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 5px;
-  position: relative;
-  z-index: 10;
-}
-
-.pagination .page.active {
-  background-color: var(--bg1);
-}
-
-/* Modal */
-
-.modal-confirm {
-  border: 1px solid var(--bd0);
-  padding: 16px;
-  margin-top: 8px;
-}
-
-.modal-confirm .message {
-  font-size: 26px;
-}
-
-.modal-confirm .alert {
-  color: var(--muted);
-}
-
-.modal-confirm .icon {
-  margin-right: 5px;
-}
-
-.modal-confirm .confirm {
-  border-radius: 8px;
-  font-weight: bold;
-  margin-right: 10px;
-  margin-top: 16px;
-  text-transform: uppercase;
-}
-
-.modal-confirm .cancel {
-  border-radius: 8px;
-  color: var(--tx1);
-  font-weight: bold;
-  margin-top: 16px;
-  text-transform: uppercase;
-}
-
-.layout-modal {
-  background-color: var(--bg3);
-  border: 2px solid var(--bg2);
-  color: #222222;
-  padding: 16px;
-}
-
-/* Fieldset */
-
-.field-fieldset {
-  border: 1px solid var(--bd2);
-  margin: 10px 0;
-  position: relative;
-}
-
-.field-fieldset header a {
-  color: var(--error);
-  cursor: pointer;
-  font-size: 20px;
-}
-
-.field-fieldset.field-fieldset-error {
-  border-color: var(--error);
-}
-
-.field-fieldset.field-fieldset-multiple header {
-  align-items: center;
-  background-color: var(--bg1);
-  display: flex;
-  padding: 10px;
-}
-
-.field-fieldset.field-fieldset-multiple header h6 {
-  flex-grow: 1;
-}
-
-.field-fieldset.field-fieldset-optional header a {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-}
-
-.field-fieldset main {
-  padding: 10px;
-}
-
-.field-fieldset .field-fieldset-control {
-  padding: 10px 0;
-}
-
-
 
 /* Layout Head */
 
 .layout-head {
-  background-color: var(--bg1);
+  background-color: var(--bg-first);
   height: 60px;
   left: 0;
   right: 0;
@@ -237,7 +33,7 @@ a.crumbs-header {
 .layout-head .menu {
   background-color: transparent;
   border: 0;
-  color: var(--tx1);
+  color: var(--default);
   display: none;
   font-size: 18px;
   padding: 0;
@@ -247,7 +43,7 @@ a.crumbs-header {
 
 .layout-head .bar a {
   align-items: center;
-  color: var(--tx1);
+  color: var(--default);
   display: flex;
   text-decoration: none;
 }
@@ -284,7 +80,7 @@ a.crumbs-header {
 .layout-head .user {
   background-color: transparent;
   border: 0;
-  color: var(--tx1);
+  color: var(--default);
   font-size: 26px;
   padding: 0;
 }
@@ -318,7 +114,7 @@ a.crumbs-header {
 
 .layout-left header {
   align-items: center;
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
   display: flex;
   height: 60px;
   padding: 0 10px;
@@ -331,7 +127,7 @@ a.crumbs-header {
 
 .layout-left header .brand > a {
   align-items: center;
-  color: var(--tx1);
+  color: var(--default);
   display: flex;
   text-decoration: none;
 }
@@ -355,14 +151,14 @@ a.crumbs-header {
 .layout-left header .back {
   background-color: transparent;
   border: 0;
-  color: var(--tx1);
+  color: var(--default);
   display: none;
   padding: 0;
   font-size: 18px;
 }
 
 .layout-left main {
-  background-color: var(--bg1);
+  background-color: var(--bg-first);
   flex-grow: 1;
   overflow-x: auto;
 }
@@ -370,7 +166,7 @@ a.crumbs-header {
 .layout-left main .menu-item {
   align-items: center;
   color: var(--info);
-  border-bottom-color: var(--bd0);
+  border-bottom-color: var(--bg-zero);
   border-bottom-style: solid;
   border-bottom-width: 1px;
   display: flex;
@@ -382,10 +178,10 @@ a.crumbs-header {
 }
 
 .layout-left main .menu-item.active {
-  color: var(--tx1);
+  color: var(--default);
 }
 .layout-left main .menu-item .icon {
-  color: var(--tx1);
+  color: var(--default);
   margin-right: 10px;
 }
 
@@ -404,7 +200,7 @@ a.crumbs-header {
 /* Layout Right */
 
 .layout-right {
-  border-left: 1px solid var(--bd0);
+  border-left: 1px solid var(--bg-zero);
   bottom: 0;
   position: absolute;
   right: -220px;
@@ -427,7 +223,7 @@ a.crumbs-header {
 }
 
 .layout-right main {
-  background-color: var(--bg2);
+  background-color: var(--bg-second);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -441,8 +237,8 @@ a.crumbs-header {
 
 .layout-right .user-menu header .info {
   align-items: center;
-  background-color: var(--bg0);
-  color: var(--tx1);
+  background-color: var(--bg-zero);
+  color: var(--default);
   display: flex;
   padding: 8px 10px;
 }
@@ -454,7 +250,7 @@ a.crumbs-header {
 }
 
 .layout-right .user-menu header .lang {
-  background-color: var(--bg2);
+  background-color: var(--bg-second);
   padding-bottom: 12px;
   padding-left: 10px;
   padding-right: 10px;
@@ -462,7 +258,7 @@ a.crumbs-header {
 }
 
 .layout-right .user-menu header .lang a {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
   color: var(--info);
   display: inline-block;
   font-size: 10px;
@@ -470,7 +266,7 @@ a.crumbs-header {
   padding: 5px;
 }
 .layout-right .user-menu main {
-  background-color: var(--bg1);
+  background-color: var(--bg-first);
   flex-grow: 1;
 }
 .layout-right .user-menu main .container {
@@ -478,7 +274,7 @@ a.crumbs-header {
 }
 .layout-right .user-menu main .menu-item {
   align-items: center;
-  border-bottom: 1px solid var(--bd0); 
+  border-bottom: 1px solid var(--bg-zero); 
   display: flex;
   padding-bottom: 14px;
   padding-left: 10px;
@@ -497,7 +293,7 @@ a.crumbs-header {
 /* Layout Main */
 
 .layout-main {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
   bottom: 0;
   left: 0;
   position: absolute;
@@ -533,8 +329,8 @@ a.crumbs-header {
 /* Layout Admin */
 
 .layout-admin {
-  background-color: var(--bg0);
-  color: var(--tx1);
+  background-color: var(--bg-zero);
+  color: var(--default);
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -544,8 +340,8 @@ a.crumbs-header {
 /* Layout Blank */
 
 .layout-blank {
-  background-color: var(--bg0);
-  color: var(--tx1);
+  background-color: var(--bg-zero);
+  color: var(--default);
   height: 100%;
   position: relative;
   width: 100%;
@@ -554,8 +350,8 @@ a.crumbs-header {
 /* Layout Panel */
 
 .layout-panel {
-  background-color: var(--bg0);
-  color: var(--tx1);
+  background-color: var(--bg-zero);
+  color: var(--default);
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -565,7 +361,7 @@ a.crumbs-header {
 /* Auth Page */
 
 .auth-page {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
   height: 100%;
   overflow: auto;
   width: 100%;
@@ -589,14 +385,14 @@ a.crumbs-header {
 }
 
 .auth-page .auth-modal {
-  background-color: var(--bg1);
-  border: 1px solid var(--bd3);
+  background-color: var(--bg-first);
+  border: 1px solid var(--bg-third);
   width: 100%;
 }
 
 .auth-page .auth-modal > header {
   align-items: center;
-  background-color: var(--bg2);
+  background-color: var(--bg-second);
   display: flex;
   padding: 10px;
 }
@@ -609,7 +405,7 @@ a.crumbs-header {
 }
 
 .auth-page .auth-modal .auth-tabs {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
   display: flex;
   overflow-x: auto;
   padding-left: 5px;
@@ -619,17 +415,17 @@ a.crumbs-header {
 .auth-page .auth-modal .auth-tabs .auth-tab {
   align-items: center;
   border-bottom: 0;
-  border-left: 1px solid var(--bd1);
-  border-right: 1px solid var(--bd1);
-  border-top: 1px solid var(--bd1);
-  color: var(--tx1);
+  border-left: 1px solid var(--bg-first);
+  border-right: 1px solid var(--bg-first);
+  border-top: 1px solid var(--bg-first);
+  color: var(--default);
   display: inline-flex;
   margin-left: 2px;
   padding: 10px;
   position: relative;
 }
 .auth-page .auth-modal .auth-tabs .auth-tab.active {
-  background-color: var(--bg1);
+  background-color: var(--bg-first);
   border: 0;
 }
 .auth-page .auth-modal .auth-tabs .auth-tab .label {
@@ -694,13 +490,13 @@ a.crumbs-header {
 /* OAuth Page */
 
 .oauth-page .oauth-form .instructions {
-  border-bottom: 1px solid var(--bd0);
+  border-bottom: 1px solid var(--bg-zero);
   padding: 10px 0;
 }
 
 .oauth-page .oauth-form .scope {
   align-items: center;
-  border-bottom: 1px solid var(--bd1);
+  border-bottom: 1px solid var(--bg-first);
   display: flex;
   padding: 10px 0;
 }
@@ -722,7 +518,7 @@ a.crumbs-header {
 /* Admin Form Page */
 
 .admin-page .admin-crumbs {
-  background-color: var(--bg2);
+  background-color: var(--bg-second);
   padding: 10px 14px;
 }
 
@@ -731,7 +527,7 @@ a.crumbs-header {
 }
 
 .admin-form-page {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -768,12 +564,12 @@ a.crumbs-header {
 }
 
 .admin-detail-page .results-label {
-  border-top: 1px solid var(--bd2) !important;
+  border-top: 1px solid var(--bg-second) !important;
   font-weight: bold;
 }
 
 .admin-detail-page .results-value {
-  border-top: 1px solid var(--bd2) !important;
+  border-top: 1px solid var(--bg-second) !important;
 }
 
 .admin-detail-page .admin-actions {
@@ -815,17 +611,17 @@ a.crumbs-header {
 }
 
 .admin-detail-page .admin-results .results-row-1 {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
 }
 
 .admin-detail-page .admin-results .results-row-2 {
-  background-color: var(--bg2);
+  background-color: var(--bg-second);
 }
 
 /* Admin Confirm Page */
 
 .admin-confirm-page {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -837,7 +633,7 @@ a.crumbs-header {
 }
 
 .admin-confirm-page .admin-confirm .message {
-  background-color: var(--bg1);
+  background-color: var(--bg-first);
   font-size: 16px;
   padding: 20px;
 }
@@ -882,7 +678,7 @@ a.crumbs-header {
 /* Admin Search Page */
 
 .admin-search-page {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -903,8 +699,8 @@ a.crumbs-header {
 }
 
 .admin-search-page .admin-filters aside {
-  background-color: var(--bg2);
-  border-left: 1px solid var(--bd1);
+  background-color: var(--bg-second);
+  border-left: 1px solid var(--bg-first);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -912,7 +708,7 @@ a.crumbs-header {
 }
 
 .admin-search-page .admin-filters aside header {
-  background-color: var(--bg3);
+  background-color: var(--bg--third);
   padding: 14px 10px;
   text-transform: uppercase;
 }
@@ -951,8 +747,8 @@ a.crumbs-header {
 }
 
 .admin-search-page .admin-search-form .search .filter {
-  background-color: var(--bg2);
-  border: 1px solid var(--bd2);
+  background-color: var(--bg-second);
+  border: 1px solid var(--bg-second);
   padding: 8px 14px !important;
 }
 
@@ -970,12 +766,12 @@ a.crumbs-header {
 }
 
 .admin-search-page .admin-search-form .search .form form .input {
-  border-color: var(--bd2) !important;
+  border-color: var(--bg-second) !important;
 }
 
 .admin-search-page .admin-search-form .search .form form .submit {
-  background-color: var(--bg2);
-  border: 1px solid var(--bd2);
+  background-color: var(--bg-second);
+  border: 1px solid var(--bg-second);
   border-left: 0;
   padding: 8px 14px !important;
 }
@@ -1013,8 +809,8 @@ a.crumbs-header {
 }
 
 .admin-search-page .admin-search-results .results-label {
-  background-color: var(--bg2);
-  border-color: var(--bd2) !important;
+  background-color: var(--bg-second);
+  border-color: var(--bg-second) !important;
   text-align: left;
 }
 
@@ -1029,14 +825,14 @@ a.crumbs-header {
 }
 
 .admin-search-page .admin-search-results .results-row-1 {
-  background-color: var(--bg0);
+  background-color: var(--bg-zero);
 }
 .admin-search-page .admin-search-results .results-row-2 {
-  background-color: var(--bg1);
+  background-color: var(--bg-first);
 }
 
 .admin-search-page .admin-search-results .results-value {
-  border-color: var(--bd2) !important;
+  border-color: var(--bg-second) !important;
 }
 .admin-search-page .admin-search-results .results-value.left {
   text-align: left;

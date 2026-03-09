@@ -4,6 +4,16 @@ import type { Config } from '../../config/common.js';
 
 export default function plugin(server: HttpServer<Config>) {
   server.on('listen', async _ => {
+    //on error, show error page
+    server.on('error', () => import('./pages/error.js'));
+    //on response, check for errors
+    server.on('response', async (req, res, ctx) => {  
+      if (res.error) {
+        await ctx.emit('error', req, res);
+      }
+    });
+  });
+  server.on('listen', async _ => {
     server.on('error', (req, res) => {
       //if there is already a body
       if (res.body) return;

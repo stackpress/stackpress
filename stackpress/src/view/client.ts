@@ -84,6 +84,14 @@ export {
   useLanguage
 } from 'r22n';
 
+export {
+  flash,
+  notify,
+  unload,
+  useNotifier,
+  NotifierContainer
+} from 'frui/Notifier';
+
 export { paginate, order, filter } from './helpers.js';
 export { useToggle } from './layout/hooks.js';
 export { useTheme } from './theme/hooks.js';
