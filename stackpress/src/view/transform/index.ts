@@ -1,8 +1,8 @@
-//root
-import type { IdeaPluginWithProject } from '../../types/index.js';
-//schema
+//stackpress
+import type { IdeaProjectPluginProps } from '../../types.js';
+//stackpress/schema
 import Schema from '../../schema/Schema.js';
-//local
+//stackpress/view/transform
 import generateViews from './view.js';
 import generateFields from './form.js';
 import generateFilters from './filter.js';
@@ -31,23 +31,23 @@ import generateSpans from './span.js';
 /**
  * This is the The params comes form the cli
  */
-export default async function generate(props: IdeaPluginWithProject) {
+export default async function generate(props: IdeaProjectPluginProps) {
   //-----------------------------//
   // 1. Config
-  //extract props
-  const { schema: config, project } = props;
-  const schema = Schema.make(config);
+  
+  const schema = Schema.make(props.schema);
+  const directory = props.directory;
 
   //-----------------------------//
   // 2. Generators
   // - profile/components/form/
-  generateFields(project, schema);
+  generateFields(directory, schema);
   // - profile/components/filter/
-  generateFilters(project, schema);
+  generateFilters(directory, schema);
   // - profile/components/list/
-  generateLists(project, schema);
+  generateLists(directory, schema);
   // - profile/components/span/
-  generateSpans(project, schema);
+  generateSpans(directory, schema);
   // - profile/components/view/
-  generateViews(project, schema);
+  generateViews(directory, schema);
 };

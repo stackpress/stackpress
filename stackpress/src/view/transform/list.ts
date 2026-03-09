@@ -1,11 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress
-import { renderCode } from '../../helpers.js';
 //stackpress/schema
 import type Schema from '../../schema/Schema.js';
-import type Fieldset from '../../schema/fieldset/Fieldset.js';
-import type Column from '../../schema/column/Column.js';
+import type Fieldset from '../../schema/Fieldset.js';
+import type Column from '../../schema/Column.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../schema/transform/helpers.js';
 
 const formatType: Record<string, string> = {
   String: 'string',
@@ -73,12 +75,14 @@ export function generateFieldsetTable(
   const columnFieldset = column.type.fieldset;
   //skip if no form field 
   if (!attribute?.component.defined || !columnFieldset) return;
+
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%fieldset%>/components/list/<%component%>.tsx', {
     fieldset: fieldset.name.toPathName(),
     component: column.name.toComponentName('%sListFormat')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/list/NameListFormat.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -90,13 +94,20 @@ export function generateFieldsetTable(
     moduleSpecifier: 'frui/Table',
     defaultImport: 'Table'
   });
+  //import type { Address } from '../../../Address/types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: columnFieldset.name.toPathName('../../../%s/types.js'),
+    namedImports: [ columnFieldset.name.toTypeName() ]
+  });
+  //import type { ProfileExtended } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ fieldset.name.toTypeName('%sExtended') ]
+  });
   //import xListFormat from '../../Address/components/list/xListFormat.js'; 
   for (const column of columnFieldset.component.listFormats.values()) {
-    //NOTE: column.list is a computed getter, 
-    // so dont keep computing it multiple times
-    const listFormat = column.component.listFormat;
-    //skip if no list component
-    if (!listFormat) return;
     source.addImportDeclaration({
       moduleSpecifier: renderCode(TEMPLATE.RELATIVE_LIST_FORMAT_PATH, {
         fieldset: columnFieldset.name.toPathName(),
@@ -120,9 +131,13 @@ export function generateFieldsetTable(
       } 
     ],
     statements: renderCode(TEMPLATE.FIELDSET_TABLE, {
+      heads: columnFieldset.component.listFormats.toArray().map(
+        column => renderCode(TEMPLATE.FIELDSET_TABLE_HEAD, {
+          label: column.name.label
+        })
+      ).join('\n'),
       rows: columnFieldset.component.listFormats.toArray().map(
         column => renderCode(TEMPLATE.FIELDSET_TABLE_ROW, {
-          label: column.name.label,
           value: column.type.required
             ? renderCode(TEMPLATE.FIELDSET_TABLE_VALUE, {
               component: column.name.toComponentName('%sListFormat'),
@@ -148,12 +163,15 @@ export function generateFieldsetInfo(
   const columnFieldset = column.type.fieldset;
   //skip if no form field 
   if (!attribute?.component.defined || !columnFieldset) return;
+
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%fieldset%>/components/list/<%component%>.tsx', {
     fieldset: fieldset.name.toPathName(),
     component: column.name.toComponentName('%sListFormat')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/list/NameListFormat.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
@@ -164,16 +182,28 @@ export function generateFieldsetInfo(
     moduleSpecifier: 'frui/Table',
     defaultImport: 'Table'
   });
+  //import type { Address } from '../../../Address/types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: columnFieldset.name.toPathName('../../../%s/types.js'),
+    namedImports: [ columnFieldset.name.toTypeName() ]
+  });
+  //import type { ProfileExtended } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ fieldset.name.toTypeName('%sExtended') ]
+  });
   //import xListFormat from '../../Address/components/list/xListFormat.js'; 
-  columnFieldset.component.listFormats.forEach(column => {
+  for (const column of columnFieldset.component.listFormats.values()) {
     source.addImportDeclaration({
-      moduleSpecifier: renderCode(TEMPLATE.RELATIVE_LIST_FORMAT_PATH, { 
+      moduleSpecifier: renderCode(TEMPLATE.RELATIVE_LIST_FORMAT_PATH, {
         fieldset: columnFieldset.name.toPathName(),
         component: column.name.toComponentName('%sListFormat')
       }),
       defaultImport: column.name.toComponentName('%sListFormat')
     });
-  });
+  }
   //export function AddressListFormat() {
   source.addFunction({
     isDefaultExport: true,
@@ -188,9 +218,9 @@ export function generateFieldsetInfo(
         })
       } 
     ],
-    statements: renderCode(TEMPLATE.FIELDSET_TABLE, {
-      rows: columnFieldset.component.listFormats.map(
-        column => renderCode(TEMPLATE.FIELDSET_TABLE_ROW, {
+    statements: renderCode(TEMPLATE.FIELDSET_INFO, {
+      rows: columnFieldset.component.listFormats.toArray().map(
+        column => renderCode(TEMPLATE.FIELDSET_INFO_ROW, {
           label: column.name.label,
           value: column.type.required
             ? renderCode(TEMPLATE.FIELDSET_TABLE_VALUE, {
@@ -202,7 +232,7 @@ export function generateFieldsetInfo(
               column: column.name.toURLPath()
             })
         })
-      )
+      ).join('\n')
     })
   });
 };
@@ -221,13 +251,16 @@ export function generateFormat(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%fieldset%>/components/list/<%component%>.tsx', {
     fieldset: fieldset.name.toPathName(),
     component: column.name.toComponentName('%sListFormat')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
-  //import Text from 'frui/view/Text';
+  //load Profile/components/list/NameListFormat.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
+  //import Text from 'frui/list/Text';
   source.addImportDeclaration({
     //component token will have import
     //info. just use that as is...
@@ -256,18 +289,23 @@ export function generateFormat(
           name: 'props', 
           type: renderCode(TEMPLATE.LIST_PROPS, {
             data: fieldset.name.toTypeName('%sExtended'),
-            value: formatType[column.type.name],
+            value: column.type.name in formatType 
+              ? formatType[column.type.name]
+              : column.type.enum
+              ? 'string'
+              : 'unknown',
             multiple: column.type.multiple ? '[]' : ''
           })
         }
       ],
-      statements: renderCode(TEMPLATE.FORMAT_TEMPLATE_VIEW, {
+      statements: renderCode(TEMPLATE.FORMAT_TEMPLATE_LIST, {
         template: props.template,
         component: component.name
       })
     });
     return;
   }
+  
   //export function NameListFormat() {
   source.addFunction({
     isDefaultExport: true,
@@ -277,12 +315,16 @@ export function generateFormat(
         name: 'props', 
         type: renderCode(TEMPLATE.LIST_PROPS, {
           data: fieldset.name.toTypeName('%sExtended'),
-          value: formatType[column.type.name],
+          value: column.type.name in formatType 
+            ? formatType[column.type.name]
+            : column.type.enum
+            ? 'string'
+            : 'unknown',
           multiple: column.type.multiple ? '[]' : ''
         })
       }
     ],
-    statements: renderCode(TEMPLATE.FORMAT_VIEW, { 
+    statements: renderCode(TEMPLATE.FORMAT_LIST, { 
       props: JSON.stringify(props),
       component: component.name
     })
@@ -290,9 +332,6 @@ export function generateFormat(
 };
 
 export const TEMPLATE = {
-
-FILE_PATH:
-'<%fieldset%>/components/list/<%component%>.tsx',
 
 RELATIVE_LIST_FORMAT_PATH:
 '../../../<%fieldset%>/components/list/<%component%>.js',
@@ -312,11 +351,45 @@ return (
     column={[ 'theme-bc-2 theme-bg-2', 'theme-bc-2 theme-bg-1' ]}
     head="theme-bg-3"
   >
+    <%heads%>
+    {value.map((value, index) => (
+      <Table.Row key={index}>
+        <%rows%>
+      </Table.Row>
+    ))}
+  </Table>
+);`,
+
+FIELDSET_TABLE_HEAD:
+`<Table.Head noWrap addClassName="font-bold">
+  {_('<%label%>')}
+</Table.Head>`, 
+
+FIELDSET_TABLE_ROW:
+`<Table.Col>
+  <%value%>
+</Table.Col>`, 
+
+FIELDSET_TABLE_VALUE:
+`<<%component%> data={value} value={value['<%column%>']} />`,
+
+FIELDSET_TABLE_VALUE_OPTIONAL:
+`{value['<%column%>'] ? (<<%component%> data={value} value={value['<%column%>']} />) : ''}`,
+
+FIELDSET_INFO:
+`const { value } = props;
+const { _ } = useLanguage();
+if (!Array.isArray(value) || !value.length) return null;
+return (
+  <Table
+    column={[ 'theme-bc-2 theme-bg-2', 'theme-bc-2 theme-bg-1' ]}
+    head="theme-bg-3"
+  >
     <%rows%>
   </Table>
 );`,
 
-FIELDSET_TABLE_ROW:
+FIELDSET_INFO_ROW:
 `<Table.Row>
   <Table.Col noWrap addClassName="font-bold">
     {_('<%label%>')}
@@ -326,13 +399,7 @@ FIELDSET_TABLE_ROW:
   </Table.Col>
 </Table.Row>`, 
 
-FIELDSET_TABLE_VALUE:
-`<<%component%> data={value} value={value['<%column%>']} />`,
-
-FIELDSET_TABLE_VALUE_OPTIONAL:
-`{value['<%column%>'] ? (<<%component%> data={value} value={value['<%column%>']} />) : ''}`,
-
-FORMAT_TEMPLATE_VIEW:
+FORMAT_TEMPLATE_LIST:
 `//props
 const { data } = props;
 const value = mustache.render(
@@ -344,7 +411,7 @@ return (
   <<%component%> value={value} />
 );`,
 
-FORMAT_VIEW:
+FORMAT_LIST:
 `//props
 const { data, value } = props;
 const attributes = { data, ...<%props%> };

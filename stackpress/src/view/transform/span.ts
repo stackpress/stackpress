@@ -1,11 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress
-import { renderCode } from '../../helpers.js';
 //stackpress/schema
 import type Schema from '../../schema/Schema.js';
-import type Column from '../../schema/column/Column.js';
-import type Model from '../../schema/model/Model.js';
+import type Column from '../../schema/Column.js';
+import type Model from '../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, schema: Schema) {
   //for each model
@@ -31,12 +33,14 @@ export function generateSpan(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%model%>/components/span/<%component%>.tsx', {
     model: model.name.toPathName(),
     component: column.name.toComponentName('%sSpanField')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/span/NameSpanField.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -90,9 +94,6 @@ export function generateSpan(
 };
 
 export const TEMPLATE = {
-
-FILE_PATH: 
-'<%model%>/components/span/<%component%>.tsx',
 
 FIELD_FIELD:
 `//props

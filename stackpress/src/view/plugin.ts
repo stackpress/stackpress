@@ -1,7 +1,7 @@
 //node
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-//stackpress
+//modules
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';

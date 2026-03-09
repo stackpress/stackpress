@@ -2,12 +2,16 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //stackpress
-import { renderCode } from '../../helpers.js';
+import Exception from '../../Exception.js';
 //stackpress/schema
 import type Schema from '../../schema/Schema.js';
-import type Fieldset from '../../schema/fieldset/Fieldset.js';
-import type Column from '../../schema/column/Column.js';
-import type Model from '../../schema/model/Model.js';
+import type Fieldset from '../../schema/Fieldset.js';
+import type Column from '../../schema/Column.js';
+import type Model from '../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, schema: Schema) {
   //for each model
@@ -72,12 +76,24 @@ export function generateRelation(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+  if (typeof props.id !== 'string' || !props.id
+    || typeof props.search !== 'string' || !props.search
+    || typeof props.template !== 'string' || !props.template
+  ) {
+    throw Exception.for(
+      '@field.relation in %s -> %s missing id, search or template prop',
+      model.name.toString(),
+      column.name.toString()
+    );
+  }
+  
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%fieldset%>/components/form/<%component%>.tsx', {
     fieldset: model.name.toPathName(),
     component: column.name.toComponentName('%sFormField')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/form/NameFormField.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -154,12 +170,14 @@ export function generateFieldset(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+  
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%fieldset%>/components/form/<%component%>.tsx', {
     fieldset: fieldset.name.toPathName(),
     component: column.name.toComponentName('%sFormField')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/form/NameFormField.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
   
   //import type { ReactNode, CSSProperties } from 'react';
   source.addImportDeclaration({
@@ -293,7 +311,11 @@ export function generateFieldset(
       required: column.type.required ? 'true' : 'false',
       singular: fieldset.name.singular,
       limit: column.type.multiple ? '0' : '1',
-      defaults: JSON.stringify(fieldset.value.staticDefaults),
+      defaults: JSON.stringify(
+        fieldset.value.staticDefaults
+          .map(column => column.value.default)
+          .toObject()
+      ),
       value: column.type.multiple 
         ? 'props.value || []'
         : column.type.required
@@ -336,12 +358,15 @@ export function generateBoolean(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%fieldset%>/components/form/<%component%>.tsx', {
     fieldset: fieldset.name.toPathName(),
     component: column.name.toComponentName('%sFormField')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/form/NameFormField.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+  
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -416,12 +441,15 @@ export function generateField(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+  
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%fieldset%>/components/form/<%component%>.tsx', {
     fieldset: fieldset.name.toPathName(),
     component: column.name.toComponentName('%sFormField')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/form/NameFormField.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -481,9 +509,6 @@ export function generateField(
 };
 
 export const TEMPLATE = {
-
-FILE_PATH:
-'<%fieldset%>/components/form/<%component%>.tsx',
 
 RELATIVE_FORM_FIELD_PATH:
 '../../../<%fieldset%>/components/form/<%component%>.tsx',
@@ -760,7 +785,6 @@ const {
 const { _ } = useLanguage();
 //determine label
 const label = _('<%label%>')<%required%>;
-}
 //renderCode
 return (
   <FieldControl label={label} error={error} className={className}>

@@ -1,11 +1,15 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress
-import { renderCode } from '../../helpers.js';
+import Exception from '../../Exception.js';
 //stackpress/schema
 import type Schema from '../../schema/Schema.js';
-import type Column from '../../schema/column/Column.js';
-import type Model from '../../schema/model/Model.js';
+import type Column from '../../schema/Column.js';
+import type Model from '../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, schema: Schema) {
   //for each model
@@ -46,14 +50,26 @@ export function generateRelation(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+  if (typeof props.id !== 'string' || !props.id
+    || typeof props.search !== 'string' || !props.search
+    || typeof props.template !== 'string' || !props.template
+  ) {
+    throw Exception.for(
+      '@filter.relation in %s missing id, search or template prop',
+      model.name.toString()
+    );
+  }
+
+  //boolean component?
+  const isBoolComponent = [ 'Checkbox', 'Switch' ].indexOf(component.name) !== -1;
+  
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%model%>/components/filter/<%component%>.tsx', {
     model: model.name.toPathName(),
     component: column.name.toComponentName('%sFilterField')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
-  //boolean component?
-  const isBoolComponent = [ 'Checkbox', 'Switch' ].indexOf(component.name) !== -1;
+  //load Profile/components/filter/NameFilterField.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -136,12 +152,14 @@ export function generateBoolean(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%model%>/components/filter/<%component%>.tsx', {
     model: model.name.toPathName(),
     component: column.name.toComponentName('%sFilterField')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/filter/NameFilterField.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -211,12 +229,14 @@ export function generateField(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
+  
   //get the path where this should be saved
-  const path = renderCode(TEMPLATE.FILE_PATH, {
+  const filepath = renderCode('<%model%>/components/filter/<%component%>.tsx', {
     model: model.name.toPathName(),
     component: column.name.toComponentName('%sFilterField')
   });
-  const source = directory.createSourceFile(path, '', { overwrite: true });
+  //load Profile/components/filter/NameFilterField.tsx if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
 
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -271,9 +291,6 @@ export function generateField(
 };
 
 export const TEMPLATE = {
-
-FILE_PATH: 
-'<%model%>/components/filter/<%component%>.tsx',
 
 RELATION_FIELD:
 `//props
