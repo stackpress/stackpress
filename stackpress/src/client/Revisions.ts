@@ -1,9 +1,9 @@
 //node
 import path from 'node:path';
-//stackpress
+//modules
 import type { SchemaConfig } from '@stackpress/idea-parser/types';
 import FileLoader from '@stackpress/lib/FileLoader';
-//schema
+//stackpress/schema
 import Schema from '../schema/Schema.js';
 
 export default class Revisions {
@@ -63,7 +63,7 @@ export default class Revisions {
     //get the last epoch
     const last = await this.last();
     //serialize the last schema
-    const from = last ? JSON.stringify(last.schema, null, 2): '';
+    const from = last ? JSON.stringify(last.config, null, 2): '';
     //serialize the new schema
     const to = JSON.stringify(schema, null, 2);
     //if they are the same
