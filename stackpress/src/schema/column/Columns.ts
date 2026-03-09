@@ -1,23 +1,22 @@
 //modules
 import type { DataMapFilter } from '@stackpress/lib/types';
 import { isObject } from '@stackpress/lib/Nest';
+import DataMap from '@stackpress/lib/Map';
 //stackpress
 import Exception from '../../Exception.js';
-import DataMap from '@stackpress/lib/Map';
 //stackpress/schema
 import type { 
   ColumnToken,
   ColumnTypeToken,
   AttributesToken
 } from '../types.js';
+import type Fieldset from '../Fieldset.js';
+import Attribute from '../Attribute.js';
+import Column from '../Column.js';
 //stackpress/schema/attribute
-import Attribute from '../attribute/Attribute.js';
 import Attributes from '../attribute/Attributes.js';
-//stackpress/schema/fieldset
-import type Fieldset from '../fieldset/Fieldset.js';
 //stackpress/schema/column
 import ColumnType from './ColumnType.js';
-import Column from './Column.js';
 
 /**
  * Collection of columns

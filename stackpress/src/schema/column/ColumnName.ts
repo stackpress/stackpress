@@ -1,12 +1,11 @@
 //stackpress/schema
+import type Column from '../Column.js';
 import { 
   capitalize, 
   camelize, 
   dasherize,
   snakerize 
 } from '../helpers.js';
-//stackpress/schema/column
-import type Column from './Column.js';
 
 export default class ColumnName {
   //column reference
@@ -33,7 +32,8 @@ export default class ColumnName {
    * example: @label("Some Label")
    */
   public get label() {
-    return this._column.attributes.value<string>('label');
+    return this._column.attributes.value<string>('label') 
+      || this.toString();
   }
 
   /**
@@ -71,7 +71,7 @@ export default class ColumnName {
    * ie. Name, ProfileID
    */
   public toClassName(pattern = '%s') {
-    return pattern.replace('%s', this.titleCase);
+    return pattern.replaceAll('%s', this.titleCase);
   }
 
   /**
@@ -84,24 +84,24 @@ export default class ColumnName {
   }
 
   /**
-   * Way to get (and change) the method naming standards
-   * 
-   * ie. nameActions, profileIdActions, getName, getProfileId
-   */
-  public toMethodName(pattern = '%s', titleCase = false) {
-    if (titleCase) {
-      return pattern.replace('%s', this.titleCase);
-    }
-    return pattern.replace('%s', this.camelCase);
-  }
-
-  /**
    * Way to get (and change) the file path naming standards
    * 
    * ie. /stackpress-client/ArticleComment/NameFormField.tsx
    */
   public toPathName(pattern = '%s') {
-    return pattern.replace('%s', this.titleCase);
+    return pattern.replaceAll('%s', this.titleCase);
+  }
+
+  /**
+   * Way to get (and change) the method naming standards
+   * 
+   * ie. nameActions, profileIdActions, getName, getProfileId
+   */
+  public toPropertyName(pattern = '%s', titleCase = false) {
+    if (titleCase) {
+      return pattern.replaceAll('%s', this.titleCase);
+    }
+    return pattern.replaceAll('%s', this.camelCase);
   }
 
   /**
@@ -117,7 +117,7 @@ export default class ColumnName {
    * ie. name, profileId
    */
   public toTypeName(pattern = '%s') {
-    return pattern.replace('%s', this.toString());
+    return pattern.replaceAll('%s', this.toString());
   }
 
   /**
@@ -126,6 +126,6 @@ export default class ColumnName {
    * ie. /name/, /profile_id/, filter[name], filter[profile_id]
    */
   public toURLPath(pattern = '%s') {
-    return pattern.replace('%s', this.underscoreCase);
+    return pattern.replaceAll('%s', this.underscoreCase);
   }
 };

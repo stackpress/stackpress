@@ -10,9 +10,9 @@ import DataMap from '@stackpress/lib/Map';
 //stackpress/schema
 import type { AttributesToken, ColumnToken } from './types.js';
 //stackpress/schema/fieldset
-import Fieldset from './fieldset/Fieldset.js';
+import Fieldset from './Fieldset.js';
 //stackpress/schema/model
-import Model from './model/Model.js';
+import Model from './Model.js';
 
 export default class Schema {
   /**

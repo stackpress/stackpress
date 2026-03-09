@@ -275,17 +275,17 @@ const column: AttributeDataMap = {
     ],
     "data": {}
   },
+  "timestamp": {
+    "type": [ "flag" ],
+    "name": "timestamp",
+    "description": "A flag that will automatically update the timestamp whenever a row is changed.",
+    "args": [],
+    "data": {}
+  },
   "unique": {
     "type": [ "flag" ],
     "name": "unique",
     "description": "A flag that ensures no duplicate value can be added to the model for this column.",
-    "args": [],
-    "data": {}
-  },
-  "updated": {
-    "type": [ "flag" ],
-    "name": "updated",
-    "description": "A flag that will automatically update the timestamp whenever a row is changed.",
     "args": [],
     "data": {}
   }
@@ -310,10 +310,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "required",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Value is required."
     }
   },
@@ -332,10 +328,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "notempty",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must not be empty."
     }
   },
@@ -354,10 +346,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "unique",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Already exists."
     }
   },
@@ -383,10 +371,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "eq",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be equal to {{arg}}."
     }
   },
@@ -412,10 +396,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "ne",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must not be equal to {{arg}}."
     }
   },
@@ -441,10 +421,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "option",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid option."
     }
   },
@@ -470,10 +446,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "regex",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Invalid format."
     }
   },
@@ -492,10 +464,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "date",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid date."
     }
   },
@@ -514,10 +482,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "future",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a future date."
     }
   },
@@ -536,10 +500,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "past",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a past date."
     }
   },
@@ -565,10 +525,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "present",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be within the present date."
     }
   },
@@ -594,10 +550,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "gt",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be greater than {{arg}}."
     }
   },
@@ -623,10 +575,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "ge",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be greater than or equal to {{arg}}."
     }
   },
@@ -652,10 +600,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "lt",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be less than {{arg}}."
     }
   },
@@ -681,10 +625,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "le",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be less than or equal to {{arg}}."
     }
   },
@@ -710,10 +650,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "ceq",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be {{arg}} characters."
     }
   },
@@ -739,10 +675,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "cgt",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be greater than {{arg}} characters."
     }
   },
@@ -768,10 +700,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "cge",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be greater than or equal to {{arg}} characters."
     }
   },
@@ -797,10 +725,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "clt",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be less than {{arg}} characters."
     }
   },
@@ -826,10 +750,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "cle",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be less than or equal to {{arg}} characters."
     }
   },
@@ -855,10 +775,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "weq",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be {{arg}} words."
     }
   },
@@ -884,10 +800,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "wgt",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be greater than {{arg}} words."
     }
   },
@@ -913,10 +825,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "wge",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be greater than or equal to {{arg}} words."
     }
   },
@@ -942,10 +850,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "wlt",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be less than {{arg}} words."
     }
   },
@@ -971,10 +875,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "wle",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be less than or equal to {{arg}} words."
     }
   },
@@ -993,10 +893,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "cc",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid credit card number."
     }
   },
@@ -1015,10 +911,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "color",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid color format."
     }
   },
@@ -1037,10 +929,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "email",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid email address."
     }
   },
@@ -1059,10 +947,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "hex",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid hex value."
     }
   },
@@ -1081,10 +965,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "price",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid price format."
     }
   },
@@ -1103,10 +983,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "url",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid URL."
     }
   },
@@ -1125,10 +1001,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "string",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a string."
     }
   },
@@ -1147,10 +1019,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "boolean",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a boolean."
     }
   },
@@ -1169,10 +1037,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "number",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a number."
     }
   },
@@ -1191,10 +1055,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "float",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid float number."
     }
   },
@@ -1213,10 +1073,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "integer",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be a valid integer format."
     }
   },
@@ -1235,10 +1091,6 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     ],
     "data": {
       "name": "object",
-      "import": {
-        "from": "stackpress/schema/assert",
-        "default": false
-      },
       "message": "Must be an object."
     }
   }
@@ -3880,7 +3732,7 @@ field.fieldset = {
 };
 
 field.relation = {
-  "type": [ "component" ],
+  "type": [ "flag", "method" ],
   "name": "field.relation",
   "description": "Special relation field to link to another model.",
   "args": [

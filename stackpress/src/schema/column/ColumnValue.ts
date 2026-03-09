@@ -1,7 +1,6 @@
 //stackpress/schema
-import { generators } from '../helpers.js'
-//stackpress/schema/column
-import type Column from './Column.js';
+import type Column from '../Column.js';
+import { generators } from '../helpers.js';
 
 export default class ColumnValue {
   //column reference

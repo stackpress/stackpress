@@ -133,13 +133,13 @@ export function snakerize(string: string) {
 };
 
 /**
- * Convers an object of attributes to a string
- * ex. { type: 'text', number: 4, required: true, disabled: false } => 
- *   'type="text" required number={4} disabled={false}'
- * ex. { list: ['a', 2, true] } => 'list={["a", 2, true]}'
+ * Removes undefined values from an object
  */
-export function objectToAttributeString(attributes: Record<string, any>) {
-  return Object.entries(attributes).map(([key, value]) => {
-    return `${key}={${JSON.stringify(value)}}`;
-  }).join(' ');
+export function removeUndefined<T extends Record<string, any>>(value: T) {
+  const entries = Object.entries(value).filter(
+    ([_, val]) => typeof val !== 'undefined'
+  );
+  return Object.fromEntries(entries) as { 
+    [key in keyof T]: Exclude<T[key], undefined> 
+  };
 };

@@ -1,7 +1,5 @@
 //modules
-import type { NestedObject } from '@stackpress/lib';
 import type { Data } from '@stackpress/idea-parser';
-
 export type { 
   EnumConfig,
   ModelConfig,
@@ -10,23 +8,7 @@ export type {
   PluginConfig,
   SchemaConfig
 } from '@stackpress/idea-parser/types';
-
-export type ErrorList = (ErrorMap | null)[];
-export type ErrorMap = NestedObject<string | string[] | ErrorList>;
-
-//used in spec/Typemap spec/Serializers
-export type SerializerSettings = {
-  encrypt?: boolean,
-  hash?: boolean,
-  require?: boolean, 
-  multiple?: boolean
-};
-
-export type SerializeOptions = {
-  booleanToNumber?: boolean,
-  dateToString?: boolean,
-  objectToString?: boolean
-};
+import type DefinitionInterface from './interface/DefinitionInterface.js';
 
 //used in config/attributes
 export type AttributeData<
@@ -56,16 +38,7 @@ export type AttributeDataComponent = {
 };
 export type AttributeDataAssertion = {
   name: string,
-  import: { from: string, default: boolean },
   message: string
-};
-
-//used in config/typemaps
-export type TypeMapDataMap<D = unknown> = Record<string, D>; 
-export type TypeMapDataAssertion = AttributeDataAssertion;
-export type TypeMapDataSerializer = {
-  name: string,
-  import: { from: string, default: boolean }
 };
 
 //used in config/definitions
@@ -103,6 +76,7 @@ export type AttributeAssertionToken = AttributeAssertionInput;
 export type AttributeMapToken = Record<string, Data[] | boolean>;
 export type AttributesEntriesToken = Array<[ string, Data[] | boolean ]> ;
 export type AttributesToken = AttributesEntriesToken | AttributeMapToken;
+
 //used in column class
 export type ColumnTypeToken = {
   name: string,
@@ -121,4 +95,34 @@ export type ColumnRelationProps = {
   local: string,
   foreign: string,
   name?: string
+};
+
+//used in schema interface
+export type IsArrayOrObject<T> = T extends any[]
+  ? true
+  : T extends object
+  ? (T extends Function ? false : true)
+  : false;
+
+export type DefinitionInterfaceMap = { [key: string]: DefinitionInterface };
+
+//Extracts the assert type (A) from each DefinitionInterface in C.
+export type AssertInterfaceMap<C extends DefinitionInterfaceMap> = {
+  [K in keyof C]: C[K] extends DefinitionInterface<unknown, infer A> 
+    ? A 
+    : unknown;
+};
+
+//Extracts the serialized type (S) from each DefinitionInterface in C.
+export type SerializeInterfaceMap<C extends DefinitionInterfaceMap> = {
+  [K in keyof C]: C[K] extends DefinitionInterface<unknown, unknown, infer S> 
+    ? (IsArrayOrObject<S> extends true ? string : S)
+    : unknown;
+};
+
+//Extracts the unserialized type (U) from each DefinitionInterface in C.
+export type UnserializeInterfaceMap<C extends DefinitionInterfaceMap> = {
+  [K in keyof C]: C[K] extends DefinitionInterface<unknown, unknown, unknown, infer U> 
+    ? U 
+    : unknown;
 };

@@ -1,96 +1,113 @@
 export type {
+  //from idea
   EnumConfig,
   ModelConfig,
   TypeConfig,
   PropConfig,
   PluginConfig,
   SchemaConfig,
-  ErrorList,
-  ErrorMap,
-  SerializerSettings,
-  SerializeOptions,
+  //used in config/attributes
   AttributeData,
   AttributeDataMap,
   AttributeDataComponent,
   AttributeDataAssertion,
-  TypeMapDataMap,
-  TypeMapDataAssertion,
-  TypeMapDataSerializer,
+  //used in config/definitions
   DefinitionBook,
+  //used in dictionary
   AttributeDefinitionInput,
   AttributeDefinitionToken,
   AttributeComponentInput,
   AttributeComponentToken,
   AttributeAssertionInput,
   AttributeAssertionToken,
-  ColumnToken,
-  ColumnTypeToken,
-  AttributesToken,
+  //used in attribute class
   AttributeMapToken,
   AttributesEntriesToken,
+  AttributesToken,
+  //used in column class
+  ColumnTypeToken,
+  ColumnToken,
   ColumnAssertionToken,
-  ColumnRelationProps
+  ColumnRelationProps,
+  //used in schema interface
+  IsArrayOrObject,
+  DefinitionInterfaceMap,
+  AssertInterfaceMap,
+  SerializeInterfaceMap,
+  UnserializeInterfaceMap
 } from './types.js';
 
-import * as attributes from './config/attributes.js';
-import * as typemaps from './config/typemaps.js';
-import {
-  TypeMapDictionary,
+export {
+  TypeDictionary,
   AttributeDictionary,
   AssertionDictionary,
   ComponentDictionary,
   dictionary
 } from './dictionary.js';
 
-import Attribute from './attribute/Attribute.js';
+export {
+  generators,
+  camelize,
+  capitalize,
+  dasherize,
+  decrypt,
+  encrypt,
+  hash,
+  lowerize,
+  snakerize,
+  removeUndefined
+} from './helpers.js';
+
+export {
+  defineAttributes,
+  defineAssertions,
+  defineComponents,
+  defineBuiltIn
+} from './config/definitions.js';
+
+import * as attributes from './config/attributes.js';
+
 import AttributeAssertion from './attribute/AttributeAssertion.js';
 import AttributeComponent from './attribute/AttributeComponent.js';
 import AttributeReference from './attribute/AttributeReference.js';
 import Attributes from './attribute/Attributes.js';
 
-import Column from './column/Column.js';
 import ColumnAssertion from './column/ColumnAssertion.js';
 import ColumnComponent from './column/ColumnComponent.js';
 import ColumnDocument from './column/ColumnDocument.js';
 import ColumnName from './column/ColumnName.js';
 import ColumnNumber from './column/ColumnNumber.js';
-import ColumnRuntime from './column/ColumnRuntime.js';
 import Columns from './column/Columns.js';
+import ColumnStore from './column/ColumnStore.js';
 import ColumnType from './column/ColumnType.js';
 import ColumnValue from './column/ColumnValue.js';
 
-import Fieldset from './fieldset/Fieldset.js';
 import FieldsetAssertion from './fieldset/FieldsetAssertion.js';
 import FieldsetComponent from './fieldset/FieldsetComponent.js';
 import FieldsetDocument from './fieldset/FieldsetDocument.js';
 import FieldsetName from './fieldset/FieldsetName.js';
-import FieldsetRuntime from './fieldset/FieldsetRuntime.js';
 import FieldsetType from './fieldset/FieldsetType.js';
 import FieldsetValue from './fieldset/FieldsetValue.js';
 
-import ColumnStore from './model/ColumnStore.js';
-import Model from './model/Model.js';
-import ModelColumn from './model/ModelColumn.js';
-import ModelColumns from './model/ModelColumns.js';
+import AbstractSchema from './interface/AbstractSchema.js';
+import ColumnInterface from './interface/ColumnInterface.js';
+import DefinitionInterface from './interface/DefinitionInterface.js';
+import SchemaInterface from './interface/SchemaInterface.js';
+
 import ModelStore from './model/ModelStore.js';
 
-import Serializer from './serializer/Serializer.js';
-import BooleanSerializer from './serializer/BooleanSerializer.js';
-import DateSerializer from './serializer/DateSerializer.js';
-import NumberSerializer from './serializer/NumberSerializer.js';
-import ObjectSerializer from './serializer/ObjectSerializer.js';
-import StringSerializer from './serializer/StringSerializer.js';
-import UnknownSerializer from './serializer/UnknownSerializer.js';
-
+import Attribute from './Attribute.js';
+import Column from './Column.js';
+import Fieldset from './Fieldset.js';
+import Model from './Model.js';
 import Schema from './Schema.js';
 
-export { 
-  attributes, 
-  typemaps, 
-  Attribute, 
-  AttributeAssertion, 
-  AttributeComponent, 
-  AttributeReference, 
+export {
+  attributes,
+  Attribute,
+  AttributeAssertion,
+  AttributeComponent,
+  AttributeReference,
   Attributes,
   Column,
   ColumnAssertion,
@@ -98,8 +115,8 @@ export {
   ColumnDocument,
   ColumnName,
   ColumnNumber,
-  ColumnRuntime,
   Columns,
+  ColumnStore,
   ColumnType,
   ColumnValue,
   Fieldset,
@@ -107,27 +124,13 @@ export {
   FieldsetComponent,
   FieldsetDocument,
   FieldsetName,
-  FieldsetRuntime,
   FieldsetType,
   FieldsetValue,
-  ColumnStore,
+  AbstractSchema,
+  ColumnInterface,
+  DefinitionInterface,
+  SchemaInterface,
   Model,
-  ModelColumn,
-  ModelColumns,
   ModelStore,
-  Serializer,
-  BooleanSerializer,
-  DateSerializer,
-  NumberSerializer,
-  ObjectSerializer,
-  StringSerializer,
-  UnknownSerializer,
-  TypeMapDictionary,
-  AttributeDictionary,
-  AssertionDictionary,
-  ComponentDictionary,
-  dictionary,
   Schema
 };
-
-export default Schema;

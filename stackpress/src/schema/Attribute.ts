@@ -2,11 +2,11 @@
 import type { Data } from '@stackpress/idea-parser';
 import DataSet from '@stackpress/lib/Set';
 //stackpress/schema/config
-import { defineBuiltIn } from '../config/definitions.js';
+import { defineBuiltIn } from './config/definitions.js';
 //stackpress/schema/attribute
-import AttributeAssertion from './AttributeAssertion.js';
-import AttributeComponent from './AttributeComponent.js';
-import AttributeReference from './AttributeReference.js';
+import AttributeAssertion from './attribute/AttributeAssertion.js';
+import AttributeComponent from './attribute/AttributeComponent.js';
+import AttributeReference from './attribute/AttributeReference.js';
 
 export default class Attribute {
   //the name of the attribute

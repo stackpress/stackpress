@@ -4,22 +4,12 @@ import DataSet from '@stackpress/lib/Set';
 import Exception from '../../Exception.js';
 //stackpress/schema
 import type { 
-  ColumnAssertionToken, 
-  SerializerSettings,
-  TypeMapDataAssertion,
-  TypeMapDataSerializer
+  AttributeDataAssertion,
+  ColumnAssertionToken
 } from '../types.js';
 import type Schema from '../Schema.js';
-import { capitalize, camelize } from '../helpers.js';
 import dictionary from '../dictionary.js';
-//stackpress/schema/serializer
-import type Serializer from '../serializer/Serializer.js';
-import BooleanSerializer from '../serializer/BooleanSerializer.js';
-import DateSerializer from '../serializer/DateSerializer.js';
-import NumberSerializer from '../serializer/NumberSerializer.js';
-import ObjectSerializer from '../serializer/ObjectSerializer.js';
-import StringSerializer from '../serializer/StringSerializer.js';
-import UnknownSerializer from '../serializer/UnknownSerializer.js';
+import { capitalize, camelize } from '../helpers.js';
 
 /**
  * Globally map types to other things, then set on columns
@@ -46,13 +36,9 @@ export default class ColumnType {
     // Float,  Boolean, Date,   Datetime, 
     // Time,   Json,    Object, Hash
     if (this.has('assertion')) {
-      const assertion = this.get<TypeMapDataAssertion>('assertion')!;
+      const assertion = this.get<AttributeDataAssertion>('assertion')!;
       assertions.add(this.multiple ? {
         name: 'array',
-        'import': {
-          from: 'stackpress/schema/assert',
-          'default': false
-        },
         args: [ assertion.name ],
         message: 'Invalid value'
       } : { ...assertion, args: [] });
@@ -76,20 +62,14 @@ export default class ColumnType {
    * If type is a fieldset, this returns the enum options
    */
   public get enum() {
-    if (this.hasSchema) {
-      return this.schema.enums.get(this.name) || null;
-    }
-    return null;
+    return this.schema.enums.get(this.name) || null;
   }
 
   /**
    * If type is a fieldset, this returns the model instance
    */
   public get fieldset() {
-    if (this.hasSchema) {
-      return this.schema.fieldsets.get(this.name) || null;
-    }
-    return null;
+    return this.schema.fieldsets.get(this.name) || null
   }
 
   /**
@@ -104,12 +84,25 @@ export default class ColumnType {
    * If type is a model, this returns the model instance
    */
   public get model() {
-    if (this.hasSchema) {
-      return this.schema.models.get(this.name) || null;
-    }
-    return null;
+    return this.schema.models.get(this.name) || null;
   }
 
+  /**
+   * Returns true if the type is nullable
+   */
+  public get nullable() {
+    if (!this.multiple) {
+      //name String - not nullable
+      //name String? - nullable
+      return !this.required;
+    }
+    //it's multiple
+    //name String[] - if no default value, then nullable
+    //NOTE: we cant test for this because 
+    // will cause a circular dependency issue
+    return false;
+  }
+  
   /**
    * Returns the schema associated with the typemap
    */
@@ -136,50 +129,26 @@ export default class ColumnType {
   public constructor(
     name: string, 
     required: boolean, 
-    multiple: boolean,
+    multiple: boolean, 
     schema?: Schema
   ) {
     this.name = capitalize(camelize(name));
     this.multiple = multiple;
     this.required = required;
-    if (schema) {
-      this._schema = schema;
-    }
+    this._schema = schema;
   }
 
   /**
    * Gets a mapped value for this type
    */
   public get<T = unknown>(key: string) {
-    return dictionary.typemaps.definition<T>(this.name, key);
+    return dictionary.types.definition<T>(this.name, key);
   }
 
   /**
    * Returns true if a mapped value exists for this type
    */
   public has(key: string) {
-    return dictionary.typemaps.defined(this.name, key);
-  }
-
-  /**
-   * Returns the serializer for this type
-   */
-  public serializer(settings: SerializerSettings): Serializer {
-    const serializer = this.get<TypeMapDataSerializer>('serializer');
-    switch (serializer?.name) {
-      case 'BooleanSerializer':
-        return new BooleanSerializer(settings);
-      case 'DateSerializer':
-        return new DateSerializer(settings);
-      case 'NumberSerializer':
-        return new NumberSerializer(settings);
-      case 'ObjectSerializer':
-        return new ObjectSerializer(settings);
-      case 'StringSerializer':
-        return new StringSerializer(settings);
-      case 'UnknownSerializer':
-      default:
-        return new UnknownSerializer(settings);
-    }
+    return dictionary.types.defined(this.name, key);
   }
 };

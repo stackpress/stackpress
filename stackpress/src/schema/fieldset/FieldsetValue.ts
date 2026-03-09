@@ -1,8 +1,18 @@
-import type Fieldset from './Fieldset.js';
+//stackpress/schema
+import type Fieldset from '../Fieldset.js';
 
 export default class FieldsetValue {
   //column reference
   protected _fieldset: Fieldset;
+
+  /**
+   * Returns all columns that are hashed
+   */
+  public get hashed() {
+    return this._fieldset.columns.filter(
+      column => column.value.hashed === true
+    );
+  }
 
   /**
    * Returns all columns that are encrypted

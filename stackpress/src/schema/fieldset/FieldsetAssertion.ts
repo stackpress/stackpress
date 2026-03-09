@@ -1,7 +1,8 @@
+//modules
+import DataMap from '@stackpress/lib/Map';
 //stackpress/schema
 import type { ColumnAssertionToken } from '../types.js';
-//stackpress/schema/fieldset
-import type Fieldset from './Fieldset.js';
+import type Fieldset from '../Fieldset.js';
 
 export default class FieldsetAssertion {
   //fieldset reference
@@ -20,7 +21,7 @@ export default class FieldsetAssertion {
    * Returns all assertions
    */
   public get assertions() {
-    const assertions = new Map<string, ColumnAssertionToken[]>();
+    const assertions = new DataMap<string, ColumnAssertionToken[]>();
     for (const column of this.columns.values()) {
       assertions.set(
         column.name.toString(), 

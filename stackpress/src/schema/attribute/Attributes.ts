@@ -5,8 +5,7 @@ import DataMap from '@stackpress/lib/Map';
 import { isObject } from '@stackpress/lib/Nest';
 //stackpress/schema
 import type { AttributesToken } from '../types.js';
-//stackpress/schema/attribute
-import Attribute from './Attribute.js';
+import Attribute from '../Attribute.js';
 
 /**
  * Manages a collection of attributes

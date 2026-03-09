@@ -10,7 +10,7 @@ import type {
   AttributeComponentToken
 } from './types.js';
 
-export class TypeMapDictionary extends DataMap<string, DataMap<string, unknown>> {
+export class TypeDictionary extends DataMap<string, DataMap<string, unknown>> {
   /**
    * Defines a new type map definition
    * Usage: 
@@ -131,13 +131,13 @@ export class ComponentDictionary extends DataMap<string, AttributeComponentToken
 //--------------------------------------------------------------------//
 // Global Static Dictionaries
 
-export const typemaps = new TypeMapDictionary();
+export const types = new TypeDictionary();
 export const attributes = new AttributeDictionary();
 export const assertions = new AssertionDictionary();
 export const components = new ComponentDictionary();
 
 export const dictionary = {
-  typemaps,
+  types,
   attributes,
   assertions,
   components

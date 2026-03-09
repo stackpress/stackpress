@@ -1,7 +1,6 @@
 //stackpress/schema
+import type Attribute from '../Attribute.js';
 import dictionary from '../dictionary.js';
-//stackpress/schema/attribute
-import type Attribute from './Attribute.js';
 
 export default class AttributeReference {
   //main attribute reference

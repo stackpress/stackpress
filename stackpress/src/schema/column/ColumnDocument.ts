@@ -1,4 +1,5 @@
-import type Column from './Column.js';
+//stackpress/schema
+import type Column from '../Column.js';
 
 export default class ColumnDocument {
   //column reference

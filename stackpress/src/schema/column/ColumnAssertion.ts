@@ -2,8 +2,7 @@
 import DataSet from '@stackpress/lib/Set';
 //stackpress/schema
 import type { ColumnAssertionToken } from '../types.js';
-//stackpress/schema/column
-import type Column from './Column.js';
+import type Column from '../Column.js';
 
 export default class ColumnAssertion {
   //column reference
@@ -42,7 +41,6 @@ export default class ColumnAssertion {
       }
       assertions.add({ 
         name: assertion.name, 
-        import: assertion.import,
         args, 
         message 
       });

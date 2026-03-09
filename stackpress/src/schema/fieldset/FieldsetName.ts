@@ -1,12 +1,11 @@
 //stackpress/schema
+import type Fieldset from '../Fieldset.js';
 import { 
   capitalize, 
   camelize, 
   dasherize,
   snakerize 
 } from '../helpers.js';
-//stackpress/schema/fieldset
-import type Fieldset from './Fieldset.js';
 
 export default class FieldsetName {
   //fieldset reference
@@ -52,9 +51,7 @@ export default class FieldsetName {
     const attribute = this._fieldset.attributes.findValue(
       attribute => attribute.name === 'labels'
     );
-    return attribute && Array.isArray(attribute.value) 
-      ? attribute.value as string[]
-      : [];
+    return attribute ? attribute.args as string[] : [];
   }
 
   /**
@@ -113,7 +110,7 @@ export default class FieldsetName {
    * ie. User, ArticleComment
    */
   public toClassName(pattern = '%s') {
-    return pattern.replace('%s', this.titleCase);
+    return pattern.replaceAll('%s', this.titleCase);
   }
 
   /**
@@ -124,17 +121,14 @@ export default class FieldsetName {
   public toComponentName(pattern = '%s') {
     return pattern.replaceAll('%s', this.titleCase);
   }
-
+  
   /**
-   * Way to get (and change) the method naming standards
+   * Way to get (and change) the event naming standards
    * 
-   * ie. userActions, articleCommentActions, getUser, getArticleComment
+   * ie. article, user-profile
    */
-  public toMethodName(pattern = '%s', titleCase = false) {
-    if (titleCase) {
-      return pattern.replace('%s', this.titleCase);
-    }
-    return pattern.replace('%s', this.camelCase);
+  public toEventName(pattern = '%s') {
+    return pattern.replace('%s', this.dashCase);
   }
 
   /**
@@ -144,7 +138,19 @@ export default class FieldsetName {
    * ie. /stackpress-client/user/
    */
   public toPathName(pattern = '%s') {
-    return pattern.replace('%s', this.toString());
+    return pattern.replaceAll('%s', this.toString());
+  }
+  
+  /**
+   * Way to get (and change) the method naming standards
+   * 
+   * ie. nameActions, profileIdActions, getName, getProfileId
+   */
+  public toPropertyName(pattern = '%s', titleCase = false) {
+    if (titleCase) {
+      return pattern.replaceAll('%s', this.titleCase);
+    }
+    return pattern.replaceAll('%s', this.camelCase);
   }
 
   /**
@@ -155,12 +161,21 @@ export default class FieldsetName {
   }
 
   /**
+   * Way to get (and change) the table naming standards
+   * 
+   * ie. users, article_comments
+   */
+  public toTableName(pattern = '%s') {
+    return pattern.replaceAll('%s', this.snakeCase);
+  }
+
+  /**
    * Way to get (and change) the typescript naming standards
    * 
    * ie. UserInput, ArticleCommentExtended
    */
   public toTypeName(pattern = '%s') {
-    return pattern.replace('%s', this.titleCase);
+    return pattern.replaceAll('%s', this.titleCase);
   }
 
   /**

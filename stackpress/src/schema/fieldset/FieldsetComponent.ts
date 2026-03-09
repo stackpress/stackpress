@@ -1,4 +1,5 @@
-import type Fieldset from './Fieldset.js';
+//stackpress/schema
+import type Fieldset from '../Fieldset.js';
 
 export default class FieldsetComponent {
   //fieldset reference

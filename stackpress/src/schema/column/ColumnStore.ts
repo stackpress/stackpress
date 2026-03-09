@@ -1,7 +1,6 @@
 //stackpress/schema
 import type { ColumnRelationProps } from '../types.js';
-//stackpress/schema/model
-import type Column from './ModelColumn.js';
+import type Column from '../Column.js';
 
 export default class ColumnStore {
   //column reference
@@ -174,17 +173,17 @@ export default class ColumnStore {
   }
 
   /**
+   * Returns true if there is an @timestamp column
+   */
+  public get timestamp() {
+    return this._column.attributes.enabled('timestamp');
+  }
+
+  /**
    * Returns true if column is @unique
    */
   public get unique() {
     return this._column.attributes.enabled('unique');
-  }
-
-  /**
-   * Returns true if there is an @updated column
-   */
-  public get updated() {
-    return this._column.attributes.enabled('updated');
   }
 
   /**

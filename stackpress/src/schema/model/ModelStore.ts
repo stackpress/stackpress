@@ -1,4 +1,5 @@
-import type Model from './Model.js';
+//stackpress/schema
+import type Model from '../Model.js';
 
 export default class ModelStore {
   //model reference
@@ -19,7 +20,8 @@ export default class ModelStore {
    */
   public get foreignRelationships() {
     return this._model.columns.filter(
-      column => column.store.foreignRelationship !== null
+      column => column.type.model !== null 
+        && column.store.foreignRelationship !== null
     );
   }
 
@@ -83,17 +85,17 @@ export default class ModelStore {
   }
 
   /**
+   * Returns the column that will @timestamp when updated
+   */
+  public get timestamp() {
+    return this._model.columns.findValue(column => column.store.timestamp);
+  }
+
+  /**
    * Returns all the @unique columns
    */
   public get uniques() {
     return this._model.columns.filter(column => column.store.unique);
-  }
-
-  /**
-   * Returns the column that will be stamped when @updated
-   */
-  public get updated() {
-    return this._model.columns.findValue(column => column.store.updated);
   }
 
   /**

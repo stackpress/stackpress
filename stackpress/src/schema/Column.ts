@@ -1,23 +1,22 @@
 //modules
 import type { Data } from '@stackpress/idea-parser';
 //stackpress
-import Exception from '../../Exception.js';
+import Exception from '../Exception.js';
 //stackpress/schema
-import type { AttributesToken, ColumnTypeToken } from '../types.js';
+import type { AttributesToken, ColumnTypeToken } from './types.js';
+import type Fieldset from './Fieldset.js';
+import Attribute from './Attribute.js';
 //stackpress/schema/attribute
-import Attribute from '../attribute/Attribute.js';
-import Attributes from '../attribute/Attributes.js';
-//stackpress/schema/fieldset
-import type Fieldset from '../fieldset/Fieldset.js';
+import Attributes from './attribute/Attributes.js';
 //stackpress/schema/column
-import ColumnAssertion from './ColumnAssertion.js';
-import ColumnComponent from './ColumnComponent.js';
-import ColumnDocument from './ColumnDocument.js';
-import ColumnName from './ColumnName.js';
-import ColumnNumber from './ColumnNumber.js';
-import ColumnRuntime from './ColumnRuntime.js';
-import ColumnType from './ColumnType.js';
-import ColumnValue from './ColumnValue.js';
+import ColumnAssertion from './column/ColumnAssertion.js';
+import ColumnComponent from './column/ColumnComponent.js';
+import ColumnDocument from './column/ColumnDocument.js';
+import ColumnName from './column/ColumnName.js';
+import ColumnNumber from './column/ColumnNumber.js';
+import ColumnStore from './column/ColumnStore.js';
+import ColumnType from './column/ColumnType.js';
+import ColumnValue from './column/ColumnValue.js';
 
 /**
  * ex. name String @is.required @field.text({ type "text" })
@@ -57,8 +56,8 @@ export default class Column {
   public readonly name: ColumnName;
   //number extension
   public readonly number: ColumnNumber;
-  //runtime extension
-  public readonly runtime: ColumnRuntime;
+  //store extension
+  public readonly store: ColumnStore;
   //type of the column (String, Number, Boolean, etc)
   public readonly type: ColumnType;
   //value extension
@@ -106,19 +105,19 @@ export default class Column {
     attributes?: Attributes,
     parent?: Fieldset
   ) {
-    this._parent = parent;
     this.name = new ColumnName(name, this);
     this.type = type;
+    this.attributes = attributes || new Attributes();
+    this._parent = parent;
     if (this._parent && this._parent.hasSchema) {
       this.type.schema = this._parent.schema;
     }
-    this.attributes = attributes || new Attributes();
     //create extensions
     this.assertion = new ColumnAssertion(this);
     this.component = new ColumnComponent(this);
     this.document = new ColumnDocument(this);
     this.number = new ColumnNumber(this);
-    this.runtime = new ColumnRuntime(this);
+    this.store = new ColumnStore(this);
     this.value = new ColumnValue(this);
   }
 

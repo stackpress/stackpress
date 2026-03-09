@@ -1,28 +1,27 @@
 //modules
 import type { Data } from '@stackpress/idea-parser';
 //stackpress
-import Exception from '../../Exception.js';
+import Exception from '../Exception.js';
 //stackpress/schema
 import type { 
   AttributesToken, 
   ColumnToken, 
   ColumnTypeToken 
-} from '../types.js';
-import type Schema from '../Schema.js';
+} from './types.js';
+import type Schema from './Schema.js';
+import Attribute from './Attribute.js';
+import Column from './Column.js';
 //stackpress/schema/attribute
-import Attribute from '../attribute/Attribute.js';
-import Attributes from '../attribute/Attributes.js';
+import Attributes from './attribute/Attributes.js';
 //stackpress/schema/column
-import Column from '../column/Column.js';
-import Columns from '../column/Columns.js';
+import Columns from './column/Columns.js';
 //stackpress/schema/fieldset
-import FieldsetAssertion from './FieldsetAssertion.js';
-import FieldsetComponent from './FieldsetComponent.js';
-import FieldsetDocument from './FieldsetDocument.js'; 
-import FieldsetName from './FieldsetName.js';
-import FieldsetRuntime from './FieldsetRuntime.js';
-import FieldsetType from './FieldsetType.js';
-import FieldsetValue from './FieldsetValue.js';
+import FieldsetAssertion from './fieldset/FieldsetAssertion.js';
+import FieldsetComponent from './fieldset/FieldsetComponent.js';
+import FieldsetDocument from './fieldset/FieldsetDocument.js'; 
+import FieldsetName from './fieldset/FieldsetName.js';
+import FieldsetType from './fieldset/FieldsetType.js';
+import FieldsetValue from './fieldset/FieldsetValue.js';
 
 
 export default class Fieldset {
@@ -55,8 +54,6 @@ export default class Fieldset {
   public readonly document: FieldsetDocument;
   //name of the fieldset
   public readonly name: FieldsetName;
-  //runtime extension
-  public readonly runtime: FieldsetRuntime;
   //type extension
   public readonly type: FieldsetType;
   //value extension
@@ -120,7 +117,6 @@ export default class Fieldset {
     this.assertion = new FieldsetAssertion(this);
     this.component = new FieldsetComponent(this);
     this.document = new FieldsetDocument(this);
-    this.runtime = new FieldsetRuntime(this);
     this.type = new FieldsetType(this);
     this.value = new FieldsetValue(this);
   }
