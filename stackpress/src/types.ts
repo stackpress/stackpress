@@ -1,23 +1,22 @@
 //modules
-import type { Directory } from 'ts-morph';
+import type { Directory, Project } from 'ts-morph';
 import type { PluginProps } from '@stackpress/idea-transformer/types';
-//stackpress
 import type { UnknownNest } from '@stackpress/lib/types';
 import type { CookieOptions } from '@stackpress/ingest/types';
 //plugins
-import type { ClientConfig } from '../client/types.js';
-import type { ServerConfig } from '../server/types.js';
-import type { ApiConfig } from '../api/types.js';
-import type { AdminConfig } from '../admin/types.js';
-import type { EmailConfig } from '../email/types.js';
-import type { LanguageConfig } from '../language/types.js';
-import type { DatabaseConfig } from '../sql/types.js';
-import type { CLIConfig } from '../terminal/types.js';
-import type { ViewConfig, BrandConfig } from '../view/types.js';
-import type { AuthConfig, SessionConfig } from '../session/types.js';
-import type StackpressTerminal from '../terminal/Terminal.js';
+import type { ClientConfig } from './client/types.js';
+import type { ServerConfig } from './server/types.js';
+import type { ApiConfig } from './api/types.js';
+import type { AdminConfig } from './admin/types.js';
+import type { EmailConfig } from './email/types.js';
+import type { LanguageConfig } from './language/types.js';
+import type { DatabaseConfig } from './sql/types.js';
+import type { CLIConfig } from './terminal/types.js';
+import type { ViewConfig, BrandConfig } from './view/types.js';
+import type { AuthConfig, SessionConfig } from './session/types.js';
+import type StackpressTerminal from './terminal/Terminal.js';
 
-export type { AdminConfig } from '../admin/types.js';
+export type { AdminConfig } from './admin/types.js';
 
 export type {
   ApiType,
@@ -35,12 +34,19 @@ export type {
   Session,
   SessionExtended,
   SessionInput
-} from '../api/types.js';
+} from './api/types.js';
 
 export type {
+  GenericEventHandler,
+  GenericEvents,
+  GenericListener,
+  GenericAdminRouter,
+  ClientModel,
+  ClientFieldset,
+  ClientScripts,
   ClientConfig,
   ClientPlugin
-} from '../client/types.js';
+} from './client/types.js';
 
 export type {
   Language as LanguageData,
@@ -48,42 +54,46 @@ export type {
   LanguageConstructor,
   LanguageConfig,
   LanguagePlugin
-} from '../language/types.js';
+} from './language/types.js';
 
 export type {
-  ErrorList,
-  ErrorMap,
-  SerializerSettings,
-  SerializeOptions,
+  //used in config/attributes
   AttributeData,
   AttributeDataMap,
   AttributeDataComponent,
   AttributeDataAssertion,
-  TypeMapDataMap,
-  TypeMapDataAssertion,
-  TypeMapDataSerializer,
+  //used in config/definitions
   DefinitionBook,
+  //used in dictionary
   AttributeDefinitionInput,
   AttributeDefinitionToken,
   AttributeComponentInput,
   AttributeComponentToken,
   AttributeAssertionInput,
   AttributeAssertionToken,
-  ColumnToken,
-  ColumnTypeToken,
-  AttributesToken,
+  //used in attribute class
   AttributeMapToken,
   AttributesEntriesToken,
+  AttributesToken,
+  //used in column class
+  ColumnTypeToken,
+  ColumnToken,
   ColumnAssertionToken,
-  ColumnRelationProps
-} from '../schema/types.js';
+  ColumnRelationProps,
+  //used in schema interface
+  IsArrayOrObject,
+  DefinitionInterfaceMap,
+  AssertInterfaceMap,
+  SerializeInterfaceMap,
+  UnserializeInterfaceMap
+} from './schema/types.js';
 
 export type {
   CLIConfig,
   CLIPlugin
-} from '../terminal/types.js';
+} from './terminal/types.js';
 
-export type { ServerConfig } from '../server/types.js';
+export type { ServerConfig } from './server/types.js';
 
 export type {
   SessionServerConstructor,
@@ -100,16 +110,46 @@ export type {
   AuthExtended,
   AuthInput,
   ProfileAuth
-} from '../session/types.js';
+} from './session/types.js';
 
 export type {
-  SearchParams,
-  SearchJoin,
-  SearchJoinMap,
-  SearchPath,
+  //inquire types
+  Field,
+  Relation,
+  ForeignKey,
+  AlterFields,
+  AlterKeys,
+  AlterUnqiues,
+  AlterPrimaries,
+  AlterForeignKeys,
+  StrictValue,
+  StrictOptValue,
+  FlatValue,
+  Value,
+  Resolve,
+  Reject,
+  Order,
+  Join,
+  Dialect,
+  QueryObject,
+  Transaction,
+  Connection,
+  //for store interface
+  ValueScalar,
+  ValuePrimitive,
+  StoreRelation,
+  StoreSelectColumnPath,
+  StoreSelectRelation,
+  StoreSelectRelationMap,
+  StoreSelectJoin,
+  StoreSelectJoinMap,
+  StoreSelectFilters,
+  StoreSelectQuery,
+  StoreSearchQuery,
+  //for ingest
   DatabaseConfig,
   DatabasePlugin
-} from '../sql/types.js';
+} from './sql/types.js';
 
 export type {
   ServerUrlProps,
@@ -153,7 +193,7 @@ export type {
   BrandConfig,
   ViewPlugin,
   PreviewPlugin
-} from '../view/types.js';
+} from './view/types.js';
 
 export type {
   TypeOf,
@@ -188,7 +228,7 @@ export type {
   FileStream,
   FileSystem,
   CallSite
-} from '../lib.js';
+} from './lib.js';
 
 export type { 
   EnumConfig,
@@ -219,11 +259,12 @@ export type ExtendsType<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 // Idea Types
 
 export type IdeaProjectProps = {
-  cli: StackpressTerminal,
-  project: Directory
+  terminal: StackpressTerminal,
+  project: Project,
+  directory: Directory
 };
 
-export type IdeaPluginWithProject = PluginProps<IdeaProjectProps>;
+export type IdeaProjectPluginProps = PluginProps<IdeaProjectProps>;
 
 //--------------------------------------------------------------------//
 // Server Configuration Types
