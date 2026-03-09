@@ -1,0 +1,46 @@
+{
+  "type": "module",
+  "name": "stackpress-store-template",
+  "version": "1.0.0",
+  "private": true,
+  "plugins": [
+    "./plugins/app/plugin",
+    "./plugins/store/plugin",
+    "stackpress"
+  ],
+  "scripts": {
+    "build": "stackpress build --b config/build -v",
+    "dev": "dotenv -e .env -- stackpress serve --b config/develop -v",
+    "emit": "dotenv -e .env -- stackpress emit",
+    "generate": "stackpress generate --b config/develop -v",
+    "migrate": "dotenv -e .env -- stackpress migrate --b config/develop -v",
+    "populate": "dotenv -e .env -- stackpress populate --b config/develop -v",
+    "preview": "dotenv -e .env -- stackpress serve --b config/preview -v",
+    "purge": "dotenv -e .env -- stackpress purge --b config/develop -v",
+    "push": "dotenv -e .env -- stackpress push --b config/develop -v",
+    "query": "dotenv -e .env -- stackpress query --b config/develop -v"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.3.15",
+    "@stackpress/inquire-pglite": "0.6.14",
+    "frui": "0.2.3",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "stackpress": "0.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "25.3.5",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.4",
+    "dotenv-cli": "11.0.0",
+    "fast-glob": "3.3.3",
+    "prettier": "3.8.1",
+    "ts-morph": "27.0.2",
+    "ts-node": "10.9.2",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3",
+    "unocss": "66.6.6",
+    "vite": "7.3.1"
+  }
+}
