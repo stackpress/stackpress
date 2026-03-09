@@ -4,36 +4,54 @@ enum Role {
   USER "USER"
 }
 
-type Address {
+type Address @icon("address") @labels("Address" "Addresses") {
   street   String
+           @label("Street Address")
            @field.input({ type "text" placeholder "123 Main St" })
+           @view.string
   city     String
+           @label("City")
            @field.input({ type "text" placeholder "Anytown" })
+           @list.string @view.string
   state    String?
+           @label("State")
            @field.input({ type "text" placeholder "CA" })
+           @view.string
   zipCode  String
+           @label("Postal Code")
            @is.ce(5)
            @field.input({ type "text" placeholder "12345" })
+           @list.string @view.string
   country  String
+           @label("Country")
            @field.country({ defaultValue "US" })
+           @list.country @view.country
 }
 
 model BasicModel
+  @display("{{title}}")
+  @icon("basic")
+  @labels("Basic Model" "Basic Models")
+  @query("*")
 {
-  title       String
-  description Text
-  price       Number
-  age         Integer
-  height      Float
-  active      Boolean
-  publishAt   Date
-  showAt      Time
-  createdAt   Datetime
-  references  Hash
-  data        Json
-  cache       Object
-  role        Role
-  address     Address
+  title       String 
+              @label("Title") 
+              @field.input @list.string @view.string
+  description Text @label("Description") 
+              @field.textarea @list.string @view.string
+  price       Number @label("Price") 
+              @field.price @list.price @view.price
+  age         Integer @label("Age")
+  height      Float @label("Height")
+  active      Boolean @label("Is Active")
+  publishAt   Date @label("Publish Date")
+  showAt      Time @label("Show Time")
+  createdAt   Datetime @label("Created At")
+  references  Hash @label("References")
+  data        Json @label("Data")
+  cache       Object @label("Cache")
+  role        Role @label("Role")
+  address     Address @label("Address")
   sink        KitchenSink[]
 }
 
