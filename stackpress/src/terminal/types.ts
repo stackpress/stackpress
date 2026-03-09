@@ -1,4 +1,4 @@
-//terminal
+//stackpress/terminal
 import type Terminal from './Terminal';
 
 //ie. ctx.config<CLIConfig>('cli');

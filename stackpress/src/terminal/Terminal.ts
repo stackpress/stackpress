@@ -1,6 +1,8 @@
-//stackpress
+//modules
 import type Server from '@stackpress/ingest/Server';
 import Terminal from '@stackpress/lib/Terminal';
+//stackpress
+import Exception from '../Exception.js';
 
 export default class StackpressTerminal extends Terminal {
   //the server
@@ -59,13 +61,34 @@ export default class StackpressTerminal extends Terminal {
    * (called in bin.js)
    */
   public async run() {
-    const request = this.server.request({ data: this.data });
+    const request = this.server.request({ 
+      data: this.data, 
+      //add a flag to indicate that this is a terminal request
+      mimetype: 'terminal/arguments' 
+    });
     const response = this.server.response();
-    const status = await this.server.emit(this.command, request, response);
-    const verbose = this.expect<boolean>(['verbose', 'v'], false);
-    if (status.code === 404 && this.command !== 'serve' && verbose) {
-      this._control.error(`Command "${this.command}" not found.`);
+    try {
+      //emit the command as an event and get the status
+      const status = await this.server.emit(this.command, request, response);
+      //determine if user wants a verbose output
+      const verbose = this.expect<boolean>(['verbose', 'v'], false);
+      //if 404 and verbose, show the error
+      if (status.code === 404 && this.command !== 'serve' && verbose) {
+        this._control.error(`Command "${this.command}" not found.`);
+      }
+      return status;
+    } catch (e) {
+      //if the command is serve, we actually want to throw the error
+      if (this.command === 'serve') throw e;
+      //upgrade the error to an exception
+      const exception = Exception.upgrade(e as Error).toResponse();
+      //set the exception as the error
+      response.setError(exception);
+      //allow plugins to handle the error and get the new status
+      const status = await this.server.emit('error', request, response);
+      //if error was not handled, throw it
+      if (status.code !== 200) throw e;
+      return status;
     }
-    return status;
   }
 }
