@@ -50,16 +50,22 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import Exception from 'stackpress/Exception';
+  //import type { StatusResponse } from '@stackpress/lib/types';
   source.addImportDeclaration({
-    defaultImport: 'Exception',
-    moduleSpecifier: 'stackpress/Exception'
+    isTypeOnly: true,
+    moduleSpecifier: '@stackpress/lib/types',
+    namedImports: [ 'StatusResponse' ]
   });
   //import type { StoreSelectFilters } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/sql/types',
     namedImports: [ 'StoreSelectFilters' ]
+  });
+  //import Exception from 'stackpress/Exception';
+  source.addImportDeclaration({
+    defaultImport: 'Exception',
+    moduleSpecifier: 'stackpress/Exception'
   });
   //import AbstractActions from 'stackpress/sql/AbstractActions';
   source.addImportDeclaration({
@@ -127,7 +133,10 @@ export default function generate(directory: Directory, model: Model) {
     }],
     statements: renderCode(TEMPLATE.BATCH, {
       type: model.name.toTypeName(),
-      store: model.name.toClassName('%sStore')
+      store: model.name.toClassName('%sStore'),
+      uniques: model.store.uniques.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
     })
   });
   //public async create(input: ProfileInput) {}
@@ -277,6 +286,9 @@ export default function generate(directory: Directory, model: Model) {
       ).toArray().join(' && '),
       ids: ids.map(
         column => ({ column: column.name.toString() })
+      ).toArray(),
+      uniques: model.store.uniques.map(
+        column => ({ column: column.name.toString() })
       ).toArray()
     })
   });
@@ -291,41 +303,65 @@ this.store = new <%store%>(seed);`,
 
 //public async batch(inputs: Array<ProfileInput>, mode = 'upsert') {}
 BATCH:
-`const results: {
-  results?: <%type%> | null,
-  errors?: {
-    message: string,
-    input?: ReturnType<<%store%>['assert']>
-  }
-}[] = [];
+`const results: StatusResponse<<%type%> | null>[] = [];
 try {
   await this.engine.transaction(async () => {
     let rollback = false;
     for (const input of inputs) {
       try {
         if (mode === 'upsert') {
-          results.push({ results: await this.upsert(input) });
+          results.push({ 
+            code: 200, 
+            status: 'OK', 
+            results: await this.upsert(input),
+            total: 1
+          });
         } else if (mode === 'create') {
-          results.push({ results: await this.create(input) });
+          results.push({ 
+            code: 200, 
+            status: 'OK', 
+            results: await this.create(input),
+            total: 1
+          });
         } else if (mode === 'update') {
           if (typeof input.id !== 'undefined') {
-            results.push({ results: await this.updateById(input.id, input) });
-          } else {
             results.push({ 
-              errors: { message: 'ID is required for update mode' } 
+              code: 200, 
+              status: 'OK', 
+              results: await this.updateById(input.id, input),
+              total: 1
             });
-          }
+            continue;
+          } 
+          <%#uniques%>
+            if (typeof input.<%column%> !== 'undefined') {
+              const query = { filter: { <%column%>: input.<%column%> } };
+              const exists = await this.find(query);
+              if (exists) {
+                const rows = await this.update(query, input);
+                results.push({ 
+                  code: 200, 
+                  status: 'OK', 
+                  results: rows[0] || null,
+                  total: 1
+                });
+                continue;
+              }
+            }
+          <%/uniques%>
+          results.push({ error: 'ID or unique field is required for update mode' });
         }
       } catch (e) {
         const error = e as any;
         const exception = typeof error.toResponse !== 'function'
           ? Exception.upgrade(error)
           : error as Exception;
-        results.push({
-          errors: {
-            message: exception.message,
-            input: exception.errors as ReturnType<<%store%>['assert']>
-          }
+        const response = exception.toResponse();
+        results.push({ 
+          code: response.code, 
+          status: response.status, 
+          error: response.error, 
+          errors: response.errors 
         });
         rollback = true;
       }
@@ -412,6 +448,16 @@ UPSERT:
 `if (<%update%>) {
   return await this.updateById(<%#ids%>input.<%column%>, <%/ids%> input);
 }
+<%#uniques%>
+  if (typeof input.<%column%> !== 'undefined') {
+    const query = { filter: { <%column%>: input.<%column%> } };
+    const exists = await this.find(query);
+    if (exists) {
+      const rows = await this.update(query, input);
+      return rows[0] || null;
+    }
+  }
+<%/uniques%>
 return await this.create(input);`,
 
 };

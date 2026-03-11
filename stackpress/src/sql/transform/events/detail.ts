@@ -7,6 +7,21 @@ import {
   renderCode 
 } from '../../../schema/transform/helpers.js';
 
+const typemap: Record<string, string> = {
+  String: 'string',
+  Text: 'string',
+  Number: 'number',
+  Integer: 'number',
+  Float: 'number',
+  Boolean: 'number',
+  Date: 'number',
+  Time: 'number',
+  Datetime: 'number',
+  Json: 'string',
+  Object: 'string',
+  Hash: 'string'
+};
+
 export default function generate(directory: Directory, model: Model) {
   const ids = model.store.ids;
   if (ids.size === 0) return;
@@ -25,6 +40,12 @@ export default function generate(directory: Directory, model: Model) {
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/server',
     namedImports: [ 'Request', 'Response', 'Server' ]
+  });
+  //import type { StoreSelectFilters } from 'stackpress/sql/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSelectFilters' ]
   });
   //import Exception from 'stackpress/Exception';
   source.addImportDeclaration({
@@ -53,7 +74,8 @@ export default function generate(directory: Directory, model: Model) {
     statements: renderCode(TEMPLATE.DETAIL, { 
       actions: model.name.toClassName('%sActions'),
       ids: ids.map(column => ({
-        column: column.name.toPropertyName()
+        column: column.name.toPropertyName(),
+        type: typemap[column.type.name] || 'string'
       })).toArray()
     })
   });
@@ -72,14 +94,17 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 //so let the response pass through
 if (!engine) return;
 
+//get all the current filters
+const filter = req.data.path<StoreSelectFilters>('filter', {});
+
 //check for id/s
 <%#ids%>
   //get id
-  const <%column%> = req.data<string>('<%column%>');
+  filter.<%column%> = req.data<<%type%>>('<%column%>');
   //let it naturally 404 if invalid id
-  if (typeof <%column%> === 'undefined' 
-    || <%column%> === null 
-    || <%column%> === ''
+  if (typeof filter.<%column%> === 'undefined' 
+    || filter.<%column%> === null 
+    || filter.<%column%> === ''
   ) {
     const errors = { <%column%>: 'Missing or invalid value' };
     res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
@@ -101,7 +126,7 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to fetch
-  const results = await actions.findById(<%#ids%><%column%>,<%/ids%> columns);
+  const results = await actions.find({ filter }, columns);
   if (!results) {
     res.setError('Not Found').setStatus(404, 'Not Found');
   } else {

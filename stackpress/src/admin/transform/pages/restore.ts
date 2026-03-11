@@ -56,7 +56,10 @@ export default function generate(directory: Directory, model: Model) {
       })).toArray(),
       idpath: model.store.ids.map(
         column => `\${req.data.get('${column.name.toString()}')}`
-      ).toArray().join('/')
+      ).toArray().join('/'),
+      active: model.store.active 
+        ? { column: model.store.active.name.toString() }
+        : null
     })
   });
 };
@@ -111,6 +114,11 @@ if (Object.keys(errors).length) {
   res.setError('Invalid parameters', errors, [], 404, 'Not Found');
   return;
 }
+<%#active%>
+  //make sure to set the active column to -1 in order 
+  // to get it returned even if it's soft-deleted
+  req.data.set('filter', '<%column%>', -1);
+<%/active%>
 
 //if confirmed
 if (req.data('confirmed')) {

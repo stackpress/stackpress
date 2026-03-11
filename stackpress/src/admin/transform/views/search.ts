@@ -199,9 +199,9 @@ export default function searchView(directory: Directory, model: Model) {
     }],
     statements: renderCode(TEMPLATE.SEARCH_FORM_BODY, {
       searchable: model.store.searchables.size > 0,
-      export: model.name.toURLPath("'base/%s/export'"),
-      import: model.name.toURLPath("'base/%s/import'"),
-      create: model.name.toURLPath("'base/%s/create'")
+      export: model.name.toURLPath("`${base}/%s/export`"),
+      import: model.name.toURLPath("`${base}/%s/import`"),
+      create: model.name.toURLPath("`${base}/%s/create`")
     })
   });
   //export function AdminProfileSearchResults() {}
@@ -310,7 +310,9 @@ SEARCH_CRUMBS:
 const { _ } = useLanguage();
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
-    <Bread.Slicer value="›" />
+    <Bread.Slicer>
+      <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
+    </Bread.Slicer>
     <Bread.Crumb icon="<%search.icon%>" className="admin-crumb">
       {_('<%search.label%>')}
     </Bread.Crumb>
@@ -355,9 +357,11 @@ const upload = (e: ChangeEvent<HTMLInputElement>) => {
   //skip if we can't find the file
   if (!file) return;
   //proceed to send
-  batchAndSend('import', token, file, notify).then(() => {
-    flash('success', 'File imported successfully');
-    window.location.reload();
+  batchAndSend('import?json', token, file, notify).then(success => {
+    if (success) {
+      flash('success', 'File imported successfully');
+      window.location.reload();
+    }
   });
   return false;
 };

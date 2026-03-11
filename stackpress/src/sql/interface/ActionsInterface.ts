@@ -1,4 +1,5 @@
 //modules
+import type { StatusResponse } from '@stackpress/lib/types';
 import type Create from '@stackpress/inquire/Create';
 //stackpress/schema
 import type { DefinitionInterfaceMap } from '../../schema/types.js';
@@ -33,13 +34,7 @@ export default interface ActionsInterface<
   batch(
     inputs: Array<I>,
     mode?: 'create' | 'update' | 'upsert',
-  ): Promise<{
-    results?: T | null,
-    errors?: {
-      message: string,
-      input?: ReturnType<StoreInterface<T, E, I, C, R>['assert']>
-    }
-  }[]>;
+  ): Promise<StatusResponse<T | null>[]>;
 
   /**
    * Returns the count of records that match the provided filters.

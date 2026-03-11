@@ -36,7 +36,10 @@ export default action(async function ErrorPage(req, res, ctx) {
     //@ts-ignore - snippet does not exist in type Trace
     stack[i] = { ...trace, snippet };
   });
-  if (req.url.pathname.endsWith('.js')) {
+
+  if (req.data.has('json')) {
+    return;
+  } else if (req.url.pathname.endsWith('.js')) {
     delete response.stack;
     res.setBody(
       'application/javascript', 
@@ -62,7 +65,7 @@ export default action(async function ErrorPage(req, res, ctx) {
   //get the session
   const session = await ctx.resolve('me', req);
   //render the html
-  ctx.view.render('@/plugins/app/views/error', {
+  const html = await ctx.view.render('@/plugins/app/views/error', {
     data: {...props, ...res.data<Record<string, unknown>>() },
     session: session.results,
     request: {
@@ -85,4 +88,7 @@ export default action(async function ErrorPage(req, res, ctx) {
     },
     response: res.toStatusResponse()
   });
+  if (typeof html === 'string') {
+    res.setHTML(html, res.code, res.status);
+  }
 });

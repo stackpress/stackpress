@@ -360,8 +360,9 @@ const values: FlatValue[] = [];
 <%#active%>
   const name = '<%active%>';
   if (typeof filter[name] === 'undefined') {
-    filter[name] = true;
+    filter = { ...filter, [name]: true };
   } else if (filter[name] == -1) {
+    filter = { ...filter, [name]: -1 };
     delete filter[name];
   }
 <%/active%>

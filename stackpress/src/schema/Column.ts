@@ -19,7 +19,7 @@ import ColumnType from './column/ColumnType.js';
 import ColumnValue from './column/ColumnValue.js';
 
 /**
- * ex. name String @is.required @field.text({ type "text" })
+ * ex. name String @is.ne @field.text({ type "text" })
  */
 export default class Column {
   /**

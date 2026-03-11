@@ -1,11 +1,13 @@
 //modules
 import type { StatusResponse, UnknownNest } from '@stackpress/lib/types';
 
+//these are types from papaparse
 export type CSVParseError = {
   code: string,
   message: string,
   row: number,
-  type: string
+  type: string,
+  errors?: Record<string, any>
 };
 
 export type CSVParseResults = { 
@@ -13,6 +15,7 @@ export type CSVParseResults = {
   errors: CSVParseError[]
 };
 
+//these are types returned from the batch send endpoint
 export type BatchSendResults<
   M extends UnknownNest = UnknownNest
 > = Partial<StatusResponse<Partial<M>>>[];
@@ -20,6 +23,16 @@ export type BatchSendResults<
 export type BatchSendResponse<
   M extends UnknownNest = UnknownNest
 > = StatusResponse<BatchSendResults<M>>;
+
+export class ErrorWithErrors<E> extends Error {
+  public code = 400;
+  public status = 'Bad Request';
+  public errors: E;
+  constructor(message: string, errors: E) {
+    super(message);
+    this.errors = errors;
+  }
+}
 
 export async function csvToFormData(file: File): Promise<FormData> {
   //cjs import
@@ -33,7 +46,7 @@ export async function csvToFormData(file: File): Promise<FormData> {
       complete: (results: CSVParseResults) => {
         //notify of errors
         if (results.errors.length) {
-          reject(results.errors);
+          reject(new ErrorWithErrors('CSV parsing error', results.errors));
           return;
         }
         //create form data
@@ -49,33 +62,55 @@ export async function csvToFormData(file: File): Promise<FormData> {
   });
 }
 
-export function batchImportSend<
-  M extends UnknownNest = UnknownNest
->(url: string, token: string, data: FormData): Promise<BatchSendResults<M>> {
+export function batchImportSend<M extends UnknownNest = UnknownNest>(
+  url: string, 
+  token: string, 
+  data: FormData
+): Promise<BatchSendResults<M>> {
   return new Promise((resolve, reject) => {
-    fetch(url, {
+    const payload = {
       method: 'POST',
       body: data,
       headers: { 'Authorization': token }
-    }).then(response => {
-      response.json().then((response: BatchSendResponse<M>) => {
-        if (response.code === 200) {
-          resolve(response.results as BatchSendResults<M>);
+    };
+    fetch(url, payload)
+      .then(response => response.json())
+      .then((response: BatchSendResponse<M>) => {
+        //if OK and results is an array, resolve with results
+        if (response.code === 200 && Array.isArray(response.results)) {
+          resolve(response.results);
           return;
-        } else if (response.results) {
-          reject(response.results as BatchSendResults<M>);
+        //if OK but no results, resolve with empty array
+        } else if (response.code === 200) {
+          resolve([]);
           return;
-        } else if (response.error) {
-          reject(new Error(response.error));
+        //if not OK and results is an array, reject with errors
+        } else if (Array.isArray(response.results)) {
+          const errors: CSVParseError[] = [];
+          response.results.forEach((row, index) => {
+            errors.push({
+              code: String(row.code || 400),
+              message: row.error || 'Unknown error',
+              row: index,
+              type: 'FieldMismatch',
+              errors: row.errors
+            })
+          })
+          reject(new ErrorWithErrors(
+            response.error || 'Batch import failed with some errors',
+            errors
+          ));
           return;
         }
-        reject(new Error('Unknown error'));
+        reject(new ErrorWithErrors(
+          response.error || 'Unknown error', 
+          []
+        ));
       });
-    });
   });
 }
 
-export async function batchAndSend(
+export function batchAndSend(
   url: string, 
   token: string, 
   file: File,
@@ -83,30 +118,21 @@ export async function batchAndSend(
 ) {
   notify = notify || (() => {});
   //proceed to parse
-  csvToFormData(file).then(data => {
-    //send data up
-    batchImportSend(url, token, data).then(() => {
-      window.location.reload();
-    }).catch(error => {
-      if (Array.isArray(error)) {
-        (error as BatchSendResults).forEach((error, i) => {
-          const errors = error.errors 
-            ? Object.entries(error.errors).map(
-              error => `${error[0]}: ${error[1]}`
-            )
-            : [];
-          notify('error', [
-            `ROW ${i}: ${error.error}`,
-            ...errors
-          ].join(' - '));
+  return new Promise<boolean>(resolve => {
+    csvToFormData(file)
+      .then(data => batchImportSend(url, token, data))
+      .then(() => resolve(true))
+      .catch((e: ErrorWithErrors<CSVParseError[]>) => {
+        const errors = e.errors || [];
+        errors.forEach(error => {
+          const errors = Object.entries(error.errors || {});
+          const message = [ 
+            `ROW ${error.row}: ${e.message}`, 
+            ...errors.map(([ key, error ]) => `${key}: ${error}`)
+          ];
+          notify('error', message.join(' - '));
         });
-        return;
-      }
-      notify('error', error.message);
+        resolve(false);
+      });
     });
-  }).catch((errors: CSVParseError[]) => {
-    errors.forEach(
-      error => notify('error', `ROW ${error.row}: ${error.message}`)
-    );
-  });
 }

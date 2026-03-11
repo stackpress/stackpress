@@ -488,7 +488,11 @@ export function generateField(
         ? '=' + JSON.stringify(column.value.default) 
         : '',
       props: JSON.stringify(props),
-      component: component.name
+      component: component.name,
+      metadata: component.name === 'Metadata',
+      value: component.name === 'Metadata'
+        ? 'entries'
+        : 'value'
     })
   });
   //export function NameFormFieldControl(props: ControlProps) {
@@ -808,6 +812,11 @@ const {
   error = false 
 } = props;
 const attributes = <%props%>;
+<%#metadata%>
+const entries = typeof value === 'object' && value !== null
+  ? Object.entries(value).map(([ key, val ]) => [ key, String(val) ])
+  : value;
+<%/metadata%>
 //renderCode
 return (
   <<%component%> 
@@ -815,7 +824,7 @@ return (
     name={name}
     className={className}
     error={error} 
-    defaultValue={value} 
+    defaultValue={<%value%>} 
     onUpdate={value => change && change('<%column%><%multiple%>', value)}
   />
 );`,

@@ -18,7 +18,7 @@ model Profile
   image       String?
               @label("Image") 
               @field.url
-              @list.image(20 20) @view.image(100 100)
+              @list.image({ width 20 height 20 }) @view.image({ width 100 height 100 })
               @description("Profile image URL.")
               @examples("https://example.com/image.jpg")
   
@@ -26,8 +26,6 @@ model Profile
               @label("Name") 
               @searchable
               @field.string({ required true })
-              @is.required("Required")
-              @is.notempty("Cannot be empty")
               @list.string @view.string
               @description("Full name (first middle last).")
               @examples("John Doe")
@@ -37,7 +35,6 @@ model Profile
               @default("person") 
               @filter.string
               @field.string({ required true })
-              @is.notempty("Cannot be empty")
               @list.string({ lower true }) 
               @view.string({ lower true })
               @description("Type of profile (ie. person, company, etc.).")
@@ -47,7 +44,8 @@ model Profile
               @label("Roles") 
               @default([])
               @field.stringlist({ add "Add Role" })
-              @view.taglist({ warning true })
+              @list.taglist({ warning true pill true className "frui-mr-md" })
+              @view.taglist({ warning true pill true className "frui-mr-md" })
               @description("Roles held by the profile. This is used with sessions to determine access levels of the app.")
               @examples(["admin" "user" "gues"])
   
@@ -55,7 +53,8 @@ model Profile
               @label("Tags") 
               @default([])
               @field.taglist
-              @view.taglist({ warning true })
+              @list.taglist({ warning true pill true className "frui-mr-md" })
+              @view.taglist({ warning true pill true className "frui-mr-md" })
               @description("Abritrary tags for general use.")
               @examples(["top buyer" "verified" "moderator"])
   
@@ -63,7 +62,7 @@ model Profile
               @label("References") 
               @default({})
               @field.metadata({ add "Add Reference" })
-              @view.metadata
+              @view.metadata({ className "frui-pt-md frui-pr-md frui-pb-md frui-pl-md"})
               @description("Arbitrary key/value references for general use.")
               @examples({ fbid "abc123" })
   
@@ -120,8 +119,6 @@ model Auth
               search "/admin/profile/search?json"
               template "{{name}}" 
             }) 
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @filter.relation({
               id "id"
               search "/admin/profile/search?json"
@@ -135,9 +132,8 @@ model Auth
   type      String
             @label("Type") 
             @default("username") 
-            @field.string({ required true }) @filter.string
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
+            @field.string({ required true }) 
+            @filter.string
             @list.string @view.string
             @description("Type of authentication method (username, email, phone).")
             @examples("username")
@@ -146,7 +142,6 @@ model Auth
             @label("Token")
             @unique @encrypted
             @field.string({ required true })
-            @is.required("Required") 
             @is.cge(5 "Must be at least 5 characters")
             @list.string @view.string
             @description("The actual username, email, or phone (depending on type)")
@@ -156,8 +151,6 @@ model Auth
             @label("Secret") 
             @hashed @secret
             @field.password
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @description("Password used to verify.")
             @examples("s3cr3t P@ssw0rd")
   
@@ -223,8 +216,6 @@ model Application
               search "/admin/profile/search?json"
               template "{{name}}" 
             }) 
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @filter.relation({
               id "id"
               search "/admin/profile/search?json"
@@ -239,7 +230,6 @@ model Application
           @label("Name") 
           @searchable
           @field.string({ required true })
-          @is.required("Required")
           @list.string @view.string
           @description("Arbitrary name of the application. Used in 3-legged OAuth flows.")
           @examples("My Awesome App")
@@ -269,7 +259,8 @@ model Application
           @label("Scopes") 
           @default([])
           @field.taglist
-          @view.taglist({ warning true })
+          @list.taglist({ warning true pill true className "frui-mr-md" })
+          @view.taglist({ warning true pill true className "frui-mr-md" })
           @description("API scopes that this application can request. This is mapped with endpoints.")
           @examples([ "commerce" "location" "account" ])
 
@@ -285,7 +276,6 @@ model Application
           @label("Expires") 
           @sortable
           @field.datetime
-          @is.required("Required")
           @list.date("m d, Y h:iA") 
           @view.date("m d, Y h:iA")
           @description("Expiration date of the application. After this date, the application will not be able to perform any operations.")
@@ -330,8 +320,6 @@ model Session
                   search "/admin/application/search?json"
                   template "{{name}}" 
                 }) 
-                @is.required("Required")
-                @is.notempty("Cannot be empty")
                 @filter.relation({ 
                   id "id"
                   search "/admin/application/search?json"
@@ -349,8 +337,6 @@ model Session
                   search "/admin/profile/search?json"
                   template "{{name}}" 
                 }) 
-                @is.required("Required")
-                @is.notempty("Cannot be empty")
                 @filter.relation({
                   id "id"
                   search "/admin/profile/search?json"
@@ -364,7 +350,6 @@ model Session
   secret        String
                 @label("Secret") 
                 @default("cuid()")
-                @is.notempty("Cannot be empty")
                 @description("Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)")
                 @examples("lig3iuej37e2bcftg8dz7pjf")
   
@@ -372,7 +357,8 @@ model Session
                 @label("Scopes") 
                 @default([])
                 @field.taglist
-                @view.taglist({ warning true })
+                @list.taglist({ warning true pill true className "frui-mr-md" })
+                @view.taglist({ warning true pill true className "frui-mr-md" })
                 @description("API scopes that this session can request. This is mapped with endpoints.")
                 @examples([ "commerce" "location" "account" ])
 
@@ -388,8 +374,6 @@ model Session
                 @label("Expires") 
                 @sortable
                 @field.datetime
-                @is.required("Required")
-                @is.notempty("Cannot be empty")
                 @list.date("m d, Y h:iA") 
                 @view.date("m d, Y h:iA")
                 @description("Expiration date of the session. After this date, the session will not be able to perform any operations.")

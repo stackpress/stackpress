@@ -26,6 +26,12 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/server',
     namedImports: [ 'Request', 'Response', 'Server' ]
   });
+  //import type { StoreSelectFilters } from 'stackpress/sql/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSelectFilters' ]
+  });
   //import Exception from 'stackpress/Exception';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/Exception',
@@ -54,7 +60,10 @@ export default function generate(directory: Directory, model: Model) {
       actions: model.name.toClassName('%sActions'),
       ids: ids.map(column => ({
         column: column.name.toPropertyName()
-      })).toArray()
+      })).toArray(),
+      active: model.store.active 
+        ? { column: model.store.active.name.toString() }
+        : null
     })
   });
 };
@@ -72,28 +81,32 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 //so let the response pass through
 if (!engine) return;
 
+const filter: StoreSelectFilters = {};
 //check for id/s
 <%#ids%>
   //get id
-  const <%column%> = req.data<string>('<%column%>');
+  filter.<%column%> = req.data<string>('<%column%>');
   //let it naturally 404 if invalid id
-  if (typeof <%column%> === 'undefined' 
-    || <%column%> === null 
-    || <%column%> === ''
+  if (typeof filter.<%column%> === 'undefined' 
+    || filter.<%column%> === null 
+    || filter.<%column%> === ''
   ) {
     const errors = { <%column%>: 'Missing or invalid value' };
     res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
     return;
   }
 <%/ids%>
-
+<%#active%>
+  //include soft-deleted records
+  filter.<%column%> = -1; 
+<%/active%>
 //get the database seed (for encrypting)
 const seed = ctx.config.path('database.seed', '');
 //load the actions
 const actions = new <%actions%>(engine, seed);
 
 try { //to restore
-  const results = await actions.restoreById(<%#ids%><%column%>,<%/ids%>);
+  const results = await actions.restore({ filter });
   res.setResults(results);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);

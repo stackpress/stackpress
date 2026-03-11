@@ -78,7 +78,7 @@ export class AttributeDictionary extends DataMap<string, AttributeDefinitionToke
 export class AssertionDictionary extends DataMap<string, AttributeAssertionToken> {
   /**
    * Defines a new attribute assertion
-   * Usage: define('is.required', AttributeAssertionInput)
+   * Usage: define('is.ne', AttributeAssertionInput)
    * Alias for set()
    */
   public define(name: string, definition: AttributeAssertionInput) {

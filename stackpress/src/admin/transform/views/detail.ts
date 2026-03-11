@@ -202,7 +202,9 @@ const { base, results } = props;
 const { _ } = useLanguage();
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
-    <Bread.Slicer value="›" />
+    <Bread.Slicer>
+      <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
+    </Bread.Slicer>
     <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
       {_('<%search.label%>')}
     </Bread.Crumb>

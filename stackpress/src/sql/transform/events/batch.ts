@@ -67,6 +67,7 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 //so let the response pass through
 if (!engine) return;
 
+const mode = req.data.path('mode', 'upsert') as 'create' | 'update' | 'upsert';
 const rows = req.data('rows');
 if (!Array.isArray(rows)) {
   const errors = { rows: 'Missing or invalid value' };
@@ -80,8 +81,11 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to batch
-  const rows = await actions.batch(rows);
-  res.setRows(rows, rows.length);
+  const results = await actions.batch(rows, mode);
+  res.setRows(results, results.length);
+  results.every(result => result.code === 200)
+    ? res.setStatus(200, 'OK')
+    : res.setStatus(400, 'Bad Request');
 } catch(e) {
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());

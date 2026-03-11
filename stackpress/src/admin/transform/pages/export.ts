@@ -89,6 +89,16 @@ if (response.code === 200 && response.results) {
       let value = data[key];
       if (typeof value === 'undefined' || value === null) {
         value = '';
+      } else if (Array.isArray(value) || typeof value === 'object') {
+        value = JSON.stringify(value)
+          //remove quotes, boxes and curlies
+          .replace(/["\\{\\}\\[\\]]/g, '')
+          //add spaces after commas
+          .replaceAll(',', ', ')
+          .replaceAll(',  ', ', ')
+          //add spaces after colons
+          .replaceAll(':', ': ')
+          .replaceAll(':  ', ': ');
       }
       row.push(JSON.stringify(value));
     }

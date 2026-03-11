@@ -254,15 +254,15 @@ export function generateString(
     statements: renderCode(TEMPLATE.SERIALIZE_STRING, {
       nullable: column.type.nullable,
       hashed: column.value.hashed
-        ? 'return hash(String(string));' 
+        ? 'return hash(string);' 
         : '',
       encrypted: column.value.encrypted 
         ? `return this._seed`
-          + `? encrypt(String(value), this._seed)`
-          + `: String(value);` 
+          + `? encrypt(string, this._seed)`
+          + `: string;` 
         : '',
       decrypted: !column.value.hashed && !column.value.encrypted 
-        ? 'return String(string);'
+        ? 'return string;'
         : ''
     })
   });

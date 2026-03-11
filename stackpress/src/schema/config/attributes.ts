@@ -313,9 +313,9 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
       "message": "Value is required."
     }
   },
-  "notempty": {
+  "ne": {
     "type": [ "flag", "method" ],
-    "name": "is.notempty",
+    "name": "is.ne",
     "description": "Validates that a value is something as opposed to an empty string.",
     "args": [
       {
@@ -327,7 +327,7 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
       }
     ],
     "data": {
-      "name": "notempty",
+      "name": "ne",
       "message": "Must not be empty."
     }
   },
@@ -374,9 +374,9 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
       "message": "Must be equal to {{arg}}."
     }
   },
-  "ne": {
+  "neq": {
     "type": [ "method" ],
-    "name": "is.ne",
+    "name": "is.neq",
     "description": "Validates that the value is explicitly equal to the given argument",
     "args": [
       {
@@ -395,7 +395,7 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
       }
     ],
     "data": {
-      "name": "ne",
+      "name": "neq",
       "message": "Must not be equal to {{arg}}."
     }
   },
@@ -3711,6 +3711,37 @@ const field: AttributeDataMap<AttributeDataComponent> = {
       "attributes": {
         "type": "time"
       }
+    }
+  },
+  "url": {
+    "type": [ "component"],
+    "name": "field.url",
+    "description": "Use a URL input to represent this column in a field.",
+    "args": [
+      {
+        "spread": false,
+        "type": [ "string" ],
+        "name": "className",
+        "required": false,
+        "description": "Standard HTML class names",
+        "examples": [ "my-url-field" ]
+      },
+      {
+        "spread": false,
+        "type": [ "CSS Object" ],
+        "name": "style",
+        "required": false,
+        "description": "Standard CSS object",
+        "examples": [ { "marginTop": "10px" } ]
+      }
+    ],
+    "data": {
+      "name": "Input",
+      "import": {
+        "from": "frui/form/Input",
+        "default": true
+      },
+      "attributes": { "type": "url" }
     }
   }
 };

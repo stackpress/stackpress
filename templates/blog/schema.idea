@@ -28,8 +28,6 @@ model Category
               @label("Name") 
               @searchable
               @field.string({ required true })
-              @is.required("Required")
-              @is.notempty("Cannot be empty")
               @list.string @view.string
               @description("Name of the category.")
               @examples("Introduction to Stackpress")
@@ -38,8 +36,6 @@ model Category
               @label("URL Slug") 
               @unique
               @field.slug({ required true })
-              @is.required("Required")
-              @is.notempty("Cannot be empty")
               @list.string @view.string
               @description("URL-friendly version of the category name.")
               @examples("introduction-to-stackpress")
@@ -47,7 +43,7 @@ model Category
   banner      String?
               @label("Banner") 
               @field.url
-              @list.image(20 20) @view.image(100 100)
+              @list.image({ width 20 height 20 }) @view.image({ width 100 height 100 })
               @description("Banner image URL.")
               @examples("https://example.com/banner.jpg")
 
@@ -130,8 +126,6 @@ model Article
               search "/admin/profile/search?json"
               template "{{name}}" 
             }) 
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @filter.relation({
               id "id"
               search "/admin/profile/search?json"
@@ -146,8 +140,6 @@ model Article
             @label("Title") 
             @searchable
             @field.string({ required true })
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @list.string @view.string
             @description("Title of the article.")
             @examples("Introduction to Stackpress")
@@ -156,8 +148,6 @@ model Article
             @label("URL Slug") 
             @unique
             @field.slug({ required true })
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @list.string @view.string
             @description("URL-friendly version of the title.")
             @examples("introduction-to-stackpress")
@@ -165,7 +155,8 @@ model Article
   banner    String?
             @label("Banner") 
             @field.url
-            @list.image(20 20) @view.image(100 100)
+            @list.image({ width 20 height 20 }) 
+            @view.image({ width 100 height 100 })
             @description("Banner image URL.")
             @examples("https://example.com/banner.jpg")
 
@@ -194,7 +185,8 @@ model Article
             @label("Keywords") 
             @default([])
             @field.taglist
-            @view.taglist({ warning true })
+            @list.taglist({ warning true pill true className "frui-mr-md" })
+            @view.taglist({ warning true pill true className "frui-mr-md" })
             @description("Keyphrases for SEO purposes.")
             @examples(["top buyer" "verified" "moderator"])
 
@@ -202,7 +194,8 @@ model Article
             @label("Tags") 
             @default([])
             @field.taglist
-            @view.taglist({ warning true })
+            @list.taglist({ warning true pill true className "frui-mr-md" })
+            @view.taglist({ warning true pill true className "frui-mr-md" })
             @description("Arbitrary tags for general use.")
             @examples(["top buyer" "verified" "moderator"])
 
@@ -210,8 +203,6 @@ model Article
             @label("Status")
             @default("DRAFT")
             @field.select({ required true options [ "DRAFT" "REVIEW" "PUBLISHED" "ARCHIVED" ] })
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @list.string @view.string
             @description("Status of the article.")
             @examples("DRAFT")
@@ -269,8 +260,6 @@ model Comment {
               search "/admin/article/search?json"
               template "{{title}}" 
             }) 
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @filter.relation({
               id "id"
               search "/admin/article/search?json"
@@ -288,8 +277,6 @@ model Comment {
               search "/admin/profile/search?json"
               template "{{name}}" 
             }) 
-            @is.required("Required")
-            @is.notempty("Cannot be empty")
             @filter.relation({
               id "id"
               search "/admin/profile/search?json"

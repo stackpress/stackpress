@@ -25,45 +25,49 @@ export const typemap: Record<string, string> = {
 };
 
 export const assertions: Record<string, string> = {
-  'is.eq': `.eq(%s, { message: '%m' })`,
-  'is.neq': `.neq(%s, { message: '%m' })`,
-  'is.ne': `.nonempty(%s, { message: '%m' })`,
-  'is.gt': `.gt(%s, { message: '%m' })`,
-  'is.ge': `.gte(%s, { message: '%m' })`,
-  'is.lt': `.lt(%s, { message: '%m' })`,
-  'is.le': `.lte(%s, { message: '%m' })`,
-  'is.ceq': `.length(%s, { message: '%m' })`,
-  'is.cgt': `.min(%s, { exclusive: true, message: '%m' })`,
-  'is.ce': `.min(%s, { message: '%m' })`,
-  'is.clt': `.max(%s, { exclusive: true, message: '%m' })`,
-  'is.cle': `.max(%s, { message: '%m' })`,
-  'is.wgt': `.refine(value => value.split(" ").length > %s, { message: '%m' })`,
-  'is.wge': `.refine(value => value.split(" ").length >= %s, { message: '%m' })`,
-  'is.wlt': `.refine(value => value.split(" ").length < %s, { message: '%m' })`,
-  'is.wle': `.refine(value => value.split(" ").length <= %s, { message: '%m' })`,
-  'is.email': `.email(%s, { message: '%m' })`,
-  'is.url': `.url(%s, { message: '%m' })`,
-  'is.regex': `.regex(%s, { message: '%m' })`,
-  'is.option': `.enum(%s, { message: '%m' })`,
-  'is.starting': `.startsWith(%s, { message: '%m' })`,
-  'is.ending': `.endsWith(%s, { message: '%m' })`,
-  'is.including': `.includes(%s, { message: '%m' })`,
-  'is.date': `.refine(value => !isNaN(Date.parse(value)), { message: '%m' })`,
-  'is.future': `.refine(value => new Date(value) > new Date(), { message: '%m' })`,
-  'is.past': `.refine(value => new Date(value) < new Date(), { message: '%m' })`,
-  'is.present': `.refine(value => {
+  'required': `.refine(
+    data => typeof data !== 'undefined' && data !== null && String(data) !== '', 
+    { message: '<%m%>' }
+  )`,
+  'ne': `.nonempty(<%s%>, { message: '<%m%>' })`,
+  'eq': `.eq(<%s%>, { message: '<%m%>' })`,
+  'neq': `.neq(<%s%>, { message: '<%m%>' })`,
+  'gt': `.gt(<%s%>, { message: '<%m%>' })`,
+  'ge': `.gte(<%s%>, { message: '<%m%>' })`,
+  'lt': `.lt(<%s%>, { message: '<%m%>' })`,
+  'le': `.lte(<%s%>, { message: '<%m%>' })`,
+  'ceq': `.length(<%s%>, { message: '<%m%>' })`,
+  'cgt': `.min(<%s%>, { exclusive: true, message: '<%m%>' })`,
+  'cge': `.min(<%s%>, { message: '<%m%>' })`,
+  'clt': `.max(<%s%>, { exclusive: true, message: '<%m%>' })`,
+  'cle': `.max(<%s%>, { message: '<%m%>' })`,
+  'wgt': `.refine(value => value.split(" ").length > <%s%>, { message: '<%m%>' })`,
+  'wge': `.refine(value => value.split(" ").length >= <%s%>, { message: '<%m%>' })`,
+  'wlt': `.refine(value => value.split(" ").length < <%s%>, { message: '<%m%>' })`,
+  'wle': `.refine(value => value.split(" ").length <= <%s%>, { message: '<%m%>' })`,
+  'email': `.email(<%s%>, { message: '<%m%>' })`,
+  'url': `.url(<%s%>, { message: '<%m%>' })`,
+  'regex': `.regex(<%s%>, { message: '<%m%>' })`,
+  'option': `.refine(data => [ <%s%> ].flat().includes(data), { message: '<%m%>' })`,
+  'starting': `.startsWith(<%s%>, { message: '<%m%>' })`,
+  'ending': `.endsWith(<%s%>, { message: '<%m%>' })`,
+  'including': `.includes(<%s%>, { message: '<%m%>' })`,
+  'date': `.refine(value => !isNaN(Date.parse(value)), { message: '<%m%>' })`,
+  'future': `.refine(value => new Date(value) > new Date(), { message: '<%m%>' })`,
+  'past': `.refine(value => new Date(value) < new Date(), { message: '<%m%>' })`,
+  'present': `.refine(value => {
     const now = new Date();
     const date = new Date(value);
     return date.getFullYear() === now.getFullYear() &&
       date.getMonth() === now.getMonth() &&
       date.getDate() === now.getDate();
-  }, { message: '%m' })`,
-  'is.cc': `.regex(/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}`
+  }, { message: '<%m%>' })`,
+  'cc': `.regex(/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}`
     + `|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]`
-    + `|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/, { message: '%m' })`,
-  'is.color': `.regex(/^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/, { message: '%m' })`,
-  'is.hex': `.regex(/^[a-f0-9]+$/, { message: '%m' })`,
-  'is.price': `.refine(value => value.toString().match(/^-?\d+(\.\d{2})?$/), { message: '%m' })`,
+    + `|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/, { message: '<%m%>' })`,
+  'color': `.regex(/^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/, { message: '<%m%>' })`,
+  'hex': `.regex(/^[a-f0-9]+$/, { message: '<%m%>' })`,
+  'price': `.refine(value => value.toString().match(/^-?\d+(\.\d{2})?$/), { message: '<%m%>' })`,
 };
 
 export default function generate(
@@ -76,7 +80,7 @@ export default function generate(
     : column.type.enum
     ? `z.enum(${column.type.name})`
     : column.type.fieldset
-    ? column.type.fieldset.name.toClassName('%sModel.shape')
+    ? column.type.fieldset.name.toClassName('<%s%>Model.shape')
     : typemap.Unknown;
   //add description
   shape += column.document.description 
@@ -99,7 +103,6 @@ export default function generate(
   column.assertion.assertions.forEach(assertion => {
     if (assertion.name in assertions) {
       const template = assertions[assertion.name];
-      const args = assertion.args.map(arg => JSON.stringify(arg)).join(', ');
       shape += renderCode(template, { 
         m: assertion.message
           .replaceAll('{{name}}', column.name.toString())
@@ -108,7 +111,7 @@ export default function generate(
           .replaceAll('{{arg1}}', String(assertion.args[0]) || '')
           .replaceAll('{{arg2}}', String(assertion.args[1]) || '')
           .replaceAll('{{arg3}}', String(assertion.args[2]) || ''), 
-        s: JSON.stringify(args).slice(1, -1),
+        s: assertion.args.map(arg => JSON.stringify(arg)).join(', ')
       });
     }
   });
@@ -119,6 +122,12 @@ export default function generate(
   //add optional if not required and not multiple
   } else if (column.type.nullable) {
     shape += '.nullable().optional()'; 
+  //not multiple and required...
+  //if no required assertion was specified
+  } else if (!column.assertion.assertions.find(
+    assertion => assertion.name === 'required'
+  )) {
+    shape += renderCode(assertions['required'], { m: 'Required' });
   }
   //public shape = z.string()...
   definition.addProperty({
