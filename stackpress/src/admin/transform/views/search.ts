@@ -533,12 +533,25 @@ return (
         />
       )}
     </div>
-    <Pager
-      total={total} 
-      take={take} 
-      skip={skip} 
-      onUpdate={page} 
-    />
+    {total > take && (
+      <div className="px-py-10 flex justify-center">
+        <Pager 
+          className={({ active }) => active 
+            ? 'px-w-32 px-h-32 !font-normal' 
+            : 'px-w-32 px-h-32 theme-info'
+          } 
+          total={total} 
+          skip={skip} 
+          take={take}
+          radius={3} 
+          prev={<i className="fas fa-fw fa-backward theme-1"></i>}
+          next={<i className="fas fa-fw fa-forward theme-1"></i>}
+          start={<i className="fas fa-fw fa-backward-fast theme-1"></i>}
+          end={<i className="fas fa-fw fa-forward-fast theme-1"></i>}
+          onUpdate={page}
+        />
+      </div>
+    )}
   </main>
 );`,
 

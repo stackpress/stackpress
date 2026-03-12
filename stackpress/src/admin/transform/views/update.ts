@@ -193,9 +193,11 @@ return (
     <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
       {_('<%search.label%>')}
     </Bread.Crumb>
-    <Bread.Crumb href={<%detail.href%>}>
-      {_(\`<%detail.label%>\`)}
-    </Bread.Crumb>
+    {!!results && (
+      <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
+        {_(\`<%detail.label%>\`)}
+      </Bread.Crumb>
+    )}
     <Bread.Crumb icon="edit">
       {_('Update')}
     </Bread.Crumb>
@@ -238,20 +240,55 @@ UPDATE_FORM_FIELD:
 />`,
 
 UPDATE_BODY:
-`const { config, request, response } = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
+`//props
+const { 
+  config, 
+  request, 
+  response 
+} = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
+//hooks
+const { _ } = useLanguage();
+//variables
 const base = config.path('admin.base', '/admin');
 const input = { ...response.results, ...request.data() };
 const errors = response.errors();
 const results = response.results as <%type%>;
+if (response.code !== 200 && response.code !== 404) {
+  console.error(response.toStatusResponse());
+}
 //render
 return (
   <main className="admin-page admin-form-page">
     <div className="admin-crumbs">
       <<%crumbs%> base={base} results={results} />
     </div>
-    <div className="admin-form">
-      <<%form%> errors={errors} input={input} />
-    </div>
+    {response.code === 200 ? (
+      <div className="admin-form">
+        <<%form%> errors={errors} input={input} />
+      </div>
+    ) : response.code === 404 ? (
+      <div className="admin-form">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Not Found')}
+          </h1>
+          <p>
+            {_('Looks like this page does not exist. Please make sure the URL is correct.')}
+          </p>
+        </div>
+      </div>
+    ) : (
+      <div className="admin-form">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Unknown Error')}
+          </h1>
+          <p>
+            {_('Sorry, something went wrong. Ask an admin to help, then try again later.')}
+          </p>
+        </div>
+      </div>
+    )}
   </main>
 );`,
 

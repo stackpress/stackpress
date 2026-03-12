@@ -660,14 +660,16 @@
 
 .admin-confirm-page .admin-confirm .actions .action.remove {
   background-color: var(--error);
+  color: var(--white);
 }
 
 .admin-confirm-page .admin-confirm .actions .action.restore {
   background-color: var(--success);
+  color: var(--white);
 }
 
 .admin-confirm-page .admin-confirm .actions .action.cancel {
-  background-color: var(--muted);
+  background-color: var(--bg-first);
 }
 
 .admin-confirm-page .admin-confirm .actions .action .icon {

@@ -197,7 +197,7 @@ DETAIL_CRUMBS_PROPS:
 
 DETAIL_CRUMBS_BODY:
 `//props
-const { base, results } = props;
+const { results } = props;
 //hooks
 const { _ } = useLanguage();
 return (
@@ -291,26 +291,63 @@ return (
 );`,
 
 DETAIL_BODY:
-`const { config, session, response } = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+`//props
+const { 
+  config, 
+  session, 
+  response 
+} = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+//hooks
+const { _ } = useLanguage();
+//variables
 const can = session.can.bind(session);
 const base = config.path('admin.base', '/admin');
 const results = response.results as <%type%>;
+if (response.code !== 200 && response.code !== 404) {
+  console.error(response.toStatusResponse());
+}
 //render
 return (
   <main className="admin-detail-page admin-page">
     <div className="admin-crumbs">
       <<%crumbs%> base={base} results={results} />
     </div>
-    <div className="admin-actions">
-      <<%actions%>
-        can={can} 
-        base={base} 
-        results={results} 
-      />
-    </div>
-    <div className="admin-results">
-      <<%results%> results={results} />
-    </div>
+    {response.code === 200 ? (
+      <>
+        <div className="admin-actions">
+          <<%actions%>
+            can={can} 
+            base={base} 
+            results={results} 
+          />
+        </div>
+        <div className="admin-results">
+          <<%results%> results={results} />
+        </div>
+      </>
+    ) : response.code === 404 ? (
+      <div className="flex-grow">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Not Found')}
+          </h1>
+          <p>
+            {_('Looks like this page does not exist. Please make sure the URL is correct.')}
+          </p>
+        </div>
+      </div>
+    ) : (
+      <div className="flex-grow">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Unknown Error')}
+          </h1>
+          <p>
+            {_('Sorry, something went wrong. Ask an admin to help, then try again later.')}
+          </p>
+        </div>
+      </div>
+    )}
   </main>
 );`,
 

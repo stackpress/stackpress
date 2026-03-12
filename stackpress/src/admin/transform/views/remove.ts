@@ -161,9 +161,11 @@ return (
     <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
       {_('<%search.label%>')}
     </Bread.Crumb>
-    <Bread.Crumb href={<%detail.href%>}>
-      {_(\`<%detail.label%>\`)}
-    </Bread.Crumb>
+    {!!results && (
+      <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
+        {_(\`<%detail.label%>\`)}
+      </Bread.Crumb>
+    )}
     <Bread.Crumb icon="trash">
       {_('Remove')}
     </Bread.Crumb>
@@ -203,18 +205,52 @@ return (
 );`,
 
 REMOVE_BODY:
-`const { config, response } = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+`//props
+const { 
+  config, 
+  response 
+} = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+//hooks
+const { _ } = useLanguage();
+//variables
 const base = config.path('admin.base', '/admin');
 const results = response.results as <%type%>;
+if (response.code !== 200 && response.code !== 404) {
+  console.error(response.toStatusResponse());
+}
 //render
 return (
   <main className="admin-page admin-confirm-page">
     <div className="admin-crumbs">
       <<%crumbs%> base={base} results={results} />
     </div>
-    <div className="admin-confirm">
-      <<%form%> base={base} results={results} />
-    </div>
+    {response.code === 200 ? (
+      <div className="admin-confirm">
+        <<%form%> base={base} results={results} />
+      </div>
+    ) : response.code === 404 ? (
+      <div className="flex-grow">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Not Found')}
+          </h1>
+          <p>
+            {_('Looks like this page does not exist. Please make sure the URL is correct.')}
+          </p>
+        </div>
+      </div>
+    ) : (
+      <div className="flex-grow">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Unknown Error')}
+          </h1>
+          <p>
+            {_('Sorry, something went wrong. Ask an admin to help, then try again later.')}
+          </p>
+        </div>
+      </div>
+    )}
   </main>
 );`,
 
