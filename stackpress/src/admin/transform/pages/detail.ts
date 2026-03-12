@@ -12,12 +12,6 @@ export default function generate(directory: Directory, model: Model) {
   //load Profile/admin/pages/detail.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
-  //import type { UnknownNest } from '@stackpress/lib/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/lib/types',
-    namedImports: [ 'UnknownNest' ]
-  });
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
     isTypeOnly: true,

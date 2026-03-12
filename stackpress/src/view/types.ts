@@ -208,7 +208,7 @@ export type FieldProps = {
   error?: boolean,
   name?: string,
   value: any,
-  change?: (name: string, value: any) => void
+  onUpdate?: (name: string, value: any) => void
 };
 
 export type ControlProps = {
@@ -216,7 +216,7 @@ export type ControlProps = {
   error?: string,
   name?: string,
   value: any,
-  change?: (name: string, value: any) => void
+  onUpdate?: (name: string, value: any) => void
 }
 
 //--------------------------------------------------------------------//

@@ -77,6 +77,11 @@ export function generateRelation(
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
+  //import { useState } from 'react';
+  source.addImportDeclaration({
+    moduleSpecifier: 'react',
+    namedImports: [ 'useState' ]
+  });
   //import mustache from 'mustache';
   source.addImportDeclaration({
     moduleSpecifier: 'mustache',
@@ -97,14 +102,7 @@ export function generateRelation(
     moduleSpecifier: 'frui/form/FieldControl',
     defaultImport: 'FieldControl'
   });
-  //import Text from 'frui/form/Text';
-  source.addImportDeclaration({
-    //component token will have import
-    //info. just use that as is...
-    moduleSpecifier: component.import.from,
-    defaultImport: component.import.default ? component.name : undefined,
-    namedImports: !component.import.default ? [ component.name ] : []
-  });
+  
   //export function NameFilterField(props: FieldProps) {
   source.addFunction({
     isExported: true,
@@ -115,7 +113,9 @@ export function generateRelation(
     statements: renderCode(TEMPLATE.RELATION_FIELD, {
       url: String(props.search || ''),
       template: props.template,
-      id: props.id
+      id: props.id,
+      column: column.name.toURLPath(),
+      multiple: column.type.multiple ? '[]': ''
     })
   });
   //export function NameFilterFieldControl(props: ControlProps) {
@@ -294,7 +294,13 @@ export const TEMPLATE = {
 
 RELATION_FIELD:
 `//props
-const { className, value, change, error = false } = props;
+const { 
+  name = 'filter[<%column%>]<%multiple%>',
+  value,  
+  error = false,
+  onUpdate,
+  className
+} = props;
 const [ 
   options, 
   updateOptions 
@@ -309,14 +315,16 @@ return (
     onQuery={async query => {
       const response = await fetch(
         '<%url%>'.replace('{{query}}', query)
+      ).then(response => response.json());
+      const options = response.results.map(
+        (row: Record<string, unknown>) => ({
+          label: mustache.render('<%template%>', row),
+          value: row.<%id%>
+        })
       );
-      const json = await response.json();
-      const options = json.results.map(row => ({
-        label: mustache.render('<%template%>', row),
-        value: row.<%id%>
-      }));
       updateOptions(options);
     }}
+    onUpdate={value => onUpdate && onUpdate(name, value)}
   >
     {options.map(option => (
       <SuggestInput.Option value={option.value} key={option.value}>
@@ -328,7 +336,7 @@ return (
 
 RELATION_CONTROL:
 `//props
-const { className, value, change, error } = props;
+const { name, value, onUpdate, error, className } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -337,8 +345,9 @@ return (
     <%hidden%>
     <<%component%>
       error={!!error} 
+      name={name}
       value={value} 
-      change={change}
+      onUpdate={onUpdate}
     />
   </FieldControl>
 );`,
@@ -348,7 +357,7 @@ RELATION_BOOLEAN_HIDDEN_FIELD:
 
 BOOLEAN_FIELD:
 `//props
-const { className, value, change, error = false } = props;
+const { className, value, onUpdate, error = false } = props;
 const attributes = <%props%>;
 //render
 return (
@@ -359,13 +368,13 @@ return (
     error={error} 
     defaultValue="1"
     defaultChecked={!!value}
-    onUpdate={value => change && change('filter[<%column%>]<%multiple%>', value)}
+    onUpdate={value => onUpdate && onUpdate('filter[<%column%>]<%multiple%>', value)}
   />
 );`,
 
 BOOLEAN_CONTROL:
 `//props
-const { className, value, change, error } = props;
+const { className, value, onUpdate, error } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -375,14 +384,14 @@ return (
     <<%component%>
       error={!!error} 
       value={value} 
-      change={change}
+      onUpdate={onUpdate}
     />
   </FieldControl>
 );`,
 
 FIELD_FIELD:
 `//props
-const { className, value, change, error = false } = props;
+const { className, value, onUpdate, error = false } = props;
 const attributes = <%props%>;
 //render
 return (
@@ -392,13 +401,13 @@ return (
     className={className}
     error={error} 
     defaultValue={value} 
-    onUpdate={value => change && change('filter[<%column%>]<%multiple%>', value)}
+    onUpdate={value => onUpdate && onUpdate('filter[<%column%>]<%multiple%>', value)}
   />
 );`,
 
 FIELD_CONTROL:
 `//props
-const { className, value, change, error } = props;
+const { className, value, onUpdate, error } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -407,7 +416,7 @@ return (
     <<%component%>
       error={!!error} 
       value={value} 
-      change={change}
+      onUpdate={onUpdate}
     />
   </FieldControl>
 );`

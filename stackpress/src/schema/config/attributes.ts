@@ -5299,7 +5299,7 @@ view.fieldset = {
 };
 
 view.template = {
-  "type": [ "component" ],
+  "type": [ "method" ],
   "name": "view.template",
   "description": "Special template view used to render custom content using a template string.",
   "args": [

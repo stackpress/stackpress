@@ -49,7 +49,10 @@ export default function generate(directory: Directory, model: Model) {
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.SEARCH, { 
-      actions: model.name.toClassName('%sActions') 
+      actions: model.name.toClassName('%sActions'),
+      columns: model.store.query.length > 0 
+        ? model.store.query.join("', '") 
+        : [ '*' ].join("', '") 
     })
   });
 };
@@ -67,15 +70,13 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 //so let the response pass through
 if (!engine) return;
 
-const columns = req.data.has('columns') 
-  ? req.data<string[]>('columns') 
-  : [ '<%columns%>' ];
+const columns = req.data<string[]>('columns');
 
 req.data.set(
   'columns', 
   Array.isArray(columns) && columns.every(
     column => typeof column === 'string' && column.length > 0
-  ) ? columns : [ '*' ]
+  ) ? columns : [ '<%columns%>' ]
 );
 
 //get the database seed (for encrypting)

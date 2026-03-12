@@ -523,7 +523,7 @@ const {
   className, 
   name = '<%column%><%multiple%>', 
   value, 
-  change, 
+  onUpdate, 
   error = false 
 } = props;
 const [ 
@@ -540,14 +540,16 @@ return (
     onQuery={async query => {
       const response = await fetch(
         '<%url%>'.replace('{{query}}', query)
+      ).then(response => response.json());
+      const options = response.results.map(
+        (row: Record<string, unknown>) => ({
+          label: mustache.render('<%template%>', row),
+          value: row.<%id%>
+        })
       );
-      const json = await response.json();
-      const options = json.results.map(row => ({
-        label: mustache.render('<%template%>', row),
-        value: row.<%id%>
-      }));
       updateOptions(options);
     }}
+    onUpdate={value => onUpdate && onUpdate('<%column%><%multiple%>', value)}
   >
     {options.map(option => (
       <SuggestInput.Option value={option.value} key={option.value}>
@@ -559,7 +561,7 @@ return (
 
 RELATION_CONTROL:
 `//props
-const { className, name, value, change, error } = props;
+const { className, name, value, onUpdate, error } = props;
 //hooks
 const { _ } = useLanguage();
 //determine label
@@ -571,7 +573,7 @@ return (
       error={!!error} 
       name={name}
       value={value} 
-      change={change}
+      onUpdate={onUpdate}
     />
   </FieldControl>
 );`,
@@ -759,7 +761,7 @@ const {
   className, 
   name = '<%column%><%multiple%>', 
   value, 
-  change, 
+  onUpdate, 
   error = false 
 } = props;
 const attributes = <%props%>;
@@ -772,7 +774,7 @@ return (
     error={error} 
     defaultValue="1"
     defaultChecked={!!value}
-    onUpdate={value => change && change('<%column%><%multiple%>', value)}
+    onUpdate={value => onUpdate && onUpdate('<%column%><%multiple%>', value)}
   />
 );`,
 
@@ -782,7 +784,7 @@ const {
   className, 
   name = '<%column%><%multiple%>', 
   value<%default%>, 
-  change, 
+  onUpdate, 
   error 
 } = props;
 //hooks
@@ -797,7 +799,7 @@ return (
       error={!!error} 
       name={name}
       value={value} 
-      change={change}
+      onUpdate={onUpdate}
     />
   </FieldControl>
 );`,
@@ -808,7 +810,7 @@ const {
   className, 
   name = '<%column%><%multiple%>', 
   value<%default%>, 
-  change, 
+  onUpdate, 
   error = false 
 } = props;
 const attributes = <%props%>;
@@ -825,13 +827,13 @@ return (
     className={className}
     error={error} 
     defaultValue={<%value%>} 
-    onUpdate={value => change && change('<%column%><%multiple%>', value)}
+    onUpdate={value => onUpdate && onUpdate('<%column%><%multiple%>', value)}
   />
 );`,
 
 FIELD_CONTROL:
 `//props
-const { className, name, value, change, error } = props;
+const { className, name, value, onUpdate, error } = props;
 //hooks
 const { _ } = useLanguage();
 //determine label
@@ -843,7 +845,7 @@ return (
       error={typeof error === 'string'} 
       name={name}
       value={value} 
-      change={change}
+      onUpdate={onUpdate}
     />
   </FieldControl>
 );`

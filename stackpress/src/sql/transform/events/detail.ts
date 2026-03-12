@@ -76,7 +76,10 @@ export default function generate(directory: Directory, model: Model) {
       ids: ids.map(column => ({
         column: column.name.toPropertyName(),
         type: typemap[column.type.name] || 'string'
-      })).toArray()
+      })).toArray(),
+      columns: model.store.query.length > 0 
+        ? model.store.query.join("', '") 
+        : [ '*' ].join("', '") 
     })
   });
 };
@@ -95,7 +98,7 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 if (!engine) return;
 
 //get all the current filters
-const filter = req.data.path<StoreSelectFilters>('filter', {});
+const filter = req.data.path<StoreSelectFilters["filter"]>('filter', {});
 
 //check for id/s
 <%#ids%>
@@ -112,13 +115,10 @@ const filter = req.data.path<StoreSelectFilters>('filter', {});
   }
 <%/ids%>
 
-const selectors = req.data.has('columns') 
-  ? req.data<string[]>('columns') 
-  : [ '<%columns%>' ];
-//determine the selectors from the columns
+const selectors = req.data<string[]>('columns');
 const columns = Array.isArray(selectors) && selectors.every(
   column => typeof column === 'string' && column.length > 0
-) ? selectors : [ '*' ];
+) ? selectors : [ '<%columns%>' ];
 
 //get the database seed (for encrypting)
 const seed = ctx.config.path('database.seed', '');
@@ -126,7 +126,7 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to fetch
-  const results = await actions.find({ filter }, columns);
+  const results = await actions.find({ columns, filter });
   if (!results) {
     res.setError('Not Found').setStatus(404, 'Not Found');
   } else {

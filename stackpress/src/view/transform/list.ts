@@ -261,13 +261,15 @@ export function generateFormat(
   const source = loadProjectFile(directory, filepath);
 
   //import Text from 'frui/list/Text';
-  source.addImportDeclaration({
-    //component token will have import
-    //info. just use that as is...
-    moduleSpecifier: component.import.from,
-    defaultImport: component.import.default ? component.name : undefined,
-    namedImports: !component.import.default ? [ component.name ] : []
-  });
+  if (!attribute.component.isVirtual) {
+    source.addImportDeclaration({
+      //component token will have import
+      //info. just use that as is...
+      moduleSpecifier: component.import.from,
+      defaultImport: component.import.default ? component.name : undefined,
+      namedImports: !component.import.default ? [ component.name ] : []
+    });
+  }
   //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -299,8 +301,7 @@ export function generateFormat(
         }
       ],
       statements: renderCode(TEMPLATE.FORMAT_TEMPLATE_LIST, {
-        template: props.template,
-        component: component.name
+        template: String(props.template)
       })
     });
     return;
@@ -407,9 +408,7 @@ const value = mustache.render(
   data
 );
 //render
-return (
-  <<%component%> value={value} />
-);`,
+return (<>{value}</>);`,
 
 FORMAT_LIST:
 `//props

@@ -110,9 +110,6 @@ export default function searchView(directory: Directory, model: Model) {
   });
   //import CreatedListFormat from '../../components/list/CreatedListFormat.js';
   model.component.listFormats.toArray().forEach(column => {
-    const attribute = column.component.listFormat!;
-    //skip if virtual component definition
-    if (attribute.component.isVirtual) return;
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
         '../../components/list/%sListFormat.js'
@@ -122,9 +119,6 @@ export default function searchView(directory: Directory, model: Model) {
   });
   //import { ActiveFilterControl } from '../../components/filter/ActiveFilterField.js';
   model.component.filterFields.toArray().forEach(column => {
-    const attribute = column.component.filterField!;
-    //skip if virtual component definition
-    if (attribute.component.isVirtual) return;
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
         '../../components/filter/%sFilterField.js'
@@ -134,9 +128,6 @@ export default function searchView(directory: Directory, model: Model) {
   });
   //import { ActiveSpanControl } from '../../components/span/ActiveSpanField.js';
   model.component.spanFields.toArray().forEach(column => {
-    const attribute = column.component.spanField!;
-    //skip if virtual component definition
-    if (attribute.component.isVirtual) return;
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName(
         '../../components/span/%sSpanField.js'
@@ -220,10 +211,7 @@ export default function searchView(directory: Directory, model: Model) {
     statements: renderCode(TEMPLATE.SEARCH_RESULTS_BODY, {
       headers: (
         model.component.listFormats
-      ).toArray().filter(column => {
-        const attribute = column.component.listFormat!;
-        return !attribute.component.isVirtual;
-      }).map(column => renderCode(
+      ).toArray().map(column => renderCode(
         column.store.sortable 
           ? TEMPLATE.SEARCH_RESULTS_TABLE_HEAD_SORTABLE
           : TEMPLATE.SEARCH_RESULTS_TABLE_HEAD, 
@@ -234,10 +222,7 @@ export default function searchView(directory: Directory, model: Model) {
       )).join('\n'),
       columns: (
         model.component.listFormats
-      ).toArray().filter(column => {
-        const attribute = column.component.listFormat!;
-        return !attribute.component.isVirtual;
-      }).map(column => renderCode(
+      ).toArray().map(column => renderCode(
         column.store.filterable 
           ? TEMPLATE.SEARCH_RESULTS_COLUMN_FILTERABLE
           : TEMPLATE.SEARCH_RESULTS_COLUMN, 
