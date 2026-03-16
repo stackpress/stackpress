@@ -123,12 +123,12 @@ model Article
             @label("Profile") 
             @field.relation({ 
               id "id"
-              search "/admin/profile/search?json"
+              search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
             @filter.relation({
               id "id"
-              search "/admin/profile/search?json"
+              search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
             @list.template({ template "{{profile.name}}" }) 
@@ -274,12 +274,12 @@ model Comment {
             @label("Profile") 
             @field.relation({ 
               id "id"
-              search "/admin/profile/search?json"
+              search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
             @filter.relation({
               id "id"
-              search "/admin/profile/search?json"
+              search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
             @list.template({ template "{{profile.name}}" }) 

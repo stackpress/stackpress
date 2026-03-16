@@ -31,11 +31,11 @@ export default interface DefinitionInterface<
   /**
    * Serialize a value for this column (for like a database...)
    */
-  serialize(value: any): S | undefined;
+  serialize(value: any, encrypt?: boolean): S | undefined;
 
   /**
    * Unserialize a value (from like a database) 
    * into the appropriate type for this column
    */
-  unserialize(value: any): U | undefined;
+  unserialize(value: any, encrypt?: boolean): U | undefined;
 };

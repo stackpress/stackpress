@@ -16,6 +16,7 @@ import generateInsert from './insert.js';
 import generateSelect from './select.js';
 import generateUpdate from './update.js';
 
+const strings = [ 'String', 'Text' ];
 //these are possible column types to map what formatter (below) to use
 export const stringable = [ 'String', 'Text', 'Json', 'Object', 'Hash' ];
 export const floatable = [ 'Number', 'Float' ];
@@ -33,14 +34,15 @@ export default function generate(directory: Directory, model: Model) {
   const filepath = model.name.toPathName('%s/%sStore.ts');
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
   //import Exception from 'stackpress/Exception';
   source.addImportDeclaration({
     defaultImport: 'Exception',
     moduleSpecifier: 'stackpress/Exception'
   });
-  //import { removeUndefined } from 'stackpress/schema/helpers';
+  //import { removeUndefined, removeEmptyStrings } from 'stackpress/schema/helpers';
   source.addImportDeclaration({
-    namedImports: [ 'removeUndefined' ],
+    namedImports: [ 'removeUndefined', 'removeEmptyStrings' ],
     moduleSpecifier: 'stackpress/schema/helpers'
   });
   //import type { 
@@ -174,7 +176,9 @@ export default function generate(directory: Directory, model: Model) {
         .filter(column => !column.type.model)
         .map(column => ({
           column: column.name.toString(),
-          snake: column.name.snakeCase
+          snake: column.name.snakeCase,
+          encrypt: strings.includes(column.type.name) 
+            && (column.value.encrypted || column.value.hashed),
         }))
         .toArray()
     })
@@ -221,7 +225,9 @@ export default function generate(directory: Directory, model: Model) {
         .filter(column => !column.type.model)
         .map(column => ({
           column: column.name.toString(),
-          snake: column.name.snakeCase
+          snake: column.name.snakeCase,
+          decrypt: strings.includes(column.type.name) 
+            && column.value.encrypted,
         }))
         .toArray()
     })
@@ -251,10 +257,18 @@ for (const [ name, value ] of Object.entries(values)) {
   <%#columns%>
     if (name === '<%column%>' && typeof value !== 'undefined') {
       const column = this.columns.<%column%>;
-      scalarized.<%snake%> = this.toSqlValue(
-        '<%column%>', 
-        column.serialize(value)
-      )! as ValueScalar;
+      <%#encrypt%>
+        scalarized.<%snake%> = this.toSqlValue(
+          '<%column%>', 
+          column.serialize(value, true)
+        )! as ValueScalar;
+      <%/encrypt%>
+      <%^encrypt%>
+        scalarized.<%snake%> = this.toSqlValue(
+          '<%column%>',
+          column.serialize(value)
+        )! as ValueScalar;
+      <%/encrypt%>
       continue;
     }
   <%/columns%>
@@ -284,7 +298,12 @@ for (const [ name, value ] of Object.entries(values)) {
   <%#columns%>
     if (name === '<%snake%>' && typeof value !== 'undefined') {
       const column = this.columns.<%column%>;
-      unscalarized.<%column%> = column.unserialize(value)! as ValuePrimitive;
+      <%#decrypt%>
+        unscalarized.<%column%> = column.unserialize(value, true)! as ValuePrimitive;
+      <%/decrypt%>
+      <%^decrypt%>
+        unscalarized.<%column%> = column.unserialize(value)! as ValuePrimitive;
+      <%/decrypt%>
       continue;
     }
   <%/columns%>

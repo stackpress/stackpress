@@ -2,6 +2,11 @@
 import type Create from '@stackpress/inquire/Create';
 import type Engine from '@stackpress/inquire/Engine';
 import Nest from '@stackpress/lib/Nest';
+//stackpress/schema
+import { 
+  removeUndefined, 
+  removeEmptyStrings 
+} from '../../schema/helpers.js';
 //stackpress/sql
 import type { StoreSelectFilters, StoreSelectQuery } from '../types';
 import StoreInterface from './StoreInterface.js';
@@ -125,7 +130,7 @@ export default abstract class AbstractActions<
           selector.name,
           //unknown to any because of the dynamic nature of 
           //the selectors and columns, but it should be correct
-          column.unserialize(value as any)
+          column.unserialize(value as any, true)
         );
       });
       return nest.get<E>();
@@ -187,7 +192,11 @@ export default abstract class AbstractActions<
     //we can't requery because the results might be different 
     // after the update, so we have to manually merge the input 
     // with the existing records
-    const unserialized = this.store.unserialize(input);
-    return rows.map(row => ({ ...row, ...unserialized })) as T[];
+    const filtered = this.store.filter(input);
+    const serialized = this.store.serialize(filtered);
+    const unserialized = this.store.unserialize(serialized);
+    const defined = removeEmptyStrings(unserialized);
+    const sanitized = removeUndefined(defined);
+    return rows.map(row => ({ ...row, ...sanitized })) as T[];
   }
 }

@@ -24,11 +24,11 @@ export default interface ColumnInterface<
   /**
    * Serialize a value for this column (for like a database...)
    */
-  serialize<T>(value: T): S | undefined;
+  serialize<T>(value: T, encrypt?: boolean): S | undefined;
 
   /**
    * Unserialize a value (from like a database) 
    * into the appropriate type for this column
    */
-  unserialize<T>(value: T): U | undefined;
+  unserialize<T>(value: T, decrypt?: boolean): U | undefined;
 };

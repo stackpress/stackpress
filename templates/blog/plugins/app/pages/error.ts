@@ -6,7 +6,10 @@ import { action } from 'stackpress/server';
 
 export default action(async function ErrorPage(req, res, ctx) {
   //if this is a terminal error or there is already a body
-  if (req.mimetype === 'terminal/arguments' || res.body) return;
+  if (req.method.toUpperCase() !== 'GET' 
+    || req.mimetype === 'terminal/arguments' 
+    || res.body
+  ) return;
   //set data for template layer
   res.data.set('server', { 
     mode: ctx.config.path('server.mode', 'production'),

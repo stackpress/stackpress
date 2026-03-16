@@ -60,11 +60,17 @@ export default interface SchemaInterface<
   /**
    * Serialize a value for this column (for like a database...)
    */
-  serialize(value: Record<string, any>, seed?: string): SerializeInterfaceMap<C>;
+  serialize(
+    value: Record<string, any>, 
+    encrypt?: boolean
+  ): SerializeInterfaceMap<C>;
 
   /**
    * Unserialize a value (from like a database) 
    * into the appropriate type for this column
    */
-  unserialize(value: Record<string, any>, seed?: string): UnserializeInterfaceMap<C>;
+  unserialize(
+    value: Record<string, any>, 
+    decrypt?: boolean
+  ): UnserializeInterfaceMap<C>;
 };

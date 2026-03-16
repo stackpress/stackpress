@@ -298,7 +298,7 @@ return (
     <Bread.Slicer>
       <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
     </Bread.Slicer>
-    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb">
+    <Bread.Crumb icon="<%search.icon%>">
       {_('<%search.label%>')}
     </Bread.Crumb>
   </Bread>

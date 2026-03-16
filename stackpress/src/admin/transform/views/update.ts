@@ -115,12 +115,12 @@ export default function updateView(directory: Directory, model: Model) {
         if (component.name === 'Fieldset') {
           return renderCode(TEMPLATE.UPDATE_FORM_FIELDSET, {
             component: column.name.toComponentName('%sFormFieldsetControl'),
-            column: column.name.toURLPath()
+            column: column.name.toString()
           });
         }
         return renderCode(TEMPLATE.UPDATE_FORM_FIELD, {
           component: column.name.toComponentName('%sFormFieldControl'),
-          column: column.name.toURLPath(),
+          column: column.name.toString(),
           multiple: column.type.multiple ? '[]' : ''
         });
       }).join('\n')
@@ -253,20 +253,13 @@ const base = config.path('admin.base', '/admin');
 const input = { ...response.results, ...request.data() };
 const errors = response.errors();
 const results = response.results as <%type%>;
-if (response.code !== 200 && response.code !== 404) {
-  console.error(response.toStatusResponse());
-}
 //render
 return (
   <main className="admin-page admin-form-page">
     <div className="admin-crumbs">
       <<%crumbs%> base={base} results={results} />
     </div>
-    {response.code === 200 ? (
-      <div className="admin-form">
-        <<%form%> errors={errors} input={input} />
-      </div>
-    ) : response.code === 404 ? (
+    {response.code === 404 ? (
       <div className="admin-form">
         <div className="flex flex-col frui-fa-center px-h-100-0">
           <h1 className="px-pb-20 px-fs-20 font-bold">
@@ -279,14 +272,7 @@ return (
       </div>
     ) : (
       <div className="admin-form">
-        <div className="flex flex-col frui-fa-center px-h-100-0">
-          <h1 className="px-pb-20 px-fs-20 font-bold">
-            {_('Unknown Error')}
-          </h1>
-          <p>
-            {_('Sorry, something went wrong. Ask an admin to help, then try again later.')}
-          </p>
-        </div>
+        <<%form%> errors={errors} input={input} />
       </div>
     )}
   </main>

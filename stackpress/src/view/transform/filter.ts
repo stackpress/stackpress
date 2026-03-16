@@ -71,26 +71,32 @@ export function generateRelation(
   //load Profile/components/filter/NameFilterField.tsx if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
+  //import type { KeyboardEvent, MouseEvent } from 'react';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'react',
+    namedImports: [ 'KeyboardEvent', 'MouseEvent' ]
+  });
   //import type { FieldProps, ControlProps } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
-  //import { useState } from 'react';
+  //import { useState, useEffect } from 'react';
   source.addImportDeclaration({
     moduleSpecifier: 'react',
-    namedImports: [ 'useState' ]
+    namedImports: [ 'useState', 'useEffect' ]
   });
   //import mustache from 'mustache';
   source.addImportDeclaration({
     moduleSpecifier: 'mustache',
     defaultImport: 'mustache'
   });
-  //import SuggestInput from 'frui/form/SuggestInput';
+  //import Select from 'frui/form/Select';
   source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/SuggestInput',
-    defaultImport: 'SuggestInput'
+    moduleSpecifier: 'frui/form/Select',
+    defaultImport: 'Select'
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -305,33 +311,100 @@ const [
   options, 
   updateOptions 
 ] = useState<{ label: string , value: any }[]>([]);
+const [ loading, isLoading  ] = useState(false);
+//handlers
+const handlers = {
+  fetch(query = '') {
+    if (loading) return;
+    isLoading(true);
+    fetch('<%url%>'.replace('{{query}}', query))
+      .then(response => response.json())
+      .then(response => {
+        updateOptions(response.results.map(
+          (row: Record<string, unknown>) => ({
+            label: mustache.render('<%template%>', row),
+            value: row.<%id%>
+          })
+        ));
+        isLoading(false);
+      });
+  },
+  keyDown(e: KeyboardEvent<HTMLInputElement>) {
+    //stop propagation of key events to prevent interference with form shortcuts
+    e.stopPropagation();
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setTimeout(() => {
+        const input = e.target as HTMLInputElement;
+        //check if this was the input being typed in and 
+        // if so, fetch options based on the current value
+        if (input.tagName === 'INPUT') {
+          const query = String(input.value || '').toLowerCase();
+          handlers.fetch(query);
+        }
+      });
+      return false;
+    }
+  },
+  mouseClick(e: MouseEvent<HTMLButtonElement>) {
+    //stop propagation of mouse events to prevent interference with form shortcuts
+    e.preventDefault();
+    e.stopPropagation();
+    //get the input element and fetch options based on its value
+    const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+    if (input) {
+      const query = String(input.value || '').toLowerCase();
+      handlers.fetch(query);
+    }
+    return false;
+  }
+};
+//effects
+useEffect(() => {
+  handlers.fetch();
+}, []);
 //render
 return (
-  <SuggestInput 
+  <Select 
     name={name}
     className={className}
+    option={({ selected, target }) => selected && target === 'control'
+      ? ''
+      : 'frui-pt-md frui-pr-lg frui-pb-md frui-pl-lg'
+    } 
     error={error} 
     defaultValue={value}
-    onQuery={async query => {
-      const response = await fetch(
-        '<%url%>'.replace('{{query}}', query)
-      ).then(response => response.json());
-      const options = response.results.map(
-        (row: Record<string, unknown>) => ({
-          label: mustache.render('<%template%>', row),
-          value: row.<%id%>
-        })
-      );
-      updateOptions(options);
-    }}
-    onUpdate={value => onUpdate && onUpdate(name, value)}
+    onUpdate={value => onUpdate && onUpdate('<%column%><%multiple%>', value)}
+    append="#dropdown-root"
   >
-    {options.map(option => (
-      <SuggestInput.Option value={option.value} key={option.value}>
+    <Select.Head className="frui-pt-md frui-pr-md frui-pl-md">
+      <div className="frui-flex frui-fa-center frui-form-input">
+        <input 
+          className="frui-fa-grow"
+          type="text" 
+          placeholder="Search..."
+          onKeyDown={handlers.keyDown}
+          style={{ outline: 'none' }}
+        />
+        <button 
+          type="button" 
+          className="frui-pt-md frui-pr-md frui-pb-md frui-pl-md" 
+          onClick={handlers.mouseClick}
+        >
+          <i className="fas fa-search"></i>
+        </button>
+      </div>
+    </Select.Head>
+    {options.length > 0 ? options.map(option => (
+      <Select.Option value={option.value} key={option.value}>
         {option.label}
-      </SuggestInput.Option>
-    ))}
-  </SuggestInput>
+      </Select.Option>
+    )) : (
+      <Select.Option className="frui-none" value="">
+        No Results Found
+      </Select.Option> 
+    )}
+  </Select>
 );`,
 
 RELATION_CONTROL:

@@ -99,12 +99,12 @@ export default function createView(directory: Directory, model: Model) {
         if (component.name === 'Fieldset') {
           return renderCode(TEMPLATE.CREATE_FORM_FIELDSET, {
             component: column.name.toComponentName('%sFormFieldsetControl'),
-            column: column.name.toURLPath()
+            column: column.name.toString()
           });
         }
         return renderCode(TEMPLATE.CREATE_FORM_FIELD, {
           component: column.name.toComponentName('%sFormFieldControl'),
-          column: column.name.toURLPath(),
+          column: column.name.toString(),
           multiple: column.type.multiple ? '[]' : ''
         });
       }).join('\n')

@@ -31,14 +31,14 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
     <form className="auth-form" method="post">
       <FieldControl 
         label={`${_('Name')}*`} 
-        error={errors.email as string|undefined} 
+        error={errors.name as string|undefined} 
         className="control"
       >
         <Input
           name="name"
           className="field"
-          error={!!errors.email}
-          defaultValue={input.email}
+          error={!!errors.name}
+          defaultValue={input.name}
           required
         />
       </FieldControl>

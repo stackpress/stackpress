@@ -62,6 +62,8 @@ export default async function AuthSignin(
     id: profile.id, 
     name: profile.name,
     image: profile.image,
-    roles: profile.roles
+    roles: Array.isArray(profile.roles) && profile.roles.length > 0 
+      ? profile.roles 
+      : [ 'GUEST' ]
   }));
 }

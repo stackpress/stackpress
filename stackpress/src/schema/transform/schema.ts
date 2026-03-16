@@ -139,7 +139,7 @@ export default function generate(directory: Directory, model: Fieldset) {
     parameters: [{ name: 'value', type: 'Record<string, any>' }],
     statements: renderCode(TEMPLATE.SERIALIZE, {
       columns: columns.map(column => ({
-        scalar: !column.type.fieldset && !column.type.multiple,
+        fieldset: !!column.type.fieldset,
         column: column.name.toString(),
       })).toArray()
     })
@@ -195,14 +195,14 @@ return Object.values(errors).some(Boolean)
 SERIALIZE:
 `return removeUndefined({
   <%#columns%>
-    <%#scalar%>
-      <%column%>: this.columns.<%column%>.serialize(value.<%column%>),
-    <%/scalar%>
-    <%^scalar%>
+    <%#fieldset%>
       <%column%>: JSON.stringify(
         this.columns.<%column%>.serialize(value.<%column%>)
       ),
-    <%/scalar%>
+    <%/fieldset%>
+    <%^fieldset%>
+      <%column%>: this.columns.<%column%>.serialize(value.<%column%>),
+    <%/fieldset%>
   <%/columns%>
 });`,
 

@@ -51,6 +51,8 @@ export default async function SignInPage(
   const guest = await me.guest();
   //form submission
   if (req.method === 'POST') {
+    //prevent passwordless sign in on this page...
+    req.data.set('password', true);
     //sign in
     await ctx.emit('auth-signin', req, res);
     //if there is an error, do nothing

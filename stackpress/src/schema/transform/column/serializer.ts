@@ -246,41 +246,40 @@ export function generateString(
     });
   }
   //public serialize<T>(value: T) {}
+  //public serialize<T>(value: T, doEncrypt = false) {}
   definition.addMethod({
     scope: notation === '_' ? Scope.Protected : Scope.Public,
     name: `${notation}serialize`,
     typeParameters: [{ name: 'T' }],
-    parameters: [{ name: 'value', type: 'T' }],
+    parameters: column.value.encrypted || column.value.hashed ? [
+      { name: 'value', type: 'T' },
+      { name: 'doEncrypt', initializer: 'false' }
+    ] : [
+      { name: 'value', type: 'T' }
+    ],
     statements: renderCode(TEMPLATE.SERIALIZE_STRING, {
       nullable: column.type.nullable,
-      hashed: column.value.hashed
-        ? 'return hash(string);' 
-        : '',
-      encrypted: column.value.encrypted 
-        ? `return this._seed`
-          + `? encrypt(string, this._seed)`
-          + `: string;` 
-        : '',
-      decrypted: !column.value.hashed && !column.value.encrypted 
-        ? 'return string;'
-        : ''
+      hashed: column.value.hashed,
+      encrypted: column.value.encrypted,
+      decrypted: !column.value.hashed && !column.value.encrypted
     })
   });
   //public unserialize<T>(value: T) {}
+  //public unserialize<T>(value: T, doDecrypt = false) {}
   definition.addMethod({
     scope: notation === '_' ? Scope.Protected : Scope.Public,
     name: `${notation}unserialize`,
     typeParameters: [{ name: 'T' }],
-    parameters: [{
-      name: 'value',
-      type: 'T',
-    }],
+    parameters: column.value.encrypted ? [
+      { name: 'value', type: 'T' }, 
+      { name: 'doDecrypt', initializer: 'false' }
+    ] : [
+      { name: 'value', type: 'T' }
+    ],
     statements: renderCode(TEMPLATE.UNSERIALIZE_STRING, {
       nullable: column.type.nullable,
       encrypted: column.value.encrypted 
-        ? `return this._seed`
-          + `? decrypt(String(value), this._seed)`
-          + `: String(value);` 
+        ? `return this._seed && value.length > 0 ? decrypt(String(value), this._seed) : String(value);` 
         : '',
       decrypted: !column.value.encrypted 
         ? 'return String(value);'
@@ -518,7 +517,21 @@ if (value instanceof Date) {
 } else if (typeof value?.toString === 'function') {
   string = value.toString();
 }
-<%decrypted%><%encrypted%><%hashed%>`,
+<%#decrypted%>
+  return string;
+<%/decrypted%>
+<%#encrypted%>
+  if (doEncrypt) {
+    return string.length > 0 ? encrypt(string, this._seed) : string;
+  }
+  return string;
+<%/encrypted%>
+<%#hashed%>
+  if (doEncrypt) {
+    return string.length > 0 ? hash(string, this._seed) : string;
+  }
+  return string;
+<%/hashed%>`,
 
 UNSERIALIZE_STRING:
 `if (typeof value === 'undefined') {
@@ -540,7 +553,15 @@ if (value instanceof Date) {
 } else if (typeof value?.toString === 'function') {
   value = value.toString() as T;
 }
-<%decrypted%><%encrypted%>`,
+<%#decrypted%>
+  return String(value);
+<%/decrypted%>
+<%#encrypted%>
+  if (doDecrypt) {
+    return String(value).length > 0 ? decrypt(String(value), this._seed) : String(value);
+  }
+  return String(value);
+<%/encrypted%>`,
 
 SERIALIZE_UNKNOWN:
 `return value;`,

@@ -36,10 +36,15 @@ export default function generate(
 export const TEMPLATE = {
 
 UPDATE:
-`//remove values that are not columns
+`//sanitize input and map to the schema
 const filtered = this.filter(input);
+const serialized = this.serialize(filtered);
+const unserialized = this.unserialize(serialized);
+const defined = removeEmptyStrings(unserialized);
+const sanitized = removeUndefined(defined);
+
 //collect errors, if any
-const errors = this.assert(filtered);
+const errors = this.assert(sanitized);
 //if there were errors
 if (errors) {
   //throw errors
@@ -50,12 +55,13 @@ if (errors) {
 }
 
 <%#timestamp%>
-  filtered.<%column%> = new Date();
+  //add timestamp to @timestamp column
+  sanitized.<%column%> = new Date();
 <%/timestamp%>
 
 //serialize values and map filtered to the 
 // relative SQL column names (snake case)
-const values = this.scalarize(removeUndefined(filtered));
+const values = this.scalarize(sanitized);
 
 //extract params
 let { q: keywords, filter = {}, span = {} } = query;

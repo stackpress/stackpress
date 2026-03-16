@@ -2,8 +2,6 @@
 import type Engine from '@stackpress/inquire/Engine';
 import Exception from '../Exception.js';
 import { email } from '../assert.js';
-//stackpress/schema
-import { hash } from '../schema/helpers.js';
 //stackpress/client
 import { ClientPlugin } from '../client/types.js';
 //stackpress/session
@@ -104,7 +102,10 @@ export async function signin(
   //if use password
   //NOTE: passwordless can occur if OTP or magic link is used
   } else if (password) {
-    const secret = hash(String(input.secret));
+    const secret = authActions.store.columns.secret.serialize(
+      String(input.secret),
+      true
+    );
     if (secret !== String(results.secret)) {
       throw Exception.for('Invalid Password').withCode(401);
     }

@@ -17,7 +17,7 @@ export default abstract class AbstractSchema<
   /**
    * Set encryption seed
    */
-  public constructor(seed = "") {
+  public constructor(seed = '') {
     this._seed = seed;
   }
 

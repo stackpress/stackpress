@@ -52,7 +52,12 @@ export default function generate(directory: Directory, model: Model) {
       ids: model.store.ids.map(column => ({
         column: column.name.toString(),
         label: column.name.label
-      })).toArray()
+      })).toArray(),
+      extended: model.name.toClassName('%sExtended'),
+      hash: model.value.hashed.size > 0,
+      hashes: model.value.hashed?.map(
+        column => ({ column: column.name.toString() })
+      ).toArray() || []
     })
   });
 };
@@ -108,7 +113,17 @@ if (Object.keys(errors).length) {
   return;
 }
 
-//emit detail event
-await ctx.emit('<%event%>-detail', req, res);`,
+<%#hash%>
+  const response = await ctx.resolve<Partial<<%extended%>>>('<%event%>-detail', req);
+  <%#hashes%>
+    if (typeof response.results?.<%column%> !== 'undefined') {
+      delete response.results.<%column%>;
+    }
+  <%/hashes%>
+  res.fromStatusResponse(response);
+<%/hash%>
+<%^hash%>
+  await ctx.emit('<%event%>-detail', req, res);
+<%/hash%>`,
 
 };

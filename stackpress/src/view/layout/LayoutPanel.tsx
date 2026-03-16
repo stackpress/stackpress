@@ -1,6 +1,6 @@
 //modules
 import { useEffect } from 'react';
-import Notifier, { unload } from 'frui/Notifier';
+import { notify, unload } from 'frui/Notifier';
 //stackpress/view
 import type { 
   ServerConfigProps, 
@@ -22,13 +22,17 @@ import LayoutProvider from './LayoutProvider.js';
 import { useToggle } from './hooks.js';
 
 export function PanelApp(props: PanelAppProps) {
+  //props
   const { menu, children } = props;
+  //hooks
   const config = useConfig<ServerConfigProps>();
   const request = useRequest();
   const [ left, toggleLeft ] = useToggle();
   const [ right, toggleRight ] = useToggle();
   const { theme, toggle: toggleTheme } = useTheme();
+  //variables
   const pathname = request.url.pathname;
+  //render
   return (
     <div className={`${theme} layout-panel`}>
       <LayoutHead 
@@ -51,11 +55,15 @@ export function PanelApp(props: PanelAppProps) {
       </LayoutLeft>
       <LayoutRight open={right}>{props.right}</LayoutRight>
       <LayoutMain open={{ left, right }}>{children}</LayoutMain>
+      <div id="popup-root"></div>
+      <div id="dialog-root"></div>
+      <div id="dropdown-root"></div>
     </div>
   );
 };
 
 export default function LayoutPanel(props: LayoutPanelProps) {
+  //props
   const { 
     cookie,
     data,
@@ -67,10 +75,16 @@ export default function LayoutPanel(props: LayoutPanelProps) {
     right,
     children 
   } = props;
-  //unload flash message
+  //effects
+  // unload any flash messages from the server
   useEffect(() => {
     unload(cookie);
   }, []);
+  // if there is an error in the response, show a notification
+  useEffect(() => {
+    response?.error && notify('error', response.error);
+  }, [ response?.error ]);
+  //render
   return (
     <LayoutProvider 
       data={data}
@@ -81,7 +95,6 @@ export default function LayoutPanel(props: LayoutPanelProps) {
       <PanelApp left={left} right={right} menu={menu}>
         {children}
       </PanelApp>
-      <Notifier.Container />
     </LayoutProvider>
   );
 };

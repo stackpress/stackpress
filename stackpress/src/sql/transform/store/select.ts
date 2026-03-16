@@ -371,7 +371,7 @@ Object.entries(filter).forEach(([ key, value ]) => {
   const info = this.getColumnInfo(key).last;
   if (!info) return;
   const selector = \`\${q}\${info.store.table}\${q}.\${q}\${info.column}\${q}\`;
-  const serialized = info.store.columns[info.column].serialize(value);
+  const serialized = info.store.columns[info.column].serialize(value, true);
   if (typeof serialized !== 'undefined' 
     && serialized !== null 
     && serialized !== ''
@@ -392,7 +392,7 @@ Object.entries(span).forEach(([ key, values ]) => {
     && values[0] !== null
     && values[0] !== ''
   ) {
-    const serialized = info.store.columns[info.column].serialize(values[0]);
+    const serialized = info.store.columns[info.column].serialize(values[0], true);
     if (typeof serialized !== 'undefined' 
       && serialized !== null
       && serialized !== ''
@@ -408,7 +408,7 @@ Object.entries(span).forEach(([ key, values ]) => {
     && values[1] !== null
     && values[1] !== ''
   ) {
-    const serialized = info.store.columns[info.column].serialize(values[1]);
+    const serialized = info.store.columns[info.column].serialize(values[1], true);
     if (typeof serialized !== 'undefined' 
       && serialized !== null
       && serialized !== ''

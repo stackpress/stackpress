@@ -42,7 +42,7 @@ model Profile
   
   roles       String[]  
               @label("Roles") 
-              @default([])
+              @default([ "GUEST" ])
               @field.stringlist({ add "Add Role" })
               @list.taglist({ warning true pill true className "frui-mr-md" })
               @view.taglist({ warning true pill true className "frui-mr-md" })
@@ -116,12 +116,12 @@ model Auth
             @label("Profile") 
             @field.relation({ 
               id "id"
-              search "/admin/profile/search?json"
+              search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
             @filter.relation({
               id "id"
-              search "/admin/profile/search?json"
+              search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
             @list.template({ template "{{profile.name}}" }) 
@@ -213,12 +213,12 @@ model Application
             @label("Profile") 
             @field.relation({ 
               id "id"
-              search "/admin/profile/search?json"
+              search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
             @filter.relation({
               id "id"
-              search "/admin/profile/search?json"
+              search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
             @list.template({ template "{{profile.name}}" }) 
@@ -334,12 +334,12 @@ model Session
                 @label("Profile") 
                 @field.relation({ 
                   id "id"
-                  search "/admin/profile/search?json"
+                  search "/admin/profile/search?json&q={{query}}"
                   template "{{name}}" 
                 }) 
                 @filter.relation({
                   id "id"
-                  search "/admin/profile/search?json"
+                  search "/admin/profile/search?json&q={{query}}"
                   template "{{name}}" 
                 }) 
                 @list.template({ template "{{profile.name}}" }) 

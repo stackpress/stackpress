@@ -143,3 +143,15 @@ export function removeUndefined<T extends Record<string, any>>(value: T) {
     [key in keyof T]: Exclude<T[key], undefined> 
   };
 };
+
+/**
+ * Removes empty string values from an object
+ */
+export function removeEmptyStrings<T extends Record<string, any>>(value: T) {
+  const entries = Object.entries(value).filter(
+    ([_, val]) => val !== ''
+  );
+  return Object.fromEntries(entries) as { 
+    [key in keyof T]: Exclude<T[key], ''> 
+  };
+};

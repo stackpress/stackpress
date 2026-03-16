@@ -12,12 +12,6 @@ export default function generate(directory: Directory, model: Model) {
   //load Profile/admin/pages/update.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
-  //import type { UnknownNest } from '@stackpress/lib/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/lib/types',
-    namedImports: [ 'UnknownNest' ]
-  });
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -42,6 +36,12 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+  //import type { ProfileExtended } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: `../../types.js`,
+    namedImports: [ model.name.toClassName('%sExtended') ]
+  });
 
   //export default async function ProfileAdminUpdatePage(req: Request, res: Response, ctx: Server) {}
   source.addFunction({
@@ -62,7 +62,12 @@ export default function generate(directory: Directory, model: Model) {
       })).toArray(),
       idpath: model.store.ids.map(
         column => `\${req.data.get('${column.name.toString()}')}`
-      ).toArray().join('/')
+      ).toArray().join('/'),
+      extended: model.name.toClassName('%sExtended'),
+      hash: model.value.hashed.size > 0,
+      hashes: model.value.hashed?.map(
+        column => ({ column: column.name.toString() })
+      ).toArray() || []
     })
   });
 };
@@ -133,6 +138,17 @@ if (req.method === 'POST' || req.method === 'PUT') {
   return;
 }
 //not submitted, fetch the data using the id
-await ctx.emit('<%event%>-detail', req, res);`,
+<%#hash%>
+  const response = await ctx.resolve<Partial<<%extended%>>>('<%event%>-detail', req);
+  <%#hashes%>
+    if (typeof response.results?.<%column%> !== 'undefined') {
+      delete response.results.<%column%>;
+    }
+  <%/hashes%>
+  res.fromStatusResponse(response);
+<%/hash%>
+<%^hash%>
+  await ctx.emit('<%event%>-detail', req, res);
+<%/hash%>`,
 
 };

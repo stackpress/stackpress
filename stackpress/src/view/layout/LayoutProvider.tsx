@@ -31,9 +31,6 @@ export default function LayoutProvider(props: LayoutProviderProps) {
         <ThemeProvider theme={theme}>
           <Notifier.Provider {...notify}>
             {children}
-            <div id="popup-root"></div>
-            <div id="dialog-root"></div>
-            <div id="dropdown-root"></div>
           </Notifier.Provider>
         </ThemeProvider>
       </R22nProvider>

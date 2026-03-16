@@ -29,10 +29,16 @@ export default function generate(
 export const TEMPLATE = {
 
 INSERT:
-`//remove values that are not columns and populate defaults
-const filtered = this.filter(input, true);
+`//sanitize input and map to the schema
+const filtered = this.filter(input);
+const populated = this.populate(filtered);
+const serialized = this.serialize(populated);
+const unserialized = this.unserialize(serialized);
+const defined = removeEmptyStrings(unserialized);
+const sanitized = removeUndefined(defined);
+
 //collect errors, if any
-const errors = this.assert(filtered, true);
+const errors = this.assert(sanitized, true);
 //if there were errors
 if (errors) {
   //throw errors
@@ -44,7 +50,7 @@ if (errors) {
   
 //serialize values and map filtered to the 
 // relative SQL column names (snake case)
-const values = this.scalarize(removeUndefined(filtered));
+const values = this.scalarize(sanitized);
 //make the insert builder
 const insert = new Insert<<%type%>>(this.table);
 return insert.values(values).returning("*");`,
