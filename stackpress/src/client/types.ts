@@ -51,12 +51,10 @@ export type ClientModel<
   T extends Record<string, unknown> = Record<string, unknown>, 
   //model type extended
   E extends Record<string, unknown> = Record<string, unknown>, 
-  //model input
-  I extends Record<string, unknown> = Record<string, unknown>, 
   //column map
   C extends DefinitionInterfaceMap = DefinitionInterfaceMap, 
   //relation map
-  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}, {}>>,
+  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}>>,
   //server context map
   X extends Record<string, unknown> = Record<string, unknown>,
   //server request resource
@@ -68,10 +66,10 @@ export type ClientModel<
     new(seed?: string): SchemaInterface<T, C> 
   },
   Store: { 
-    new(seed?: string): StoreInterface<T, E, I, C, R> 
+    new(seed?: string): StoreInterface<T, E, C, R> 
   },
   Actions: { 
-    new(engine: Engine, seed?: string): ActionsInterface<T, E, I, C, R> 
+    new(engine: Engine, seed?: string): ActionsInterface<T, E, C, R> 
   },
   columns: C,
   events: GenericEvents<X, Q, S>,
@@ -102,7 +100,7 @@ export type ClientScripts = {
 //contents from import('stackpress-client')
 export type ClientPlugin<
   //exact map of models
-  //ex. { profile: ClientModel<Profile, ProfileExtended, ProfileInput, { name: NameSchema, ...}, { auth: {} }> }
+  //ex. { profile: ClientModel<Profile, ProfileExtended, { name: NameSchema, ...}, { auth: {} }> }
   M extends Record<string, ClientModel> = Record<string, ClientModel>,
   //exact map of fieldsets
   F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>

@@ -17,22 +17,20 @@ export default interface ActionsInterface<
   T extends Record<string, unknown>,
   //the extended type of the records in the store, with relations included
   E extends Record<string, unknown>,
-  //the acceptable inputs
-  I extends Record<string, unknown>,
   //the column map
   C extends DefinitionInterfaceMap = DefinitionInterfaceMap,
   //the relation map
-  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}, {}>>
+  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}>>
 > {
   //relative store methods reference
-  store: StoreInterface<T, E, I, C, R>;
+  store: StoreInterface<T, E, C, R>;
 
   /**
    * Performs batch operations (create, update, upsert) on multiple 
    * records based on the provided inputs and mode.
    */
   batch(
-    inputs: Array<I>,
+    inputs: Array<Partial<T>>,
     mode?: 'create' | 'update' | 'upsert',
   ): Promise<StatusResponse<T | null>[]>;
 
@@ -44,7 +42,7 @@ export default interface ActionsInterface<
   /**
    * Creates a new record in the database based on the provided input.
    */
-  create(input: I): Promise<T>;
+  create(input: Partial<T>): Promise<T>;
 
   /**
    * Deletes records that match the provided 
@@ -126,17 +124,17 @@ export default interface ActionsInterface<
    * Updates records that match the provided filters with 
    * the given input and returns the updated record.
    */
-  update(query: StoreSelectFilters, input: Partial<I>): Promise<T[]>;
+  update(query: StoreSelectFilters, input: Partial<T>): Promise<T[]>;
 
   /**
    * Updates a record by its ID with the given 
    * input and returns the updated record.
    */
-  updateById(id: string, input: Partial<I>): Promise<T>;
+  updateById(id: string, input: Partial<T>): Promise<T>;
 
   /**
    * Inserts a new record or updates an existing 
    * record based on the provided input.
    */
-  upsert(input: I): Promise<T>;
+  upsert(input: Partial<T>): Promise<T>;
 };

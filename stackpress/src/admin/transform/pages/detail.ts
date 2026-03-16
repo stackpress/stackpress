@@ -36,7 +36,15 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
-
+  //import type { ProfileExtended } from '../../types.js';
+  if (model.value.hashed.size > 0) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: `../../types.js`,
+      namedImports: [ model.name.toClassName('%sExtended') ]
+    });
+  }
+  
   //export default async function ProfileAdminDetailPage(req: Request, res: Response, ctx: Server) {}
   source.addFunction({
     isDefaultExport: true,

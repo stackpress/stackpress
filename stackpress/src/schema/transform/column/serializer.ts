@@ -528,7 +528,7 @@ if (value instanceof Date) {
 <%/encrypted%>
 <%#hashed%>
   if (doEncrypt) {
-    return string.length > 0 ? hash(string, this._seed) : string;
+    return string.length > 0 ? hash(string) : string;
   }
   return string;
 <%/hashed%>`,

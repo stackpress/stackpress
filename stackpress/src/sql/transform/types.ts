@@ -44,7 +44,7 @@ export default function generate(directory: Directory, model: Model) {
     });
   }
 
-  //export interface ProfileStoreInterface extends StoreInterface<T, E, I, C, R> {};
+  //export interface ProfileStoreInterface extends StoreInterface<T, E, C, R> {};
   source.addInterface({
     isExported: true,
     name: `${model.name.toClassName()}StoreInterface`,
@@ -52,7 +52,6 @@ export default function generate(directory: Directory, model: Model) {
       `StoreInterface<${[
         model.name.toTypeName(),
         model.name.toTypeName('%sExtended'),
-        model.name.toTypeName('%sInput'),
         `{${
           columns.map(
             column => `${column.name.toString()}: ${
@@ -77,7 +76,7 @@ export default function generate(directory: Directory, model: Model) {
     ]
   });
 
-  //export interface ProfileActionsInterface extends ActionsInterface<T, E, I, C, R> {};
+  //export interface ProfileActionsInterface extends ActionsInterface<T, E, C, R> {};
   source.addInterface({
     isExported: true,
     name: `${model.name.toClassName()}ActionsInterface`,
@@ -85,7 +84,6 @@ export default function generate(directory: Directory, model: Model) {
       `ActionsInterface<${[
         model.name.toTypeName(),
         model.name.toTypeName('%sExtended'),
-        model.name.toTypeName('%sInput'),
         `{${
           columns.map(
             column => `${column.name.toString()}: ${

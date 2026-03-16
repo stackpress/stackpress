@@ -25,7 +25,19 @@ const typemap: Record<string, string> = {
   Datetime: 'Date',
   Json: 'Record<string, ScalarInput>',
   Object: 'Record<string, ScalarInput>',
-  Hash: 'Record<string, ScalarInput>'
+  Hash: 'Record<string, ScalarInput>',
+  'String[]': 'string[]',
+  'Text[]': 'string[]',
+  'Number[]': 'number[]',
+  'Integer[]': 'number[]',
+  'Float[]': 'number[]',
+  'Boolean[]': 'boolean[]',
+  'Date[]': 'Date[]',
+  'Time[]': 'Date[]',
+  'Datetime[]': 'Date[]',
+  'Json[]': 'Record<string, ScalarInput>[]',
+  'Object[]': 'Record<string, ScalarInput>[]',
+  'Hash[]': 'Record<string, ScalarInput>[]'
 };
 
 const serialmap: Record<string, string> = {
@@ -40,7 +52,19 @@ const serialmap: Record<string, string> = {
   Datetime: 'string',
   Json: 'string',
   Object: 'string',
-  Hash: 'string'
+  Hash: 'string',
+  'String[]': 'string',
+  'Text[]': 'string',
+  'Number[]': 'string',
+  'Integer[]': 'string',
+  'Float[]': 'string',
+  'Boolean[]': 'string',
+  'Date[]': 'string',
+  'Time[]': 'string',
+  'Datetime[]': 'string',
+  'Json[]': 'string',
+  'Object[]': 'string',
+  'Hash[]': 'string'
 };
 
 export const zodmap: Record<string, string> = {
@@ -56,13 +80,29 @@ export const zodmap: Record<string, string> = {
   Hash: 'z.ZodObject',
   String: 'z.ZodString',
   Text: 'z.ZodString',
-  Unknown: 'z.ZodType'
+  Unknown: 'z.ZodType',
+  'Boolean[]': 'z.ZodArray<z.ZodBoolean>',
+  'Integer[]': 'z.ZodArray<z.ZodInt>',
+  'Date[]': 'z.ZodArray<z.ZodDate>',
+  'Datetime[]': 'z.ZodArray<z.ZodDate>',
+  'Time[]': 'z.ZodArray<z.ZodDate>',
+  'Number[]': 'z.ZodArray<z.ZodNumber>',
+  'Float[]': 'z.ZodArray<z.ZodNumber>',
+  'Object[]': 'z.ZodArray<z.ZodObject>',
+  'Json[]': 'z.ZodArray<z.ZodObject>',
+  'Hash[]': 'z.ZodArray<z.ZodObject>',
+  'String[]': 'z.ZodArray<z.ZodString>',
+  'Text[]': 'z.ZodArray<z.ZodString>',
+  'Unknown[]': 'z.ZodArray<z.ZodType>'
 };
 
 export default function generate(directory: Directory, column: Column) {
   const defaults = column.value.default;
   const forCuid = String(defaults).match(/^cuid\(([0-9]+)\)$/);
   const forNano = String(defaults).match(/^nanoid\(([0-9]+)\)$/);
+  const typemapKey = column.type.multiple 
+    ? (column.type.name + '[]') 
+    : column.type.name;
 
   //NOTE: column would never be model or fieldset. see schema.ts.
   const filepath = renderCode('<%fieldset%>/columns/<%column%>Column.ts', {
@@ -115,6 +155,7 @@ export default function generate(directory: Directory, column: Column) {
       namedImports: [ column.type.name ]
     });
   }
+
   //export default class StreetColumn implements ColumnInterface<D, S, U, Z> {};
   const definition = source.addClass({
     isDefaultExport: true,
@@ -125,38 +166,38 @@ export default function generate(directory: Directory, column: Column) {
         typeof defaults === 'undefined' ? 'undefined'
           : defaults === null ? 'null'
           : defaults === 'now()' ? 'Date'
-          : column.type.name in typemap ? typemap[column.type.name] 
+          : typemapKey in typemap ? typemap[typemapKey] 
           : typeof defaults === 'string' ? 'string' 
           : typeof defaults === 'number' ? 'number' 
           : typeof defaults === 'boolean' ? 'boolean' 
-          : isObject(column.type.name) ? 'Record<string, ScalarInput>'
+          : isObject(defaults) ? 'Record<string, ScalarInput>'
           : 'undefined',
         //serialized return type
-        column.type.nullable && column.type.name in serialmap 
-          ? `${serialmap[column.type.name]} | null`
+        column.type.nullable && typemapKey in serialmap 
+          ? `${serialmap[typemapKey]} | null`
           : column.type.nullable && column.type.enum 
           ? 'string | null'
-          : column.type.name in serialmap 
-          ? serialmap[column.type.name]
+          : typemapKey in serialmap 
+          ? serialmap[typemapKey]
           : column.type.enum 
           ? 'string'
           : 'unknown',
         //unserialized return type
-        column.type.nullable && column.type.name in typemap 
-          ? `${typemap[column.type.name]} | null`
+        column.type.nullable && typemapKey in typemap 
+          ? `${typemap[typemapKey]} | null`
           : column.type.nullable && column.type.enum 
           ? 'string | null'
-          : column.type.name in typemap 
-          ? typemap[column.type.name]
+          : typemapKey in typemap 
+          ? typemap[typemapKey]
           : column.type.enum 
           ? 'string'
           : 'unknown',
         //zod shape type
-        column.type.nullable && column.type.name in zodmap
-          ? `z.ZodOptional<z.ZodNullable<${zodmap[column.type.name]}>>`
+        column.type.nullable && typemapKey in zodmap
+          ? `z.ZodOptional<z.ZodNullable<${zodmap[typemapKey]}>>`
           : column.type.nullable && column.type.enum 
           ? `z.ZodOptional<z.ZodNullable<z.ZodEnum<typeof ${column.type.name}>>>`
-          : column.type.name in zodmap ? zodmap[column.type.name]
+          : typemapKey in zodmap ? zodmap[typemapKey]
           : column.type.enum ? `z.ZodEnum<typeof ${column.type.name}>`
           : 'z.ZodType'
       ].join(', ')}>`

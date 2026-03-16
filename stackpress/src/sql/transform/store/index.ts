@@ -35,16 +35,6 @@ export default function generate(directory: Directory, model: Model) {
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
-  //import Exception from 'stackpress/Exception';
-  source.addImportDeclaration({
-    defaultImport: 'Exception',
-    moduleSpecifier: 'stackpress/Exception'
-  });
-  //import { removeUndefined, removeEmptyStrings } from 'stackpress/schema/helpers';
-  source.addImportDeclaration({
-    namedImports: [ 'removeUndefined', 'removeEmptyStrings' ],
-    moduleSpecifier: 'stackpress/schema/helpers'
-  });
   //import type { 
   //  StoreSelectColumnPath, 
   //  StoreSelectFilters,
@@ -97,14 +87,13 @@ export default function generate(directory: Directory, model: Model) {
       defaultImport: column.type.model.name.toClassName('%sStore')
     });
   }
-  //import type { Profile, ProfileExtended, ProfileInput, ProfileStoreInterface } from './types.js';
+  //import type { Profile, ProfileExtended, ProfileStoreInterface } from './types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: './types.js',
     namedImports: [ 
       model.name.toTypeName(),
       model.name.toTypeName('%sExtended'),
-      model.name.toTypeName('%sInput'),
       model.name.toClassName('%sStoreInterface')
     ]
   });
@@ -160,11 +149,11 @@ export default function generate(directory: Directory, model: Model) {
   generateCreate(source, model, definition);
   //public delete(query: StoreSearchParams = {}, q = '"') {}
   generateDelete(source, model, definition);
-  //public insert(input: PlaceInput) {}
+  //public insert(input: Partial<Place>) {}
   generateInsert(source, model, definition);
   //public select(query: StoreSearchParams = {}, q = '"') {}
   generateSelect(source, model, definition);
-  //public update(query: StoreSearchParams = {}, input: PlaceInput, q = '"') {}
+  //public update(query: StoreSearchParams = {}, input: Partial<Place>, q = '"') {}
   generateUpdate(source, model, definition);
   //public scalarize(values: Record<string, unknown>) {}
   definition.addMethod({

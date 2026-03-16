@@ -30,7 +30,7 @@ export default function generate(directory: Directory, model: Model) {
     defaultImport: 'Exception'
   });
   //export default async function ProfilePurgeEvent(
-  //  req: Request, 
+  //  _req: Request, 
   //  res: Response, 
   //  ctx: Server
   //) {}
@@ -39,7 +39,7 @@ export default function generate(directory: Directory, model: Model) {
     isDefaultExport: true,
     isAsync: true,
     parameters: [
-      { name: 'req', type: 'Request' },
+      { name: '_req', type: 'Request' },
       { name: 'res', type: 'Response' },
       { name: 'ctx', type: 'Server' }
     ],

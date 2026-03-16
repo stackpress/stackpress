@@ -2,11 +2,6 @@
 import type Create from '@stackpress/inquire/Create';
 import type Engine from '@stackpress/inquire/Engine';
 import Nest from '@stackpress/lib/Nest';
-//stackpress/schema
-import { 
-  removeUndefined, 
-  removeEmptyStrings 
-} from '../../schema/helpers.js';
 //stackpress/sql
 import type { StoreSelectFilters, StoreSelectQuery } from '../types';
 import StoreInterface from './StoreInterface.js';
@@ -15,12 +10,10 @@ export default abstract class AbstractActions<
   //the basic type of the records in the store
   T extends Record<string, unknown>,
   //the extended type of the records in the store, with relations included
-  E extends Record<string, unknown>,
-  //the acceptable inputs
-  I extends Record<string, unknown>
+  E extends Record<string, unknown>
 > {
   //relative store methods reference
-  public abstract store: StoreInterface<T, E, I>;
+  public abstract store: StoreInterface<T, E>;
   //database engine
   public readonly engine: Engine;
   //encoding seed for en/decryption methods
@@ -173,30 +166,5 @@ export default abstract class AbstractActions<
     const alter = this.store.alter(to);
     alter.engine = this.engine;
     await alter;
-  }
-
-  /**
-   * Updates records that match the provided filters with the provided 
-   * input, and returns the updated record.
-   */
-  public async update(query: StoreSelectFilters, input: Partial<I>) {
-    const rows = await this.findAll(query);
-    //if there are no rows, it doesn't make sense to update...
-    if (rows.length > 0) {
-      const update = this.store.update(query, input, this.engine.dialect.q);
-      update.engine = this.engine;
-      //dont rely on native update... 
-      // pgsql returns different things than sqlite and mysql....
-      await update;
-    }
-    //we can't requery because the results might be different 
-    // after the update, so we have to manually merge the input 
-    // with the existing records
-    const filtered = this.store.filter(input);
-    const serialized = this.store.serialize(filtered);
-    const unserialized = this.store.unserialize(serialized);
-    const defined = removeEmptyStrings(unserialized);
-    const sanitized = removeUndefined(defined);
-    return rows.map(row => ({ ...row, ...sanitized })) as T[];
   }
 }

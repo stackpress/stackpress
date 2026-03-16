@@ -62,6 +62,11 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/sql/types',
     namedImports: [ 'StoreSelectFilters' ]
   });
+  //import { removeUndefined, removeEmptyStrings } from 'stackpress/schema/helpers';
+  source.addImportDeclaration({
+    namedImports: [ 'removeUndefined', 'removeEmptyStrings' ],
+    moduleSpecifier: 'stackpress/schema/helpers'
+  });
   //import Exception from 'stackpress/Exception';
   source.addImportDeclaration({
     defaultImport: 'Exception',
@@ -72,14 +77,13 @@ export default function generate(directory: Directory, model: Model) {
     defaultImport: 'AbstractActions',
     moduleSpecifier: 'stackpress/sql/AbstractActions'
   });
-  //import type { Profile, ProfileExtended, ProfileInput, ProfileActionsInterface } from './types.js';
+  //import type { Profile, ProfileExtended, ProfileActionsInterface } from './types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: './types.js',
     namedImports: [ 
       model.name.toTypeName(),
       model.name.toTypeName('%sExtended'),
-      model.name.toTypeName('%sInput'),
       model.name.toClassName('%sActionsInterface')
     ]
   });
@@ -92,9 +96,9 @@ export default function generate(directory: Directory, model: Model) {
   //export default class ProfileActions {};
   const definition = source.addClass({
     name: model.name.toClassName('%sActions'),
-    //extends AbstractActions<Place, PlaceExtended, PlaceInput>
-    extends: model.name.toTypeName('AbstractActions<%s, %sExtended, %sInput>'),
-    //implements ActionsInterface<Place, PlaceExtended, PlaceInput> 
+    //extends AbstractActions<Place, PlaceExtended>
+    extends: model.name.toTypeName('AbstractActions<%s, %sExtended>'),
+    //implements ProfileActionsInterface
     implements: [ model.name.toClassName('%sActionsInterface') ],
     isDefaultExport: true,
   });
@@ -118,14 +122,14 @@ export default function generate(directory: Directory, model: Model) {
       store: model.name.toClassName('%sStore')
     })
   });
-  //public async batch(inputs: Array<ProfileInput>, mode = 'upsert') {}
+  //public async batch(inputs: Array<Partial<Profile>>, mode = 'upsert') {}
   definition.addMethod({
     scope: Scope.Public,
     isAsync: true,
     name: 'batch',
     parameters: [{
       name: 'inputs',
-      type: model.name.toTypeName('Array<%sInput>')
+      type: model.name.toTypeName('Array<Partial<%s>>')
     }, {
       name: 'mode',
       type: `'create' | 'update' | 'upsert'`,
@@ -139,14 +143,14 @@ export default function generate(directory: Directory, model: Model) {
       ).toArray()
     })
   });
-  //public async create(input: ProfileInput) {}
+  //public async create(input: Partial<Profile>) {}
   definition.addMethod({
     scope: Scope.Public,
     isAsync: true,
     name: 'create',
     parameters: [{
       name: 'input',
-      type: model.name.toTypeName('%sInput')
+      type: model.name.toTypeName('Partial<%s>')
     }],
     statements: renderCode(TEMPLATE.CREATE, {
       oneid: ids.size === 1,
@@ -250,7 +254,7 @@ export default function generate(directory: Directory, model: Model) {
       ).toArray()
     })
   });
-  //public async updateById(id: number | string, input: Partial<ProfileInput>) {}
+  //public async updateById(id: number | string, input: Partial<Profile>) {}
   definition.addMethod({
     scope: Scope.Public,
     isAsync: true,
@@ -262,7 +266,7 @@ export default function generate(directory: Directory, model: Model) {
       })).toArray(),
       {
         name: 'input',
-        type: model.name.toTypeName('Partial<%sInput>')
+        type: model.name.toTypeName('Partial<%s>')
       }
     ],
     statements: renderCode(TEMPLATE.UPDATE_BY_ID, {
@@ -271,14 +275,27 @@ export default function generate(directory: Directory, model: Model) {
       ).toArray()
     })
   });
-  //public async upsert(input: ProfileInput) {}
+  //public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'update',
+    parameters: [
+      { name: 'query', type: `StoreSelectFilters` }, 
+      { name: 'input', type: model.name.toTypeName('Partial<%s>') }
+    ],
+    statements: renderCode(TEMPLATE.UPDATE, {
+      type: model.name.toTypeName()
+    })
+  });
+  //public async upsert(input: Partial<Profile>) {}
   definition.addMethod({
     scope: Scope.Public,
     isAsync: true,
     name: 'upsert',
     parameters: [{
       name: 'input',
-      type: model.name.toTypeName('%sInput')
+      type: model.name.toTypeName('Partial<%s>')
     }],
     statements: renderCode(TEMPLATE.UPSERT, {
       update: ids.map(
@@ -301,7 +318,7 @@ CONSTRUCTOR:
 `super(engine, seed);
 this.store = new <%store%>(seed);`,
 
-//public async batch(inputs: Array<ProfileInput>, mode = 'upsert') {}
+//public async batch(inputs: Array<Partial<Profile>>, mode = 'upsert') {}
 BATCH:
 `const results: StatusResponse<<%type%> | null>[] = [];
 try {
@@ -374,7 +391,26 @@ try {
 return results;`,
 
 CREATE:
-`const insert = this.store.insert(input);
+`//sanitize input and map to the schema
+const filtered = this.store.filter(input);
+const populated = this.store.populate(filtered);
+const serialized = this.store.serialize(populated);
+const unserialized = this.store.unserialize(serialized);
+const defined = removeEmptyStrings(unserialized);
+const sanitized = removeUndefined(defined);
+
+//collect errors, if any
+const errors = this.store.assert(sanitized, true);
+//if there were errors
+if (errors) {
+  //throw errors
+  throw Exception
+    .for('Invalid parameters')
+    .withCode(400)
+    .withErrors(errors);
+}
+
+const insert = this.store.insert(sanitized);
 insert.engine = this.engine;
 //dont rely on native insert... 
 // pgsql returns different things than sqlite and mysql....
@@ -437,13 +473,47 @@ RESTORE_BY_ID:
 const rows = await this.restore({ filter });
 return rows[0] || null;`,
 
-//public async updateById(id: number | string, input: Partial<ProfileInput>) {}
+//public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
+UPDATE:
+`//sanitize input and map to the schema
+const filtered = this.store.filter(input);
+const serialized = this.store.serialize(filtered);
+const unserialized = this.store.unserialize(serialized);
+const defined = removeEmptyStrings(unserialized);
+const sanitized = removeUndefined(defined);
+
+//collect errors, if any
+const errors = this.store.assert(sanitized);
+//if there were errors
+if (errors) {
+  //throw errors
+  throw Exception
+    .for('Invalid parameters')
+    .withCode(400)
+    .withErrors(errors);
+}
+
+const rows = await this.findAll(query);
+//if there are no rows, it doesn't make sense to update...
+if (rows.length > 0) {
+  const update = this.store.update(query, input, this.engine.dialect.q);
+  update.engine = this.engine;
+  //dont rely on native update... 
+  // pgsql returns different things than sqlite and mysql....
+  await update;
+}
+//we can't requery because the results might be different 
+// after the update, so we have to manually merge the input 
+// with the existing records
+return rows.map(row => ({ ...row, ...sanitized })) as <%type%>[];`,
+
+//public async updateById(id: number | string, input: Partial<Profile>) {}
 UPDATE_BY_ID:
 `const filter = { <%#ids%><%column%>, <%/ids%> };
 const rows = await this.update({ filter }, input);
 return rows[0] || null;`,
 
-//public async upsert(input: ProfileInput) {}
+//public async upsert(input: Partial<Profile>) {}
 UPSERT:
 `if (<%update%>) {
   return await this.updateById(<%#ids%>input.<%column%>, <%/ids%> input);

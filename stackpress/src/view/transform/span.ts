@@ -97,7 +97,7 @@ export const TEMPLATE = {
 
 FIELD_FIELD:
 `//props
-const { className, value, change, error = false } = props;
+const { className, value, onUpdate, error = false } = props;
 const attributes = <%props%>;
 const values = Array.isArray(value) ? value : [];
 //render
@@ -109,7 +109,7 @@ return (
       className={className}
       error={error} 
       defaultValue={values[0]} 
-      onUpdate={value => change && change('span[<%column%>][0]', value)}
+      onUpdate={value => onUpdate && onUpdate('span[<%column%>][0]', value)}
     />
     <br />
     <<%component%>
@@ -118,14 +118,14 @@ return (
       className={className}
       error={error} 
       defaultValue={values[1]} 
-      onUpdate={value => change && change('span[<%column%>][1]', value)}
+      onUpdate={value => onUpdate && onUpdate('span[<%column%>][1]', value)}
     />
   </>
 );`,
 
 FIELD_CONTROL:
 `//props
-const { className, value, change, error } = props;
+const { className, value, onUpdate, error } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -135,7 +135,7 @@ return (
       className="!border-b2 dark:bg-gray-300 outline-none"
       error={!!error} 
       value={value} 
-      change={change}
+      onUpdate={onUpdate}
     />
   </FieldControl>
 );`

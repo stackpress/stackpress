@@ -81,7 +81,7 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 //so let the response pass through
 if (!engine) return;
 
-const filter: StoreSelectFilters = {};
+const filter: StoreSelectFilters["filter"] = {};
 //check for id/s
 <%#ids%>
   //get id
@@ -107,7 +107,7 @@ const actions = new <%actions%>(engine, seed);
 
 try { //to restore
   const results = await actions.restore({ filter });
-  res.setResults(results);
+  res.setResults(results[0] || null);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());

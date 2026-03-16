@@ -87,10 +87,12 @@ export default function searchView(directory: Directory, model: Model) {
     namedImports: [ 'notify', 'flash' ]
   });
   //import Input from 'frui/form/Input';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Input',
-    defaultImport: 'Input'
-  });
+  if (model.store.searchables.size > 0) {
+    source.addImportDeclaration({
+      moduleSpecifier: 'frui/form/Input',
+      defaultImport: 'Input'
+    });
+  }
   //import { paginate, filter, order, useServer, 
   // LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({

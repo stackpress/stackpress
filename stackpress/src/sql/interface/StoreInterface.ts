@@ -24,12 +24,10 @@ export default interface StoreInterface<
   T extends Record<string, unknown>,
   //the extended type of the records in the store, with relations included
   E extends Record<string, unknown>,
-  //the acceptable inputs
-  I extends Record<string, unknown>,
   //the column map
   C extends DefinitionInterfaceMap = DefinitionInterfaceMap,
   //the relation map
-  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}, {}>>
+  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}>>
 > extends SchemaInterface<T, C> {
   //the relationships for the model, used for joins and populating related records
   relations: R;
@@ -62,7 +60,7 @@ export default interface StoreInterface<
   /**
    * Query builder for inserting records
    */
-  insert(input: I): Insert<T>;
+  insert(input: Partial<T>): Insert<T>;
 
   /**
    * Query builder for selecting records
@@ -83,7 +81,7 @@ export default interface StoreInterface<
    */
   update(
     query: StoreSelectFilters, 
-    input: Partial<I>, 
+    input: Partial<T>, 
     q?: string
   ): Update<T>;
 

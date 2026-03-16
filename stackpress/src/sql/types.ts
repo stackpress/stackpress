@@ -10,11 +10,9 @@ export type StoreRelation<
   //the basic type of the records in the store
   T extends Record<string, unknown> = Record<string, unknown>,
   //the extended type of the records in the store, with relations included
-  E extends Record<string, unknown> = Record<string, unknown>,
-  //the acceptable inputs
-  I extends Record<string, unknown> = Record<string, unknown>
+  E extends Record<string, unknown> = Record<string, unknown>
 > = {
-  store: StoreInterface<T, E, I>,
+  store: StoreInterface<T, E>,
   local: string,
   foreign: string,
   multiple: boolean,
@@ -26,7 +24,6 @@ export type StoreSelectColumnPath = {
   column: string,
   store: StoreInterface<
     Record<string, unknown>, 
-    Record<string, unknown>, 
     Record<string, unknown>
   >
 };
@@ -35,25 +32,21 @@ export type StoreSelectRelation<
   //the basic type of the records in the store
   T extends Record<string, unknown>,
   //the extended type of the records in the store, with relations included
-  E extends Record<string, unknown>,
-  //the acceptable inputs
-  I extends Record<string, unknown>
+  E extends Record<string, unknown>
 > = {
   local: string,
   foreign: string,
   multiple: boolean,
   required: boolean,
-  store: StoreInterface<T, E, I>
+  store: StoreInterface<T, E>
 };
 
 export type StoreSelectRelationMap<
   //the basic type of the records in the store
   T extends Record<string, unknown>,
   //the extended type of the records in the store, with relations included
-  E extends Record<string, unknown>,
-  //the acceptable inputs
-  I extends Record<string, unknown>
-> = Record<string, StoreSelectRelation<T, E, I>>;
+  E extends Record<string, unknown>
+> = Record<string, StoreSelectRelation<T, E>>;
 
 export type StoreSelectJoin = {
   table: string,

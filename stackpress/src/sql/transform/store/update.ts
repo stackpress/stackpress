@@ -21,7 +21,7 @@ export default function generate(
     name: 'update',
     parameters: [
       { name: 'query', type: 'StoreSelectFilters', initializer: '{}' }, 
-      { name: 'input', type: `Partial<${model.name.toTypeName('%sInput')}>` },
+      { name: 'input', type: model.name.toTypeName('Partial<%s>') },
       { name: 'q', initializer: `'"'` }
     ],
     statements: renderCode(TEMPLATE.UPDATE, {
@@ -36,32 +36,14 @@ export default function generate(
 export const TEMPLATE = {
 
 UPDATE:
-`//sanitize input and map to the schema
-const filtered = this.filter(input);
-const serialized = this.serialize(filtered);
-const unserialized = this.unserialize(serialized);
-const defined = removeEmptyStrings(unserialized);
-const sanitized = removeUndefined(defined);
-
-//collect errors, if any
-const errors = this.assert(sanitized);
-//if there were errors
-if (errors) {
-  //throw errors
-  throw Exception
-    .for('Invalid parameters')
-    .withCode(400)
-    .withErrors(errors);
-}
-
-<%#timestamp%>
+`<%#timestamp%>
   //add timestamp to @timestamp column
-  sanitized.<%column%> = new Date();
+  input.<%column%> = new Date();
 <%/timestamp%>
 
 //serialize values and map filtered to the 
 // relative SQL column names (snake case)
-const values = this.scalarize(sanitized);
+const values = this.scalarize(input);
 
 //extract params
 let { q: keywords, filter = {}, span = {} } = query;
