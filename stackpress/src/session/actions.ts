@@ -52,6 +52,16 @@ export async function signup(
       type: 'email',
       token: String(input.email),
       secret: String(input.secret)
+    }).catch(e => {
+      //if e is an exception with errors
+      //NOTE: we cant rely on instanceof...
+      if ((e as Exception).errors && e.errors.token) {
+        e.withErrors({ 
+          email: e.errors.token,
+          token: e.errors.token
+        });
+      }
+      throw e;
     }) as Auth;
   } 
   //if phone
@@ -62,6 +72,16 @@ export async function signup(
       type: 'phone',
       token: String(input.phone),
       secret: String(input.secret)
+    }).catch(e => {
+      //if e is an exception with errors
+      //NOTE: we cant rely on instanceof...
+      if ((e as Exception).errors && e.errors.token) {
+        e.withErrors({ 
+          phone: e.errors.token,
+          token: e.errors.token
+        });
+      }
+      throw e;
     }) as Auth;
   }
   //if username
@@ -72,6 +92,16 @@ export async function signup(
       type: 'username',
       token: String(input.username),
       secret: String(input.secret)
+    }).catch(e => {
+      //if e is an exception with errors
+      //NOTE: we cant rely on instanceof...
+      if ((e as Exception).errors && e.errors.token) {
+        e.withErrors({ 
+          username: e.errors.token,
+          token: e.errors.token
+        });
+      }
+      throw e;
     }) as Auth;
   }
 
@@ -88,7 +118,7 @@ export async function signin(
   engine: Engine,
   client: ClientPlugin,
   password = true
-): Promise<Partial<AuthExtended> | null> {
+): Promise<Partial<AuthExtended>> {
   const { Actions: AuthActions } = client.model.auth;
   const authActions = new AuthActions(engine, seed);
   //get form body
@@ -98,7 +128,10 @@ export async function signin(
   }) as AuthExtended | null;
   //if null (no user found)
   if (results === null) {
-    return null;
+    throw Exception
+      .for('Invalid Parameters')
+      .withErrors({ [type]: 'User Not Found' })
+      .withCode(404);
   //if use password
   //NOTE: passwordless can occur if OTP or magic link is used
   } else if (password) {
@@ -107,7 +140,10 @@ export async function signin(
       true
     );
     if (secret !== String(results.secret)) {
-      throw Exception.for('Invalid Password').withCode(401);
+      throw Exception
+        .for('Invalid Parameters')
+        .withErrors({ secret: 'Invalid Password' })
+        .withCode(401);
     }
   }
   //update consumed
@@ -127,7 +163,7 @@ export function assert(input: Partial<SignupInput>) {
     errors.name = 'Name is required';
   }
   if (!input.username && !input.email && !input.phone) {
-    errors.type = 'Username, email, or phone is required';
+    errors.username = 'Username, email, or phone is required';
   } else if (input.email && !email(input.email)) {
     errors.email = 'Invalid email';
   }

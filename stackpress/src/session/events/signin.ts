@@ -30,7 +30,7 @@ export default async function AuthSignin(
   //Q: Do I want to error if no seed?
   const seed = ctx.config.path('database.seed', 'abc123');
   //get the user from the database
-  let results: Partial<AuthExtended> | null = null;
+  let results: Partial<AuthExtended>;
   try { //to sign in
     results = await signin(
       type, 
@@ -43,11 +43,6 @@ export default async function AuthSignin(
   } catch (e) {
     const exception = Exception.upgrade(e as Error);
     res.setError(exception.toResponse());
-    return;
-  }
-  //if no results
-  if (results === null) {
-    res.setError('User Not Found').setStatus(404, 'Not Found');
     return;
   }
   //remove sensitive data

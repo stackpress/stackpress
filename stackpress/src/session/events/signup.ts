@@ -32,6 +32,11 @@ export default async function AuthSignup(
     results = await signup(input, seed, engine, client);
   } catch (e) {
     const exception = Exception.upgrade(e as Error);
+    //if e is an exception with errors
+    //NOTE: we cant rely on instanceof...
+    if ((e as Exception).errors) {
+      exception.withErrors((e as Exception).errors);
+    }
     res.setError(exception.toResponse());
     return;
   }
