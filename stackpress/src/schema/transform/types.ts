@@ -58,8 +58,23 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
       namedImports: [ 'ScalarInput' ]
     });
   }
-  //import SchemaInterface from 'stackpress/SchemaInterface';
+  //import type { 
+  //  AssertInterfaceMap, 
+  //  SerializeInterfaceMap, 
+  //  UnserializeInterfaceMap 
+  //} from 'stackpress/schema/types';
   source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/schema/types',
+    namedImports: [
+      'AssertInterfaceMap',
+      'SerializeInterfaceMap',
+      'UnserializeInterfaceMap'
+    ]
+  });
+  //import type SchemaInterface from 'stackpress/SchemaInterface';
+  source.addImportDeclaration({
+    isTypeOnly: true,
     moduleSpecifier: 'stackpress/SchemaInterface',
     defaultImport: 'SchemaInterface'
   });
@@ -136,20 +151,47 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
       )).join(',\n')}
     }`)
   });
-  //export interface ProfileSchemaInterface extends SchemaInterface<T, C> {};
+  //export type AddressColumns = { street: StreetColumn, ... };
+  source.addTypeAlias({
+    isExported: true,
+    name: fieldset.name.toTypeName('%sColumns'),
+    type: (`{${
+      columns.map(
+        column => `${column.name.toString()}: ${
+          column.type.fieldset 
+            ? column.type.fieldset.name.toClassName('%sSchema')
+            : column.name.toClassName('%sColumn')
+        }`
+      ).join(', ')
+    }}`)
+  });
+  //export type AddressAssertInterfaceMap = AssertInterfaceMap<AddressColumns>;
+  source.addTypeAlias({
+    isExported: true,
+    name: fieldset.name.toTypeName('%sAssertInterfaceMap'),
+    type: fieldset.name.toTypeName('AssertInterfaceMap<%sColumns>')
+  });
+  //export type AddressSerializeInterfaceMap = SerializeInterfaceMap<AddressColumns>;
+  source.addTypeAlias({
+    isExported: true,
+    name: fieldset.name.toTypeName('%sSerializeInterfaceMap'),
+    type: fieldset.name.toTypeName('SerializeInterfaceMap<%sColumns>')
+  });
+  //export type AddressUnserializeInterfaceMap = UnserializeInterfaceMap<AddressColumns>;
+  source.addTypeAlias({
+    isExported: true,
+    name: fieldset.name.toTypeName('%sUnserializeInterfaceMap'),
+    type: fieldset.name.toTypeName('UnserializeInterfaceMap<%sColumns>')
+  });
+  //export interface AddressSchemaInterface extends SchemaInterface<T, C> {};
   source.addInterface({
     isExported: true,
     name: `${fieldset.name.toClassName()}SchemaInterface`,
     extends: [
-      `SchemaInterface<${fieldset.name.toTypeName()}, {${
-        columns.map(
-          column => `${column.name.toString()}: ${
-            column.type.fieldset 
-              ? column.type.fieldset.name.toClassName('%sSchema')
-              : column.name.toClassName('%sColumn')
-          }`
-        ).join(', ')
-      }}>`
+      `SchemaInterface<${[
+        fieldset.name.toTypeName(), 
+        fieldset.name.toTypeName('%sColumns')
+      ].join(', ')}>`
     ]
   });
 

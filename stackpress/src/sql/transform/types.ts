@@ -6,11 +6,6 @@ import type Model from '../../schema/Model.js';
 import { loadProjectFile } from '../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
-  //dont include columns that are models 
-  //(those are more of relational information)
-  const columns = model.columns.filter(
-    column => !column.type.model
-  );
   //relations like this: (foriegn keys)
   // owner User @relation({ name "connections" local "userId" foreign "id" })
   //not like this: (local keys)
@@ -44,6 +39,32 @@ export default function generate(directory: Directory, model: Model) {
     });
   }
 
+  //export type AuthRelations = {
+  //  profile: {
+  //    store: ProfileStore;
+  //    local: string;
+  //    foreign: string;
+  //    multiple: boolean;
+  //    required: boolean;
+  //  },
+  //  ...
+  //};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sRelations'),
+    type: (`{${
+      relations.map(
+        column => `${column.name.toString()}: {
+          store: ${column.name.toClassName('%sStore')},
+          local: string,
+          foreign: string,
+          multiple: boolean,
+          required: boolean
+        }`
+      ).toArray().join(', ')
+    }}`)
+  });
+
   //export interface ProfileStoreInterface extends StoreInterface<T, E, C, R> {};
   source.addInterface({
     isExported: true,
@@ -52,26 +73,8 @@ export default function generate(directory: Directory, model: Model) {
       `StoreInterface<${[
         model.name.toTypeName(),
         model.name.toTypeName('%sExtended'),
-        `{${
-          columns.map(
-            column => `${column.name.toString()}: ${
-              column.type.fieldset 
-                ? column.type.fieldset.name.toClassName('%sColumn')
-                : column.name.toClassName('%sColumn')
-            }`
-          ).toArray().join(', ')
-        }}`,
-        `{${
-          relations.map(
-            column => `${column.name.toString()}: {
-              store: ${column.name.toClassName('%sStore')},
-              local: string,
-              foreign: string,
-              multiple: boolean,
-              required: boolean
-            }`
-          ).toArray().join(', ')
-        }}`
+        model.name.toTypeName('%sColumns'),
+        model.name.toTypeName('%sRelations')
       ].join(', ')}>` 
     ]
   });
@@ -84,26 +87,8 @@ export default function generate(directory: Directory, model: Model) {
       `ActionsInterface<${[
         model.name.toTypeName(),
         model.name.toTypeName('%sExtended'),
-        `{${
-          columns.map(
-            column => `${column.name.toString()}: ${
-              column.type.fieldset 
-                ? column.type.fieldset.name.toClassName('%sColumn')
-                : column.name.toClassName('%sColumn')
-            }`
-          ).toArray().join(', ')
-        }}`,
-        `{${
-          relations.map(
-            column => `${column.name.toString()}: {
-              store: ${column.name.toClassName('%sStore')},
-              local: string,
-              foreign: string,
-              multiple: boolean,
-              required: boolean
-            }`
-          ).toArray().join(', ')
-        }}`
+        model.name.toTypeName('%sColumns'),
+        model.name.toTypeName('%sRelations')
       ].join(', ')}>`
     ]
   });

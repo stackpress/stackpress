@@ -77,14 +77,15 @@ export default function generate(directory: Directory, model: Model) {
     defaultImport: 'AbstractActions',
     moduleSpecifier: 'stackpress/sql/AbstractActions'
   });
-  //import type { Profile, ProfileExtended, ProfileActionsInterface } from './types.js';
+  //import type { Profile, ProfileExtended, ProfileActionsInterface, ProfileAssertInterfaceMap } from './types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: './types.js',
     namedImports: [ 
       model.name.toTypeName(),
       model.name.toTypeName('%sExtended'),
-      model.name.toClassName('%sActionsInterface')
+      model.name.toTypeName('%sActionsInterface'),
+      model.name.toTypeName('%sAssertInterfaceMap')
     ]
   });
   //import ProfileStore from './ProfileStore.js';
@@ -153,16 +154,19 @@ export default function generate(directory: Directory, model: Model) {
       type: model.name.toTypeName('Partial<%s>')
     }],
     statements: renderCode(TEMPLATE.CREATE, {
+      assert: model.name.toTypeName('%sAssertInterfaceMap'),
       oneid: ids.size === 1,
       multid: ids.size > 1,
       noid: ids.size === 0,
       type: ids.size === 1 
         ? ids.map(column => typemap[column.type.name]!).toArray()[0] 
         : 'any',
-      ids: ids.map(column => ({ column: column.name.toString() })).toArray()
+      ids: ids.map(column => ({ column: column.name.toString() })).toArray(),
+      exists: model.store.uniques.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
     })
   });
-  //public async delete(query: StoreSelectFilters) {}
   //public async deleteById(id: number | string) {}
   definition.addMethod({
     scope: Scope.Public,
@@ -254,6 +258,24 @@ export default function generate(directory: Directory, model: Model) {
       ).toArray()
     })
   });
+  //public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'update',
+    parameters: [
+      { name: 'query', type: `StoreSelectFilters` }, 
+      { name: 'input', type: model.name.toTypeName('Partial<%s>') }
+    ],
+    statements: renderCode(TEMPLATE.UPDATE, {
+      assert: model.name.toTypeName('%sAssertInterfaceMap'),
+      type: model.name.toTypeName(),
+      uniques: model.store.uniques.size > 0,
+      exists: model.store.uniques.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
   //public async updateById(id: number | string, input: Partial<Profile>) {}
   definition.addMethod({
     scope: Scope.Public,
@@ -273,19 +295,6 @@ export default function generate(directory: Directory, model: Model) {
       ids: ids.map(
         column => ({ column: column.name.toString() })
       ).toArray()
-    })
-  });
-  //public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
-  definition.addMethod({
-    scope: Scope.Public,
-    isAsync: true,
-    name: 'update',
-    parameters: [
-      { name: 'query', type: `StoreSelectFilters` }, 
-      { name: 'input', type: model.name.toTypeName('Partial<%s>') }
-    ],
-    statements: renderCode(TEMPLATE.UPDATE, {
-      type: model.name.toTypeName()
     })
   });
   //public async upsert(input: Partial<Profile>) {}
@@ -400,9 +409,25 @@ const defined = removeEmptyStrings(unserialized);
 const sanitized = removeUndefined(defined);
 
 //collect errors, if any
-const errors = this.store.assert(sanitized, true);
+const errors = this.store.assert(sanitized, true) || {} as <%assert%>;
+
+<%#exists%>
+  //if there's a <%column%> value
+  if (typeof sanitized.<%column%> !== 'undefined') {
+    //check to see if exists already
+    const exists = await this.find({ 
+      filter: { <%column%>: sanitized.<%column%> } 
+    });
+    //if it does exist
+    if (exists) {
+      //add a unique error
+      errors.<%column%> = 'Already exists';
+    }
+  }
+<%/exists%>
+
 //if there were errors
-if (errors) {
+if (Object.keys(errors).length > 0) {
   //throw errors
   throw Exception
     .for('Invalid parameters')
@@ -483,9 +508,35 @@ const defined = removeEmptyStrings(unserialized);
 const sanitized = removeUndefined(defined);
 
 //collect errors, if any
-const errors = this.store.assert(sanitized);
+const errors = this.store.assert(sanitized) || {} as <%assert%>;
+
+<%#uniques%>
+  //we need to check if the existing record 
+  // is the same as the one about to be updated
+  const queue = await this.findAll(query);
+  <%#exists%>
+    //if there's a <%column%> value
+    if (typeof sanitized.<%column%> !== 'undefined') {
+      //check to see if exists already
+      const exists = await this.findAll({ 
+        filter: { <%column%>: sanitized.<%column%> } 
+      });
+      //if it does exist
+      if (exists.length > 0) {
+        const same = queue.some(
+          update => update.<%column%> === sanitized.<%column%>
+        );
+        if (!same) {
+          //add a unique error
+          errors.<%column%> = 'Already exists';
+        }
+      }
+    }
+  <%/exists%>
+<%/uniques%>
+
 //if there were errors
-if (errors) {
+if (Object.keys(errors).length > 0) {
   //throw errors
   throw Exception
     .for('Invalid parameters')
