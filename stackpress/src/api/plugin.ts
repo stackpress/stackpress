@@ -32,6 +32,7 @@ export default function plugin(ctx: Server) {
         //send the webhook
         await fetch(webhook.uri, {
           method: webhook.method,
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data, params, results }),
         });
       }, -200);

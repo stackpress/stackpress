@@ -79,7 +79,6 @@ model Category
               @examples("2025-10-01T12:00:00Z")
   
   profile     Profile @relation({ local "profileId" foreign "id" })
-
   articles    CategoryArticle[] @label("Articles")
 }
 
@@ -111,6 +110,7 @@ model Article
   @labels("Article" "Articles")
   @icon("file")
   @display("{{title}}")
+  @query("*" "profile.*")
 {
   id        String
             @label("ID") 
@@ -162,7 +162,7 @@ model Article
 
   contents  Text?
             @label("Contents") 
-            @field.texteditor({ 
+            @field.editor({ 
               history true 
               font true 
               size true 

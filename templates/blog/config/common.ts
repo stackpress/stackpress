@@ -25,6 +25,18 @@ export const admin = {
   //static admin menu items
   menu: [
     {
+      name: 'Categories',
+      icon: 'sitemap',
+      path: '/admin/category/search',
+      match: '/admin/category'
+    },
+    {
+      name: 'Articles',
+      icon: 'file',
+      path: '/admin/article/search',
+      match: '/admin/article'
+    },
+    {
       name: 'Profiles',
       icon: 'user',
       path: '/admin/profile/search',
