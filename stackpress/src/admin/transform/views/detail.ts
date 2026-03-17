@@ -17,6 +17,9 @@ export default function detailView(directory: Directory, model: Model) {
     action: string,
     extras = ''
   ) => `\`\${base}/${model.name.dashCase}/${action}/${path}${extras}\``;
+  const relations = model.columns.filter(
+    column => Boolean(column.type.model && column.store.foreignRelationship)
+  ).map(column => column.store.foreignRelationship!).toArray();
 
   const filepath = model.name.toPathName('%s/admin/views/detail.tsx');
   //load Profile/admin/views/detail.tsx if it exists, if not create it
@@ -127,14 +130,36 @@ export default function detailView(directory: Directory, model: Model) {
       rows: model.component.viewFormats.toArray().map(column => {
         return renderCode(TEMPLATE.DETAIL_RESULTS_ROW, {
           label: column.name.label,
-          value: column.type.required
+          value: !column.type.nullable
             ? renderCode(TEMPLATE.DETAIL_RESULTS_VALUE_REQUIRED, { 
               component: column.name.toComponentName('%sViewFormat'),
-              name: column.name.toString()
+              name: column.name.toString(),
+              link: (() => {
+                const relation = relations.find(
+                  relation => relation.local.key.name.toString() === column.name.toString()
+                );
+                if (relation) {
+                  const fieldset = relation.foreign.model.name.dashCase;
+                  const name = column.name.toString();
+                  return `\`../../${fieldset}/detail/\${results.${name}}\``;
+                }
+                return null;
+              })()
             })
             : renderCode(TEMPLATE.DETAIL_RESULTS_VALUE_OPTIONAL, {
               component: column.name.toComponentName('%sViewFormat'),
-              name: column.name.toString()
+              name: column.name.toString(),
+              link: (() => {
+                const relation = relations.find(
+                  relation => relation.local.key.name.toString() === column.name.toString()
+                );
+                if (relation) {
+                  const fieldset = relation.foreign.model.name.dashCase;
+                  const name = column.name.toString();
+                  return `\`../../${fieldset}/detail/\${results.${name}}\``;
+                }
+                return null;
+              })()
             })
         });
       }).join('\n')
@@ -262,10 +287,24 @@ return (
 );`,
 
 DETAIL_RESULTS_VALUE_REQUIRED:
-'<<%component%> data={results} value={results.<%name%>} />',
+`<%#link%>
+  <a className="theme-info" href={<%link%>}>
+    <<%component%> data={results} value={results.<%name%>} />
+  </a>
+<%/link%>
+<%^link%>
+  <<%component%> data={results} value={results.<%name%>} />
+<%/link%>`,
 
 DETAIL_RESULTS_VALUE_OPTIONAL:
-`{results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}`,
+`<%#link%>
+  <a className="theme-info" href={<%link%>}>
+    {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
+  </a>
+<%/link%>
+<%^link%>
+  {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
+<%/link%>`,
 
 DETAIL_RESULTS_ROW:
 `<Table.Row>
