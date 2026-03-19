@@ -9,6 +9,8 @@ import {
 } from '../../../schema/transform/helpers.js';
 //stackpress/admin
 import { render } from '../helpers.js';
+import generateCreate from './detail/create.js';
+import generateSearch from './detail/search.js';
 
 export default function detailView(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(column => column.name);
@@ -20,6 +22,18 @@ export default function detailView(directory: Directory, model: Model) {
   const relations = model.columns.filter(
     column => Boolean(column.type.model && column.store.foreignRelationship)
   ).map(column => column.store.foreignRelationship!).toArray();
+  const related = model.columns.filter(
+    column => Boolean(
+      column.type.model 
+        && column.store.localRelationship
+        && column.store.localRelationship.foreign.type === 2
+    )
+  ).map(column => column.store.localRelationship!).toArray();
+
+  for (const relationship of related) {
+    generateCreate(directory, model, relationship);
+    generateSearch(directory, model, relationship);
+  }
 
   const filepath = model.name.toPathName('%s/admin/views/detail.tsx');
   //load Profile/admin/views/detail.tsx if it exists, if not create it
@@ -54,15 +68,15 @@ export default function detailView(directory: Directory, model: Model) {
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
-  //import Table from 'frui/Table';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/Table',
-    defaultImport: 'Table'
-  });
   //import Bread from 'frui/Bread';
   source.addImportDeclaration({
     moduleSpecifier: 'frui/Bread',
     defaultImport: 'Bread'
+  });
+  //import Table from 'frui/Table';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Table',
+    defaultImport: 'Table'
   });
   //import { useServer, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -82,10 +96,10 @@ export default function detailView(directory: Directory, model: Model) {
   //export function AdminProfileDetailCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sDetailCrumbs'),
+    name: model.name.toComponentName('%sAdminDetailCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.DETAIL_CRUMBS_PROPS, { 
+      type: renderCode('{ base: string, results: <%type%> }', { 
         type: model.name.toTypeName('%sExtended')
       })
     }],
@@ -102,7 +116,7 @@ export default function detailView(directory: Directory, model: Model) {
   //export function AdminProfileDetailActions() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sDetailActions'),
+    name: model.name.toComponentName('%sAdminDetailActions'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.DETAIL_ACTIONS_PROPS, { 
@@ -115,10 +129,30 @@ export default function detailView(directory: Directory, model: Model) {
       restore: link('restore')
     })
   });
+  //export function AdminProfileDetailTabs() {}
+  source.addFunction({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminDetailTabs'),
+    parameters: [{ 
+      name: 'props', 
+      type: renderCode(TEMPLATE.DETAIL_ACTIONS_PROPS, { 
+        type: model.name.toTypeName('%sExtended') 
+      }) 
+    }],
+    statements: renderCode(TEMPLATE.DETAIL_TABS, {
+      //where this model is 1, get the many relations...
+      related: related.map(related => ({
+        label: related.local.model.name.plural 
+          || related.local.model.name.singular
+          || related.local.model.name.titleCase,
+        link: link('detail', `/${related.local.model.name.toURLPath()}/search`)
+      }))
+    })
+  });
   //export function AdminProfileDetailResults() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sDetailResults'),
+    name: model.name.toComponentName('%sAdminDetailResults'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(
@@ -127,8 +161,9 @@ export default function detailView(directory: Directory, model: Model) {
       )
     }],
     statements: renderCode(TEMPLATE.DETAIL_RESULTS_BODY, {
-      rows: model.component.viewFormats.toArray().map(column => {
+      rows: model.component.viewFormats.toArray().map((column, index) => {
         return renderCode(TEMPLATE.DETAIL_RESULTS_ROW, {
+          index,
           label: column.name.label,
           value: !column.type.nullable
             ? renderCode(TEMPLATE.DETAIL_RESULTS_VALUE_REQUIRED, { 
@@ -168,18 +203,19 @@ export default function detailView(directory: Directory, model: Model) {
   //export function AdminProfileDetailBody() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sDetailBody'),
+    name: model.name.toComponentName('%sAdminDetailBody'),
     statements: renderCode(TEMPLATE.DETAIL_BODY, {
       type: model.name.toTypeName('%sExtended'),
-      crumbs: model.name.toComponentName('Admin%sDetailCrumbs'),
-      actions: model.name.toComponentName('Admin%sDetailActions'),
-      results: model.name.toComponentName('Admin%sDetailResults')
+      crumbs: model.name.toComponentName('%sAdminDetailCrumbs'),
+      tabs: model.name.toComponentName('%sAdminDetailTabs'),
+      actions: model.name.toComponentName('%sAdminDetailActions'),
+      results: model.name.toComponentName('%sAdminDetailResults')
     })
   });
   //export function AdminProfileDetailHead() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sDetailHead'),
+    name: model.name.toComponentName('%sAdminDetailHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -191,13 +227,13 @@ export default function detailView(directory: Directory, model: Model) {
   //export function AdminProfileDetailPage() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sDetailPage'),
+    name: model.name.toComponentName('%sAdminDetailPage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: renderCode(TEMPLATE.DETAIL_PAGE, { 
-      component: model.name.toComponentName('Admin%sDetailBody')
+      component: model.name.toComponentName('%sAdminDetailBody')
     })
   });
   //export const Head = AdminProfileDetailHead;
@@ -206,25 +242,23 @@ export default function detailView(directory: Directory, model: Model) {
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `${model.name.toComponentName('Admin%sDetailHead')}`
+      initializer: `${model.name.toComponentName('%sAdminDetailHead')}`
     }]
   });
   //export default AdminProfileDetailPage;
   source.addStatements(
-    `export default ${model.name.toComponentName('Admin%sDetailPage')};`
+    `export default ${model.name.toComponentName('%sAdminDetailPage')};`
   );
 };
 
 export const TEMPLATE = {
-
-DETAIL_CRUMBS_PROPS:
-'{ base: string, results: <%type%> }',
 
 DETAIL_CRUMBS_BODY:
 `//props
 const { results } = props;
 //hooks
 const { _ } = useLanguage();
+//render
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
     <Bread.Slicer>
@@ -247,8 +281,11 @@ DETAIL_ACTIONS_PROPS:
 }`,
 
 DETAIL_ACTIONS_BODY:
-`const { base, results, can } = props;
+`//props
+const { base, results, can } = props;
+//hooks
 const { _ } = useLanguage();
+//variables
 const routes = {
   update: { 
     method: 'GET', 
@@ -263,6 +300,7 @@ const routes = {
     route: <%restore%>
   },
 };
+//render
 return (
   <div className="actions">
     {can(routes.update) && (
@@ -283,6 +321,23 @@ return (
         {_('Restore')}
       </a>
     )}
+  </div>
+);`,
+
+DETAIL_TABS:
+`//props
+const { base, results, can } = props;
+//hooks
+const { _ } = useLanguage();
+//render
+return (
+  <div className="admin-tabs">
+    <span>{_('Info')}</span>
+    <%#related%>
+      {can({ method: 'GET', route: <%link%> }) && (
+        <a href={<%link%>}>{_('<%label%>')}</a>
+      )}
+    <%/related%>
   </div>
 );`,
 
@@ -307,7 +362,7 @@ DETAIL_RESULTS_VALUE_OPTIONAL:
 <%/link%>`,
 
 DETAIL_RESULTS_ROW:
-`<Table.Row>
+`<Table.Row index={<%index%>}>
   <Table.Col noWrap addClassName="results-label">
     {_('<%label%>')}
   </Table.Col>
@@ -317,27 +372,29 @@ DETAIL_RESULTS_ROW:
 </Table.Row>`,
 
 DETAIL_RESULTS_BODY:
-`const { results } = props;
+`//props
+const { results } = props;
+//hooks
 const { _ } = useLanguage();
+//render
 return (
   <Table
     className="w-full"
-    column={[ 'theme-bg-2', 'theme-bg-1' ]}
-    head="theme-bg-3"
+    column={[ 'admin-table-even', 'admin-table-odd' ]}
+    head="admin-table-head"
   >
     <%rows%>
   </Table>
 );`,
 
 DETAIL_BODY:
-`//props
+`//hooks
+const { _ } = useLanguage();
 const { 
   config, 
   session, 
   response 
 } = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
-//hooks
-const { _ } = useLanguage();
 //variables
 const can = session.can.bind(session);
 const base = config.path('admin.base', '/admin');
@@ -353,15 +410,22 @@ return (
     </div>
     {response.code === 200 ? (
       <>
-        <div className="admin-actions">
-          <<%actions%>
-            can={can} 
-            base={base} 
-            results={results} 
-          />
-        </div>
-        <div className="admin-results">
-          <<%results%> results={results} />
+        <<%tabs%> 
+          can={can} 
+          base={base} 
+          results={results} 
+        />
+        <div className="admin-tab-body">
+          <div className="admin-actions">
+            <<%actions%>
+              can={can} 
+              base={base} 
+              results={results} 
+            />
+          </div>
+          <div className="admin-results">
+            <<%results%> results={results} />
+          </div>
         </div>
       </>
     ) : response.code === 404 ? (
@@ -391,14 +455,18 @@ return (
 );`,
 
 DETAIL_HEAD:
-`const { data, styles = [] } = props;
-const { favicon = '/favicon.ico' } = data?.brand || {};
+`//props
+const { data, styles = [] } = props;
+//hooks
 const { _ } = useLanguage();
+//variables
+const { favicon = '/favicon.ico' } = data?.brand || {};
 const mimetype = favicon.endsWith('.png')
   ? 'image/png'
   : favicon.endsWith('.svg')
   ? 'image/svg+xml'
   : 'image/x-icon';
+//render
 return (
   <>
     <title>{_('<%name%> Detail')}</title>
@@ -411,7 +479,8 @@ return (
 );`,
 
 DETAIL_PAGE:
-`return (
+`//render
+return (
   <LayoutAdmin {...props}>
     <<%component%> />
   </LayoutAdmin>

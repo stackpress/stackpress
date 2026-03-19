@@ -6,8 +6,28 @@ import {
   loadProjectFile, 
   renderCode 
 } from '../../../schema/transform/helpers.js';
+//stackpress/admin
+import generateCreate from './detail/create.js';
+import generateExport from './detail/export.js';
+import generateImport from './detail/import.js';
+import generateSearch from './detail/search.js';
 
 export default function generate(directory: Directory, model: Model) {
+  const related = model.columns.filter(
+    column => Boolean(
+      column.type.model 
+        && column.store.localRelationship
+        && column.store.localRelationship.foreign.type === 2
+    )
+  );
+
+  for (const column of related.toArray()) {
+    generateCreate(directory, model, column.store.localRelationship!);
+    generateExport(directory, model, column.store.localRelationship!);
+    generateImport(directory, model, column.store.localRelationship!);
+    generateSearch(directory, model, column.store.localRelationship!);
+  }
+
   const filepath = model.name.toPathName('%s/admin/pages/detail.ts');
   //load Profile/admin/pages/detail.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);

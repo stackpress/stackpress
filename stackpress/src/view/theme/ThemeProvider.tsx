@@ -15,7 +15,7 @@ export default function ThemeProvider(props: ThemeProviderProps) {
   const toggle = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    cookie.set('theme', newTheme);
+    cookie.set('theme', newTheme, { path: '/' });
   };
   const value = { theme, toggle };
   useEffect(() => {

@@ -188,7 +188,7 @@ Object.entries(sort).forEach(([ key, value ]) => {
   const info = this.getColumnInfo(key).last;
   if (!info) return;
   //NOTE: inquire already adds the quotes around the column name
-  const selector = \`\${info.store.table}\${q}.\${q}\${info.column}\${q}\`;
+  const selector = \`\${info.store.table}\${q}.\${q}\${info.column}\`;
   select.order(selector, direction.toUpperCase() as 'ASC' | 'DESC');
 });
 
@@ -242,7 +242,9 @@ const alias = {
   child: getAlias(selectors.slice(0, index + 1).join(".")),
 };
 if (alias.parent.length > 0) {
-  alias.parent += ".";
+  alias.parent += '.';
+} else {
+  alias.parent = this.table + '.';
 }
 <%#relations%>
   //model: product -> group
@@ -252,7 +254,6 @@ if (alias.parent.length > 0) {
   //if there is a relation
   if (relation) {
     //get the table (should be the parent table)
-    //group
     const table = relation.store.table;
     //get the from (should be the child column)
     const from = \`\${alias.parent}\${relation.local}\`;
@@ -370,7 +371,7 @@ const values: FlatValue[] = [];
 Object.entries(filter).forEach(([ key, value ]) => {
   const info = this.getColumnInfo(key).last;
   if (!info) return;
-  const selector = \`\${q}\${info.store.table}\${q}.\${q}\${info.column}\${q}\`;
+  const selector = \`\${q}\${info.store.table}\${q}.\${q}\${getAlias(info.column)}\${q}\`;
   const serialized = info.store.columns[info.column].serialize(value, true);
   if (typeof serialized !== 'undefined' 
     && serialized !== null 
@@ -387,7 +388,7 @@ Object.entries(filter).forEach(([ key, value ]) => {
 Object.entries(span).forEach(([ key, values ]) => {
   const info = this.getColumnInfo(key).last;
   if (!info) return;
-  const selector = \`\${q}\${info.store.table}\${q}.\${q}\${info.column}\${q}\`;
+  const selector = \`\${q}\${info.store.table}\${q}.\${q}\${getAlias(info.column)}\${q}\`;
   if (typeof values[0] !== 'undefined'
     && values[0] !== null
     && values[0] !== ''

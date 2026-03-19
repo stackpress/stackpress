@@ -71,6 +71,13 @@ export default function searchView(directory: Directory, model: Model) {
     moduleSpecifier: 'frui/Button',
     defaultImport: 'Button'
   });
+  //import Input from 'frui/form/Input';
+  if (model.store.searchables.size > 0) {
+    source.addImportDeclaration({
+      moduleSpecifier: 'frui/form/Input',
+      defaultImport: 'Input'
+    });
+  }
   //import Pager from 'frui/Pager';
   source.addImportDeclaration({
     moduleSpecifier: 'frui/Pager',
@@ -86,13 +93,6 @@ export default function searchView(directory: Directory, model: Model) {
     moduleSpecifier: 'frui/Notifier',
     namedImports: [ 'notify', 'flash' ]
   });
-  //import Input from 'frui/form/Input';
-  if (model.store.searchables.size > 0) {
-    source.addImportDeclaration({
-      moduleSpecifier: 'frui/form/Input',
-      defaultImport: 'Input'
-    });
-  }
   //import { paginate, filter, order, useServer, 
   // LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -141,7 +141,7 @@ export default function searchView(directory: Directory, model: Model) {
   //export function AdminProfileSearchCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sSearchCrumbs'),
+    name: model.name.toComponentName('%sAdminSearchCrumbs'),
     statements: renderCode(TEMPLATE.SEARCH_CRUMBS, {
       search: {
         label: model.name.plural || model.name.titleCase,
@@ -152,7 +152,7 @@ export default function searchView(directory: Directory, model: Model) {
   //export function AdminProfileSearchFilters() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sSearchFilters'),
+    name: model.name.toComponentName('%sAdminSearchFilters'),
     parameters: [{ 
       name: 'props', 
       type: `{ 
@@ -180,7 +180,7 @@ export default function searchView(directory: Directory, model: Model) {
   //export function AdminProfileSearchForm() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sSearchForm'),
+    name: model.name.toComponentName('%sAdminSearchForm'),
     parameters: [{ 
       name: 'props', 
       type: `{ 
@@ -200,7 +200,7 @@ export default function searchView(directory: Directory, model: Model) {
   //export function AdminProfileSearchResults() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sSearchResults'),
+    name: model.name.toComponentName('%sAdminSearchResults'),
     parameters: [{ 
       name: 'props', 
       type: `{ 
@@ -242,19 +242,19 @@ export default function searchView(directory: Directory, model: Model) {
   //export function AdminProfileSearchBody() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sSearchBody'),
+    name: model.name.toComponentName('%sAdminSearchBody'),
     statements: renderCode(TEMPLATE.SEARCH_BODY, {
       type: model.name.toTypeName('%sExtended[]'),
-      crumbs: model.name.toComponentName('Admin%sSearchCrumbs'),
-      filters: model.name.toComponentName('Admin%sSearchFilters'),
-      form: model.name.toComponentName('Admin%sSearchForm'),
-      results: model.name.toComponentName('Admin%sSearchResults')
+      crumbs: model.name.toComponentName('%sAdminSearchCrumbs'),
+      filters: model.name.toComponentName('%sAdminSearchFilters'),
+      form: model.name.toComponentName('%sAdminSearchForm'),
+      results: model.name.toComponentName('%sAdminSearchResults')
     })
   });
   //export function AdminProfileSearchHead() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sSearchHead'),
+    name: model.name.toComponentName('%sAdminSearchHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -266,13 +266,13 @@ export default function searchView(directory: Directory, model: Model) {
   //export function AdminProfileSearchPage() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sSearchPage'),
+    name: model.name.toComponentName('%sAdminSearchPage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: renderCode(TEMPLATE.SEARCH_PAGE, { 
-      component: model.name.toComponentName('Admin%sSearchBody') 
+      component: model.name.toComponentName('%sAdminSearchBody') 
     })
   });
   //export const Head = AdminProfileSearchHead;
@@ -281,12 +281,12 @@ export default function searchView(directory: Directory, model: Model) {
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: model.name.toComponentName('Admin%sSearchHead')
+      initializer: model.name.toComponentName('%sAdminSearchHead')
     }]
   });
   //export default AdminProfileSearchPage;
   source.addStatements(
-    `export default ${model.name.toComponentName('Admin%sSearchPage')};`
+    `export default ${model.name.toComponentName('%sAdminSearchPage')};`
   );
 };
 
@@ -441,18 +441,18 @@ const { _ } = useLanguage();
 return (
   <Table
     className="w-full"
-    column={[ 'theme-bg-2', 'theme-bg-1' ]}
-    head="theme-bg-3"
+    column={[ 'admin-table-odd', 'admin-table-even' ]}
+    head="admin-table-head"
   >
     <%headers%>
     <%#path%>
-      <Table.Head stickyTop stickyRight className="results-label" />
+      <Table.Head stickyTop stickyRight addClassName="results-label" />
     <%/path%>
     {results.map((row, index) => (
-      <Table.Row key={index}>
+      <Table.Row key={index} index={index}>
         <%columns%>
         <%#path%>
-          <Table.Col stickyRight className="results-value center">
+          <Table.Col stickyRight addClassName="results-value center">
             {can({ method: 'GET', route: \`\${base}/<%model%>/detail/<%path%>\`}) ? (
               <Button info className="detail" href={\`detail/<%path%>\`}>
                 <i className="fas fa-fw fa-caret-right"></i>
@@ -466,8 +466,16 @@ return (
 );`,
 
 SEARCH_BODY:
-`//props
-const { config, session, request, response } = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+`//hooks
+const { _ } = useLanguage();
+const { 
+  config, 
+  session, 
+  request, 
+  response 
+} = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+const [ opened, open ] = useState(false);
+//variables
 const base = config.path('admin.base', '/admin');
 const can = session.can.bind(session);
 const query = request.data();
@@ -475,9 +483,6 @@ const skip = query.skip || 0;
 const take = query.take || 50;
 const results = response.results as <%type%>;
 const total = response.total || 0;
-//hooks
-const { _ } = useLanguage();
-const [ opened, open ] = useState(false);
 //handlers
 const page = (skip: number) => paginate('skip', skip);
 //render

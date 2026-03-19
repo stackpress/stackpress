@@ -62,7 +62,7 @@ export default function restoreView(directory: Directory, model: Model) {
   //export function AdminProfileRestoreCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRestoreCrumbs'),
+    name: model.name.toComponentName('%sAdminRestoreCrumbs'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.RESTORE_CRUMBS_PROPS, { 
@@ -83,7 +83,7 @@ export default function restoreView(directory: Directory, model: Model) {
   //export function AdminProfileRestoreForm() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRestoreForm'),
+    name: model.name.toComponentName('%sAdminRestoreForm'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.RESTORE_FORM_PROPS, { 
@@ -98,17 +98,17 @@ export default function restoreView(directory: Directory, model: Model) {
   //export function AdminProfileRestoreBody() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRestoreBody'),
+    name: model.name.toComponentName('%sAdminRestoreBody'),
     statements: renderCode(TEMPLATE.RESTORE_BODY, {
       type: model.name.toTypeName('%sExtended'),
-      crumbs: model.name.toComponentName('Admin%sRestoreCrumbs'),
-      form: model.name.toComponentName('Admin%sRestoreForm')
+      crumbs: model.name.toComponentName('%sAdminRestoreCrumbs'),
+      form: model.name.toComponentName('%sAdminRestoreForm')
     })
   });
   //export function AdminProfileRestoreHead() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRestoreHead'),
+    name: model.name.toComponentName('%sAdminRestoreHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -120,13 +120,13 @@ export default function restoreView(directory: Directory, model: Model) {
   //export function AdminProfileRestorePage() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRestorePage'),
+    name: model.name.toComponentName('%sAdminRestorePage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: renderCode(TEMPLATE.RESTORE_PAGE, { 
-      component: model.name.toComponentName('Admin%sRestoreBody') 
+      component: model.name.toComponentName('%sAdminRestoreBody') 
     })
   });
   //export const Head = AdminProfileRestoreHead;
@@ -135,12 +135,12 @@ export default function restoreView(directory: Directory, model: Model) {
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: model.name.toComponentName('Admin%sRestoreHead')
+      initializer: model.name.toComponentName('%sAdminRestoreHead')
     }]
   });
   //export default AdminProfileRestorePage;
   source.addStatements(
-    `export default ${model.name.toComponentName('Admin%sRestorePage')};`
+    `export default ${model.name.toComponentName('%sAdminRestorePage')};`
   );
 };
 

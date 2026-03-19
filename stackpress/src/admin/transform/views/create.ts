@@ -71,10 +71,10 @@ export default function createView(directory: Directory, model: Model) {
     });
   });
   
-  //export function AdminProfileCreateCrumbs() {}
+  //export function ProfileAdminCreateCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sCreateCrumbs'),
+    name: model.name.toComponentName('%sAdminCreateCrumbs'),
     statements: renderCode(TEMPLATE.CREATE_CRUMBS, { 
       search: {
         label: model.name.plural || model.name.titleCase,
@@ -82,10 +82,10 @@ export default function createView(directory: Directory, model: Model) {
       }
     })
   });
-  //export function AdminProfileCreateForm() {}
+  //export function ProfileAdminCreateForm() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sCreateForm'),
+    name: model.name.toComponentName('%sAdminCreateForm'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.CREATE_FORM_PROPS, { 
@@ -110,21 +110,21 @@ export default function createView(directory: Directory, model: Model) {
       }).join('\n')
     })
   });
-  //export function AdminProfileCreateBody() {}
+  //export function ProfileAdminCreateBody() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sCreateBody'),
+    name: model.name.toComponentName('%sAdminCreateBody'),
     statements: renderCode(TEMPLATE.CREATE_BODY, {
       input: model.name.toTypeName('%sInput'),
       type: model.name.toTypeName(),
-      crumbs: model.name.toComponentName('Admin%sCreateCrumbs'),
-      form: model.name.toComponentName('Admin%sCreateForm')
+      crumbs: model.name.toComponentName('%sAdminCreateCrumbs'),
+      form: model.name.toComponentName('%sAdminCreateForm')
     })
   });
-  //export function AdminProfileCreateHead() {}
+  //export function ProfileAdminCreateHead() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sCreateHead'),
+    name: model.name.toComponentName('%sAdminCreateHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -133,30 +133,30 @@ export default function createView(directory: Directory, model: Model) {
       name: model.name.singular 
     })
   });
-  //export function AdminProfileCreatePage() {}
+  //export function ProfileAdminCreatePage() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sCreatePage'),
+    name: model.name.toComponentName('%sAdminCreatePage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: renderCode(TEMPLATE.CREATE_PAGE, { 
-      component: model.name.toComponentName('Admin%sCreateBody') 
+      component: model.name.toComponentName('%sAdminCreateBody') 
     })
   });
-  //export const Head = AdminProfileCreateHead;
+  //export const Head = ProfileAdminCreateHead;
   source.addVariableStatement({
     isExported: true,
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `${model.name.toComponentName('Admin%sCreateHead')}`
+      initializer: `${model.name.toComponentName('%sAdminCreateHead')}`
     }]
   });
-  //export default AdminProfileCreatePage;
+  //export default ProfileAdminCreatePage;
   source.addStatements(
-    `export default ${model.name.toComponentName('Admin%sCreatePage')};`
+    `export default ${model.name.toComponentName('%sAdminCreatePage')};`
   );
 };
 

@@ -176,6 +176,7 @@ model Article
               textStyle true 
               align true 
               list true
+              code true
             })
             @view.html
             @description("Main contents of the article.")
@@ -245,7 +246,12 @@ model Article
   categories CategoryArticle[] @label("Categories")
 }
 
-model Comment {
+model Comment 
+  @labels("Comment" "Comments")
+  @icon("comment")
+  @display("{{comment}}")
+  @query("*" "article.*" "profile.*")
+{
   id        String
             @label("ID") 
             @id @default("cuid()")
@@ -290,6 +296,7 @@ model Comment {
   comment   Text?
             @label("Description") 
             @field.textarea
+            @list.text
             @view.text
             @description("Detailed description of the category.")
             @examples("This category includes articles about getting started with Stackpress.")

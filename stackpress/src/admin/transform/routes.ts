@@ -8,7 +8,16 @@ import {
 } from '../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
-  const ids = model.store.ids.toArray().map(column => `:${column.name.toString()}`).join('/')
+  const ids = model.store.ids.toArray().map(
+    column => `:${column.name.toString()}`
+  ).join('/');
+  const related = model.columns.filter(
+    column => Boolean(
+      column.type.model 
+        && column.store.localRelationship
+        && column.store.localRelationship.foreign.type === 2
+    )
+  ).toArray();
   
   const filepath = model.name.toPathName('%s/admin/routes.ts');
   //load Profile/index.ts if it exists, if not create it
@@ -32,34 +41,95 @@ export default function generate(directory: Directory, model: Model) {
         ids: ids,
         create: {
           route: model.name.toURLPath('${root}/%s/create'),
-          view: model.name.toPathName('${module}/%s/admin/views/create')
+          view: model.name.toPathName('${module}/%s/admin/views/create'),
+          import: './pages/create.js'
         },
         detail: {
           route: model.name.toURLPath('${root}/%s/detail/' + ids),
-          view: model.name.toPathName('${module}/%s/admin/views/detail')
+          view: model.name.toPathName('${module}/%s/admin/views/detail'),
+          import: './pages/detail.js'
         },
         remove: {
           route: model.name.toURLPath('${root}/%s/remove/' + ids),
-          view: model.name.toPathName('${module}/%s/admin/views/remove')
+          view: model.name.toPathName('${module}/%s/admin/views/remove'),
+          import: './pages/remove.js'
         },
         restore: {
           route: model.name.toURLPath('${root}/%s/restore/' + ids),
-          view: model.name.toPathName('${module}/%s/admin/views/restore')
+          view: model.name.toPathName('${module}/%s/admin/views/restore'),
+          import: './pages/restore.js'
         },
         search: {
           route: model.name.toURLPath('${root}/%s/search'),
-          view: model.name.toPathName('${module}/%s/admin/views/search')
+          view: model.name.toPathName('${module}/%s/admin/views/search'),
+          import: './pages/search.js'
         },
         update: {
           route: model.name.toURLPath('${root}/%s/update/' + ids),
-          view: model.name.toPathName('${module}/%s/admin/views/update')
+          view: model.name.toPathName('${module}/%s/admin/views/update'),
+          import: './pages/update.js'
         },
         import: {
-          route: model.name.toURLPath('${root}/%s/import')
+          route: model.name.toURLPath('${root}/%s/import'),
+          import: './pages/import.js'
         },
         export: {
-          route: model.name.toURLPath('${root}/%s/export')
-        }
+          route: model.name.toURLPath('${root}/%s/export'),
+          import: './pages/export.js'
+        },
+        details: related.map(column => {
+          const relationship = column.store.localRelationship!;
+          return {
+            create: {
+              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/create', {
+                model: model.name.toURLPath(),
+                ids: ids,
+                relation: relationship.local.model.name.toURLPath()
+              }),
+              import: relationship.local.model.name.toPathName('./pages/%s/create.js'),
+              view: renderCode('${module}/<%model%>/admin/views/<%relation%>/create', {
+                model: model.name.toString(),
+                relation: relationship.local.model.name.toString()
+              })
+            },
+            export: {
+              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/export', {
+                model: model.name.toURLPath(),
+                ids: ids,
+                relation: relationship.local.model.name.toURLPath()
+              }),
+              import: relationship.local.model.name.toPathName('./pages/%s/export.js'),
+              view: renderCode('${module}/<%model%>/admin/views/<%relation%>/export', {
+                model: model.name.toString(),
+                relation: relationship.local.model.name.toString()
+              })
+            },
+            import: {
+              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/import', {
+                model: model.name.toURLPath(),
+                ids: ids,
+                relation: relationship.local.model.name.toURLPath()
+              }),
+              import: relationship.local.model.name.toPathName('./pages/%s/import.js'),
+              view: renderCode('${module}/<%model%>/admin/views/<%relation%>/import', {
+                model: model.name.toString(),
+                relation: relationship.local.model.name.toString()
+              })
+            },
+            search: {
+              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/search', {
+                model: model.name.toURLPath(),
+                ids: ids,
+                relation: relationship.local.model.name.toURLPath()
+              }),
+              import: relationship.local.model.name.toPathName('./pages/%s/search.js'),
+              view: renderCode('${module}/<%model%>/admin/views/<%relation%>/search', {
+                model: model.name.toString(),
+                relation: relationship.local.model.name.toString()
+              })
+            }
+          };
+        })
       }
     )
   });
@@ -71,37 +141,55 @@ ROUTES:
 `const root = server.config.path('admin.root', '/admin');
 server.import.all(
   \`<%create.route%>\`, 
-  () => import('./pages/create.js')
+  () => import('<%create.import%>')
 );
 server.import.all(
   \`<%search.route%>\`, 
-  () => import('./pages/search.js')
+  () => import('<%search.import%>')
 );
 server.import.all(
   \`<%export.route%>\`, 
-  () => import('./pages/export.js')
+  () => import('<%export.import%>')
 );
 server.import.all(
   \`<%import.route%>\`, 
-  () => import('./pages/import.js')
+  () => import('<%import.import%>')
 );
 <%#ids%>
   server.import.all(
     \`<%detail.route%>\`, 
-    () => import('./pages/detail.js')
+    () => import('<%detail.import%>')
   );
   server.import.all(
     \`<%remove.route%>\`, 
-    () => import('./pages/remove.js')
+    () => import('<%remove.import%>')
   );
   server.import.all(
     \`<%restore.route%>\`, 
-    () => import('./pages/restore.js')
+    () => import('<%restore.import%>')
   );
   server.import.all(
     \`<%update.route%>\`, 
-    () => import('./pages/update.js')
+    () => import('<%update.import%>')
   );
+  <%#details%>
+    server.import.all(
+      \`<%create.route%>\`, 
+      () => import('<%create.import%>')
+    );
+    server.import.all(
+      \`<%export.route%>\`, 
+      () => import('<%export.import%>')
+    );
+    server.import.all(
+      \`<%import.route%>\`, 
+      () => import('<%import.import%>')
+    );
+    server.import.all(
+      \`<%search.route%>\`, 
+      () => import('<%search.import%>')
+    );
+  <%/details%>
 <%/ids%>
 
 const module = server.config.path<string>('client.module');
@@ -137,6 +225,18 @@ if (module) {
       \`<%update.view%>\`,
       -100
     );
+    <%#details%>
+      server.view.all(
+        \`<%create.route%>\`, 
+        \`<%create.view%>\`,
+        -100
+      );
+      server.view.all(
+        \`<%search.route%>\`, 
+        \`<%search.view%>\`,
+        -100
+      );
+    <%/details%>
   <%/ids%>
 }`,
 

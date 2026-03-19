@@ -120,7 +120,7 @@ export function generateRelation(
       url: String(props.search || ''),
       template: props.template,
       id: props.id,
-      column: column.name.toURLPath(),
+      column: column.name.toString(),
       multiple: column.type.multiple ? '[]': ''
     })
   });
@@ -135,7 +135,7 @@ export function generateRelation(
       label: column.name.label,
       hidden: isBoolComponent 
         ? renderCode(TEMPLATE.RELATION_BOOLEAN_HIDDEN_FIELD, {
-          column: column.name.toURLPath(),
+          column: column.name.toString(),
           multiple: column.type.multiple ? '[]': ''
         }) 
         : '',
@@ -201,7 +201,7 @@ export function generateBoolean(
     statements: renderCode(TEMPLATE.BOOLEAN_FIELD, {
       props: JSON.stringify(props),
       component: component.name,
-      column: column.name.toURLPath(),
+      column: column.name.toString(),
       multiple: column.type.multiple ? '[]': ''
     })
   });
@@ -214,7 +214,7 @@ export function generateBoolean(
     ],
     statements: renderCode(TEMPLATE.BOOLEAN_CONTROL, {
       label: column.name.label,
-      column: column.name.toURLPath(),
+      column: column.name.toString(),
       multiple: column.type.multiple ? '[]': '',
       component: column.name.toComponentName('%sFilterField')
     })
@@ -278,7 +278,7 @@ export function generateField(
     statements: renderCode(TEMPLATE.FIELD_FIELD, {
       props: JSON.stringify(props),
       component: component.name,
-      column: column.name.toURLPath(),
+      column: column.name.toString(),
       multiple: column.type.multiple ? '[]': ''
     })
   });

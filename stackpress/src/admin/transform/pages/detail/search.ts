@@ -1,17 +1,46 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress/schema
-import type Model from '../../../schema/Model.js';
+import type Column from '../../../../schema/Column.js';
+import type Fieldset from '../../../../schema/Fieldset.js';
+import type Model from '../../../../schema/Model.js';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../../schema/transform/helpers.js';
+} from '../../../../schema/transform/helpers.js';
 
-export default function generate(directory: Directory, model: Model) {
-  const filepath = model.name.toPathName('%s/admin/pages/search.ts');
-  //load Profile/admin/pages/search.ts if it exists, if not create it
+export type Relationship = {
+  foreign: {
+      model: Model,
+      column: Column,
+      key: Column,
+      type: number
+  },
+  local: {
+      model: Fieldset,
+      column: Column,
+      key: Column,
+      type: number
+  };
+};
+
+export default function generate(
+  directory: Directory, 
+  model: Model, 
+  relationship: Relationship
+) {
+  const foreign = relationship.local.model as Model;
+
+  const filepath = renderCode(
+    '<%model%>/admin/pages/<%relation%>/search.ts', 
+    {
+      model: model.name.toPathName(),
+      relation: foreign.name.toPathName()
+    }
+  );
+  //load Profile/admin/pages/Auth/search.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
-
+  
   //import type { UnknownNest } from '@stackpress/lib/types';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -42,19 +71,39 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+  //import type { ProfileExtended } from '../../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: `../../../types.js`,
+    namedImports: [ model.name.toClassName('%sExtended') ]
+  });
 
-  //export default async function ProfileAdminSearchPage(req: Request, res: Response, ctx: Server) {}
+  //export default async function ProfileAdminAuthSearchPage(req: Request, res: Response, ctx: Server) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
-    name: model.name.toClassName('%sAdminSearchPage'),
+    name: renderCode('<%model%>Admin<%relation%>SearchPage', {
+      model: model.name.toComponentName(),
+      relation: foreign.name.toComponentName(),
+    }),
     parameters: [
       { name: 'req', type: 'Request' },
       { name: 'res', type: 'Response' },
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.SEARCH, { 
-      event: model.name.toEventName()
+      extended: model.name.toClassName('%sExtended'),
+      detail: model.name.toEventName('%s-detail'),
+      search: foreign.name.toEventName('%s-search'),
+      id: {
+        foreign: relationship.foreign.key.name.toString(),
+        local: relationship.local.key.name.toString()
+      },
+      relation: foreign.name.toPropertyName(),
+      hash: model.value.hashed.size > 0,
+      hashes: model.value.hashed?.map(
+        column => ({ column: column.name.toString() })
+      ).toArray() || []
     })
   });
 };
@@ -97,10 +146,29 @@ res.data.set('admin', {
   base: admin.base || '/admin',
   menu: admin.menu || []
 });
+
+//first get the detail
+const detail = await ctx.resolve<Partial<<%extended%>>>('<%detail%>', req);
+//if there's an error, let it pass
+if (detail.code !== 200) {
+  res.fromStatusResponse(detail);
+  return;
+}
+<%#hash%>
+  //remove hashed data
+  <%#hashes%>
+    if (typeof detail.results?.<%column%> !== 'undefined') {
+      delete detail.results.<%column%>;
+    }
+  <%/hashes%>
+<%/hash%>
+
+//next get the relation rows
+
 //extract filters from url query
 let {
   q,
-  filter,
+  filter = {},
   span,
   sort,
   skip,
@@ -123,19 +191,34 @@ if (skip && !isNaN(Number(skip))) {
 if (take && !isNaN(Number(take))) {
   take = Number(take);
 }
+
+//add relation id/s to filters
+filter.<%id.local%> = req.data<string>('<%id.foreign%>');
+
 //search using the filters
-const response = await ctx.resolve(
-  '<%event%>-search',
-  { q, filter, span, sort, skip, take, columns },
-  res
+const search = await ctx.resolve(
+  '<%search%>',
+  { q, filter, span, sort, skip, take, columns }
 );
-//if OK
-if (res.code === 200) {
-  //remember the total
-  const total = response.total;
-  const rows = response.results as UnknownNest[];
-  res.setRows(rows, total || rows.length);
+
+//if there's an error, let it pass
+if (search.code !== 200) {
+  res.fromStatusResponse(search);
   return;
-}`,
+}
+
+//remember the total
+const total = search.total;
+const rows = search.results as UnknownNest[];
+
+res.fromStatusResponse({
+  code: 200,
+  status: 'OK',
+  total: total || rows.length,
+  results: {
+    ...detail.results,
+    <%relation%>: rows
+  }
+});`,
 
 };

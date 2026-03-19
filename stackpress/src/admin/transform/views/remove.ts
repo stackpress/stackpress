@@ -10,7 +10,7 @@ import {
 //stackpress/admin
 import { render } from '../helpers.js';
 
-export default function removeView(directory: Directory, model: Model) {
+export default function generate(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
   const link = (action: string) => `\`\${base}/${model.name.dashCase}/${action}/${path}\``;
@@ -62,7 +62,7 @@ export default function removeView(directory: Directory, model: Model) {
   //export function AdminProfileRemoveCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRemoveCrumbs'),
+    name: model.name.toComponentName('%sAdminRemoveCrumbs'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.REMOVE_CRUMBS_PROPS, { 
@@ -83,7 +83,7 @@ export default function removeView(directory: Directory, model: Model) {
   //export function AdminProfileRemoveForm() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRemoveForm'),
+    name: model.name.toComponentName('%sAdminRemoveForm'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.REMOVE_FORM_PROPS, { 
@@ -98,17 +98,17 @@ export default function removeView(directory: Directory, model: Model) {
   //export function AdminProfileRemoveBody() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRemoveBody'),
+    name: model.name.toComponentName('%sAdminRemoveBody'),
     statements: renderCode(TEMPLATE.REMOVE_BODY, {
       type: model.name.toTypeName('%sExtended'),
-      crumbs: model.name.toComponentName('Admin%sRemoveCrumbs'),
-      form: model.name.toComponentName('Admin%sRemoveForm')
+      crumbs: model.name.toComponentName('%sAdminRemoveCrumbs'),
+      form: model.name.toComponentName('%sAdminRemoveForm')
     })
   });
   //export function AdminProfileRemoveHead() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRemoveHead'),
+    name: model.name.toComponentName('%sAdminRemoveHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -120,13 +120,13 @@ export default function removeView(directory: Directory, model: Model) {
   //export function AdminProfileRemovePage() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sRemovePage'),
+    name: model.name.toComponentName('%sAdminRemovePage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: renderCode(TEMPLATE.REMOVE_PAGE, { 
-      component: model.name.toComponentName('Admin%sRemoveBody') 
+      component: model.name.toComponentName('%sAdminRemoveBody') 
     })
   });
   //export const Head = AdminProfileRemoveHead;
@@ -135,12 +135,12 @@ export default function removeView(directory: Directory, model: Model) {
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: model.name.toComponentName('Admin%sRemoveHead')
+      initializer: model.name.toComponentName('%sAdminRemoveHead')
     }]
   });
   //export default AdminProfileRemovePage;
   source.addStatements(
-    `export default ${model.name.toComponentName('Admin%sRemovePage')};`
+    `export default ${model.name.toComponentName('%sAdminRemovePage')};`
   );
 };
 
@@ -150,9 +150,11 @@ REMOVE_CRUMBS_PROPS:
 '{ base: string, results: <%type%> }',
 
 REMOVE_CRUMBS_BODY:
-`const { base, results } = props;
+`//props
+const { base, results } = props;
 //hooks
 const { _ } = useLanguage();
+//render
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
     <Bread.Slicer>

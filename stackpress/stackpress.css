@@ -523,16 +523,63 @@
   padding: 8px 14px;
 }
 
-/* Admin Form Page */
+/* Admin Page */
 
 .admin-page .admin-crumbs {
   background-color: var(--bg-second);
-  padding: 10px 14px;
+  padding: 10px;
 }
 
 .admin-page .admin-crumb {
   color: var(--info);
 }
+
+.admin-page .admin-tabs {
+  align-items: center;
+  display: flex;
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+.admin-page .admin-tabs span,
+.admin-page .admin-tabs a.active {
+  background-color: var(--bg-second);
+  display: inline-block;
+  margin-right: 5px;
+  padding: 5px 15px;
+}
+.admin-page .admin-tabs a {
+  display: inline-block;
+  margin-right: 5px;
+  padding: 5px 15px;
+}
+.admin-page .admin-tab-body {
+  border-left: 2px solid var(--bg-zero);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.admin-page .admin-table-head {
+  background-color: var(--bg-second);
+  border-color: var(--bg-second) !important;
+  text-align: left;
+  top: -1px;
+}
+
+.admin-page .admin-table-even {
+  background-color: var(--bg-zero);
+  border-color: var(--bg-first) !important;
+}
+
+.admin-page .admin-table-odd {
+  background-color: var(--bg-first);
+  border-color: var(--bg-second) !important;
+}
+
+
+/* Admin Form Page */
 
 .admin-form-page {
   background-color: var(--bg-zero);
@@ -545,7 +592,7 @@
 .admin-form-page .admin-form {
   flex-grow: 1;
   overflow: auto;
-  padding: 20px;
+  padding: 10px;
 }
 
 .admin-form-page .admin-form .control {
@@ -571,6 +618,11 @@
   width: 100%;
 }
 
+.admin-detail-page .admin-tab-body .admin-actions .actions {
+  background-color: var(--bg-second);
+  padding: 10px;
+}
+
 .admin-detail-page .results-label {
   border-top: 1px solid var(--bg-second) !important;
   font-weight: bold;
@@ -586,7 +638,7 @@
 
 .admin-detail-page .admin-actions .actions {
   text-align: right;
-  padding: 20px;
+  padding: 10px;
 }
 
 .admin-detail-page .admin-actions .actions .action {
@@ -618,12 +670,20 @@
   width: 100%;
 }
 
-.admin-detail-page .admin-results .results-row-1 {
+.admin-detail-page.admin-search-page .admin-search-form .search .filter {
   background-color: var(--bg-zero);
+  border: 1px solid var(--bg-zero);
 }
 
-.admin-detail-page .admin-results .results-row-2 {
-  background-color: var(--bg-second);
+.admin-detail-page.admin-search-page .admin-search-form .search .form form .submit {
+  background-color: var(--bg-zero);
+  border: 1px solid var(--bg-zero);
+}
+
+.admin-detail-page.admin-search-page .admin-search-title {
+  background-color: var(--bg-zero);
+  margin: 0;
+  padding: 10px;
 }
 
 /* Admin Confirm Page */
@@ -709,7 +769,7 @@
 }
 
 .admin-search-page .admin-filters aside {
-  background-color: var(--bg-second);
+  background-color: var(--bg-first);
   border-left: 1px solid var(--bg-first);
   display: flex;
   flex-direction: column;
@@ -718,8 +778,8 @@
 }
 
 .admin-search-page .admin-filters aside header {
-  background-color: var(--bg--third);
-  padding: 14px 10px;
+  background-color: var(--bg-zero);
+  padding: 10px 10px;
   text-transform: uppercase;
 }
 
@@ -751,14 +811,19 @@
   padding: 10px;
 }
 
+.admin-search-page .admin-tab-body .admin-search-form {
+  background-color: var(--bg-second);
+}
+
 .admin-search-page .admin-search-form .search {
   align-items: center;
   display: flex;
 }
 
 .admin-search-page .admin-search-form .search .filter {
-  background-color: var(--bg-second);
-  border: 1px solid var(--bg-second);
+  background-color: var(--bg-first);
+  border: 1px solid var(--bg-first);
+  color: var(--default) !important;
   padding: 8px 14px !important;
 }
 
@@ -811,17 +876,12 @@
 }
 
 .admin-search-page .admin-search-results {
+  border-left: 2px solid var(--bg-zero);
   bottom: 0;
   flex-grow: 1;
   overflow: auto;
   position: relative;
   width: 100%;
-}
-
-.admin-search-page .admin-search-results .results-label {
-  background-color: var(--bg-second);
-  border-color: var(--bg-second) !important;
-  text-align: left;
 }
 
 .admin-search-page .admin-search-results .results-label.sortable {
@@ -834,16 +894,6 @@
   margin-left: 2px;
 }
 
-.admin-search-page .admin-search-results .results-row-1 {
-  background-color: var(--bg-zero);
-}
-.admin-search-page .admin-search-results .results-row-2 {
-  background-color: var(--bg-first);
-}
-
-.admin-search-page .admin-search-results .results-value {
-  border-color: var(--bg-second) !important;
-}
 .admin-search-page .admin-search-results .results-value.left {
   text-align: left;
 }

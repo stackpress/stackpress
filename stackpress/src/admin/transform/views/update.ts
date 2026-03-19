@@ -80,7 +80,7 @@ export default function updateView(directory: Directory, model: Model) {
   //export function AdminProfileUpdateCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sUpdateCrumbs'),
+    name: model.name.toComponentName('%sAdminUpdateCrumbs'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.UPDATE_CRUMBS_PROPS, { 
@@ -101,7 +101,7 @@ export default function updateView(directory: Directory, model: Model) {
   //export function AdminProfileUpdateForm() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sUpdateForm'),
+    name: model.name.toComponentName('%sAdminUpdateForm'),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.UPDATE_FORM_PROPS, { 
@@ -129,18 +129,18 @@ export default function updateView(directory: Directory, model: Model) {
   //export function AdminProfileUpdateBody() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sUpdateBody'),
+    name: model.name.toComponentName('%sAdminUpdateBody'),
     statements: renderCode(TEMPLATE.UPDATE_BODY, {
       input: model.name.toTypeName('%sInput'),
       type: model.name.toTypeName('%sExtended'),
-      crumbs: model.name.toComponentName('Admin%sUpdateCrumbs'),
-      form: model.name.toComponentName('Admin%sUpdateForm')
+      crumbs: model.name.toComponentName('%sAdminUpdateCrumbs'),
+      form: model.name.toComponentName('%sAdminUpdateForm')
     })
   });
   //export function AdminProfileUpdateHead() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sUpdateHead'),
+    name: model.name.toComponentName('%sAdminUpdateHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
@@ -152,13 +152,13 @@ export default function updateView(directory: Directory, model: Model) {
   //export function AdminProfileUpdatePage() {}
   source.addFunction({
     isExported: true,
-    name: model.name.toComponentName('Admin%sUpdatePage'),
+    name: model.name.toComponentName('%sAdminUpdatePage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
     statements: renderCode(TEMPLATE.UPDATE_PAGE, { 
-      component: model.name.toComponentName('Admin%sUpdateBody') 
+      component: model.name.toComponentName('%sAdminUpdateBody') 
     })
   });
   //export const Head = AdminProfileUpdateHead;
@@ -167,12 +167,12 @@ export default function updateView(directory: Directory, model: Model) {
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: model.name.toComponentName('Admin%sUpdateHead')
+      initializer: model.name.toComponentName('%sAdminUpdateHead')
     }]
   });
   //export default AdminProfileUpdatePage;
   source.addStatements(
-    `export default ${model.name.toComponentName('Admin%sUpdatePage')};`
+    `export default ${model.name.toComponentName('%sAdminUpdatePage')};`
   );
 };
 
