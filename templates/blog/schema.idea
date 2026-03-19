@@ -78,12 +78,12 @@ model Category
               @description("Generated timestamp that is updated whenever the row has changed.")
               @examples("2025-10-01T12:00:00Z")
   
+  catalogs    Catalog[] @label("Catalogs")
   profile     Profile @relation({ local "profileId" foreign "id" })
-  articles    CategoryArticle[] @label("Articles")
 }
 
-model CategoryArticle 
-  @labels("Category Article" "Category Articles")
+model Catalog 
+  @labels("Catalog" "Catalogs")
   @icon("link")
   @display("{{category.name}} - {{article.title}}")
   @query("*" "category.*" "article.*")
@@ -255,7 +255,7 @@ model Article
   profile   Profile @relation({ local "profileId" foreign "id" })
 
   comments   Comment[]         @label("Comments")
-  categories CategoryArticle[] @label("Categories")
+  catalogs   Catalog[] @label("Catalogs")
 }
 
 model Comment 
