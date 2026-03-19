@@ -1,9 +1,9 @@
-//stackpress
+//modules
 import type Engine from '@stackpress/inquire/Engine';
 import { action } from '@stackpress/ingest/Server';
-//scripts
+//stackpress/scripts
 import purge from '../../scripts/purge.js';
-//terminal
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
 export default action(async function PurgeScript(_req, res, ctx) {

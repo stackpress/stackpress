@@ -1,12 +1,15 @@
-//stackpress
+//modules
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//client
+//stackpress
+import Exception from '../../Exception.js';
+//stackpress/client
 import type { ClientPlugin } from '../../client/types.js';
-//sql
+//stackpress/sql
 import type { DatabasePlugin } from '../../sql/types.js';
-//session
+//stackpress/session
+import type { ProfileAuth } from '../types.js';
 import { signup } from '../actions.js';
 
 export default async function AuthSignup(
@@ -15,7 +18,7 @@ export default async function AuthSignup(
   ctx: Server
 ) {
   //get the roles from the config
-  const roles = ctx.config.path<string[]>('session.auth.roles', []);
+  const roles = ctx.config.path<string[]>('auth.roles', []);
   //get the database engine 
   const engine = ctx.plugin<DatabasePlugin>('database');
   //get the client
@@ -24,37 +27,42 @@ export default async function AuthSignup(
   const seed = ctx.config.path('database.seed', 'abc123');
   //get input
   const input = { roles, ...req.data() };
-  const response = await signup(input, seed, engine, client);
-  //if good
-  if (response.code === 200) {
-    if (input.email) {
-      ctx.resolve('email-email-send', { 
-        email: input.email, 
-        ...response.results 
-      });
+  let results: Partial<ProfileAuth>; 
+  try { //to sign up
+    results = await signup(input, seed, engine, client);
+  } catch (e) {
+    const exception = Exception.upgrade(e as Error);
+    //if e is an exception with errors
+    //NOTE: we cant rely on instanceof...
+    if ((e as Exception).errors) {
+      exception.withErrors((e as Exception).errors);
     }
-    if (input.phone) {
-      ctx.resolve('auth-phone-verify', { 
-        phone: input.phone, 
-        ...response.results 
-      });
-    }
+    res.setError(exception.toResponse());
+    return;
+  }
+  //if email was provided
+  if (input.email) {
+    ctx.resolve('email-email-send', { email: input.email, ...results });
+  }
+  //if phone was provided
+  if (input.phone) {
+    ctx.resolve('auth-phone-verify', { phone: input.phone, ...results });
   }
   //if there is an email
-  if (response.results?.auth.email) {
+  if (results.auth?.email) {
     //remove sensitive data
-    delete response.results.auth.email.secret;
+    delete results.auth.email.secret;
   }
   //if there is an phone
-  if (response.results?.auth.phone) {
+  if (results.auth?.phone) {
     //remove sensitive data
-    delete response.results.auth.phone.secret;
+    delete results.auth.phone.secret;
   }
   //if there is an username
-  if (response.results?.auth.username) {
+  if (results.auth?.username) {
     //remove sensitive data
-    delete response.results.auth.username.secret;
+    delete results.auth.username.secret;
   }
   
-  res.fromStatusResponse(response);
+  res.setResults(results);
 }

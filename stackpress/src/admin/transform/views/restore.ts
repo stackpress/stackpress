@@ -1,19 +1,43 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//schema
-import type Registry from '../../../schema/Registry.js';
-import type Model from '../../../schema/spec/Model.js';
+//stackpress/schema
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
+//stackpress/admin
+import { render } from '../helpers.js';
 
-export default function removeView(directory: Directory, _registry: Registry, model: Model) {
-  const file = `${model.name}/admin/views/restore.tsx`;
-  const source = directory.createSourceFile(file, '', { overwrite: true });
-  const ids = model.ids.map(column => column.name);
+export default function restoreView(directory: Directory, model: Model) {
+  const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${base}/${model.dash}/${action}/${path}\``;
+  const link = (action: string) => `\`\${base}/${model.name.dashCase}/${action}/${path}\``;
 
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+  //------------------------------------------------------------------//
+  // Profile/admin/views/restore.tsx
+
+  const filepath = model.name.toPathName('%s/admin/views/restore.tsx');
+  //load file if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+
+  //import { useLanguage } from 'r22n';
+  source.addImportDeclaration({
+    moduleSpecifier: 'r22n',
+    namedImports: [ 'useLanguage' ]
+  });
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -27,172 +51,100 @@ export default function removeView(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
-  //import type { SearchParams } from 'stackpress/sql';
+  //import type { StoreSearchQuery } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql',
-    namedImports: [ 'SearchParams' ]
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSearchQuery' ]
   });
+  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'useServer', 'LayoutAdmin' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Extended` ]
+    namedImports: [ model.name.toTypeName('%sExtended') ]
   });
-  //import { useLanguage } from 'r22n';
-  source.addImportDeclaration({
-    moduleSpecifier: 'r22n',
-    namedImports: [ 'useLanguage' ]
-  });
-  //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
-  });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function AdminProfileRestoreCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestoreCrumbs`,
+    name: model.name.toComponentName('%sAdminRestoreCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.title}Extended }` 
+      type: renderCode(TEMPLATE.RESTORE_CRUMBS_PROPS, { 
+        type: model.name.toTypeName('%sExtended') 
+      }) 
     }],
-    statements: (`
-      const { base, results } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //variables
-      const crumbs = [
-        {
-          label: (
-            <span className="admin-crumb">{_('${model.plural}')}</span>
-          ),
-          icon: '${model.icon}',
-          href: \`\${base}/${model.dash}/search\`
-        },
-        {
-          label: (
-            <span className="admin-crumb">
-              {\`${model.transformTemplate('${results?.%s || \'\'}')}\`}
-            </span>
-          ),
-          icon: '${model.icon}',
-          href: ${link('detail')}
-        },
-        {
-          label: _('Restore'),
-          icon: 'check-circle'
-        }
-      ];
-      return (<Crumbs crumbs={crumbs} />);
-    `)
+    statements: renderCode(TEMPLATE.RESTORE_CRUMBS_BODY, {
+      search: {
+        label: model.name.plural || model.name.titleCase,
+        icon: model.name.icon
+      },
+      detail: {
+        label: render(model, "${results?.%s || ''}"),
+        href: link('detail')
+      }
+    })
   });
   //export function AdminProfileRestoreForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestoreForm`,
+    name: model.name.toComponentName('%sAdminRestoreForm'),
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.title}Extended }` 
+      type: renderCode(TEMPLATE.RESTORE_FORM_PROPS, { 
+        type: model.name.toTypeName('%sExtended') 
+      }) 
     }],
-    statements: (`
-      const { base, results } = props;
-      const { _ } = useLanguage();
-      return (
-        <div>
-          <div className="message">
-            <i className="icon fas fa-fw fa-info-circle"></i>
-            <strong className="font-semibold">
-              {_(
-                'Are you sure you want to restore %s?', 
-                \`${model.transformTemplate('${results?.%s || \'\'}')}\`
-              )}
-            </strong> 
-          </div>
-          <div className="actions">
-            <a className="action cancel" href={${link('detail')}}>
-              <i className="icon fas fa-fw fa-arrow-left"></i>
-              <span>Nevermind.</span>
-            </a>
-            <a className="action restore" href="?confirmed=true">
-              <i className="icon fas fa-fw fa-check-circle"></i>
-              <span>{_('Confirmed')}</span>
-            </a>
-          </div>
-        </div>
-      ); 
-    `)
+    statements: renderCode(TEMPLATE.RESTORE_FORM_BODY, { 
+      label: render(model, "${results?.%s || ''}"),
+      href: link('detail')
+    })
   });
   //export function AdminProfileRestoreBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestoreBody`,
-    statements: (`
-      const { config, response } = useServer<${[
-        `AdminConfigProps`, 
-        'Partial<SearchParams>', 
-        `${model.title}Extended`
-      ].join(', ')}>();
-      const base = config.path('admin.base', '/admin');
-      const results = response.results as ${model.title}Extended;
-      //render
-      return (
-        <main className="admin-page admin-confirm-page">
-          <div className="admin-crumbs">
-            <Admin${model.title}RestoreCrumbs base={base} results={results} />
-          </div>
-          <div className="admin-confirm">
-            <Admin${model.title}RestoreForm base={base} results={results} />
-          </div>
-        </main>
-      );
-    `)
+    name: model.name.toComponentName('%sAdminRestoreBody'),
+    statements: renderCode(TEMPLATE.RESTORE_BODY, {
+      type: model.name.toTypeName('%sExtended'),
+      crumbs: model.name.toComponentName('%sAdminRestoreCrumbs'),
+      form: model.name.toComponentName('%sAdminRestoreForm')
+    })
   });
   //export function AdminProfileRestoreHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestoreHead`,
+    name: model.name.toComponentName('%sAdminRestoreHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      const { data, styles = [] } = props;
-      const { favicon = '/favicon.ico' } = data?.brand || {};
-      const { _ } = useLanguage();
-      const mimetype = favicon.endsWith('.png')
-        ? 'image/png'
-        : favicon.endsWith('.svg')
-        ? 'image/svg+xml'
-        : 'image/x-icon';
-      return (
-        <>
-          <title>{_('Restore ${model.singular}')}</title>
-          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
-          <link rel="stylesheet" type="text/css" href="/styles/global.css" />
-          {styles.map((href, index) => (
-            <link key={index} rel="stylesheet" type="text/css" href={href} />
-          ))}
-        </>
-      );  
-    `)
+    statements: renderCode(TEMPLATE.RESTORE_HEAD, { 
+      name: model.name.singular 
+    })
   });
   //export function AdminProfileRestorePage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}RestorePage`,
+    name: model.name.toComponentName('%sAdminRestorePage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      return (
-        <LayoutAdmin {...props}>
-          <Admin${model.title}RestoreBody />
-        </LayoutAdmin>
-      );
-    `)
+    statements: renderCode(TEMPLATE.RESTORE_PAGE, { 
+      component: model.name.toComponentName('%sAdminRestoreBody') 
+    })
   });
   //export const Head = AdminProfileRestoreHead;
   source.addVariableStatement({
@@ -200,9 +152,148 @@ export default function removeView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}RestoreHead`
+      initializer: model.name.toComponentName('%sAdminRestoreHead')
     }]
   });
   //export default AdminProfileRestorePage;
-  source.addStatements(`export default Admin${model.title}RestorePage;`);
+  source.addStatements(
+    `export default ${model.name.toComponentName('%sAdminRestorePage')};`
+  );
+};
+
+export const TEMPLATE = {
+
+RESTORE_CRUMBS_PROPS:
+'{ base: string, results: <%type%> }',
+
+RESTORE_CRUMBS_BODY:
+`const { base, results } = props;
+//hooks
+const { _ } = useLanguage();
+return (
+  <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
+    <Bread.Slicer>
+      <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
+    </Bread.Slicer>
+    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
+      {_('<%search.label%>')}
+    </Bread.Crumb>
+    {!!results && (
+      <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
+        {_(\`<%detail.label%>\`)}
+      </Bread.Crumb>
+    )}
+    <Bread.Crumb icon="check-circle">
+      {_('Restore')}
+    </Bread.Crumb>
+  </Bread>
+);`,
+
+RESTORE_FORM_PROPS:
+'{ base: string, results: <%type%> }',
+
+RESTORE_FORM_BODY:
+`const { base, results } = props;
+const { _ } = useLanguage();
+return (
+  <div>
+    <div className="message">
+      <i className="icon fas fa-fw fa-info-circle"></i>
+      <strong>
+        {_(
+          'Are you sure you want to restore %s?', 
+          \`<%label%>\`
+        )}
+      </strong> 
+    </div>
+    <div className="actions">
+      <a className="action cancel" href={<%href%>}>
+        <i className="icon fas fa-fw fa-arrow-left"></i>
+        <span>Nevermind.</span>
+      </a>
+      <a className="action restore" href="?confirmed=true">
+        <i className="icon fas fa-fw fa-check-circle"></i>
+        <span>{_('Confirmed')}</span>
+      </a>
+    </div>
+  </div>
+);`,
+
+RESTORE_BODY:
+`//props
+const { 
+  config, 
+  response 
+} = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+//hooks
+const { _ } = useLanguage();
+//variables
+const base = config.path('admin.base', '/admin');
+const results = response.results as <%type%>;
+if (response.code !== 200 && response.code !== 404) {
+  console.error(response.toStatusResponse());
 }
+//render
+return (
+  <main className="admin-page admin-confirm-page">
+    <div className="admin-crumbs">
+      <<%crumbs%> base={base} results={results} />
+    </div>
+    {response.code === 200 ? (
+      <div className="admin-confirm">
+        <<%form%> base={base} results={results} />
+      </div>
+    ) : response.code === 404 ? (
+      <div className="flex-grow">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Not Found')}
+          </h1>
+          <p>
+            {_('Looks like this page does not exist. Please make sure the URL is correct.')}
+          </p>
+        </div>
+      </div>
+    ) : (
+      <div className="flex-grow">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Unknown Error')}
+          </h1>
+          <p>
+            {_('Sorry, something went wrong. Ask an admin to help, then try again later.')}
+          </p>
+        </div>
+      </div>
+    )}
+  </main>
+);`,
+
+RESTORE_HEAD:
+`const { data, styles = [] } = props;
+const { favicon = '/favicon.ico' } = data?.brand || {};
+const { _ } = useLanguage();
+const mimetype = favicon.endsWith('.png')
+  ? 'image/png'
+  : favicon.endsWith('.svg')
+  ? 'image/svg+xml'
+  : 'image/x-icon';
+return (
+  <>
+    <title>{_('Restore <%name%>')}</title>
+    {favicon && <link rel="icon" type={mimetype} href={favicon} />}
+    <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+    {styles.map((href, index) => (
+      <link key={index} rel="stylesheet" type="text/css" href={href} />
+    ))}
+  </>
+);`,
+
+RESTORE_PAGE:
+`return (
+  <LayoutAdmin {...props}>
+    <<%component%> />
+  </LayoutAdmin>
+);`
+
+};

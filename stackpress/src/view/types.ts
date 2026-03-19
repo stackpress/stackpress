@@ -1,5 +1,5 @@
 //modules
-import type { JSX, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type { 
   OutputChunk, 
   OutputAsset, 
@@ -19,13 +19,14 @@ import type {
   Builder as ReactusBuilder, 
   ServerConfig as ReactusConfig 
 } from 'reactus';
+import type { ToastOptions } from 'frui/Notifier';
 import type ReactusPreview from 'reactus/server/Server';
-//stackpress
+import type { CookieOptions } from '@stackpress/lib';
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type { IM, SR, Method } from '@stackpress/ingest/types';
-//language
+//stackpress/language
 import { LanguageConfig } from '../language/types.js';
-//session
+//stackpress/session
 import type { SessionTokenData } from '../session/types.js';
 
 //--------------------------------------------------------------------//
@@ -96,29 +97,6 @@ export type ServerPageProps<
 > = ServerProps<C, I, O> & { styles?: string[] };
 
 //--------------------------------------------------------------------//
-// Element Types
-
-export type Crumb = { 
-  href?: string, 
-  label: string|JSX.Element, 
-  icon?: string,
-  permit?: string[]
-};
-
-export type CrumbsProps = {
-  crumbs: Crumb[], 
-  className?: string
-};
-
-export type PaginationProps = {
-  total?: number,
-  skip?: number, 
-  take?: number, 
-  radius?: number,
-  paginate?: Function
-};
-
-//--------------------------------------------------------------------//
 // Layout Types
 
 export type LayoutHeadProps = {
@@ -175,10 +153,12 @@ export type LayoutRightProps = {
 };
 
 export type LayoutProviderProps = Partial<ServerProps<ServerConfigProps>> & {
+  cookie?: CookieOptions, 
   children: ReactNode
 };
 
 export type BlankAppProps = {
+  cookie?: CookieOptions, 
   head?: boolean,
   children: ReactNode
 };
@@ -188,6 +168,7 @@ export type LayoutBlankProps = LayoutProviderProps & {
 };
 
 export type PanelAppProps = { 
+  cookie?: CookieOptions, 
   menu?: {
     name: string;
     icon: string;
@@ -200,60 +181,6 @@ export type PanelAppProps = {
 };
 
 export type LayoutPanelProps = LayoutProviderProps & PanelAppProps;
-
-//--------------------------------------------------------------------//
-// Modal Types
-
-export type ModalConfirmProps = { 
-  open: Function,
-  message: ReactNode
-  confirmed: Function
-};
-
-export type ModalContextProps = { 
-  _title: string,
-  _className: string,
-  _body?: ReactNode,
-  opened: boolean,
-  title: (title: string) => void,
-  open: (opened: boolean) => void,
-  className: (className: string) => void,
-  body: (body: ReactNode) => void
-};
-
-export type ModalProviderProps = { 
-  title?: string,
-  className?: string,
-  children: ReactNode
-};
-
-//--------------------------------------------------------------------//
-// Notify Types
-
-export type NotifyContextProps = {
-  config: {
-    position: string,
-    autoClose: number,
-    hideProgressBar: boolean,
-    closeOnClick: boolean,
-    pauseOnHover: boolean,
-    draggable: boolean,
-    theme: string,
-  }
-};
-
-export type NotifyProviderProps = { 
-  config?: {
-    position: string,
-    autoClose: number,
-    hideProgressBar: boolean,
-    closeOnClick: boolean,
-    pauseOnHover: boolean,
-    draggable: boolean,
-    theme: string,
-  },
-  children: ReactNode 
-};
 
 //--------------------------------------------------------------------//
 // Theme Types
@@ -281,7 +208,7 @@ export type FieldProps = {
   error?: boolean,
   name?: string,
   value: any,
-  change?: (name: string, value: any) => void
+  onUpdate?: (name: string, value: any) => void
 };
 
 export type ControlProps = {
@@ -289,22 +216,14 @@ export type ControlProps = {
   error?: string,
   name?: string,
   value: any,
-  change?: (name: string, value: any) => void
+  onUpdate?: (name: string, value: any) => void
 }
 
 //--------------------------------------------------------------------//
 // Config Types
 
 //ie. ctx.config<NotifyConfig>('view', 'notify')
-export type NotifyConfig = {
-  position: string,
-  autoClose: number,
-  hideProgressBar: boolean,
-  closeOnClick: boolean,
-  pauseOnHover: boolean,
-  draggable: boolean,
-  theme: string,
-};
+export type NotifyConfig = ToastOptions;
 
 //ie. ctx.config<ViewConfig>('view')
 export type ViewConfig = {

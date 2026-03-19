@@ -1,9 +1,9 @@
 //modules
 import { useState, useEffect } from 'react';
 import UniversalCookie from 'universal-cookie';
-//views
+//stackpress/view
 import type { ThemeProviderProps } from '../types.js';
-//theme
+//stackpress/view/theme
 import ThemeContext from './ThemeContext.js';
 
 const cookie = new UniversalCookie();
@@ -15,7 +15,7 @@ export default function ThemeProvider(props: ThemeProviderProps) {
   const toggle = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    cookie.set('theme', newTheme);
+    cookie.set('theme', newTheme, { path: '/' });
   };
   const value = { theme, toggle };
   useEffect(() => {
@@ -26,4 +26,4 @@ export default function ThemeProvider(props: ThemeProviderProps) {
       {children}
     </ThemeContext.Provider>
   );
-}
+};

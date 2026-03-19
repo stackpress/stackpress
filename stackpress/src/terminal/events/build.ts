@@ -1,11 +1,11 @@
 //node
 import path from 'node:path';
-//stackpress
+//modules
 import type { FileSystem } from '@stackpress/lib/types';
 import { action } from '@stackpress/ingest/Server';
-//scripts
+//stackpress/scripts
 import buildScript from '../../scripts/build.js';
-//terminal
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
 export default action(async function BuildScript(_req, res, ctx) {

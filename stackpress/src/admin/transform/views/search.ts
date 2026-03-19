@@ -1,17 +1,26 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//schema
-import type Registry from '../../../schema/Registry.js';
-import type Model from '../../../schema/spec/Model.js';
+//stackpress/schema
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
 
-export default function searchView(directory: Directory, _registry: Registry, model: Model) {
-  const file = `${model.name}/admin/views/search.tsx`;
-  const source = directory.createSourceFile(file, '', { overwrite: true });
-  const ids = model.ids.map(column => column.name);
+export default function searchView(directory: Directory, model: Model) {
+  const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${row.${name}}`).join('/');
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+
+  //------------------------------------------------------------------//
+  // Profile/admin/views/search.tsx
+
+  const filepath = model.name.toPathName('%s/admin/views/search.tsx');
+  //load file if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import type { ChangeEvent, MouseEventHandler, SetStateAction } from 'react';
   source.addImportDeclaration({
@@ -19,11 +28,62 @@ export default function searchView(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'react',
     namedImports: [ 'ChangeEvent', 'MouseEventHandler', 'SetStateAction' ]
   });
-  //import type { SearchParams } from 'stackpress/sql';
+  //import { useState } from 'react';
+  source.addImportDeclaration({
+    moduleSpecifier: 'react',
+    namedImports: [ 'useState' ]
+  });
+  //import { useLanguage } from 'r22n';
+  source.addImportDeclaration({
+    moduleSpecifier: 'r22n',
+    namedImports: [ 'useLanguage' ]
+  });
+  //import Alert from 'frui/Alert';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Alert',
+    defaultImport: 'Alert'
+  });
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+  //import Button from 'frui/Button';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Button',
+    defaultImport: 'Button'
+  });
+  //import Input from 'frui/form/Input';
+  if (model.store.searchables.size > 0) {
+    source.addImportDeclaration({
+      moduleSpecifier: 'frui/form/Input',
+      defaultImport: 'Input'
+    });
+  }
+  //import Pager from 'frui/Pager';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Pager',
+    defaultImport: 'Pager'
+  });
+  //import Table from 'frui/Table';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Table',
+    defaultImport: 'Table'
+  });
+  //import { notify, flash } from 'frui/Notifier';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Notifier',
+    namedImports: [ 'notify', 'flash' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
+  //import type { StoreSearchQuery } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql',
-    namedImports: [ 'SearchParams' ]
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSearchQuery' ]
   });
   //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -37,49 +97,16 @@ export default function searchView(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
-  //import type { ProfileExtended } from '../../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Extended` ]
-  });
-  //import { useState } from 'react';
-  source.addImportDeclaration({
-    moduleSpecifier: 'react',
-    namedImports: [ 'useState' ]
-  });
-  //import { useLanguage } from 'r22n';
-  source.addImportDeclaration({
-    moduleSpecifier: 'r22n',
-    namedImports: [ 'useLanguage' ]
-  });
-  //import { Table, Thead, Trow, Tcol } from 'frui/element/Table';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Table',
-    namedImports: [ 'Table', 'Thead', 'Trow', 'Tcol' ]
-  });
-  //import Alert from 'frui/element/Alert';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/element/Alert',
-    defaultImport: 'Alert'
-  });
-  //import Button from 'frui/form/Button';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Button',
-    defaultImport: 'Button'
-  });
-  //import Input from 'frui/field/Input';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/field/Input',
-    defaultImport: 'Input'
-  });
-  //import { paginate, filter, order, notify, flash, useServer, useStripe, 
-  //Crumbs, Pagination, LayoutAdmin } from 'stackpress/view/client';
+  //import { paginate, filter, order, useServer, 
+  // LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [
-      'paginate',  'filter',    'order',  'notify',     'flash',
-      'useServer', 'useStripe', 'Crumbs', 'Pagination', 'LayoutAdmin'
+      'paginate',
+      'filter',
+      'order',
+      'useServer',
+      'LayoutAdmin'
     ]
   });
   //import { batchAndSend } from 'stackpress/view/import';
@@ -87,368 +114,183 @@ export default function searchView(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/view/import',
     namedImports: [ 'batchAndSend' ]
   });
-  //import CreatedListFormat from '../../components/lists/CreatedListFormat.js';
-  model.lists.forEach(column => {
-    //skip if no component
-    if (typeof column.list.component !== 'string') return;
+
+  //------------------------------------------------------------------//
+  // Import Client
+
+  //import type { ProfileExtended } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ model.name.toTypeName('%sExtended') ]
+  });
+  //import CreatedListFormat from '../../components/list/CreatedListFormat.js';
+  model.component.listFormats.toArray().forEach(column => {
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/lists/${column.title}ListFormat.js`,
-      defaultImport: `${column.title}ListFormat`
+      moduleSpecifier: column.name.toPathName(
+        '../../components/list/%sListFormat.js'
+      ),
+      defaultImport: column.name.toComponentName('%sListFormat')
     });
   });
-  //import { ActiveFilterControl } from '../../components/filters/ActiveFilter.js';
-  model.filters.forEach(column => {
-    //skip if no component
-    if (typeof column.filter.component !== 'string') return;
+  //import { ActiveFilterControl } from '../../components/filter/ActiveFilterField.js';
+  model.component.filterFields.toArray().forEach(column => {
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/filters/${column.title}Filter.js`,
-      namedImports: [ `${column.title}FilterControl` ]
+      moduleSpecifier: column.name.toPathName(
+        '../../components/filter/%sFilterField.js'
+      ),
+      namedImports: [ column.name.toComponentName('%sFilterFieldControl') ]
     });
   });
-  //import { ActiveSpanControl } from '../../components/spans/ActiveSpan.js';
-  model.spans.forEach(column => {
-    //skip if no component
-    if (typeof column.span.component !== 'string') return;
+  //import { ActiveSpanControl } from '../../components/span/ActiveSpanField.js';
+  model.component.spanFields.toArray().forEach(column => {
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/spans/${column.title}Span.js`,
-      namedImports: [ `${column.title}SpanControl` ]
+      moduleSpecifier: column.name.toPathName(
+        '../../components/span/%sSpanField.js'
+      ),
+      namedImports: [ column.name.toComponentName('%sSpanFieldControl') ]
     });
   });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function AdminProfileSearchCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchCrumbs`,
-    statements: (`
-      //hooks
-      const { _ } = useLanguage();
-      //variables
-      const crumbs = [{
-        label: _('${model.plural}'),
-        icon: '${model.icon}'
-      }];
-      return (<Crumbs crumbs={crumbs} />);
-    `)
+    name: model.name.toComponentName('%sAdminSearchCrumbs'),
+    statements: renderCode(TEMPLATE.SEARCH_CRUMBS, {
+      search: {
+        label: model.name.plural || model.name.titleCase,
+        icon: model.name.icon
+      }
+    })
   });
   //export function AdminProfileSearchFilters() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchFilters`,
+    name: model.name.toComponentName('%sAdminSearchFilters'),
     parameters: [{ 
       name: 'props', 
       type: `{ 
-        query: SearchParams, 
+        query: StoreSearchQuery, 
         close: MouseEventHandler<HTMLElement> 
       }` 
     }],
-    statements: (`
-      //props
-      const { query, close } = props;
-      //hooks
-      const { _ } = useLanguage();
-      return (
-        <aside>
-          <header>
-            <i className="icon fas fa-chevron-right" onClick={close}></i>
-            {_('Filters')}
-          </header>
-          <form>
-            ${Array.from(model.columns.values()).map(column => {
-              if (column.filter.component) {
-                return (`
-                  <${column.title}FilterControl 
-                    className="control"
-                    value={query.filter?.${column.name}} 
-                  />
-                `);
-              } else if (column.span.component) {
-                return (`
-                  <${column.title}SpanControl 
-                    className="control"
-                    value={query.span?.${column.name}} 
-                  />
-                `);
-              }
-              return '';
-            }).join('\n')}
-            <Button className="submit" type="submit">
-              <i className="icon fas fa-fw fa-filter"></i>
-              {_('Filter')}
-            </Button>
-          </form>
-        </aside>
-      ); 
-    `)
+    statements: renderCode(TEMPLATE.SEARCH_FILTERS_BODY, {
+      fields: Array.from(model.columns.values()).map(column => {
+        if (column.component.filterField?.component) {
+          return renderCode(TEMPLATE.SEARCH_FILTERS_FIELD, {
+            component: column.name.toComponentName('%sFilterFieldControl'),
+            column: column.name.toString()
+          });
+        } else if (column.component.spanField?.component) {
+          return renderCode(TEMPLATE.SEARCH_FILTERS_FIELD, {
+            component: column.name.toComponentName('%sSpanFieldControl'),
+            column: column.name.toString()
+          });
+        }
+        return '';
+      }).join('\n')
+    })
   });
   //export function AdminProfileSearchForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchForm`,
+    name: model.name.toComponentName('%sAdminSearchForm'),
     parameters: [{ 
       name: 'props', 
-      type: (`{ 
+      type: `{ 
         base: string,
         token: string, 
         open: (value: SetStateAction<boolean>) => void,
         can: (...permits: SessionPermission[]) => boolean
-      }`) 
+      }`
     }],
-    statements: (`
-      const { base, token, open, can } = props;
-      const upload = (e: ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        //get the input
-        const input = e.currentTarget;
-        //get the first file
-        const file = input.files?.[0];
-        //skip if we can't find the file
-        if (!file) return;
-        //proceed to send
-        batchAndSend('import', token, file, notify).then(() => {
-          flash('success', 'File imported successfully');
-          window.location.reload();
-        });
-        return false;
-      };
-
-      return (
-        <div className="search">
-          <Button 
-            className="filter" 
-            type="button" 
-            onClick={() => open((opened: boolean) => !opened)}
-          >
-            <i className="icon fas fa-fw fa-filter"></i>
-          </Button>
-          <div className="form">
-            ${model.searchables.length > 0 ? (`
-              <form>
-                <Input className="input" />
-                <Button className="submit" type="submit">
-                  <i className="icon fas fa-fw fa-search"></i>
-                </Button>
-              </form>
-            `): ''}
-          </div>
-          {can({ method: 'GET', route: \`\${base}/${model.dash}/export\` }) ?(
-            <Button info className="action" href="export">
-              <i className="fas fa-download"></i>
-            </Button>
-          ): null}
-          {can({ method: 'GET', route: \`\${base}/${model.dash}/import\` }) ?(
-            <Button warning type="button" className="action import">
-              <i className="cursor-pointer fas fa-upload"></i>
-              <input className="input" type="file" onChange={upload} />
-            </Button>
-          ): null}
-          {can({ method: 'GET', route: \`\${base}/${model.dash}/create\` }) ? (
-            <Button success className="action" href="create">
-              <i className="fas fa-plus"></i>
-            </Button>
-          ): null}
-        </div>
-      );  
-    `)
+    statements: renderCode(TEMPLATE.SEARCH_FORM_BODY, {
+      searchable: model.store.searchables.size > 0,
+      export: model.name.toURLPath("`${base}/%s/export`"),
+      import: model.name.toURLPath("`${base}/%s/import`"),
+      create: model.name.toURLPath("`${base}/%s/create`")
+    })
   });
   //export function AdminProfileSearchResults() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchResults`,
+    name: model.name.toComponentName('%sAdminSearchResults'),
     parameters: [{ 
       name: 'props', 
-      type: (`{ 
+      type: `{ 
         base: string,
-        query: Partial<SearchParams>, 
-        results: ProfileExtended[], 
+        query: Partial<StoreSearchQuery>, 
+        results: ${model.name.toTypeName('%sExtended')}[], 
         can: (...permits: SessionPermission[]) => boolean 
-      }`) 
+      }`
     }],
-    statements: (`
-      const { can, base, query, results } = props;
-      const { sort = {} } = query;
-      const { _ } = useLanguage();
-      const stripe = useStripe('results-row-1', 'results-row-2');
-      return (
-        <Table>
-          ${model.lists.filter(
-            column => column.list.method !== 'hide'
-          ).map(column => column.sortable ? (`
-            <Thead noWrap stickyTop className="results-label sortable">
-              <span onClick={() => order('sort[${column.name}]')}>
-                {_('${column.label}')}
-              </span>
-              {!sort.${column.name} ? (
-                <i className="icon fas fa-sort"></i>
-              ) : null}
-              {sort.${column.name} === 'asc' ? (
-                <i className="icon fas fa-sort-up"></i>
-              ) : null}
-              {sort.${column.name} === 'desc' ? (
-                <i className="icon fas fa-sort-down"></i>
-              ) : null}
-            </Thead>
-          `): (`
-            <Thead noWrap stickyTop className="results-label">
-              {_('${column.label}')}
-            </Thead>
-          `)).join('\n')}
-          <Thead stickyTop stickyRight className="results-label" />
-          {results.map((row, index) => (
-            <Trow key={index}>
-              ${model.lists.filter(
-                column => column.list.method !== 'hide'
-              ).map(column => {
-                const value = column.required && column.list.method === 'none'
-                  ? `{row.${column.name}.toString()}`
-                  : column.required && column.list.method !== 'none'
-                  ? `<${column.title}ListFormat data={row} value={row.${column.name}} />`
-                  : !column.required && column.list.method === 'none'
-                  ? `{row.${column.name} ? row.${column.name}.toString() : ''}`
-                  //!column.required && column.list.method !== 'none'
-                  : `{row.${column.name} ? (<${column.title}ListFormat data={row} value={row.${column.name}} />) : ''}`;
-                const align = column.sortable ? 'right' : 'left';
-                return column.filter.method !== 'none' ? (`
-                  <Tcol noWrap className={\`results-value ${align} filterable \${stripe(index)}\`}>
-                    <span onClick={() => filter('filter[${column.name}]', row.${column.name})}>
-                      ${value}
-                    </span>
-                  </Tcol>
-                `) : (`
-                  <Tcol noWrap className={\`results-value ${align} \${stripe(index)}\`}>
-                    ${value}
-                  </Tcol>
-                `);
-              }).join('\n')}
-              <Tcol stickyRight className={\`results-value center \${stripe(index)}\`}>
-                {can({ method: 'GET', route: \`\${base}/${model.dash}/detail/${path}\`}) ? (
-                  <Button info className="detail" href={\`detail/\${row.id}\`}>
-                    <i className="fas fa-fw fa-caret-right"></i>
-                  </Button>
-                ) : null}
-              </Tcol>
-            </Trow>
-          ))}
-        </Table>
-      ); 
-    `)
+    statements: renderCode(TEMPLATE.SEARCH_RESULTS_BODY, {
+      headers: (
+        model.component.listFormats
+      ).toArray().map(column => renderCode(
+        column.store.sortable 
+          ? TEMPLATE.SEARCH_RESULTS_TABLE_HEAD_SORTABLE
+          : TEMPLATE.SEARCH_RESULTS_TABLE_HEAD, 
+        {
+          label: column.name.label,
+          column: column.name.toString()
+        }
+      )).join('\n'),
+      columns: (
+        model.component.listFormats
+      ).toArray().map(column => renderCode(
+        column.store.filterable 
+          ? TEMPLATE.SEARCH_RESULTS_COLUMN_FILTERABLE
+          : TEMPLATE.SEARCH_RESULTS_COLUMN, 
+        {
+          align: column.store.sortable ? 'right' : 'left',
+          column: column.name.toString(),
+          required: column.type.required,
+          component: column.name.toComponentName('%sListFormat')
+        }
+      )).join('\n'),
+      model: model.name.toURLPath(),
+      path
+    })
   });
   //export function AdminProfileSearchBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchBody`,
-    statements: (`
-      //props
-      const { config, session, request, response } = useServer<${[
-        'AdminConfigProps', 
-        'Partial<SearchParams>', 
-        `${model.title}Extended[]`
-      ].join(', ')}>();
-      const base = config.path('admin.base', '/admin');
-      const can = session.can.bind(session);
-      const query = request.data();
-      const skip = query.skip || 0;
-      const take = query.take || 50;
-      const results = response.results as ${model.title}Extended[];
-      const total = response.total || 0;
-      //hooks
-      const { _ } = useLanguage();
-      const [ opened, open ] = useState(false);
-      //handlers
-      const page = (skip: number) => paginate('skip', skip);
-      //render
-      return (
-        <main className="admin-page admin-search-page">
-          <div className="admin-crumbs">
-            <Admin${model.title}SearchCrumbs />
-          </div>
-          <div className={\`admin-filters \${opened? 'open': '' }\`}>
-            <Admin${model.title}SearchFilters query={query} close={() => open(false)} />
-          </div>
-          <div className="admin-search-form">
-            <Admin${model.title}SearchForm 
-              base={base} 
-              token={session.data.token} 
-              open={open} 
-              can={can} 
-            />
-          </div>
-          {!!results?.length && (
-            <h1 className="admin-search-title">{_(
-              'Showing %s - %s of %s',
-              (skip + 1).toString(),
-              (skip + results.length).toString(),
-              total.toString()
-            )}</h1>
-          )}
-          <div className="admin-search-results">
-            {!results?.length ? (
-              <Alert info>
-                <i className="no-results-icon fas fa-fw fa-info-circle"></i>
-                {_('No results found.')}
-              </Alert>
-            ): (
-              <Admin${model.title}SearchResults 
-                base={base}
-                can={can} 
-                query={query} 
-                results={results} 
-              />
-            )}
-          </div>
-          <Pagination 
-            total={total} 
-            take={take} 
-            skip={skip} 
-            paginate={page} 
-          />
-        </main>
-      );
-    `)
+    name: model.name.toComponentName('%sAdminSearchBody'),
+    statements: renderCode(TEMPLATE.SEARCH_BODY, {
+      type: model.name.toTypeName('%sExtended[]'),
+      crumbs: model.name.toComponentName('%sAdminSearchCrumbs'),
+      filters: model.name.toComponentName('%sAdminSearchFilters'),
+      form: model.name.toComponentName('%sAdminSearchForm'),
+      results: model.name.toComponentName('%sAdminSearchResults')
+    })
   });
   //export function AdminProfileSearchHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchHead`,
+    name: model.name.toComponentName('%sAdminSearchHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      const { data, styles = [] } = props;
-      const { favicon = '/favicon.ico' } = data?.brand || {};
-      const { _ } = useLanguage();
-      const mimetype = favicon.endsWith('.png')
-        ? 'image/png'
-        : favicon.endsWith('.svg')
-        ? 'image/svg+xml'
-        : 'image/x-icon';
-      return (
-        <>
-          <title>{_('Search ${model.plural}')}</title>
-          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
-          <link rel="stylesheet" type="text/css" href="/styles/global.css" />
-          {styles.map((href, index) => (
-            <link key={index} rel="stylesheet" type="text/css" href={href} />
-          ))}
-        </>
-      );
-    `)
+    statements: renderCode(TEMPLATE.SEARCH_HEAD, { 
+      label: model.name.plural 
+    })
   });
   //export function AdminProfileSearchPage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}SearchPage`,
+    name: model.name.toComponentName('%sAdminSearchPage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      return (
-        <LayoutAdmin {...props}>
-          <Admin${model.title}SearchBody />
-        </LayoutAdmin>
-      );
-    `)
+    statements: renderCode(TEMPLATE.SEARCH_PAGE, { 
+      component: model.name.toComponentName('%sAdminSearchBody') 
+    })
   });
   //export const Head = AdminProfileSearchHead;
   source.addVariableStatement({
@@ -456,9 +298,297 @@ export default function searchView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}SearchHead`
+      initializer: model.name.toComponentName('%sAdminSearchHead')
     }]
   });
   //export default AdminProfileSearchPage;
-  source.addStatements(`export default Admin${model.title}SearchPage;`);
-}
+  source.addStatements(
+    `export default ${model.name.toComponentName('%sAdminSearchPage')};`
+  );
+};
+
+export const TEMPLATE = {
+
+SEARCH_CRUMBS:
+`//hooks
+const { _ } = useLanguage();
+return (
+  <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
+    <Bread.Slicer>
+      <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
+    </Bread.Slicer>
+    <Bread.Crumb icon="<%search.icon%>">
+      {_('<%search.label%>')}
+    </Bread.Crumb>
+  </Bread>
+);`,
+
+SEARCH_FILTERS_FIELD:
+`<<%component%> 
+  className="control"
+  value={query.filter?.<%column%>} 
+/>`,
+
+SEARCH_FILTERS_BODY:
+`//props
+const { query, close } = props;
+//hooks
+const { _ } = useLanguage();
+return (
+  <aside>
+    <header>
+      <i className="icon fas fa-chevron-right" onClick={close}></i>
+      {_('Filters')}
+    </header>
+    <form>
+      <%fields%>
+      <Button className="submit" type="submit">
+        <i className="icon fas fa-fw fa-filter"></i>
+        {_('Filter')}
+      </Button>
+    </form>
+  </aside>
+);`,
+
+SEARCH_FORM_BODY:
+`const { base, token, open, can } = props;
+const upload = (e: ChangeEvent<HTMLInputElement>) => {
+  e.preventDefault();
+  //get the input
+  const input = e.currentTarget;
+  //get the first file
+  const file = input.files?.[0];
+  //skip if we can't find the file
+  if (!file) return;
+  //proceed to send
+  batchAndSend('import?json', token, file, notify).then(success => {
+    if (success) {
+      flash('success', 'File imported successfully');
+      window.location.reload();
+    }
+  });
+  return false;
+};
+
+return (
+  <div className="search">
+    <Button 
+      className="filter" 
+      type="button" 
+      onClick={() => open((opened: boolean) => !opened)}
+    >
+      <i className="icon fas fa-fw fa-filter"></i>
+    </Button>
+    <div className="form">
+      <%#searchable%>
+        <form>
+          <Input className="input" />
+          <Button className="submit" type="submit">
+            <i className="icon fas fa-fw fa-search"></i>
+          </Button>
+        </form>
+      <%/searchable%>
+    </div>
+    {can({ method: 'GET', route: <%export%> }) ?(
+      <Button info className="action" href="export">
+        <i className="fas fa-download"></i>
+      </Button>
+    ): null}
+    {can({ method: 'GET', route: <%import%> }) ?(
+      <Button warning type="button" className="action import">
+        <i className="cursor-pointer fas fa-upload"></i>
+        <input className="input" type="file" onChange={upload} />
+      </Button>
+    ): null}
+    {can({ method: 'GET', route: <%create%> }) ? (
+      <Button success className="action" href="create">
+        <i className="fas fa-plus"></i>
+      </Button>
+    ): null}
+  </div>
+);`,
+
+SEARCH_RESULTS_TABLE_HEAD_SORTABLE:
+`<Table.Head noWrap stickyTop addClassName="results-label sortable">
+  <span onClick={() => order('sort[<%column%>]')}>
+    {_('<%label%>')}
+  </span>
+  {!sort.<%column%> ? (
+    <i className="icon fas fa-sort"></i>
+  ) : null}
+  {sort.<%column%> === 'asc' ? (
+    <i className="icon fas fa-sort-up"></i>
+  ) : null}
+  {sort.<%column%> === 'desc' ? (
+    <i className="icon fas fa-sort-down"></i>
+  ) : null}
+</Table.Head>`,
+
+SEARCH_RESULTS_TABLE_HEAD:
+`<Table.Head noWrap stickyTop addClassName="results-label">
+  {_('<%label%>')}
+</Table.Head>`,
+
+SEARCH_RESULTS_COLUMN_FILTERABLE:
+`<Table.Col noWrap addClassName="results-value <%align%> filterable">
+  <span onClick={() => filter('filter[<%column%>]', row.<%column%>)}>
+    <%#required%>
+      <<%component%> data={row} value={row.<%column%>} />
+    <%/required%>
+    <%^required%>
+      {row.<%column%> ? (<<%component%> data={row} value={row.<%column%>} />) : ''}
+    <%/required%>
+  </span>
+</Table.Col>`,
+
+SEARCH_RESULTS_COLUMN:
+`<Table.Col noWrap addClassName="results-value <%align%>">
+  <%#required%>
+    <<%component%> data={row} value={row.<%column%>} />
+  <%/required%>
+  <%^required%>
+    {row.<%column%> ? (<<%component%> data={row} value={row.<%column%>} />) : ''}
+  <%/required%>
+</Table.Col>`,
+
+SEARCH_RESULTS_BODY:
+`const { can, base, query, results } = props;
+const { sort = {} } = query;
+const { _ } = useLanguage();
+return (
+  <Table
+    className="w-full"
+    column={[ 'admin-table-odd', 'admin-table-even' ]}
+    head="admin-table-head"
+  >
+    <%headers%>
+    <%#path%>
+      <Table.Head stickyTop stickyRight addClassName="results-label" />
+    <%/path%>
+    {results.map((row, index) => (
+      <Table.Row key={index} index={index}>
+        <%columns%>
+        <%#path%>
+          <Table.Col stickyRight addClassName="results-value center">
+            {can({ method: 'GET', route: \`\${base}/<%model%>/detail/<%path%>\`}) ? (
+              <Button info className="detail" href={\`detail/<%path%>\`}>
+                <i className="fas fa-fw fa-caret-right"></i>
+              </Button>
+            ) : null}
+          </Table.Col>
+        <%/path%>
+      </Table.Row>
+    ))}
+  </Table>
+);`,
+
+SEARCH_BODY:
+`//hooks
+const { _ } = useLanguage();
+const { 
+  config, 
+  session, 
+  request, 
+  response 
+} = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+const [ opened, open ] = useState(false);
+//variables
+const base = config.path('admin.base', '/admin');
+const can = session.can.bind(session);
+const query = request.data();
+const skip = query.skip || 0;
+const take = query.take || 50;
+const results = response.results as <%type%>;
+const total = response.total || 0;
+//handlers
+const page = (skip: number) => paginate('skip', skip);
+//render
+return (
+  <main className="admin-page admin-search-page">
+    <div className="admin-crumbs">
+      <<%crumbs%> />
+    </div>
+    <div className={\`admin-filters \${opened? 'open': '' }\`}>
+      <<%filters%> query={query} close={() => open(false)} />
+    </div>
+    <div className="admin-search-form">
+      <<%form%>
+        base={base} 
+        token={session.data.token} 
+        open={open} 
+        can={can} 
+      />
+    </div>
+    {!!results?.length && (
+      <h1 className="admin-search-title">{_(
+        'Showing %s - %s of %s',
+        (skip + 1).toString(),
+        (skip + results.length).toString(),
+        total.toString()
+      )}</h1>
+    )}
+    <div className="admin-search-results">
+      {!results?.length ? (
+        <Alert info>
+          <i className="no-results-icon fas fa-fw fa-info-circle"></i>
+          {_('No results found.')}
+        </Alert>
+      ): (
+        <<%results%>
+          base={base}
+          can={can} 
+          query={query} 
+          results={results} 
+        />
+      )}
+    </div>
+    {total > take && (
+      <div className="px-py-10 flex justify-center">
+        <Pager 
+          className={({ active }) => active 
+            ? 'px-w-32 px-h-32 !font-normal' 
+            : 'px-w-32 px-h-32 theme-info'
+          } 
+          total={total} 
+          skip={skip} 
+          take={take}
+          radius={3} 
+          prev={<i className="fas fa-fw fa-backward theme-1"></i>}
+          next={<i className="fas fa-fw fa-forward theme-1"></i>}
+          start={<i className="fas fa-fw fa-backward-fast theme-1"></i>}
+          end={<i className="fas fa-fw fa-forward-fast theme-1"></i>}
+          onUpdate={page}
+        />
+      </div>
+    )}
+  </main>
+);`,
+
+SEARCH_HEAD:
+`const { data, styles = [] } = props;
+const { favicon = '/favicon.ico' } = data?.brand || {};
+const { _ } = useLanguage();
+const mimetype = favicon.endsWith('.png')
+  ? 'image/png'
+  : favicon.endsWith('.svg')
+  ? 'image/svg+xml'
+  : 'image/x-icon';
+return (
+  <>
+    <title>{_('Search <%label%>')}</title>
+    {favicon && <link rel="icon" type={mimetype} href={favicon} />}
+    <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+    {styles.map((href, index) => (
+      <link key={index} rel="stylesheet" type="text/css" href={href} />
+    ))}
+  </>
+);`,
+
+SEARCH_PAGE:
+`return (
+  <LayoutAdmin {...props}>
+    <<%component%> />
+  </LayoutAdmin>
+);`
+
+};

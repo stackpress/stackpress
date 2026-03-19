@@ -1,12 +1,10 @@
-//stackpress
+//modules
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//root
-import type { SessionExtended } from '../../types/index.js';
-//sql
-import { toResponse } from '../../sql/helpers.js';
-//api
+//stackpress/types
+import type { SessionExtended } from '../../types.js';
+//stackpress/api
 import { authorize, unauthorized } from '../helpers.js';
 
 export default async function APIToken(
@@ -43,7 +41,7 @@ export default async function APIToken(
     return unauthorized(res);
   }
   //set the global response
-  res.fromStatusResponse(toResponse({
+  res.setResults({
     token_type: 'Bearer',
     access_token: data.id,
     access_secret: data.secret,
@@ -56,5 +54,5 @@ export default async function APIToken(
       image: data.profile.image,
       created: data.profile.created
     }
-  }));
+  });
 }

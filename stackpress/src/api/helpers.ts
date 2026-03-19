@@ -1,8 +1,8 @@
-//stackpress
+//modules
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import { isObject } from '@stackpress/ingest/helpers';
-//root
+//stackpress
 import Exception from '../Exception.js';
 
 export function authorize(req: Request, res: Response) {

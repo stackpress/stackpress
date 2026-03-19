@@ -1,6 +1,6 @@
 //modules
 import { useContext } from 'react';
-//theme
+//stackpress/view/theme
 import ThemeContext from './ThemeContext.js';
 
 export function useTheme() {

@@ -1,9 +1,9 @@
-//stackpress
+//modules
 import type Engine from '@stackpress/inquire/Engine';
 import { action } from '@stackpress/ingest/Server';
-//scripts
+//stackpress/scripts
 import push from '../../scripts/push.js';
-//terminal
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
 export default action(async function PushScript(_req, res, ctx) {

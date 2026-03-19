@@ -1,552 +1,584 @@
 //modules
 import type { Directory } from 'ts-morph';
-//schema
-import type Model from '../../schema/spec/Model.js';
-import Registry from '../../schema/Registry.js';
+import { Scope } from 'ts-morph';
+//stackpress/schema
+import type Model from '../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../schema/transform/helpers.js';
 
-export default function generate(directory: Directory, registry: Registry) {
-  //loop through models
-  for (const model of registry.model.values()) {
-    // - profile/actions/batch.ts
-    batch(model, directory);
-    // - profile/actions/create.ts
-    create(model, directory);
-    // - profile/actions/detail.ts
-    detail(model, directory);
-    // - profile/actions/get.ts
-    get(model, directory);
-    // - profile/actions/remove.ts
-    remove(model, directory);
-    // - profile/actions/restore.ts
-    restore(model, directory);
-    // - profile/actions/search.ts
-    search(model, directory);
-    // - profile/actions/update.ts
-    update(model, directory);
-    // - profile/actions/upsert.ts
-    upsert(model, directory);
-    // - profile/actions/index.ts
-    const source = directory.createSourceFile(
-      `${model.name}/actions/index.ts`,
-      '', 
-      { overwrite: true }
-    );
-    //import type { ProfileExtended } from '../types.js';
+//these are possible column types to map what formatter (below) to use
+export const strings = [ 'String', 'Text' ];
+export const numbers = [ 'Number', 'Float', 'Integer' ];
+export const dates = [ 'Date', 'Time', 'Datetime' ];
+export const objects = [ 'Object', 'Json', 'Hash' ];
+
+const typemap: Record<string, string> = {
+  String: 'string',
+  Text: 'string',
+  Number: 'number',
+  Integer: 'number',
+  Float: 'number',
+  Date: 'Date',
+  Time: 'Date',
+  Datetime: 'Date',
+  Json: 'Record<string, ScalarInput>',
+  Object: 'Record<string, ScalarInput>',
+  Hash: 'Record<string, ScalarInput>'
+};
+
+export default function generate(directory: Directory, model: Model) {
+  const ids = model.store.ids.filter(
+    column => column.type.name in typemap
+  );
+
+  const filepath = model.name.toPathName('%s/%sActions.ts');
+  //load Profile/index.ts if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
+  //import type { ScalarInput } from '@stackpress/lib/types';
+  if (ids.findValue(column => objects.includes(column.type.name))) {
     source.addImportDeclaration({
-      isTypeOnly: true,
-      moduleSpecifier: '../types.js',
-      namedImports: [ 
-        `${model.title}Extended`
-      ]
-    });
-    //import Engine from '@stackpress/inquire/Engine';
-    source.addImportDeclaration({
-      moduleSpecifier: '@stackpress/inquire/Engine',
-      defaultImport: 'Engine'
-    });
-    //import { Actions } from 'stackpress/sql/actions';
-    source.addImportDeclaration({
-      moduleSpecifier: 'stackpress/sql/actions',
-      namedImports: [ 'Actions' ]
-    });
-    //import config from '../config.js';
-    source.addImportDeclaration({
-      moduleSpecifier: '../config.js',
-      defaultImport: 'config'
-    });
-    //export default function actions(engine: Engine, seed?: string) {}
-    source.addFunction({
-      isDefaultExport: true,
-      name: 'actions',
-      parameters: [ 
-        { name: 'engine', type: 'Engine' },
-        //seed?: string
-        { name: 'seed', type: 'string', hasQuestionToken: true }
-      ],
-      statements: `return new Actions<${model.title}Extended>(config, engine, seed);`
-    });
-    //import batch from './batch.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './batch.js',
-      defaultImport: 'batch'
-    });
-    //import create from './create.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './create.js',
-      defaultImport: 'create'
-    });
-    //import detail from './detail.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './detail.js',
-      defaultImport: 'detail'
-    });
-    //import get from './get.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './get.js',
-      defaultImport: 'get'
-    });
-    //import remove from './remove.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './remove.js',
-      defaultImport: 'remove'
-    });
-    //import restore from './restore';
-    source.addImportDeclaration({
-      moduleSpecifier: './restore.js',
-      defaultImport: 'restore'
-    });
-    //import search from './search.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './search.js',
-      defaultImport: 'search'
-    });
-    //import update from './update.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './update.js',
-      defaultImport: 'update'
-    });
-    //import upsert from './upsert.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './upsert.js',
-      defaultImport: 'upsert'
-    });
-    //export { create, detail, ... }
-    source.addExportDeclaration({
-      namedExports: [
-        'batch',
-        'create',
-        'detail',
-        'get',
-        'remove',
-        'restore',
-        'search',
-        'update',
-        'upsert'
-      ]
+      namedImports: [ 'ScalarInput' ],
+      moduleSpecifier: '@stackpress/lib/types'
     });
   }
-};
-
-export function batch(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/batch.ts`,
-    '', 
-    { overwrite: true }
-  );
   //import type Engine from '@stackpress/inquire/Engine';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
-  //import type { Profile } from '../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ model.title ]
-  });
-  //import batch from 'stackpress/sql/actions/batch';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/batch',
-    defaultImport: 'batch'
-  });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileBatchAction(engine, rows)
-  source.addFunction({
-    name: `${model.title}BatchAction`,
-    isDefaultExport: true,
-    parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //rows: Profile[]
-      { name: 'rows', type: `${model.title}[]` },
-      //seed?: string
-      { name: 'seed', type: 'string', hasQuestionToken: true }
-    ],
-    statements: (`return batch<${model.title}>(config, engine, rows, seed);`)
-  });
-};
-
-export function create(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/create.ts`,
-    '', 
-    { overwrite: true }
-  );
-  //import type { NestedObject } from '@stackpress/lib/types';
+  //import type { StatusResponse } from '@stackpress/lib/types';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '@stackpress/lib/types',
-    namedImports: [ 'NestedObject' ]
+    namedImports: [ 'StatusResponse' ]
   });
-  //import type Engine from '@stackpress/inquire/Engine';
+  //import type { StoreSelectFilters } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSelectFilters' ]
   });
-  //import type { Profile } from '../types.js';
+  //import { removeUndefined, removeEmptyStrings } from 'stackpress/schema/helpers';
+  source.addImportDeclaration({
+    namedImports: [ 'removeUndefined', 'removeEmptyStrings' ],
+    moduleSpecifier: 'stackpress/schema/helpers'
+  });
+  //import Exception from 'stackpress/Exception';
+  source.addImportDeclaration({
+    defaultImport: 'Exception',
+    moduleSpecifier: 'stackpress/Exception'
+  });
+  //import AbstractActions from 'stackpress/sql/AbstractActions';
+  source.addImportDeclaration({
+    defaultImport: 'AbstractActions',
+    moduleSpecifier: 'stackpress/sql/AbstractActions'
+  });
+  //import type { Profile, ProfileExtended, ProfileActionsInterface, ProfileAssertInterfaceMap } from './types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ model.title ]
+    moduleSpecifier: './types.js',
+    namedImports: [ 
+      model.name.toTypeName(),
+      model.name.toTypeName('%sExtended'),
+      model.name.toTypeName('%sActionsInterface'),
+      model.name.toTypeName('%sAssertInterfaceMap')
+    ]
   });
-  //import create from 'stackpress/sql/actions/create';
+  //import ProfileStore from './ProfileStore.js';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/create',
-    defaultImport: 'create'
+    moduleSpecifier: model.name.toPathName('./%sStore.js'),
+    defaultImport: model.name.toClassName('%sStore')
   });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileCreateAction(engine, input)
-  source.addFunction({
-    name: `${model.title}CreateAction`,
+  
+  //export default class ProfileActions {};
+  const definition = source.addClass({
+    name: model.name.toClassName('%sActions'),
+    //extends AbstractActions<Place, PlaceExtended>
+    extends: model.name.toTypeName('AbstractActions<%s, %sExtended>'),
+    //implements ProfileActionsInterface
+    implements: [ model.name.toClassName('%sActionsInterface') ],
     isDefaultExport: true,
+  });
+  //public readonly store;
+  definition.addProperty({
+    scope: Scope.Public,
+    isReadonly: true,
+    name: 'store'
+  });
+  //public constructor(engine: Engine, seed = '') {}
+  definition.addConstructor({
+    scope: Scope.Public,
+    parameters: [{
+      name: 'engine',
+      type: 'Engine'
+    }, {
+      name: 'seed',
+      initializer: "''"
+    }],
+    statements: renderCode(TEMPLATE.CONSTRUCTOR, {
+      store: model.name.toClassName('%sStore')
+    })
+  });
+  //public async batch(inputs: Array<Partial<Profile>>, mode = 'upsert') {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'batch',
+    parameters: [{
+      name: 'inputs',
+      type: model.name.toTypeName('Array<Partial<%s>>')
+    }, {
+      name: 'mode',
+      type: `'create' | 'update' | 'upsert'`,
+      initializer: `'upsert'`
+    }],
+    statements: renderCode(TEMPLATE.BATCH, {
+      type: model.name.toTypeName(),
+      store: model.name.toClassName('%sStore'),
+      uniques: model.store.uniques.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
+  //public async create(input: Partial<Profile>) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'create',
+    parameters: [{
+      name: 'input',
+      type: model.name.toTypeName('Partial<%s>')
+    }],
+    statements: renderCode(TEMPLATE.CREATE, {
+      assert: model.name.toTypeName('%sAssertInterfaceMap'),
+      oneid: ids.size === 1,
+      multid: ids.size > 1,
+      noid: ids.size === 0,
+      type: ids.size === 1 
+        ? ids.map(column => typemap[column.type.name]!).toArray()[0] 
+        : 'any',
+      ids: ids.map(column => ({ column: column.name.toString() })).toArray(),
+      exists: model.store.uniques.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
+  //public async deleteById(id: number | string) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'deleteById',
+    parameters: ids.map(column => ({
+      name: column.name.toPropertyName(),
+      type: typemap[column.type.name]!
+    })).toArray(),
+    statements: renderCode(TEMPLATE.DELETE_BY_ID, {
+      ids: ids.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
+  //public async findById(id: number | string, columns = [ '*' ]) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'findById',
     parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //input: NestedObject
-      { name: 'input', type: 'NestedObject' },
-      //seed?: string
-      { name: 'seed', type: 'string', hasQuestionToken: true }
+      ...ids.map(column => ({
+        name: column.name.toPropertyName(),
+        type: typemap[column.type.name]!
+      })).toArray(),
+      { name: 'columns', initializer: '[ \'*\' ]' }
     ],
-    statements: (`return create<${model.title}>(config, engine, input, seed);`)
+    statements: renderCode(TEMPLATE.FIND_BY_ID, {
+      ids: ids.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
+  //public async remove(query: StoreSelectFilters) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'remove',
+    parameters: [{
+      name: 'query',
+      type: `StoreSelectFilters`
+    }],
+    statements: renderCode(TEMPLATE.REMOVE, {
+      active: Boolean(model.store.active),
+      column: model.store.active?.name.toString() || ''
+    })
+  });
+  //public async removeById(id: number | string) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'removeById',
+    parameters: ids.map(column => ({
+      name: column.name.toPropertyName(),
+      type: typemap[column.type.name]!
+    })).toArray(),
+    statements: renderCode(TEMPLATE.REMOVE_BY_ID, {
+      ids: ids.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
+  //public async restore(query: StoreSelectFilters) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'restore',
+    parameters: [{
+      name: 'query',
+      type: `StoreSelectFilters`
+    }],
+    statements: renderCode(TEMPLATE.RESTORE, {
+      active: Boolean(model.store.active),
+      column: model.store.active?.name.toString() || ''
+    })
+  });
+  //public async restoreById(id: number | string) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'restoreById',
+    parameters: ids.map(column => ({
+      name: column.name.toPropertyName(),
+      type: typemap[column.type.name]!
+    })).toArray(),
+    statements: renderCode(TEMPLATE.RESTORE_BY_ID, {
+      ids: ids.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
+  //public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'update',
+    parameters: [
+      { name: 'query', type: `StoreSelectFilters` }, 
+      { name: 'input', type: model.name.toTypeName('Partial<%s>') }
+    ],
+    statements: renderCode(TEMPLATE.UPDATE, {
+      assert: model.name.toTypeName('%sAssertInterfaceMap'),
+      type: model.name.toTypeName(),
+      uniques: model.store.uniques.size > 0,
+      exists: model.store.uniques.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
+  //public async updateById(id: number | string, input: Partial<Profile>) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'updateById',
+    parameters: [
+      ...ids.map(column => ({
+        name: column.name.toPropertyName(),
+        type: typemap[column.type.name]!
+      })).toArray(),
+      {
+        name: 'input',
+        type: model.name.toTypeName('Partial<%s>')
+      }
+    ],
+    statements: renderCode(TEMPLATE.UPDATE_BY_ID, {
+      ids: ids.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
+  });
+  //public async upsert(input: Partial<Profile>) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    isAsync: true,
+    name: 'upsert',
+    parameters: [{
+      name: 'input',
+      type: model.name.toTypeName('Partial<%s>')
+    }],
+    statements: renderCode(TEMPLATE.UPSERT, {
+      update: ids.map(
+        column => `typeof input.${column.name.toPropertyName()} !== 'undefined'`
+      ).toArray().join(' && '),
+      ids: ids.map(
+        column => ({ column: column.name.toString() })
+      ).toArray(),
+      uniques: model.store.uniques.map(
+        column => ({ column: column.name.toString() })
+      ).toArray()
+    })
   });
 };
 
-export function detail(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/detail.ts`,
-    '', 
-    { overwrite: true }
-  );
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
-  //import type { ProfileExtended } from '../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ `${model.title}Extended` ]
-  });
-  //import detail from 'stackpress/sql/actions/detail';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/detail',
-    defaultImport: 'detail'
-  });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileDetailAction(engine, ids)
-  source.addFunction({
-    name: `${model.title}DetailAction`,
-    isDefaultExport: true,
-    parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //ids: Record<string, string|number>
-      { name: 'ids', type: 'Record<string, string|number>' },
-      //columns?: string[]
-      { name: 'columns', type: 'string[]', hasQuestionToken: true },
-      //seed?: string
-      { name: 'seed', type: 'string', hasQuestionToken: true }
-    ],
-    statements: (`return detail<${model.title}Extended>(config, engine, ids, columns);`)
-  });
-};
+export const TEMPLATE = {
 
-export function get(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/get.ts`,
-    '', 
-    { overwrite: true }
-  );
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
-  //import type { ProfileExtended } from '../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ `${model.title}Extended` ]
-  });
-  //import get from 'stackpress/sql/actions/get';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/get',
-    defaultImport: 'get'
-  });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileGetAction(engine, key, value)
-  source.addFunction({
-    name: `${model.title}GetAction`,
-    isDefaultExport: true,
-    parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //key: string
-      { name: 'key', type: 'string' },
-      //value: string|number
-      { name: 'value', type: 'string|number' },
-      //columns?: string[]
-      { name: 'columns', type: 'string[]', hasQuestionToken: true },
-      //seed?: string
-      { name: 'seed', type: 'string', hasQuestionToken: true }
-    ],
-    statements: (`return get<${model.title}Extended>(config, engine, key, value, columns, seed);`)
-  });
-};
+//public constructor(engine: Engine, seed = '') {}
+CONSTRUCTOR:
+`super(engine, seed);
+this.store = new <%store%>(seed);`,
 
-export function remove(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/remove.ts`,
-    '', 
-    { overwrite: true }
-  );
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
+//public async batch(inputs: Array<Partial<Profile>>, mode = 'upsert') {}
+BATCH:
+`const results: StatusResponse<<%type%> | null>[] = [];
+try {
+  await this.engine.transaction(async () => {
+    let rollback = false;
+    for (const input of inputs) {
+      try {
+        if (mode === 'upsert') {
+          results.push({ 
+            code: 200, 
+            status: 'OK', 
+            results: await this.upsert(input),
+            total: 1
+          });
+        } else if (mode === 'create') {
+          results.push({ 
+            code: 200, 
+            status: 'OK', 
+            results: await this.create(input),
+            total: 1
+          });
+        } else if (mode === 'update') {
+          if (typeof input.id !== 'undefined') {
+            results.push({ 
+              code: 200, 
+              status: 'OK', 
+              results: await this.updateById(input.id, input),
+              total: 1
+            });
+            continue;
+          } 
+          <%#uniques%>
+            if (typeof input.<%column%> !== 'undefined') {
+              const query = { filter: { <%column%>: input.<%column%> } };
+              const exists = await this.find(query);
+              if (exists) {
+                const rows = await this.update(query, input);
+                results.push({ 
+                  code: 200, 
+                  status: 'OK', 
+                  results: rows[0] || null,
+                  total: 1
+                });
+                continue;
+              }
+            }
+          <%/uniques%>
+          results.push({ error: 'ID or unique field is required for update mode' });
+        }
+      } catch (e) {
+        const error = e as any;
+        const exception = typeof error.toResponse !== 'function'
+          ? Exception.upgrade(error)
+          : error as Exception;
+        const response = exception.toResponse();
+        results.push({ 
+          code: response.code, 
+          status: response.status, 
+          error: response.error, 
+          errors: response.errors 
+        });
+        rollback = true;
+      }
+    }
+    if (rollback) {
+      throw Exception.for('Batch operation failed');
+    }
   });
-  //import type { ProfileExtended } from '../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ `${model.title}Extended` ]
-  });
-  //import remove from 'stackpress/sql/actions/remove';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/remove',
-    defaultImport: 'remove'
-  });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileRemoveAction(engine, ids)
-  source.addFunction({
-    name: `${model.title}RemoveAction`,
-    isDefaultExport: true,
-    parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //ids: Record<string, string|number>
-      { name: 'ids', type: 'Record<string, string|number>' }
-    ],
-    statements: (`return remove<${model.title}Extended>(config, engine, ids);`)
-  });
-};
+} catch(e) {}
+return results;`,
 
-export function restore(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/restore.ts`,
-    '', 
-    { overwrite: true }
-  );
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
-  //import type { ProfileExtended } from '../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ `${model.title}Extended` ]
-  });
-  //import restore from 'stackpress/sql/actions/restore';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/restore',
-    defaultImport: 'restore'
-  });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileRestoreAction(engine, ids)
-  source.addFunction({
-    name: `${model.title}RestoreAction`,
-    isDefaultExport: true,
-    parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //ids: Record<string, string|number>
-      { name: 'ids', type: 'Record<string, string|number>' }
-    ],
-    statements: (`return restore<${model.title}Extended>(config, engine, ids);`)
-  });
-};
+CREATE:
+`//sanitize input and map to the schema
+const filtered = this.store.filter(input);
+const populated = this.store.populate(filtered);
+const serialized = this.store.serialize(populated);
+const unserialized = this.store.unserialize(serialized);
+const defined = removeEmptyStrings(unserialized);
+const sanitized = removeUndefined(defined);
 
-export function search(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/search.ts`,
-    '', 
-    { overwrite: true }
-  );
-  //import type { SearchParams } from 'stackpress/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/types',
-    namedImports: [ 'SearchParams' ]
-  });
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
-  //import type { ProfileExtended } from '../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ `${model.title}Extended` ]
-  });
-  //import search from 'stackpress/sql/actions/search';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/search',
-    defaultImport: 'search'
-  });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileSearchAction(engine, params)
-  source.addFunction({
-    name: `${model.title}SearchAction`,
-    isDefaultExport: true,
-    parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //query: SearchParams = {}
-      { name: 'params', type: 'SearchParams', initializer: '{}' },
-      //seed?: string
-      { name: 'seed', type: 'string', hasQuestionToken: true }
-    ],
-    statements: (`return search<${model.title}Extended>(config, engine, params, seed);`)
-  });
-};
+//collect errors, if any
+const errors = this.store.assert(sanitized, true) || {} as <%assert%>;
 
-export function update(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/update.ts`,
-    '', 
-    { overwrite: true }
-  );
-  //import type { NestedObject } from '@stackpress/lib/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/lib/types',
-    namedImports: [ 'NestedObject' ]
-  });
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
-  //import type { ProfileExtended } from '../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ `${model.title}Extended` ]
-  });
-  //import update from 'stackpress/sql/actions/update';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/update',
-    defaultImport: 'update'
-  });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileUpdateAction(engine, ids, input)
-  source.addFunction({
-    name: `${model.title}UpdateAction`,
-    isDefaultExport: true,
-    parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //ids: Record<string, string|number>
-      { name: 'ids', type: 'Record<string, string|number>' },
-      //input: NestedObject
-      { name: 'input', type: 'NestedObject' },
-      //seed?: string
-      { name: 'seed', type: 'string', hasQuestionToken: true }
-    ],
-    statements: (`return update<${model.title}Extended>(config, engine, ids, input, seed);`)
-  });
-};
+<%#exists%>
+  //if there's a <%column%> value
+  if (typeof sanitized.<%column%> !== 'undefined') {
+    //check to see if exists already
+    const exists = await this.find({ 
+      filter: { <%column%>: sanitized.<%column%> } 
+    });
+    //if it does exist
+    if (exists) {
+      //add a unique error
+      errors.<%column%> = 'Already exists';
+    }
+  }
+<%/exists%>
 
-export function upsert(model: Model, directory: Directory) {
-  const source = directory.createSourceFile(
-    `${model.name}/actions/upsert.ts`,
-    '', 
-    { overwrite: true }
-  );
-  //import type { NestedObject } from '@stackpress/lib/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/lib/types',
-    namedImports: [ 'NestedObject' ]
+//if there were errors
+if (Object.keys(errors).length > 0) {
+  //throw errors
+  throw Exception
+    .for('Invalid parameters')
+    .withCode(400)
+    .withErrors(errors);
+}
+
+const insert = this.store.insert(sanitized);
+insert.engine = this.engine;
+//dont rely on native insert... 
+// pgsql returns different things than sqlite and mysql....
+const rows = await insert;
+//if there are rows, then it's pgsql...
+if (rows.length > 0) {
+  return this.store.unserialize(rows[0]);
+}
+//must be mysql or sqlite...
+<%#oneid%>
+  return (await this.findById(
+    this.engine.connection.lastId as <%type%>
+  ))!;
+<%/oneid%>
+<%#multid%>
+  return await this.find({ 
+   filter: { <%#ids%><%column%>: input.<%column%>, <%/ids%> } 
   });
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
-  //import type { ProfileExtended } from '../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../types.js',
-    namedImports: [ `${model.title}Extended` ]
-  });
-  //import upsert from 'stackpress/sql/actions/upsert';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/actions/upsert',
-    defaultImport: 'upsert'
-  });
-  //import config from '../config.js';
-  source.addImportDeclaration({
-    moduleSpecifier: '../config.js',
-    defaultImport: 'config'
-  });
-  //export default function ProfileCreateAction(engine, input)
-  source.addFunction({
-    name: `${model.title}CreateAction`,
-    isDefaultExport: true,
-    parameters: [
-      //engine: Engine,
-      { name: 'engine', type: 'Engine' },
-      //input: NestedObject
-      { name: 'input', type: 'NestedObject' },
-      //seed?: string
-      { name: 'seed', type: 'string', hasQuestionToken: true }
-    ],
-    statements: (`return upsert<${model.title}Extended>(config, engine, input, seed);`)
-  });
+<%/multid%>
+<%#noid%>
+  return input as unknown as T;
+<%/noid%>
+`,
+
+//public async deleteById(id: number | string) {}
+DELETE_BY_ID:
+`const filter = { <%#ids%><%column%>, <%/ids%> };
+const rows = await this.delete({ filter });
+return rows[0] || null;`,
+
+//public async findById(id: number | string, columns = [ '*' ]) {}
+FIND_BY_ID:
+`const filter = { <%#ids%><%column%>, <%/ids%> };
+return await this.find({ columns, filter });`,
+
+//public async remove(query: StoreSelectFilters) {}
+REMOVE:
+`<%#active%>
+  return await this.update(query, { <%column%>: false });
+<%/active%>
+<%^active%>
+  return await this.delete(query);
+<%/active%>`,
+
+//public async removeById(id: number | string) {}
+REMOVE_BY_ID:
+`const filter = { <%#ids%><%column%>, <%/ids%> };
+const rows = await this.remove({ filter });
+return rows[0] || null;`,
+
+//public async restore(query: StoreSelectFilters) {}
+RESTORE:
+`<%#active%>
+  return await this.update(query, { <%column%>: true });
+<%/active%>`,
+
+//public async restoreById(id: number | string) {}
+RESTORE_BY_ID:
+`const filter = { <%#ids%><%column%>, <%/ids%> };
+const rows = await this.restore({ filter });
+return rows[0] || null;`,
+
+//public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
+UPDATE:
+`//sanitize input and map to the schema
+const filtered = this.store.filter(input);
+const serialized = this.store.serialize(filtered);
+const unserialized = this.store.unserialize(serialized);
+const defined = removeEmptyStrings(unserialized);
+const sanitized = removeUndefined(defined);
+
+//collect errors, if any
+const errors = this.store.assert(sanitized) || {} as <%assert%>;
+
+<%#uniques%>
+  //we need to check if the existing record 
+  // is the same as the one about to be updated
+  const queue = await this.findAll(query);
+  <%#exists%>
+    //if there's a <%column%> value
+    if (typeof sanitized.<%column%> !== 'undefined') {
+      //check to see if exists already
+      const exists = await this.findAll({ 
+        filter: { <%column%>: sanitized.<%column%> } 
+      });
+      //if it does exist
+      if (exists.length > 0) {
+        const same = queue.some(
+          update => update.<%column%> === sanitized.<%column%>
+        );
+        if (!same) {
+          //add a unique error
+          errors.<%column%> = 'Already exists';
+        }
+      }
+    }
+  <%/exists%>
+<%/uniques%>
+
+//if there were errors
+if (Object.keys(errors).length > 0) {
+  //throw errors
+  throw Exception
+    .for('Invalid parameters')
+    .withCode(400)
+    .withErrors(errors);
+}
+
+const rows = await this.findAll(query);
+//if there are no rows, it doesn't make sense to update...
+if (rows.length > 0) {
+  const update = this.store.update(query, input, this.engine.dialect.q);
+  update.engine = this.engine;
+  //dont rely on native update... 
+  // pgsql returns different things than sqlite and mysql....
+  await update;
+}
+//we can't requery because the results might be different 
+// after the update, so we have to manually merge the input 
+// with the existing records
+return rows.map(row => ({ ...row, ...sanitized })) as <%type%>[];`,
+
+//public async updateById(id: number | string, input: Partial<Profile>) {}
+UPDATE_BY_ID:
+`const filter = { <%#ids%><%column%>, <%/ids%> };
+const rows = await this.update({ filter }, input);
+return rows[0] || null;`,
+
+//public async upsert(input: Partial<Profile>) {}
+UPSERT:
+`if (<%update%>) {
+  return await this.updateById(<%#ids%>input.<%column%>, <%/ids%> input);
+}
+<%#uniques%>
+  if (typeof input.<%column%> !== 'undefined') {
+    const query = { filter: { <%column%>: input.<%column%> } };
+    const exists = await this.find(query);
+    if (exists) {
+      const rows = await this.update(query, input);
+      return rows[0] || null;
+    }
+  }
+<%/uniques%>
+return await this.create(input);`,
+
 };

@@ -1,18 +1,18 @@
 //node
 import path from 'node:path';
-//stackpress
+//modules
 import type Server from '@stackpress/ingest/Server';
 import FileLoader from '@stackpress/lib/FileLoader';
-//types
-import type { IdeaProjectProps } from '../types/index.js';
-//terminal
+//stackpress
+import type { IdeaProjectProps } from '../types.js';
+//stackpress/terminal
 import Terminal from '../terminal/Terminal.js';
 
 export default async function generate(
   server: Server<any, any, any>,
   idea: string,
   tsconfig: string,
-  cli: Terminal
+  terminal: Terminal
 ) {
   //get build
   const build = getBuildPath(server);
@@ -22,18 +22,18 @@ export default async function generate(
   const project = await createProject(build, tsconfig);
   
   //register all the idea plugins first
-  cli?.verbose && cli.control.system('Looking up ideas...');
+  terminal?.verbose && terminal.control.system('Looking up ideas...');
   await server.resolve('idea', { transformer });
   //create the directory
   const directory = project.createDirectory(build);
   //transform (generate the code)
-  cli?.verbose && cli.control.system('Generating ideas...');
-  await transformer.transform({ cli, project: directory });
+  terminal?.verbose && terminal.control.system('Generating ideas...');
+  await transformer.transform({ terminal, project, directory });
   //get the output language
   const lang = server.config.path<string>('client.lang', 'js');
   //if you want ts, tsx files
   if (lang === 'ts') {
-    cli?.verbose && cli.control.system('Converting to typescript...');
+    terminal?.verbose && terminal.control.system('Converting to typescript...');
     //lazy import prettier
     const prettier = await import('prettier');
     //save first
@@ -52,10 +52,13 @@ export default async function generate(
     }
   //if you want js, d.ts files
   } else {
-    cli?.verbose && cli.control.system('Converting to javascript...');
+    terminal?.verbose && terminal.control.system('Converting to javascript...');
     await project.emit();
   }
-  cli?.verbose && cli.control.success('Ideas generated');
+  terminal?.verbose && terminal.control.success(
+    'Ideas generated to %s', 
+    [ build ]
+  );
 };
 
 export async function createProject(output: string, tsconfig: string) {

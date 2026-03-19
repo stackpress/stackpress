@@ -1,12 +1,12 @@
 //modules
 import { useLanguage } from 'r22n';
-import Button from 'frui/form/Button';
-import Switch from 'frui/field/Switch';
-//views
+import Button from 'frui/Button';
+import Switch from 'frui/form/Switch';
+//stackpress/view
 import type { ServerPageProps } from '../../view/types.js';
 import LayoutBlank from '../../view/layout/LayoutBlank.js';
 import { useServer } from '../../view/server/hooks.js';
-//api
+//stackpress/api
 import type { 
   Scopes,
   ApiOauthInputProps,

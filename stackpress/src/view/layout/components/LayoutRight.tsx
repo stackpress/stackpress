@@ -10,4 +10,4 @@ export default function LayoutRight({ open, head, children }: LayoutRightProps) 
       </main>
     </aside>
   );
-}
+};

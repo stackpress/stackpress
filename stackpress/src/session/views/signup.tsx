@@ -1,14 +1,14 @@
 //modules
 import { useLanguage } from 'r22n';
-import Control from 'frui/form/Control';
-import Button from 'frui/form/Button';
-import Input from 'frui/field/Input';
-import Password from 'frui/field/Password';
+import FieldControl from 'frui/form/FieldControl';
+import Button from 'frui/Button';
+import Input from 'frui/form/Input';
+import PasswordInput from 'frui/form/PasswordInput';
 //views
 import type { 
   NestedObject, 
   ServerPageProps 
-} from '../../types/index.js';
+} from '../../types.js';
 import LayoutBlank from '../../view/layout/LayoutBlank.js';
 import { useServer } from '../../view/server/hooks.js';
 //session
@@ -21,7 +21,7 @@ import type {
 export type AuthSignupFormProps = {
   input: Partial<SignupInput>;
   errors: NestedObject<string | string[]>;
-}
+};
 
 export function AuthSignupForm(props: AuthSignupFormProps) {
   const { input, errors } = props;
@@ -29,20 +29,20 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
   
   return (
     <form className="auth-form" method="post">
-      <Control 
+      <FieldControl 
         label={`${_('Name')}*`} 
-        error={errors.email as string|undefined} 
+        error={errors.name as string|undefined} 
         className="control"
       >
         <Input
           name="name"
           className="field"
-          error={!!errors.email}
-          defaultValue={input.email}
+          error={!!errors.name}
+          defaultValue={input.name}
           required
         />
-      </Control>
-      <Control 
+      </FieldControl>
+      <FieldControl 
         label={_('Email Address')} 
         error={errors.email as string|undefined} 
         className="control"
@@ -53,8 +53,8 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           error={!!errors.email}
           defaultValue={input.email}
         />
-      </Control>
-      <Control 
+      </FieldControl>
+      <FieldControl 
         label={_('Phone Number')} 
         error={errors.phone as string|undefined} 
         className="control"
@@ -65,8 +65,8 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           error={!!errors.phone}
           defaultValue={input.phone}
         />
-      </Control>
-      <Control 
+      </FieldControl>
+      <FieldControl 
         label={_('Username')} 
         error={errors.username as string|undefined} 
         className="control"
@@ -77,19 +77,19 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           error={!!errors.username}
           defaultValue={input.username}
         />
-      </Control>
-      <Control 
+      </FieldControl>
+      <FieldControl 
         label={`${_('Password')}*`} 
         error={errors.secret as string|undefined} 
         className="control"
       >
-        <Password
+        <PasswordInput
           name="secret"
           error={!!errors.secret}
           defaultValue={input.secret}
           required
         />
-      </Control>
+      </FieldControl>
       <div className="action">
         <Button className="submit" type="submit">
           {_('Sign Up')}
@@ -97,7 +97,7 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
       </div>
     </form>
   );
-}
+};
 
 export function AuthSignupBody() {
   const { config, request, response } = useServer<
@@ -141,7 +141,7 @@ export function AuthSignupBody() {
       </div>
     </main>
   );
-}
+};
 
 export function AuthSignupHead(props: ServerPageProps<AuthConfigProps>) {
   const { data, styles = [] } = props;
@@ -162,7 +162,7 @@ export function AuthSignupHead(props: ServerPageProps<AuthConfigProps>) {
       ))}
     </>
   );
-}
+};
 
 export function AuthSignupPage(props: ServerPageProps<AuthConfigProps>) {
   return (
@@ -170,7 +170,7 @@ export function AuthSignupPage(props: ServerPageProps<AuthConfigProps>) {
       <AuthSignupBody />
     </LayoutBlank>
   );
-}
+};
 
 export const Head = AuthSignupHead;
 export default AuthSignupPage;

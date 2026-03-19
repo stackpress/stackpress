@@ -1,9 +1,9 @@
-//stackpress
+//modules
 import type Engine from '@stackpress/inquire/Engine';
 import { action } from '@stackpress/ingest/Server';
-//scripts
+//stackpress/scripts
 import install from '../../scripts/install.js';
-//terminal
+//stackpress/terminal
 import type { CLIPlugin } from '../types.js';
 
 export default action(async function InstallScript(_req, res, ctx) {

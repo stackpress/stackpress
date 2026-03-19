@@ -1,6 +1,9 @@
+//stackpress/language
 import { LanguageConfig } from '../language/types.js';
+//stackpress/view
 import { ViewConfig, BrandConfig } from '../view/types.js';
 
+//used by generated views
 export type AdminConfigProps = {
   language: LanguageConfig,
   view: ViewConfig,

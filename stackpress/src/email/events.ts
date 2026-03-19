@@ -1,9 +1,8 @@
 //modules
 import type { SendMailOptions, SentMessageInfo } from 'nodemailer';
 import nodemailer from 'nodemailer';
-//stackpress
 import { server } from '@stackpress/ingest/Server';
-//email
+//stackpress/email
 import type { EmailConfig } from './types.js';
 
 const emitter = server();

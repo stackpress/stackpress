@@ -1,4 +1,4 @@
-//stackpress
+//modules
 import type { 
   Trace,
   UnknownNest, 
@@ -9,7 +9,7 @@ import type {
 import Status from '@stackpress/lib/Status';
 import Exception from '@stackpress/lib/Exception';
 import { nest, isObject } from '@stackpress/lib/Nest';
-//views
+//stackpress/view
 import type { ServerResponseProps } from '../types.js';
 
 /**
@@ -152,4 +152,4 @@ export default class Response<O = UnknownNest> {
       total: this._total
     };
   }
-}
+};

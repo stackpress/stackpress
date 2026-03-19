@@ -1,6 +1,6 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
-//events
+//stackpress/terminal
 import listen from './events/index.js';
 
 /**

@@ -1,9 +1,9 @@
-//stackpress
+//modules
 import type { UnknownNest } from '@stackpress/lib/types';
-import { withUnknownHost } from '@stackpress/lib/Request';
-//view
+import { withUnknownHost } from '../helpers.js';
+//stackpress/view
 import type { ServerProviderProps } from '../types.js';
-//server
+//stackpress/view/server
 import ServerContext from './ServerContext.js';
 
 // (this is what to put in app.tsx)
@@ -51,4 +51,4 @@ export default function ServerProvider<
       {children}
     </ServerContext.Provider>
   );
-}
+};

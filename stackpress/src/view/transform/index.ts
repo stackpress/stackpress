@@ -1,23 +1,23 @@
-//root
-import type { IdeaPluginWithProject } from '../../types/index.js';
-//schema
-import Registry from '../../schema/Registry.js';
-//local
-import generateViews from './views.js';
-import generateFields from './fields.js';
-import generateFilters from './filters.js';
-import generateLists from './lists.js';
-import generateSpans from './spans.js';
+//stackpress
+import type { IdeaProjectPluginProps } from '../../types.js';
+//stackpress/schema
+import Schema from '../../schema/Schema.js';
+//stackpress/view/transform
+import generateViews from './view.js';
+import generateFields from './form.js';
+import generateFilters from './filter.js';
+import generateLists from './list.js';
+import generateSpans from './span.js';
 
 /**
  * Client File Structure
  * - profile/
  * | - components/
- * | | - filters/
- * | | - fields/
- * | | - lists/
- * | | - spans/
- * | | - views/
+ * | | - filter/
+ * | | - form/
+ * | | - list/
+ * | | - span/
+ * | | - view/
  */
 
 /**
@@ -31,23 +31,23 @@ import generateSpans from './spans.js';
 /**
  * This is the The params comes form the cli
  */
-export default async function generate(props: IdeaPluginWithProject) {
+export default async function generate(props: IdeaProjectPluginProps) {
   //-----------------------------//
   // 1. Config
-  //extract props
-  const { schema, project } = props;
-  const registry = new Registry(schema);
+  
+  const schema = Schema.make(props.schema);
+  const directory = props.directory;
 
   //-----------------------------//
   // 2. Generators
-  // - profile/components/fields/
-  generateFields(project, registry);
-  // - profile/components/filters/
-  generateFilters(project, registry);
-  // - profile/components/lists/
-  generateLists(project, registry);
-  // - profile/components/spans/
-  generateSpans(project, registry);
-  // - profile/components/views
-  generateViews(project, registry);
+  // - profile/components/form/
+  generateFields(directory, schema);
+  // - profile/components/filter/
+  generateFilters(directory, schema);
+  // - profile/components/list/
+  generateLists(directory, schema);
+  // - profile/components/span/
+  generateSpans(directory, schema);
+  // - profile/components/view/
+  generateViews(directory, schema);
 };

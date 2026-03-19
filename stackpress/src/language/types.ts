@@ -1,6 +1,6 @@
-//stackpress
+//modules
 import type Request from '@stackpress/ingest/Request';
-//language
+//stackpress/language
 import type SessionLanguage from './Language.js';
 
 export type Language = {

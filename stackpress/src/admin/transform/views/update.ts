@@ -1,19 +1,48 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//schema
-import type Registry from '../../../schema/Registry.js';
-import type Model from '../../../schema/spec/Model.js';
+//stackpress/schema
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
+//stackpress/admin
+import { render } from '../helpers.js';
 
-export default function updateView(directory: Directory, _registry: Registry, model: Model) {
-  const file = `${model.name}/admin/views/update.tsx`;
-  const source = directory.createSourceFile(file, '', { overwrite: true });
-  const ids = model.ids.map(column => column.name);
+export default function updateView(directory: Directory, model: Model) {
+  const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${base}/${model.dash}/${action}/${path}\``;
+  const link = (action: string) => `\`\${base}/${model.name.dashCase}/${action}/${path}\``;
 
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+  //------------------------------------------------------------------//
+  // Profile/admin/views/update.tsx
+
+  const filepath = model.name.toPathName('%s/admin/views/update.tsx');
+  //load file if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+
+  //import { useLanguage } from 'r22n';
+  source.addImportDeclaration({
+    moduleSpecifier: 'r22n',
+    namedImports: [ 'useLanguage' ]
+  });
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+  //import Button from 'frui/Button';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Button',
+    defaultImport: 'Button'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -27,191 +56,127 @@ export default function updateView(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
+  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'useServer', 'LayoutAdmin' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileInput, ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Input`, `${model.title}Extended` ]
+    namedImports: [ 
+      model.name.toTypeName('%sInput'), 
+      model.name.toTypeName('%sExtended') 
+    ]
   });
-  //import { useLanguage } from 'r22n';
-  source.addImportDeclaration({
-    moduleSpecifier: 'r22n',
-    namedImports: [ 'useLanguage' ]
-  });
-  //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
-  });
-  //import Button from 'frui/form/Button';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Button',
-    defaultImport: 'Button'
-  });
-  //import { ActiveFieldControl } from '../../components/fields/ActiveField.js';
-  model.fields.forEach(column => {
-    //skip if no component
-    if (typeof column.field.component !== 'string') return;
-    if (column.field.method === 'fieldset') {
-      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
-      source.addImportDeclaration({
-        moduleSpecifier: `../../components/fields/${column.title}Field.js`,
-        namedImports: [ `${column.title}FieldsetControl` ]
-      });
-      return;
-    }
+  //import { ActiveFieldControl } from '../../components/form/ActiveField.js';
+  model.component.formFields.forEach(column => {
+    const field = column.component.formField!;
+    const component = field.component.definition!;
+    //import { ActiveFieldsetControl } from '../../components/form/ActiveField.js';
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/fields/${column.title}Field.js`,
-      namedImports: [ `${column.title}FieldControl` ]
+      moduleSpecifier: column.name.toPathName(
+        '../../components/form/%sFormField.js'
+      ),
+      namedImports: [ 
+        component.name === 'Fieldset'
+          ? column.name.toComponentName('%sFormFieldsetControl') 
+          : column.name.toComponentName('%sFormFieldControl') 
+      ]
     });
   });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function AdminProfileUpdateCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdateCrumbs`,
+    name: model.name.toComponentName('%sAdminUpdateCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: `{ base: string, results: ${model.title}Extended }` 
+      type: renderCode(TEMPLATE.UPDATE_CRUMBS_PROPS, { 
+        type: model.name.toTypeName('%sExtended') 
+      })
     }],
-    statements: (`
-      const { base, results } = props;
-      //hooks
-      const { _ } = useLanguage();
-      //variables
-      const crumbs = [
-        {
-          label: (<span className="admin-crumb">{_('${model.plural}')}</span>),
-          icon: '${model.icon}',
-          href: \`\${base}/${model.dash}/search\`
-        },
-        {
-          label: (
-            <span className="admin-crumb">
-              {\`${model.transformTemplate('${results?.%s || \'\'}')}\`}
-            </span>
-          ),
-          icon: '${model.icon}',
-          href: ${link('detail')}
-        },
-        {
-          label: _('Update'),
-          icon: 'edit'
-        }
-      ];
-      return (<Crumbs crumbs={crumbs} />);
-    `)
+    statements: renderCode(TEMPLATE.UPDATE_CRUMBS_BODY, {
+      search: {
+        label: model.name.plural || model.name.titleCase,
+        icon: model.name.icon
+      },
+      detail: {
+        label: render(model, "${results?.%s || ''}"),
+        href: link('detail')
+      }
+    })
   });
   //export function AdminProfileUpdateForm() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdateForm`,
+    name: model.name.toComponentName('%sAdminUpdateForm'),
     parameters: [{ 
       name: 'props', 
-      type: `{ 
-        input: Partial<${model.title}Input>,
-        errors: NestedObject<string | string[]>
-      }` 
+      type: renderCode(TEMPLATE.UPDATE_FORM_PROPS, { 
+        type: model.name.toTypeName('%sInput') 
+      }) 
     }],
-    statements: (`
-      const { input, errors } = props;
-      const { _ } = useLanguage();
-      return (
-        <form method="post">
-          ${model.fields.map(column => column.field.method === 'fieldset' ? (`
-            <${column.title}FieldsetControl 
-              className="control"
-              name="${column.name}"
-              value={input['${column.name}']} 
-              errors={errors['${column.name}']} 
-            />
-          `) : (`
-            <${column.title}FieldControl 
-              className="control"
-              name="${column.name}${column.multiple ? '[]' : ''}"
-              value={input['${column.name}']} 
-              error={errors.${column.name}?.toString()} 
-            />
-          `)).join('\n')}
-          <Button className="submit" type="submit">
-            <i className="icon fas fa-fw fa-save"></i>
-            {_('Save')}
-          </Button>
-        </form>
-      ); 
-    `)
+    statements: renderCode(TEMPLATE.UPDATE_FORM_BODY,{
+      fields: model.component.formFields.toArray().map(column => {
+        const attribute = column.component.formField!;
+        const component = attribute.component.definition!;
+        if (component.name === 'Fieldset') {
+          return renderCode(TEMPLATE.UPDATE_FORM_FIELDSET, {
+            component: column.name.toComponentName('%sFormFieldsetControl'),
+            column: column.name.toString()
+          });
+        }
+        return renderCode(TEMPLATE.UPDATE_FORM_FIELD, {
+          component: column.name.toComponentName('%sFormFieldControl'),
+          column: column.name.toString(),
+          multiple: column.type.multiple ? '[]' : ''
+        });
+      }).join('\n')
+    })
   });
   //export function AdminProfileUpdateBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdateBody`,
-    statements: (`
-      const { config, request, response } = useServer<${[
-        'AdminConfigProps', 
-        `Partial<${model.title}Input>`, 
-        `${model.title}Extended`
-      ].join(',')}>();
-      const base = config.path('admin.base', '/admin');
-      const input = { ...response.results, ...request.data() };
-      const errors = response.errors();
-      const results = response.results as ${model.title}Extended;
-      //render
-      return (
-        <main className="admin-page admin-form-page">
-          <div className="admin-crumbs">
-            <Admin${model.title}UpdateCrumbs base={base} results={results} />
-          </div>
-          <div className="admin-form">
-            <Admin${model.title}UpdateForm errors={errors} input={input} />
-          </div>
-        </main>
-      );
-    `)
+    name: model.name.toComponentName('%sAdminUpdateBody'),
+    statements: renderCode(TEMPLATE.UPDATE_BODY, {
+      input: model.name.toTypeName('%sInput'),
+      type: model.name.toTypeName('%sExtended'),
+      crumbs: model.name.toComponentName('%sAdminUpdateCrumbs'),
+      form: model.name.toComponentName('%sAdminUpdateForm')
+    })
   });
   //export function AdminProfileUpdateHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdateHead`,
+    name: model.name.toComponentName('%sAdminUpdateHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      const { data, styles = [] } = props;
-      const { favicon = '/favicon.ico' } = data?.brand || {};
-      const { _ } = useLanguage();
-      const mimetype = favicon.endsWith('.png')
-        ? 'image/png'
-        : favicon.endsWith('.svg')
-        ? 'image/svg+xml'
-        : 'image/x-icon';
-      return (
-        <>
-          <title>{_('Update ${model.singular}')}</title>
-          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
-          <link rel="stylesheet" type="text/css" href="/styles/global.css" />
-          {styles.map((href, index) => (
-            <link key={index} rel="stylesheet" type="text/css" href={href} />
-          ))}
-        </>
-      );  
-    `)
+    statements: renderCode(TEMPLATE.UPDATE_HEAD, { 
+      name: model.name.singular 
+    })
   });
   //export function AdminProfileUpdatePage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}UpdatePage`,
+    name: model.name.toComponentName('%sAdminUpdatePage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      return (
-        <LayoutAdmin {...props}>
-          <Admin${model.title}UpdateBody />
-        </LayoutAdmin>
-      );
-    `)
+    statements: renderCode(TEMPLATE.UPDATE_PAGE, { 
+      component: model.name.toComponentName('%sAdminUpdateBody') 
+    })
   });
   //export const Head = AdminProfileUpdateHead;
   source.addVariableStatement({
@@ -219,9 +184,142 @@ export default function updateView(directory: Directory, _registry: Registry, mo
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}UpdateHead`
+      initializer: model.name.toComponentName('%sAdminUpdateHead')
     }]
   });
   //export default AdminProfileUpdatePage;
-  source.addStatements(`export default Admin${model.title}UpdatePage;`);
-}
+  source.addStatements(
+    `export default ${model.name.toComponentName('%sAdminUpdatePage')};`
+  );
+};
+
+export const TEMPLATE = {
+
+UPDATE_CRUMBS_PROPS:
+'{ base: string, results: <%type%> }',
+
+UPDATE_CRUMBS_BODY:
+`const { base, results } = props;
+//hooks
+const { _ } = useLanguage();
+return (
+  <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
+    <Bread.Slicer>
+      <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
+    </Bread.Slicer>
+    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
+      {_('<%search.label%>')}
+    </Bread.Crumb>
+    {!!results && (
+      <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
+        {_(\`<%detail.label%>\`)}
+      </Bread.Crumb>
+    )}
+    <Bread.Crumb icon="edit">
+      {_('Update')}
+    </Bread.Crumb>
+  </Bread>
+);`,
+
+UPDATE_FORM_PROPS:
+`{ 
+  input: Partial<<%type%>>, 
+  errors: NestedObject<string | string[]> 
+}`,
+
+UPDATE_FORM_BODY:
+`const { input, errors } = props;
+const { _ } = useLanguage();
+return (
+  <form method="post">
+    <%fields%>
+    <Button className="submit" type="submit">
+      <i className="icon fas fa-fw fa-save"></i>
+      {_('Save')}
+    </Button>
+  </form>
+);`,
+
+UPDATE_FORM_FIELDSET:
+`<<%component%>
+  className="control"
+  name="<%column%>"
+  value={input['<%column%>']} 
+  errors={errors['<%column%>']} 
+/>`,
+
+UPDATE_FORM_FIELD:
+`<<%component%>
+  className="control"
+  name="<%column%><%multiple%>"
+  value={input['<%column%>']} 
+  error={errors.<%column%>?.toString()} 
+/>`,
+
+UPDATE_BODY:
+`//props
+const { 
+  config, 
+  request, 
+  response 
+} = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
+//hooks
+const { _ } = useLanguage();
+//variables
+const base = config.path('admin.base', '/admin');
+const input = { ...response.results, ...request.data() };
+const errors = response.errors();
+const results = response.results as <%type%>;
+//render
+return (
+  <main className="admin-page admin-form-page">
+    <div className="admin-crumbs">
+      <<%crumbs%> base={base} results={results} />
+    </div>
+    {response.code === 404 ? (
+      <div className="admin-form">
+        <div className="flex flex-col frui-fa-center px-h-100-0">
+          <h1 className="px-pb-20 px-fs-20 font-bold">
+            {_('Not Found')}
+          </h1>
+          <p>
+            {_('Looks like this page does not exist. Please make sure the URL is correct.')}
+          </p>
+        </div>
+      </div>
+    ) : (
+      <div className="admin-form">
+        <<%form%> errors={errors} input={input} />
+      </div>
+    )}
+  </main>
+);`,
+
+UPDATE_HEAD:
+`const { data, styles = [] } = props;
+const { favicon = '/favicon.ico' } = data?.brand || {};
+const { _ } = useLanguage();
+const mimetype = favicon.endsWith('.png')
+  ? 'image/png'
+  : favicon.endsWith('.svg')
+  ? 'image/svg+xml'
+  : 'image/x-icon';
+return (
+  <>
+    <title>{_('Update <%name%>')}</title>
+    {favicon && <link rel="icon" type={mimetype} href={favicon} />}
+    <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+    {styles.map((href, index) => (
+      <link key={index} rel="stylesheet" type="text/css" href={href} />
+    ))}
+  </>
+);`,
+
+UPDATE_PAGE:
+`return (
+  <LayoutAdmin {...props}>
+    <<%component%> />
+  </LayoutAdmin>
+);`
+
+};

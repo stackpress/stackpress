@@ -129,15 +129,20 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-packages/stackpress
-
+.clinerules
 .DS_Store
 .env.build
 .env.develop
 .env.preview
 cjs
 esm
-examples/*/.build
-examples/*/public/assets
-examples/*/public/client
+
+templates/*/.build
+templates/*/config/client.ts
+templates/*/client-source
+templates/*/public/assets
+templates/*/public/client
+stackpress/tests/out
 archives
+
+

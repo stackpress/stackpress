@@ -1,26 +1,36 @@
 //modules
 import type { Directory } from 'ts-morph';
 //schema
-import type Registry from '../../schema/Registry.js';
+import type Schema from '../../schema/Schema.js';
+import { loadProjectFile } from '../../schema/transform/helpers.js';
 
-export default function generate(directory: Directory, registry: Registry) {
-  page('create', directory, registry);
-  page('detail', directory, registry);
-  page('export', directory, registry);
-  page('import', directory, registry);
-  page('remove', directory, registry);
-  page('restore', directory, registry);
-  page('search', directory, registry);
-  page('update', directory, registry);
+export const idActions = [ 'detail', 'remove', 'restore', 'update' ];
+
+export default function generate(directory: Directory, registry: Schema) {
+  generatePage('create', directory, registry);
+  generatePage('detail', directory, registry);
+  generatePage('export', directory, registry);
+  generatePage('import', directory, registry);
+  generatePage('remove', directory, registry);
+  generatePage('restore', directory, registry);
+  generatePage('search', directory, registry);
+  generatePage('update', directory, registry);
 };
 
-export function page(action: string, directory: Directory, registry: Registry) {
+export function generatePage(action: string, directory: Directory, schema: Schema) {
   const lower = action.toLowerCase();
   const title = action.charAt(0).toUpperCase() + action.slice(1);
   //loop through models
-  for (const model of registry.model.values()) {
-    const file = `${model.name}/admin/pages/${lower}.ts`;
-    const source = directory.createSourceFile(file, '', { overwrite: true });
+  for (const model of schema.models.values()) {
+    const ids = model.store.ids;
+    if (ids.size === 0 && idActions.includes(lower)) {
+      continue;
+    }
+
+    const filepath = model.name.toPathName(`%s/admin/pages/${lower}.ts`);
+    //load Profile/index.ts if it exists, if not create it
+    const source = loadProjectFile(directory, filepath);
+    
     // import type Request from '@stackpress/ingest/Request';
     source.addImportDeclaration({
       isTypeOnly: true,
@@ -52,7 +62,7 @@ export function page(action: string, directory: Directory, registry: Registry) {
     });
     // export default function AdminProfileCreatePage(req, res) {} 
     source.addFunction({
-      name: `Admin${model.title}${title}Page`,
+      name: `Admin${model.name.titleCase}${title}Page`,
       isDefaultExport: true,
       parameters: [
         { name: 'req', type: 'Request' }, 

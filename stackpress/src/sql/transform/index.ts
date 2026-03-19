@@ -1,94 +1,73 @@
-//schema
-import Registry from '../../schema/Registry.js';
-//root
-import type { IdeaPluginWithProject } from '../../types/index.js';
-//local
-import generateSchema from './schema.js';
+//modules
+import type { Directory } from 'ts-morph';
+//stackpress
+import type { IdeaProjectPluginProps } from '../../types.js';
+//stackpress/schema
+import type Model from '../../schema/Model.js';
+import Schema from '../../schema/Schema.js';
+//stackpress/sql
+import generateEvents from './events/index.js';
+import generateStore from './store/index.js';
 import generateActions from './actions.js';
-import generateEvents from './events.js';
-import generateTests from './tests/index.js';
+import generateScripts from './scripts.js';
+import generateTypes from './types.js';
+import generateActionsTests from './tests/actions.js';
+import generateEventsTests from './tests/events.js';
+import generateStoreTests from './tests/store.js';
 
-/**
- * Client File Structure
- * - profile/
- * | - actions/
- * | | - batch.ts
- * | | - create.ts
- * | | - detail.ts
- * | | - get.ts
- * | | - index.ts
- * | | - remove.ts
- * | | - restore.ts
- * | | - search.ts
- * | | - update.ts
- * | | - upsert.ts
- * | - events/
- * | | - batch.ts
- * | | - create.ts
- * | | - detail.ts
- * | | - get.ts
- * | | - index.ts
- * | | - remove.ts
- * | | - restore.ts
- * | | - search.ts
- * | | - update.ts
- * | | - upsert.ts
- * | - tests/
- * | | - actions.ts
- * | | - events.ts
- * | | - index.ts
- * | - index.ts
- * | - schema.ts
- * | - tests.ts
- */
-
-/**
- * This is the The params comes form the cli
- */
-export default async function generate(props: IdeaPluginWithProject) {
-  //-----------------------------//
+export default async function generate(props: IdeaProjectPluginProps) {
+  //------------------------------------------------------------------//
   // 1. Config
-  //extract props
-  const { schema, project } = props;
-  const registry = new Registry(schema);
 
-  //-----------------------------//
+  const schema = Schema.make(props.schema);
+  const directory = props.directory;
+
+  //------------------------------------------------------------------//
   // 2. Generators
-  // - profile/actions.ts
-  generateActions(project, registry);
-  // - profile/events.ts
-  generateEvents(project, registry);
-  // - profile/schema.ts
-  generateSchema(project, registry);
-  // - profile/tests.ts
-  generateTests(project, registry);
 
-  //-----------------------------//
-  // 3. Profile/index.ts
-
-  for (const model of registry.model.values()) {
-    const filepath = `${model.name}/index.ts`;
-    //load profile/index.ts if it exists, if not create it
-    const source = project.getSourceFile(filepath) 
-      || project.createSourceFile(filepath, '', { overwrite: true });
-    //import action from './actions/index.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './actions/index.js',
-      defaultImport: 'actions'
-    });
-    //import events from './events/index.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './events/index.js',
-      defaultImport: 'events'
-    });
-    //import schema from './schema.js';
-    source.addImportDeclaration({
-      moduleSpecifier: './schema.js',
-      defaultImport: 'schema'
-    });
-    //export { actions, schema, events };
-    source.addExportDeclaration({ 
-      namedExports: [ 'actions', 'schema', 'events' ] 
-    });
+  for (const model of schema.models.values()) {
+    generateModel(directory, model);
   }
+
+  //------------------------------------------------------------------//
+  // 3. scripts.ts
+
+  generateScripts(directory, schema);
 };
+
+export function generateModel(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // 1. Profile/ProfileStore.ts
+
+  generateStore(directory, model);
+
+  //------------------------------------------------------------------//
+  // 2. Profile/ProfileActions.ts
+
+  generateActions(directory, model);
+
+  //------------------------------------------------------------------//
+  // 3. Profile/events/*.ts
+
+  generateEvents(directory, model);
+
+  //------------------------------------------------------------------//
+  // 4. Profile/ProfileTypes.ts
+
+  generateTypes(directory, model);
+
+  //------------------------------------------------------------------//
+  // 5. Profile/tests/ProfileStore.test.ts
+
+  generateStoreTests(directory, model);
+
+  //------------------------------------------------------------------//
+  // 6. Profile/tests/ProfileActions.test.ts
+
+  generateActionsTests(directory, model);
+
+  //------------------------------------------------------------------//
+  // 7. Profile/tests/events.test.ts
+
+  generateEventsTests(directory, model);
+}

@@ -1,11 +1,11 @@
 //modules
 import { R22nProvider } from 'r22n';
-//views
+import Notifier from 'frui/Notifier';
+//stackpress/view
 import type { LayoutProviderProps } from '../types.js';
-//providers
+//stackpress/view/server
 import ServerProvider from '../server/ServerProvider.js';
-import ModalProvider from '../modal/ModalProvider.js';
-import NotifyProvider from '../notify/NotifyProvider.js';
+//stackpress/view/theme
 import ThemeProvider from '../theme/ThemeProvider.js';
 
 export default function LayoutProvider(props: LayoutProviderProps) {
@@ -29,13 +29,11 @@ export default function LayoutProvider(props: LayoutProviderProps) {
     >
       <R22nProvider language={label} translations={translations}>
         <ThemeProvider theme={theme}>
-          <NotifyProvider config={notify}>
-            <ModalProvider className="layout-modal">
-              {children}
-            </ModalProvider>
-          </NotifyProvider>
+          <Notifier.Provider {...notify}>
+            {children}
+          </Notifier.Provider>
         </ThemeProvider>
       </R22nProvider>
     </ServerProvider>
   );
-}
+};

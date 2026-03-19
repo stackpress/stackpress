@@ -61,4 +61,4 @@ export default function LayoutHead(props: LayoutHeadProps) {
       </div>
     </header>
   );
-}
+};

@@ -1,14 +1,115 @@
-//stackpress
-import type { SchemaConfig } from '@stackpress/idea-parser/types';
-import type Server from '@stackpress/ingest/Server';
-import type Engine from '@stackpress/inquire/Engine';
+//modules
+import type { SchemaConfig } from '@stackpress/idea-parser';
+import type { Request, Response, Server } from '@stackpress/ingest';
 import type Create from '@stackpress/inquire/Create';
-//spec
-import type Fieldset from '../schema/spec/Fieldset.js';
-import type Model from '../schema/spec/Model.js';
-import type Registry from '../schema/Registry.js';
-//sql
-import type { Actions } from '../sql/actions/index.js';
+import type Engine from '@stackpress/inquire/Engine';
+//stackpress/schema
+import type { DefinitionInterfaceMap } from '../schema/types.js';
+import SchemaInterface from '../schema/interface/SchemaInterface.js';
+//stackpress/sql
+import type { StoreRelation } from '../sql/types.js';
+import ActionsInterface from '../sql/interface/ActionsInterface.js';
+import StoreInterface from '../sql/interface/StoreInterface.js';
+
+export type GenericEventHandler<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  R = any,
+  S = any
+> = (req: Request<R>, res: Response<S>, ctx: Server<C, R, S>) => Promise<void>;
+
+export type GenericEvents<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  R = any,
+  S = any
+> = {
+  batch: GenericEventHandler<C, R, S>;
+  create: GenericEventHandler<C, R, S>;
+  detail: GenericEventHandler<C, R, S>;
+  get: GenericEventHandler<C, R, S>;
+  purge: GenericEventHandler<C, R, S>;
+  remove: GenericEventHandler<C, R, S>;
+  restore: GenericEventHandler<C, R, S>;
+  search: GenericEventHandler<C, R, S>;
+  update: GenericEventHandler<C, R, S>;
+  upsert: GenericEventHandler<C, R, S>;
+};
+
+export type GenericListener<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  R = any,
+  S = any
+> = (server: Server<C, R, S>) => void;
+
+export type GenericAdminRouter<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  R = any,
+  S = any
+> = (server: Server<C, R, S>) => void;
+
+export type ClientModel<
+  //model type
+  T extends Record<string, unknown> = Record<string, unknown>, 
+  //model type extended
+  E extends Record<string, unknown> = Record<string, unknown>, 
+  //column map
+  C extends DefinitionInterfaceMap = DefinitionInterfaceMap, 
+  //relation map
+  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}>>,
+  //server context map
+  X extends Record<string, unknown> = Record<string, unknown>,
+  //server request resource
+  Q = any,
+  //server response resource
+  S = any
+> = {
+  Schema: { 
+    new(seed?: string): SchemaInterface<T, C> 
+  },
+  Store: { 
+    new(seed?: string): StoreInterface<T, E, C, R> 
+  },
+  Actions: { 
+    new(engine: Engine, seed?: string): ActionsInterface<T, E, C, R> 
+  },
+  columns: C,
+  events: GenericEvents<X, Q, S>,
+  listen: GenericListener<X, Q, S>,
+  admin: GenericAdminRouter<X, Q, S>
+};
+
+export type ClientFieldset<
+  //fieldset type
+  T extends Record<string, unknown> = Record<string, unknown>, 
+  //column map
+  C extends DefinitionInterfaceMap = DefinitionInterfaceMap
+> = {
+  Schema: { 
+    new(seed?: string): SchemaInterface<T, C> 
+  },
+  columns: C
+};
+
+export type ClientScripts = {
+  install(engine: Engine): Promise<void>,
+  purge(engine: Engine): Promise<void>,
+  uninstall(engine: Engine): Promise<void>,
+  upgrade(engine: Engine, updates: Record<string, Create>): Promise<void>
+};
+
+//ie. ctx.plugin<ClientPlugin>('client');
+//contents from import('stackpress-client')
+export type ClientPlugin<
+  //exact map of models
+  //ex. { profile: ClientModel<Profile, ProfileExtended, { name: NameSchema, ...}, { auth: {} }> }
+  M extends Record<string, ClientModel> = Record<string, ClientModel>,
+  //exact map of fieldsets
+  F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
+> = {
+  config: SchemaConfig,
+  model: M,
+  fieldset: F,
+  scripts: ClientScripts
+};
 
 //ie. ctx.config<ClientConfig>('client');
 export type ClientConfig = {
@@ -32,21 +133,4 @@ export type ClientConfig = {
   //what tsconfig file to base the typescript compiler on
   //used by `stackpress/terminal` (for generating client)
   tsconfig: string
-};
-
-//ie. ctx.plugin<ClientPlugin>('client');
-export type ClientPlugin<
-  M extends Record<string, unknown> = {},
-  F extends Record<string, unknown> = {}
-> = {
-  config: SchemaConfig,
-  registry: Registry,
-  fieldset: Record<string, F & { config: Fieldset }>,
-  model: Record<string, M & { 
-    config: Model,
-    events: Server,
-    schema: Create,
-    actions: (engine: Engine, seed?: string) => Actions<M>,
-    admin(server: Server<any, any, any>): void
-  }>
 };

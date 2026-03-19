@@ -23,4 +23,4 @@ export default function LayoutMain(props: LayoutMainProps) {
       {children}
     </main>
   );
-}
+};

@@ -18,4 +18,4 @@ export default function LayoutMenu(props: LayoutMenuProps) {
       ))}
     </>
   );
-}
+};

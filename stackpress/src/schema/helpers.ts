@@ -1,7 +1,5 @@
 //node
 import crypto from 'node:crypto';
-//modules
-import mustache from 'mustache';
 
 export const generators = [
   'cuid()',
@@ -30,7 +28,7 @@ export function camelize(string: string) {
           .replace('_', '');
       })
   );
-}
+};
 
 /**
  * Converts a word into capital format
@@ -38,7 +36,7 @@ export function camelize(string: string) {
  */
 export function capitalize(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
-}
+};
 
 /**
  * Converts a string into dash format
@@ -56,7 +54,7 @@ export function dasherize(string: string) {
     //replace "someString" to "some-string"
     .replace(/([a-z])([A-Z0-9])/g, '$1-$2')
     .toLowerCase();
-}
+};
 
 /**
  * Used to decrypt sensitive info from the database
@@ -76,7 +74,7 @@ export function decrypt(encrypted: string, seed: string) {
     decipher.update(value), 
     decipher.final()
   ]).toString();
-}
+};
 
 /**
  * Used to encrypt sensitive info in the database
@@ -96,7 +94,7 @@ export function encrypt(value: string, seed: string) {
     cipher.final() 
   ]);
   return encrypted.toString('hex');
-}
+};
 
 /**
  * Creates a hash salt of a string
@@ -106,7 +104,7 @@ export function hash(string: string) {
     .createHash('shake256')
     .update(string)
     .digest('hex');
-}
+};
 
 /**
  * Converts a word into lower format
@@ -114,7 +112,7 @@ export function hash(string: string) {
  */
 export function lowerize(word: string) {
   return word.charAt(0).toLowerCase() + word.slice(1);
-}
+};
 
 /**
  * Converts a string into dash format
@@ -132,20 +130,28 @@ export function snakerize(string: string) {
     //replace "someString" to "some-string"
     .replace(/([a-z])([A-Z0-9])/g, '$1_$2')
     .toLowerCase();
-}
-
-export function render(template: string, data: Record<string, any> = {}) {
-  return mustache.render(template, data);
-}
+};
 
 /**
- * Convers an object of attributes to a string
- * ex. { type: 'text', number: 4, required: true, disabled: false } => 
- *   'type="text" required number={4} disabled={false}'
- * ex. { list: ['a', 2, true] } => 'list={["a", 2, true]}'
+ * Removes undefined values from an object
  */
-export function objectToAttributeString(attributes: Record<string, any>) {
-  return Object.entries(attributes).map(([key, value]) => {
-    return `${key}={${JSON.stringify(value)}}`;
-  }).join(' ');
-}
+export function removeUndefined<T extends Record<string, any>>(value: T) {
+  const entries = Object.entries(value).filter(
+    ([_, val]) => typeof val !== 'undefined'
+  );
+  return Object.fromEntries(entries) as { 
+    [key in keyof T]: Exclude<T[key], undefined> 
+  };
+};
+
+/**
+ * Removes empty string values from an object
+ */
+export function removeEmptyStrings<T extends Record<string, any>>(value: T) {
+  const entries = Object.entries(value).filter(
+    ([_, val]) => val !== ''
+  );
+  return Object.fromEntries(entries) as { 
+    [key in keyof T]: Exclude<T[key], ''> 
+  };
+};

@@ -1,126 +1,243 @@
 //modules
 import type { Directory } from 'ts-morph';
-//schema
-import type Registry from '../../schema/Registry.js';
+//stackpress/schema
+import type Model from '../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../schema/transform/helpers.js';
 
-export default function generate(directory: Directory, registry: Registry) {
-  //loop through models
-  for (const model of registry.model.values()) {
-    const ids = model.ids.map(column => `:${column.name}`).join('/')
-    const file = `${model.name}/admin/routes.ts`;
-    const source = directory.createSourceFile(file, '', { overwrite: true });
-    //import type Server from '@stackpress/ingest//Server';
-    source.addImportDeclaration({
-      isTypeOnly: true,
-      moduleSpecifier: '@stackpress/ingest/Server',
-      defaultImport: 'Server'
-    });
-    //export default function route(server: Server) {}
-    source.addFunction({
-      isDefaultExport: true,
-      name: 'routes',
-      parameters: [
-        { name: 'server', type: 'Server' }
-      ],
-      statements: `
-        const root = server.config.path('admin.root', '/admin');
-        server.import.all(
-          \`\${root}/${model.dash}/create\`, 
-          () => import('./pages/create.js')
-        );
-        server.import.all(
-          \`\${root}/${model.dash}/detail/${ids}\`, 
-          () => import('./pages/detail.js')
-        );
-        server.import.all(
-          \`\${root}/${model.dash}/export\`, 
-          () => import('./pages/export.js')
-        );
-        server.import.all(
-          \`\${root}/${model.dash}/import\`, 
-          () => import('./pages/import.js')
-        );
-        server.import.all(
-          \`\${root}/${model.dash}/remove/${ids}\`, 
-          () => import('./pages/remove.js')
-        );
-        server.import.all(
-          \`\${root}/${model.dash}/restore/${ids}\`, 
-          () => import('./pages/restore.js')
-        );
-        server.import.all(
-          \`\${root}/${model.dash}/search\`, 
-          () => import('./pages/search.js')
-        );
-        server.import.all(
-          \`\${root}/${model.dash}/update/${ids}\`, 
-          () => import('./pages/update.js')
-        );
-
-        const module = server.config.path<string>('client.module');
-        if (module) {
-          server.view.all(
-            \`\${root}/${model.dash}/create\`, 
-            \`\${module}/${model.name}/admin/views/create\`,
-            -100
-          );
-          server.view.all(
-            \`\${root}/${model.dash}/detail/${ids}\`, 
-            \`\${module}/${model.name}/admin/views/detail\`,
-            -100
-          );
-          server.view.all(
-            \`\${root}/${model.dash}/remove/${ids}\`, 
-            \`\${module}/${model.name}/admin/views/remove\`,
-            -100
-          );
-          server.view.all(
-            \`\${root}/${model.dash}/restore/${ids}\`, 
-            \`\${module}/${model.name}/admin/views/restore\`,
-            -100
-          );
-          server.view.all(
-            \`\${root}/${model.dash}/search\`, 
-            \`\${module}/${model.name}/admin/views/search\`,
-            -100
-          );
-          server.view.all(
-            \`\${root}/${model.dash}/update/${ids}\`, 
-            \`\${module}/${model.name}/admin/views/update\`,
-            -100
-          );
-        }
-      `.trim()
-    });
-  }
-
-  const source = directory.createSourceFile('admin.ts', '', { 
-    overwrite: true 
-  });
-  //import Server from '@stackpress/ingest/Server';
+export default function generate(directory: Directory, model: Model) {
+  const ids = model.store.ids.toArray().map(
+    column => `:${column.name.toString()}`
+  ).join('/');
+  const related = model.columns.filter(
+    column => Boolean(
+      column.type.model 
+        && column.store.localRelationship
+        && column.store.localRelationship.foreign.type === 2
+    )
+  ).toArray();
+  
+  const filepath = model.name.toPathName('%s/admin/routes.ts');
+  //load Profile/index.ts if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+  
+  //import type Server from '@stackpress/ingest//Server';
   source.addImportDeclaration({
+    isTypeOnly: true,
     moduleSpecifier: '@stackpress/ingest/Server',
     defaultImport: 'Server'
   });
-  //import profileRoutes from './profile/admin/routes.js';
-  for (const model of registry.model.values()) {
-    source.addImportDeclaration({
-      moduleSpecifier: `./${model.name}/admin/routes.js`,
-      defaultImport: `${model.camel}Routes`
-    });
-  }
-
-  //export default function route(router: MethodRouter) {}
+  //export default function route(server: Server) {}
   source.addFunction({
     isDefaultExport: true,
-    name: 'admin',
+    name: 'routes',
     parameters: [
       { name: 'server', type: 'Server' }
     ],
-    statements: `
-      ${Array.from(registry.model.values()).map(
-        model => `${model.camel}Routes(server);`
-      ).join('\n')}
-    `.trim()
+    statements: renderCode(TEMPLATE.ROUTES,
+      {
+        ids: ids,
+        create: {
+          route: model.name.toURLPath('${root}/%s/create'),
+          view: model.name.toPathName('${module}/%s/admin/views/create'),
+          import: './pages/create.js'
+        },
+        detail: {
+          route: model.name.toURLPath('${root}/%s/detail/' + ids),
+          view: model.name.toPathName('${module}/%s/admin/views/detail'),
+          import: './pages/detail.js'
+        },
+        remove: {
+          route: model.name.toURLPath('${root}/%s/remove/' + ids),
+          view: model.name.toPathName('${module}/%s/admin/views/remove'),
+          import: './pages/remove.js'
+        },
+        restore: {
+          route: model.name.toURLPath('${root}/%s/restore/' + ids),
+          view: model.name.toPathName('${module}/%s/admin/views/restore'),
+          import: './pages/restore.js'
+        },
+        search: {
+          route: model.name.toURLPath('${root}/%s/search'),
+          view: model.name.toPathName('${module}/%s/admin/views/search'),
+          import: './pages/search.js'
+        },
+        update: {
+          route: model.name.toURLPath('${root}/%s/update/' + ids),
+          view: model.name.toPathName('${module}/%s/admin/views/update'),
+          import: './pages/update.js'
+        },
+        import: {
+          route: model.name.toURLPath('${root}/%s/import'),
+          import: './pages/import.js'
+        },
+        export: {
+          route: model.name.toURLPath('${root}/%s/export'),
+          import: './pages/export.js'
+        },
+        details: related.map(column => {
+          const relationship = column.store.localRelationship!;
+          return {
+            create: {
+              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/create', {
+                model: model.name.toURLPath(),
+                ids: ids,
+                relation: relationship.local.model.name.toURLPath()
+              }),
+              import: relationship.local.model.name.toPathName('./pages/%s/create.js'),
+              view: renderCode('${module}/<%model%>/admin/views/<%relation%>/create', {
+                model: model.name.toString(),
+                relation: relationship.local.model.name.toString()
+              })
+            },
+            export: {
+              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/export', {
+                model: model.name.toURLPath(),
+                ids: ids,
+                relation: relationship.local.model.name.toURLPath()
+              }),
+              import: relationship.local.model.name.toPathName('./pages/%s/export.js'),
+              view: renderCode('${module}/<%model%>/admin/views/<%relation%>/export', {
+                model: model.name.toString(),
+                relation: relationship.local.model.name.toString()
+              })
+            },
+            import: {
+              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/import', {
+                model: model.name.toURLPath(),
+                ids: ids,
+                relation: relationship.local.model.name.toURLPath()
+              }),
+              import: relationship.local.model.name.toPathName('./pages/%s/import.js'),
+              view: renderCode('${module}/<%model%>/admin/views/<%relation%>/import', {
+                model: model.name.toString(),
+                relation: relationship.local.model.name.toString()
+              })
+            },
+            search: {
+              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/search', {
+                model: model.name.toURLPath(),
+                ids: ids,
+                relation: relationship.local.model.name.toURLPath()
+              }),
+              import: relationship.local.model.name.toPathName('./pages/%s/search.js'),
+              view: renderCode('${module}/<%model%>/admin/views/<%relation%>/search', {
+                model: model.name.toString(),
+                relation: relationship.local.model.name.toString()
+              })
+            }
+          };
+        })
+      }
+    )
   });
+};
+
+export const TEMPLATE = {
+
+ROUTES:
+`const root = server.config.path('admin.root', '/admin');
+server.import.all(
+  \`<%create.route%>\`, 
+  () => import('<%create.import%>')
+);
+server.import.all(
+  \`<%search.route%>\`, 
+  () => import('<%search.import%>')
+);
+server.import.all(
+  \`<%export.route%>\`, 
+  () => import('<%export.import%>')
+);
+server.import.all(
+  \`<%import.route%>\`, 
+  () => import('<%import.import%>')
+);
+<%#ids%>
+  server.import.all(
+    \`<%detail.route%>\`, 
+    () => import('<%detail.import%>')
+  );
+  server.import.all(
+    \`<%remove.route%>\`, 
+    () => import('<%remove.import%>')
+  );
+  server.import.all(
+    \`<%restore.route%>\`, 
+    () => import('<%restore.import%>')
+  );
+  server.import.all(
+    \`<%update.route%>\`, 
+    () => import('<%update.import%>')
+  );
+  <%#details%>
+    server.import.all(
+      \`<%create.route%>\`, 
+      () => import('<%create.import%>')
+    );
+    server.import.all(
+      \`<%export.route%>\`, 
+      () => import('<%export.import%>')
+    );
+    server.import.all(
+      \`<%import.route%>\`, 
+      () => import('<%import.import%>')
+    );
+    server.import.all(
+      \`<%search.route%>\`, 
+      () => import('<%search.import%>')
+    );
+  <%/details%>
+<%/ids%>
+
+const module = server.config.path<string>('client.module');
+if (module) {
+  server.view.all(
+    \`<%create.route%>\`, 
+    \`<%create.view%>\`,
+    -100
+  );
+  server.view.all(
+    \`<%search.route%>\`, 
+    \`<%search.view%>\`,
+    -100
+  );
+  <%#ids%>
+    server.view.all(
+      \`<%detail.route%>\`, 
+      \`<%detail.view%>\`,
+      -100
+    );
+    server.view.all(
+      \`<%remove.route%>\`, 
+      \`<%remove.view%>\`,
+      -100
+    );
+    server.view.all(
+      \`<%restore.route%>\`, 
+      \`<%restore.view%>\`,
+      -100
+    );
+    server.view.all(
+      \`<%update.route%>\`, 
+      \`<%update.view%>\`,
+      -100
+    );
+    <%#details%>
+      server.view.all(
+        \`<%create.route%>\`, 
+        \`<%create.view%>\`,
+        -100
+      );
+      server.view.all(
+        \`<%search.route%>\`, 
+        \`<%search.view%>\`,
+        -100
+      );
+    <%/details%>
+  <%/ids%>
+}`,
+
 };

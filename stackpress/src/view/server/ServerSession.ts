@@ -1,5 +1,6 @@
-//session
+//stackpress/view
 import type { ServerSessionProps, SessionPermission } from '../types.js';
+//stackpress/view/server
 import { matchAnyEvent, matchAnyRoute } from './helpers.js';
 
 /**

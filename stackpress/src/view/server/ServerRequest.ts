@@ -1,13 +1,13 @@
-//stackpress
+//modules
 import type { 
   Method, 
   UnknownNest,
   CallableMap, 
   CallableNest
 } from '@stackpress/lib/types';
-import map from '@stackpress/lib/map';
+import { map } from '@stackpress/lib/Map';
 import { nest } from '@stackpress/lib/Nest';
-//views
+//stackpress/view
 import type { ServerRequestProps } from '../types.js';
 
 /**
@@ -35,4 +35,4 @@ export default class Request<I extends UnknownNest = UnknownNest> {
     this.session = map(Object.entries(config.session));
     this.method = config.method || 'GET';
   }
-}
+};

@@ -1,14 +1,13 @@
 //node
 import path from 'node:path';
-//stackpress
+//modules
 import type Server from '@stackpress/ingest/Server';
 import type Request from '@stackpress/ingest/Request';
 import { action } from '@stackpress/ingest/Server';
-//types
-//terminal
-import type { CLIPlugin } from '../types.js';
-//scripts
+//stackpress/scripts
 import generate from '../../scripts/generate.js';
+//stackpress/terminal
+import type { CLIPlugin } from '../types.js';
 
 export default action(async function GenerateScript(req, res, ctx) {
   //if client config is not set, dont generate client

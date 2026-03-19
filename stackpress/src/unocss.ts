@@ -2,7 +2,7 @@ import { definePreset } from 'unocss';
 
 export default definePreset(() => {
   return {
-    name: "unocss-stackpress",
+    name: "unocss-frui-preset",
     variants: [
       //desktop first rule set
       matcher => matcher.startsWith('r4xl-') ? {
@@ -49,8 +49,31 @@ export default definePreset(() => {
     rules: [
       //theme rule set
       [ /^theme-(\w+)$/, ([_, color]) => ({ color: `var(--${color})` }) ],
+      [ /^theme-(\d)$/, ([_, color]) => {
+        if (color === '0') return { color: 'var(--zero)' };
+        if (color === '1') return { color: 'var(--default)' };
+        if (color === '2') return { color: 'var(--primary)' };
+        if (color === '3') return { color: 'var(--secondary)' };
+        return {};
+      } ],
       [ /^theme-bg-(\w+)$/, ([_, color]) => ({ 'background-color': `var(--${color})` }) ],
+      [ /^theme-bg-(\d)$/, ([_, color]) => {
+        if (color === '0') return { 'background-color': 'var(--bg-zero)' };
+        if (color === '1') return { 'background-color': 'var(--bg-first)' };
+        if (color === '2') return { 'background-color': 'var(--bg-second)' };
+        if (color === '3') return { 'background-color': 'var(--bg-third)' };
+        if (color === '4') return { 'background-color': 'var(--bg-fourth)' };
+        return {};
+      } ],
       [ /^theme-bc-(\w+)$/, ([_, color]) => ({ 'border-color': `var(--${color})` }) ],
+      [ /^theme-bc-(\d)$/, ([_, color]) => {
+        if (color === '0') return { 'border-color': 'var(--bg-zero)' };
+        if (color === '1') return { 'border-color': 'var(--bg-first)' };
+        if (color === '2') return { 'border-color': 'var(--bg-second)' };
+        if (color === '3') return { 'border-color': 'var(--bg-third)' };
+        if (color === '4') return { 'border-color': 'var(--bg-fourth)' };
+        return {};
+      } ],
       //hex color rule set
       [ /^hex-(\w{2,6})$/, ([_, color]) => ({ color: `#${color}` }) ],
       [ /^hex-bg-(\w{2,6})$/, ([_, color]) => ({ 'background-color': `#${color}` }) ],
@@ -71,6 +94,7 @@ export default definePreset(() => {
       [ /^px-bx-([\.\d]+)$/, ([_, num]) => ({ 'border-left-width': `${num}px`, 'border-right-width': `${num}px` }) ],
       [ /^px-by-([\.\d]+)$/, ([_, num]) => ({ 'border-bottom-width': `${num}px`, 'border-top-width': `${num}px` }) ],
       [ /^px-m-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ margin: `${num}px` }) ],
+      [ /^px-m-(\-{0,1}[\.\d]+)-(\-{0,1}[\.\d]+)-(\-{0,1}[\.\d]+)-(\-{0,1}[\.\d]+)$/, ([_, num1, num2, num3, num4]) => ({ margin: `${num1}px ${num2}px ${num3}px ${num4}px` }) ],
       [ /^px-mb-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ 'margin-bottom': `${num}px` }) ],
       [ /^px-ml-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ 'margin-left': `${num}px` }) ],
       [ /^px-mr-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({' margin-right': `${num}px` }) ],
@@ -78,6 +102,7 @@ export default definePreset(() => {
       [ /^px-mx-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ 'margin-left': `${num}px`, 'margin-right': `${num}px` }) ],
       [ /^px-my-(\-{0,1}[\.\d]+)$/, ([_, num]) => ({ 'margin-bottom': `${num}px`, 'margin-top': `${num}px` }) ],
       [ /^px-p-([\.\d]+)$/, ([_, num]) => ({ padding: `${num}px` }) ],
+      [ /^px-p-([\.\d]+)-([\.\d]+)-([\.\d]+)-([\.\d]+)$/, ([_, num1, num2, num3, num4]) => ({ padding: `${num1}px ${num2}px ${num3}px ${num4}px` }) ],
       [ /^px-pb-([\.\d]+)$/, ([_, num]) => ({ 'padding-bottom': `${num}px` }) ],
       [ /^px-pl-([\.\d]+)$/, ([_, num]) => ({ 'padding-left': `${num}px` }) ],
       [ /^px-pr-([\.\d]+)$/, ([_, num]) => ({' padding-right': `${num}px` }) ],

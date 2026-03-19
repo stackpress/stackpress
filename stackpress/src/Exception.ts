@@ -1,5 +1,5 @@
 
-//stackpress
+//modules
 import Exception from '@stackpress/lib/Exception';
 
 /**

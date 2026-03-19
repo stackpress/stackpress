@@ -1,16 +1,17 @@
 //node
 import path from 'node:path';
-//stackpress
+//modules
 import type { QueryObject } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 import type Server from '@stackpress/ingest/Server';
-//schema
+//stackpress/client
 import Revisions from '../client/Revisions.js';
-//sql
+//stackpress/sql
 import type { DatabaseConfig } from '../sql/types.js'; 
-import { sequence } from '../sql/helpers.js';
-//plugins
-import create from '../sql/schema.js';
+import { 
+  arrangeModelSequence, 
+  makeCreateQuery 
+} from '../sql/transform/helpers.js';
 
 export default async function migrate(
   server: Server<any, any, any>, 
@@ -35,18 +36,18 @@ export default async function migrate(
     //this is where we are going to store all the queries
     const queries: QueryObject[] = [];
     //get models
-    const models = Array.from(first.registry.model.values());
+    const models = first.schema.models.toArray();
     //there's an order to creating and dropping tables
-    const order = sequence(models);
+    const order = arrangeModelSequence(models);
     //add drop queries
     for (const model of order) {
-      queries.push(database.dialect.drop(model.snake));
+      queries.push(database.dialect.drop(model.name.snakeCase));
     }
     //add create queries
     for (const model of order.reverse()) {
       const exists = models.find(map => map.name === model.name);
       if (exists) {
-        const schema = create(exists);
+        const schema = makeCreateQuery(exists);
         schema.engine = database;
         queries.push(...schema.query());
       }
@@ -68,12 +69,12 @@ export default async function migrate(
     const to = await revisions.index(i);
     if (!from || !to) break;
     //create a registry from the history
-    const previous = Array.from(from.registry.model.values()).map(
-      model => create(model)
+    const previous = from.schema.models.toArray().map(
+      model => makeCreateQuery(model)
     );
     //create a registry from the new generated schema
-    const current = Array.from(to.registry.model.values()).map(
-      model => create(model)
+    const current = to.schema.models.toArray().map(
+      model => makeCreateQuery(model)
     );
     //this is where we are going to store all the queries
     const queries: QueryObject[] = [];

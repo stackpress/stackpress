@@ -1,4 +1,4 @@
-//session
+//stackpress/view
 import type { SessionRoute } from '../types.js';
 
 export const isRegExp = /^\/.+\/[igmsuy]*$/;
@@ -22,7 +22,7 @@ export function matchAnyEvent(permit: string, permissions: string[]) {
   }
   //nothing in the permission list matched
   return false;
-}
+};
 
 /**
  * Returns true if the permit matches 
@@ -39,7 +39,7 @@ export function matchAnyRoute(permit: SessionRoute, permissions: SessionRoute[])
   }
   //nothing in the permission list matched
   return false;
-}
+};
 
 /**
  * Returns true if the permit 
@@ -74,7 +74,7 @@ export function matchEvent(permit: string, permission: string) {
   );
   //test the permit
   return regexp.test(permit);
-}
+};
 
 /**
  * Returns true if the permit 
@@ -122,4 +122,4 @@ export function matchRoute(permit: SessionRoute, permission: SessionRoute) {
   );
   //test the permit
   return regexp.test(permit.route);
-}
+};

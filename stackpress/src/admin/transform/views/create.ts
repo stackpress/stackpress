@@ -1,15 +1,42 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//schema
-import type Registry from '../../../schema/Registry.js';
-import type Model from '../../../schema/spec/Model.js';
+//stackpress/schema
+import type Model from '../../../schema/Model.js';
+import { 
+  loadProjectFile, 
+  renderCode 
+} from '../../../schema/transform/helpers.js';
 
-export default function createView(directory: Directory, _registry: Registry, model: Model) {
-  const file = `${model.name}/admin/views/create.tsx`;
-  const source = directory.createSourceFile(file, '', { overwrite: true });
-  //import 'frui/frui.css';
-  //import 'stackpress/fouc.css';
+export default function createView(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/views/create.tsx
+
+  const filepath = model.name.toPathName('%s/admin/views/create.tsx');
+  //load file if it exists, if not create it
+  const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+
+  //import { useLanguage } from 'r22n';
+  source.addImportDeclaration({
+    moduleSpecifier: 'r22n',
+    namedImports: [ 'useLanguage' ]
+  });
+  //import Button from 'frui/Button';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Button',
+    defaultImport: 'Button'
+  });
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -23,185 +50,228 @@ export default function createView(directory: Directory, _registry: Registry, mo
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
+  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'useServer', 'LayoutAdmin' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileInput, Profile } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
-    namedImports: [ `${model.title}Input`, model.title ]
+    namedImports: [ 
+      model.name.toTypeName('%sInput'), 
+      model.name.toTypeName()
+    ]
   });
-  //import { useLanguage } from 'r22n';
-  source.addImportDeclaration({
-    moduleSpecifier: 'r22n',
-    namedImports: [ 'useLanguage' ]
-  });
-  //import Button from 'frui/form/Button';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Button',
-    defaultImport: 'Button'
-  });
-  //import { useServer, Crumbs, LayoutAdmin } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'Crumbs', 'LayoutAdmin' ]
-  });
-  //import { ActiveFieldControl } from '../../components/fields/ActiveField.js';
-  model.fields.forEach(column => {
-    //skip if no component
-    if (typeof column.field.component !== 'string') return;
-    if (column.field.method === 'fieldset') {
-      //import { ActiveFieldsetControl } from '../../components/fields/ActiveField.js';
-      source.addImportDeclaration({
-        moduleSpecifier: `../../components/fields/${column.title}Field.js`,
-        namedImports: [ `${column.title}FieldsetControl` ]
-      });
-      return;
-    }
+  //import { ActiveFieldControl } from '../../components/form/ActiveField.js';
+  model.component.formFields.forEach(column => {
+    const field = column.component.formField!;
+    const component = field.component.definition!;
+    //import { ActiveFieldsetControl } from '../../components/form/ActiveField.js';
     source.addImportDeclaration({
-      moduleSpecifier: `../../components/fields/${column.title}Field.js`,
-      namedImports: [ `${column.title}FieldControl` ]
+      moduleSpecifier: column.name.toPathName(
+        '../../components/form/%sFormField.js'
+      ),
+      namedImports: [ 
+        component.name === 'Fieldset'
+          ? column.name.toComponentName('%sFormFieldsetControl') 
+          : column.name.toComponentName('%sFormFieldControl') 
+      ]
     });
   });
+
+  //------------------------------------------------------------------//
+  // Exports
   
-  //export function AdminProfileCreateCrumbs() {}
+  //export function ProfileAdminCreateCrumbs() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreateCrumbs`,
-    statements: (`
-      //hooks
-      const { _ } = useLanguage();
-      //variables
-      const crumbs = [
-        {
-          label: (<span className="admin-crumb">{_('${model.plural}')}</span>),
-          icon: 'user',
-          href: 'search'
-        },
-        {
-          label: _('Create'),
-          icon: 'plus'
+    name: model.name.toComponentName('%sAdminCreateCrumbs'),
+    statements: renderCode(TEMPLATE.CREATE_CRUMBS, { 
+      search: {
+        label: model.name.plural || model.name.titleCase,
+        icon: model.name.icon
+      }
+    })
+  });
+  //export function ProfileAdminCreateForm() {}
+  source.addFunction({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminCreateForm'),
+    parameters: [{ 
+      name: 'props', 
+      type: renderCode(TEMPLATE.CREATE_FORM_PROPS, { 
+        type: model.name.toTypeName('%sInput') 
+      }) 
+    }],
+    statements: renderCode(TEMPLATE.CREATE_FORM_BODY,{
+      fields: model.component.formFields.toArray().map(column => {
+        const attribute = column.component.formField!;
+        const component = attribute.component.definition!;
+        if (component.name === 'Fieldset') {
+          return renderCode(TEMPLATE.CREATE_FORM_FIELDSET, {
+            component: column.name.toComponentName('%sFormFieldsetControl'),
+            column: column.name.toString()
+          });
         }
-      ];
-      return (<Crumbs crumbs={crumbs} />);
-    `)
+        return renderCode(TEMPLATE.CREATE_FORM_FIELD, {
+          component: column.name.toComponentName('%sFormFieldControl'),
+          column: column.name.toString(),
+          multiple: column.type.multiple ? '[]' : ''
+        });
+      }).join('\n')
+    })
   });
-  //export function AdminProfileCreateForm() {}
+  //export function ProfileAdminCreateBody() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreateForm`,
-    parameters: [{ 
-      name: 'props', 
-      type: `{ 
-        input: Partial<${model.title}Input>, 
-        errors: NestedObject<string | string[]> 
-      }` 
-    }],
-    statements: (`
-      const { input, errors } = props;
-      const { _ } = useLanguage();
-      return (
-        <form method="post">
-          ${model.fields.map(column => column.field.method === 'fieldset' ? (`
-            <${column.title}FieldsetControl 
-              className="control"
-              name="${column.name}"
-              value={input['${column.name}']} 
-              errors={errors['${column.name}']} 
-            />
-          `) : (`
-            <${column.title}FieldControl 
-              className="control"
-              name="${column.name}${column.multiple ? '[]' : ''}"
-              value={input['${column.name}']} 
-              error={errors.${column.name}?.toString()} 
-            />
-          `)).join('\n')}
-          <Button className="submit" type="submit">
-            <i className="icon fas fa-fw fa-save"></i>
-            {_('Save')}
-          </Button>
-        </form>
-      ); 
-    `)
+    name: model.name.toComponentName('%sAdminCreateBody'),
+    statements: renderCode(TEMPLATE.CREATE_BODY, {
+      type: model.name.toTypeName(),
+      input: model.name.toTypeName('%sInput'),
+      crumbs: model.name.toComponentName('%sAdminCreateCrumbs'),
+      form: model.name.toComponentName('%sAdminCreateForm')
+    })
   });
-  //export function AdminProfileCreateBody() {}
+  //export function ProfileAdminCreateHead() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreateBody`,
-    statements: (`
-      const { request, response } = useServer<${[
-        'AdminConfigProps', 
-        `Partial<${model.title}Input>`,
-        model.title
-      ].join(', ')}>();
-      const input = { ...response.results, ...request.data() };
-      const errors = response.errors();
-      //render
-      return (
-        <main className="admin-page admin-form-page">
-          <div className="admin-crumbs">
-            <Admin${model.title}CreateCrumbs />
-          </div>
-          <div className="admin-form">
-            <Admin${model.title}CreateForm errors={errors} input={input} />
-          </div>
-        </main>
-      );
-    `)
-  });
-  //export function AdminProfileCreateHead() {}
-  source.addFunction({
-    isExported: true,
-    name: `Admin${model.title}CreateHead`,
+    name: model.name.toComponentName('%sAdminCreateHead'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      const { data, styles = [] } = props;
-      const { favicon = '/favicon.ico' } = data?.brand || {};
-      const { _ } = useLanguage();
-      const mimetype = favicon.endsWith('.png')
-        ? 'image/png'
-        : favicon.endsWith('.svg')
-        ? 'image/svg+xml'
-        : 'image/x-icon';
-      return (
-        <>
-          <title>{_('Create ${model.singular}')}</title>
-          {favicon && <link rel="icon" type={mimetype} href={favicon} />}
-          <link rel="stylesheet" type="text/css" href="/styles/global.css" />
-          {styles.map((href, index) => (
-            <link key={index} rel="stylesheet" type="text/css" href={href} />
-          ))}
-        </>
-      );  
-    `)
+    statements: renderCode(TEMPLATE.CREATE_HEAD, { 
+      name: model.name.singular 
+    })
   });
-  //export function AdminProfileCreatePage() {}
+  //export function ProfileAdminCreatePage() {}
   source.addFunction({
     isExported: true,
-    name: `Admin${model.title}CreatePage`,
+    name: model.name.toComponentName('%sAdminCreatePage'),
     parameters: [{ 
       name: 'props', 
       type: 'ServerPageProps<AdminConfigProps>'
     }],
-    statements: (`
-      return (
-        <LayoutAdmin {...props}>
-          <Admin${model.title}CreateBody />
-        </LayoutAdmin>
-      );  
-    `)
+    statements: renderCode(TEMPLATE.CREATE_PAGE, { 
+      component: model.name.toComponentName('%sAdminCreateBody') 
+    })
   });
-  //export const Head = AdminProfileCreateHead;
+  //export const Head = ProfileAdminCreateHead;
   source.addVariableStatement({
     isExported: true,
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'Head',
-      initializer: `Admin${model.title}CreateHead`
+      initializer: `${model.name.toComponentName('%sAdminCreateHead')}`
     }]
   });
-  //export default AdminProfileCreatePage;
-  source.addStatements(`export default Admin${model.title}CreatePage;`);
-}
+  //export default ProfileAdminCreatePage;
+  source.addStatements(
+    `export default ${model.name.toComponentName('%sAdminCreatePage')};`
+  );
+};
+
+export const TEMPLATE = {
+
+CREATE_CRUMBS:
+`//hooks
+const { _ } = useLanguage();
+return (
+  <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
+    <Bread.Slicer>
+      <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
+    </Bread.Slicer>
+    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="search">
+      {_('<%search.label%>')}
+    </Bread.Crumb>
+    <Bread.Crumb icon="plus">
+      {_('Create')}
+    </Bread.Crumb>
+  </Bread>
+);`,
+  
+CREATE_FORM_PROPS:
+`{ 
+  input: Partial<<%type%>>, 
+  errors: NestedObject<string | string[]> 
+}`,
+
+CREATE_FORM_BODY:
+`const { input, errors } = props;
+const { _ } = useLanguage();
+return (
+  <form method="post">
+    <%fields%>
+    <Button className="submit" type="submit">
+      <i className="icon fas fa-fw fa-save"></i>
+      {_('Save')}
+    </Button>
+  </form>
+);`,
+
+CREATE_FORM_FIELDSET:
+`<<%component%>
+  className="control"
+  name="<%column%>"
+  value={input['<%column%>']} 
+  errors={errors['<%column%>']} 
+/>`,
+
+CREATE_FORM_FIELD:
+`<<%component%>
+  className="control"
+  name="<%column%><%multiple%>"
+  value={input['<%column%>']} 
+  error={errors.<%column%>?.toString()} 
+/>`,
+
+CREATE_BODY:
+`const { request, response } = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
+const input = { ...response.results, ...request.data() };
+const errors = response.errors();
+//render
+return (
+  <main className="admin-page admin-form-page">
+    <div className="admin-crumbs">
+      <<%crumbs%> />
+    </div>
+    <div className="admin-form">
+      <<%form%> errors={errors} input={input} />
+    </div>
+  </main>
+);`,
+
+CREATE_HEAD:
+`const { data, styles = [] } = props;
+const { favicon = '/favicon.ico' } = data?.brand || {};
+const { _ } = useLanguage();
+const mimetype = favicon.endsWith('.png')
+  ? 'image/png'
+  : favicon.endsWith('.svg')
+  ? 'image/svg+xml'
+  : 'image/x-icon';
+return (
+  <>
+    <title>{_('Create <%name%>')}</title>
+    {favicon && <link rel="icon" type={mimetype} href={favicon} />}
+    <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+    {styles.map((href, index) => (
+      <link key={index} rel="stylesheet" type="text/css" href={href} />
+    ))}
+  </>
+);`,
+
+CREATE_PAGE:
+`return (
+  <LayoutAdmin {...props}>
+    <<%component%> />
+  </LayoutAdmin>
+);`
+
+};
