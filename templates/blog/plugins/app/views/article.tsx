@@ -11,13 +11,6 @@ import type { ArticleExtended } from 'blog-client/types';
 import Layout from '../components/Layout.js';
 
 //--------------------------------------------------------------------//
-// Constants
-
-const title = 'The Blog';
-const description = 'A simple blog built with Stackpress.';
-const url = 'https://stackpress.dev/blog';
-
-//--------------------------------------------------------------------//
 // Helpers
 
 /**
@@ -36,51 +29,48 @@ function formatDate(dateString: string | Date) {
 // Components
 
 export function Body() {
-  const response = useResponse<ArticleExtended[]>();
-  const rows = response.results || [];
+  const response = useResponse<ArticleExtended>();
+  const article = response.results!;
   const { _ } = useLanguage();
   return (
-    <main className="flex flex-col w-full h-full">
+    <main className="flex flex-col w-full h-full article-detail">
       <div className="px-p-10 px-mw-960 mx-auto">
-        <h1 className="text-2xl font-bold px-pb-10">
-          {_('Whats New')}
+        {!!article.published && (
+          <em className="inline-flex items-center">
+            <i className="fas fa-fw fa-calendar inline-block px-mr-5" />
+            {formatDate(article.published)}
+          </em>
+        )}
+        <div className="px-mt-5 px-h-200 overflow-hidden">
+          {!!article.banner && (
+            <img src={article.banner} alt={article.title} />
+          )}
+        </div>
+        <h1 className="px-mt-5 text-xl font-bold">
+          {_(article.title)}
         </h1>
-        {rows.map((article, index) => (
-          <div key={index} className="px-mt-10 px-pt-10 border-t theme-bc-2">
-            {!!article.published && (
-              <em className="inline-flex items-center">
-                <i className="fas fa-fw fa-calendar inline-block px-mr-5" />
-                {formatDate(article.published)}
-              </em>
-            )}
-            <div className="px-mt-5 px-h-200 overflow-hidden">
-              {!!article.banner && (
-                <a href={`/articles/${article.slug}`}>
-                  <img src={article.banner} alt={article.title} />
-                </a>
-              )}
-            </div>
-            <h2 className="px-mt-5 text-xl font-bold">
-              <a href={`/articles/${article.slug}`} className="text-blue-500 hover:underline">
-                {article.title}
-              </a>
-            </h2>
-          </div>
-        ))}
+        <em className="inline-flex items-center">
+          <i className="fas fa-fw fa-user inline-block px-mr-5" />
+          by: {article.profile.name}
+        </em>
+        <div 
+          className="px-mt-10" 
+          dangerouslySetInnerHTML={{ __html: article.contents || '' }} 
+        />
       </div>
     </main>
   );
 }
 
 export function Head(props: ServerPageProps) {
-  const { styles = [] } = props;
+  const { styles = [], response } = props;
+  const article = response.results as Record<string, any>;
+  const title = article.title;
   return (
     <>
       <title>{title}</title>
-      <meta name="description" content={description} />
       <meta property="og:title" content={title} />
       <meta property="og:image" content="/icon.png" />
-      <meta property="og:url" content={url} />
       <meta property="og:type" content="website" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:title" content={title} />
@@ -88,6 +78,7 @@ export function Head(props: ServerPageProps) {
 
       <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+      <link rel="stylesheet" type="text/css" href="/styles/article.css" />
       {styles.map((href, index) => (
         <link key={index} rel="stylesheet" type="text/css" href={href} />
       ))}

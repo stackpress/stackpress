@@ -32,7 +32,7 @@ export default action.props(async function Populate({ ctx }) {
     banner: 'https://g.foolcdn.com/editorial/images/598665/pokemon-go.jpg',
     slug: 'pokemon-turns-30-how-the-fictional-pocket-monsters-shaped-science',
     title: 'Pokémon turns 30 — how the fictional pocket monsters shaped science',
-    content: `<p>On 27 February 1996, Japanese game designer Satoshi Tajiri 
+    contents: `<p>On 27 February 1996, Japanese game designer Satoshi Tajiri 
     released the first ever Pokémon games for the Nintendo Game Boy. What 
     started as a childhood passion for collecting insects grew into a giant 
     franchise and global phenomenon with themes of science at its heart.</p>
@@ -54,7 +54,7 @@ export default action.props(async function Populate({ ctx }) {
     banner: 'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MSpotlight_HEADER.jpg',
     slug: 'minecraft-is-15-years-old-and-still-changing-lives',
     title: 'Minecraft is 15 years old and still changing lives',
-    content: `<p>A few days ago, I was tidying my home office – which more 
+    contents: `<p>A few days ago, I was tidying my home office – which more 
     closely resembles a video game arcade recently hit by a tornado – when I 
     found a long-lost piece of technology in the bottom drawer of my filing 
     cabinet. It was an old Xbox 360, the Elite model – black, heavy, ungainly, 

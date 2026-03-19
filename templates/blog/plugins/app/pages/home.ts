@@ -1,7 +1,6 @@
 //modules
 import { action } from '@stackpress/ingest';
-//plugins/store
 
-export default action.props(async function HomePage({ res }) {
-  res.setResults({ title: 'The Blog' });
+export default action.props(async function HomePage({ req, res, ctx }) {
+  await ctx.emit('article-search', req, res);
 });

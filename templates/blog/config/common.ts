@@ -270,7 +270,7 @@ export const session = {
     ADMIN: [
       //page routes
       { method: 'ALL', route: '/' },
-      { method: 'GET', route: '/form' },
+      { method: 'ALL', route: '/articles/**' },
       { method: 'ALL', route: '/auth/**' },
       { method: 'ALL', route: '/admin/**' },
       { method: 'ALL', route: '/api/**' }
@@ -278,14 +278,14 @@ export const session = {
     USER: [
       //page routes
       { method: 'ALL', route: '/' },
-      { method: 'GET', route: '/form' },
+      { method: 'ALL', route: '/articles/**' },
       { method: 'ALL', route: '/auth/**' },
       { method: 'ALL', route: '/api/**' }
     ],
     GUEST: [
       //page routes
       { method: 'ALL', route: '/' },
-      { method: 'GET', route: '/form' },
+      { method: 'ALL', route: '/articles/**' },
       { method: 'ALL', route: '/auth/**' },
       { method: 'ALL', route: '/api/**' }
     ]

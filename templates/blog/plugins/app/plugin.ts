@@ -16,5 +16,8 @@ export default function plugin(server: HttpServer<Config>) {
   server.on('route', async _ => {
     server.import.get('/', () => import('./pages/home.js'));
     server.view.get('/', '@/plugins/app/views/home');
+
+    server.import.get('/articles/:slug', () => import('./pages/article.js'));
+    server.view.get('/articles/:slug', '@/plugins/app/views/article');
   });
 };
