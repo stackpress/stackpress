@@ -2,30 +2,14 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //stackpress/schema
-import type Column from '../../../../schema/Column.js';
-import type Fieldset from '../../../../schema/Fieldset.js';
 import type Model from '../../../../schema/Model.js';
 import { 
   loadProjectFile, 
   renderCode 
 } from '../../../../schema/transform/helpers.js';
 //stackpress/admin
+import type { Relationship } from '../../types.js';
 import { render } from '../../helpers.js';
-
-export type Relationship = {
-  foreign: {
-      model: Model,
-      column: Column,
-      key: Column,
-      type: number
-  },
-  local: {
-      model: Fieldset,
-      column: Column,
-      key: Column,
-      type: number
-  };
-};
 
 export default function generate(
   directory: Directory, 
@@ -43,6 +27,9 @@ export default function generate(
   ).map(column => column.store.localRelationship!).toArray();
   const foreign = relationship.local.model as Model;
 
+  //------------------------------------------------------------------//
+  // Profile/admin/views/Auth/search.tsx
+
   const filepath = renderCode(
     '<%model%>/admin/views/<%relation%>/search.tsx', 
     {
@@ -50,32 +37,17 @@ export default function generate(
       relation: foreign.name.toPathName()
     }
   );
-  //load Profile/admin/views/Auth/search.tsx if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import type { ChangeEvent, MouseEventHandler, SetStateAction } from 'react';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'react',
     namedImports: [ 'ChangeEvent', 'MouseEventHandler', 'SetStateAction' ]
-  });
-  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
-  });
-  //import type { AdminConfigProps } from 'stackpress/admin/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/admin/types',
-    namedImports: [ 'AdminConfigProps' ]
-  });
-  //import type { StoreSearchQuery } from 'stackpress/sql/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql/types',
-    namedImports: [ 'StoreSearchQuery' ]
   });
   //import { useState } from 'react';
   source.addImportDeclaration({
@@ -124,6 +96,28 @@ export default function generate(
     moduleSpecifier: 'frui/Notifier',
     namedImports: [ 'notify', 'flash' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
+  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
+  });
+  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/admin/types',
+    namedImports: [ 'AdminConfigProps' ]
+  });
+  //import type { StoreSearchQuery } from 'stackpress/sql/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSearchQuery' ]
+  });
   //import { paginate, filter, order, useServer, 
   // LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -141,6 +135,10 @@ export default function generate(
     moduleSpecifier: 'stackpress/view/import',
     namedImports: [ 'batchAndSend' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileExtended } from '../../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -191,6 +189,9 @@ export default function generate(
       namedImports: [ column.name.toComponentName('%sSpanFieldControl') ]
     });
   });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function AdminProfileAuthSearchCrumbs() {}
   source.addFunction({
@@ -373,7 +374,11 @@ export default function generate(
         )
       ).join('\n'),
       model: foreign.name.toURLPath(),
-      ids: ids.map(name => `\${row.${name}}`).join('/')
+      ids: foreign.store.ids
+        .toArray()
+        .map(column => column.name)
+        .map(name => `\${row.${name}}`)
+        .join('/')
     })
   });
   //export function AdminProfileAuthSearchBody() {}

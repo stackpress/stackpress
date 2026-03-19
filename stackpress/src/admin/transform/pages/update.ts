@@ -8,9 +8,17 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/update.ts
+
   const filepath = model.name.toPathName('%s/admin/pages/update.ts');
-  //load Profile/admin/pages/update.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
@@ -36,6 +44,10 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileExtended } from '../../types.js';
   if (model.value.hashed.size > 0) {
     source.addImportDeclaration({
@@ -45,7 +57,10 @@ export default function generate(directory: Directory, model: Model) {
     });
   }
 
-  //export default async function ProfileAdminUpdatePage(req: Request, res: Response, ctx: Server) {}
+  //------------------------------------------------------------------//
+  // Exports
+
+  //export default async function ProfileAdminUpdatePage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -57,16 +72,11 @@ export default function generate(directory: Directory, model: Model) {
     ],
     statements: renderCode(TEMPLATE.UPDATE, { 
       event: model.name.toEventName(),
-      pathname: model.name.toURLPath(),
-      ids: model.store.ids.map(column => ({
-        column: column.name.toString(),
-        label: column.name.label
-      })).toArray(),
-      idpath: model.store.ids.map(
+      model: model.name.toURLPath(),
+      extended: model.name.toClassName('%sExtended'),
+      ids: model.store.ids.map(
         column => `\${req.data.get('${column.name.toString()}')}`
       ).toArray().join('/'),
-      extended: model.name.toClassName('%sExtended'),
-      hash: model.value.hashed.size > 0,
       hashes: model.value.hashed?.map(
         column => ({ column: column.name.toString() })
       ).toArray() || []
@@ -113,18 +123,6 @@ res.data.set('admin', {
   menu: admin.menu || []
 });
 
-//validate id/s
-const errors: Record<string, string> = {};
-<%#ids%>
-  if (!req.data.has('<%column%>')) {
-    errors['<%column%>'] = 'Missing <%label%>';
-  }
-<%/ids%>
-if (Object.keys(errors).length) {
-  res.setError('Invalid parameters', errors, [], 404, 'Not Found');
-  return;
-}
-
 //if form submitted
 if (req.method === 'POST' || req.method === 'PUT') {
   //emit update with the fixed fields
@@ -133,24 +131,24 @@ if (req.method === 'POST' || req.method === 'PUT') {
   if (res.code === 200) {
     //redirect
     const base = admin.base || '/admin';
-    res.redirect(\`\${base}/<%pathname%>/detail/<%idpath%>\`);
+    res.redirect(\`\${base}/<%model%>/detail/<%ids%>\`);
     return;
   }
   //let the error pass through
   return;
 }
 //not submitted, fetch the data using the id
-<%#hash%>
-  const response = await ctx.resolve<Partial<<%extended%>>>('<%event%>-detail', req);
+<%#hashes.length%>
+  const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
   <%#hashes%>
     if (typeof response.results?.<%column%> !== 'undefined') {
       delete response.results.<%column%>;
     }
   <%/hashes%>
   res.fromStatusResponse(response);
-<%/hash%>
-<%^hash%>
+<%/hashes.length%>
+<%^hashes.length%>
   await ctx.emit('<%event%>-detail', req, res);
-<%/hash%>`,
+<%/hashes.length%>`,
 
 };

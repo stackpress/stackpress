@@ -92,8 +92,7 @@ model Profile
               @description("Generated timestamp that is updated whenever the row has changed.")
               @examples("2025-10-01T12:00:00Z")
   
-  auth        Auth?
-
+  auth         Auth[]        @label("Authentications")
   applications Application[] @label("Applications")
   sessions     Session[]     @label("Sessions")
 }

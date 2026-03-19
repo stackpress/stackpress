@@ -13,6 +13,12 @@ import generateImport from './detail/import.js';
 import generateSearch from './detail/search.js';
 
 export default function generate(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/Auth/create.ts
+  // Profile/admin/pages/Auth/export.ts
+  // Profile/admin/pages/Auth/import.ts
+  // Profile/admin/pages/Auth/search.ts
+
   const related = model.columns.filter(
     column => Boolean(
       column.type.model 
@@ -28,9 +34,17 @@ export default function generate(directory: Directory, model: Model) {
     generateSearch(directory, model, column.store.localRelationship!);
   }
 
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/detail.ts
+
   const filepath = model.name.toPathName('%s/admin/pages/detail.ts');
-  //load Profile/admin/pages/detail.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
@@ -56,6 +70,10 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileExtended } from '../../types.js';
   if (model.value.hashed.size > 0) {
     source.addImportDeclaration({
@@ -64,8 +82,11 @@ export default function generate(directory: Directory, model: Model) {
       namedImports: [ model.name.toClassName('%sExtended') ]
     });
   }
+
+  //------------------------------------------------------------------//
+  // Exports
   
-  //export default async function ProfileAdminDetailPage(req: Request, res: Response, ctx: Server) {}
+  //export default async function ProfileAdminDetailPage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -77,13 +98,8 @@ export default function generate(directory: Directory, model: Model) {
     ],
     statements: renderCode(TEMPLATE.DETAIL, { 
       event: model.name.toEventName(),
-      ids: model.store.ids.map(column => ({
-        column: column.name.toString(),
-        label: column.name.label
-      })).toArray(),
       extended: model.name.toClassName('%sExtended'),
-      hash: model.value.hashed.size > 0,
-      hashes: model.value.hashed?.map(
+      hashes: model.value.hashed.map(
         column => ({ column: column.name.toString() })
       ).toArray() || []
     })
@@ -129,29 +145,17 @@ res.data.set('admin', {
   menu: admin.menu || []
 });
 
-//validate id/s
-const errors: Record<string, string> = {};
-<%#ids%>
-  if (!req.data.has('<%column%>')) {
-    errors['<%column%>'] = 'Missing <%label%>';
-  }
-<%/ids%>
-if (Object.keys(errors).length) {
-  res.setError('Invalid parameters', errors, [], 404, 'Not Found');
-  return;
-}
-
-<%#hash%>
-  const response = await ctx.resolve<Partial<<%extended%>>>('<%event%>-detail', req);
+<%#hashes.length%>
+  const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
   <%#hashes%>
     if (typeof response.results?.<%column%> !== 'undefined') {
       delete response.results.<%column%>;
     }
   <%/hashes%>
   res.fromStatusResponse(response);
-<%/hash%>
-<%^hash%>
+<%/hashes.length%>
+<%^hashes.length%>
   await ctx.emit('<%event%>-detail', req, res);
-<%/hash%>`,
+<%/hashes.length%>`,
 
 };

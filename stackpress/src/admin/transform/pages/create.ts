@@ -8,9 +8,15 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/create.ts
+
   const filepath = model.name.toPathName('%s/admin/pages/create.ts');
-  //load Profile/admin/pages/create.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import type { UnknownNest } from '@stackpress/lib/types';
   source.addImportDeclaration({
@@ -18,6 +24,15 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
+  //import { isObject } from '@stackpress/lib/Nest';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/lib/Nest',
+    namedImports: [ 'isObject' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -42,13 +57,23 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
-  //import { isObject } from '@stackpress/lib/Nest';
-  source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/lib/Nest',
-    namedImports: [ 'isObject' ]
-  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
+  //import type { Profile } from '../../types.js';
+  if (model.value.hashed.size > 0) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: `../../types.js`,
+      namedImports: [ model.name.toClassName() ]
+    });
+  }
+
+  //------------------------------------------------------------------//
+  // Exports
   
-  //export default async function ProfileAdminCreatePage(req: Request, res: Response, ctx: Server) {}
+  //export default async function ProfileAdminCreatePage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -59,9 +84,10 @@ export default function generate(directory: Directory, model: Model) {
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.CREATE, { 
+      type: model.name.toTypeName(),
       event: model.name.toEventName(),
-      pathname: model.name.toURLPath(),
-      idpath: model.store.ids.map(
+      model: model.name.toURLPath(),
+      ids: model.store.ids.map(
         column => `\${results.${column.name.toString()}}`
       ).toArray().join('/')
     })
@@ -110,7 +136,7 @@ res.data.set('admin', {
 //if form submitted
 if (req.method === 'POST') {
   //emit the create event
-  const response = await ctx.resolve<UnknownNest>('<%event%>-create', req, res);
+  const response = await ctx.resolve<<%type%>>('<%event%>-create', req, res);
   //if error
   if (res.code !== 200) {
     return;
@@ -122,7 +148,7 @@ if (req.method === 'POST') {
   //redirect
   const base = admin.base || '/admin';
   res.redirect(
-    \`\${base}/<%pathname%>/detail/<%idpath%>\`
+    \`\${base}/<%model%>/detail/<%ids%>\`
   );
 }`,
 

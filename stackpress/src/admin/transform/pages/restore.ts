@@ -8,9 +8,17 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/restore.ts
+  
   const filepath = model.name.toPathName('%s/admin/pages/restore.ts');
-  //load Profile/admin/pages/restore.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
@@ -37,7 +45,12 @@ export default function generate(directory: Directory, model: Model) {
     namedImports: [ 'AdminConfig' ]
   });
 
-  //export default async function ProfileAdminRemovePage(req: Request, res: Response, ctx: Server) {}
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Exports
+
+  //export default async function ProfileAdminRestorePage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -49,12 +62,8 @@ export default function generate(directory: Directory, model: Model) {
     ],
     statements: renderCode(TEMPLATE.RESTORE, { 
       event: model.name.toEventName(),
-      pathname: model.name.toURLPath(),
-      ids: model.store.ids.map(column => ({
-        column: column.name.toString(),
-        label: column.name.label
-      })).toArray(),
-      idpath: model.store.ids.map(
+      model: model.name.toURLPath(),
+      ids: model.store.ids.map(
         column => `\${req.data.get('${column.name.toString()}')}`
       ).toArray().join('/'),
       active: model.store.active 
@@ -103,17 +112,6 @@ res.data.set('admin', {
   menu: admin.menu || []
 });
 
-//validate id/s
-const errors: Record<string, string> = {};
-<%#ids%>
-  if (!req.data.has('<%column%>')) {
-    errors['<%column%>'] = 'Missing <%label%>';
-  }
-<%/ids%>
-if (Object.keys(errors).length) {
-  res.setError('Invalid parameters', errors, [], 404, 'Not Found');
-  return;
-}
 <%#active%>
   //make sure to set the active column to -1 in order 
   // to get it returned even if it's soft-deleted
@@ -128,7 +126,7 @@ if (req.data('confirmed')) {
   if (res.code === 200) {
     //redirect
     const base = admin.base || '/admin';
-    res.redirect(\`\${base}/<%pathname%>/detail/<%idpath%>\`);
+    res.redirect(\`\${base}/<%model%>/detail/<%ids%>\`);
   }
   //let the error pass through
   return;

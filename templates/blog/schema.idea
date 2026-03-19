@@ -86,19 +86,31 @@ model CategoryArticle
   @labels("Category Article" "Category Articles")
   @icon("link")
   @display("{{category.name}} - {{article.title}}")
-  @query("category.*" "article.*")
+  @query("*" "category.*" "article.*")
 {
   categoryId  String
               @label("Category ID") 
               @id
-              @list.overflow({ length 10 hellip true })
+              @field.relation({ 
+                id "id"
+                search "/admin/category/search?json"
+                template "{{name}}" 
+              }) 
+              @list.template({ template "{{category.name}}" }) 
+              @view.template({ template "{{category.name}}" })
               @description("Unique generated identifier for the category.")
               @examples("dz7tg8bcf7e2lig3iuej3pjf")
 
   articleId   String
               @label("Article ID") 
               @id
-              @list.overflow({ length 10 hellip true })
+              @field.relation({ 
+                id "id"
+                search "/admin/article/search?json"
+                template "{{title}}" 
+              }) 
+              @list.template({ template "{{article.title}}" }) 
+              @view.template({ template "{{article.title}}" })
               @description("Unique generated identifier for the article.")
               @examples("dz7tg8bcf7e2lig3iuej3pjf")
 

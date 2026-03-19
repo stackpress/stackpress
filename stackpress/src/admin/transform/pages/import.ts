@@ -8,9 +8,17 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/import.ts
+
   const filepath = model.name.toPathName('%s/admin/pages/import.ts');
-  //load Profile/admin/pages/import.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
@@ -19,7 +27,12 @@ export default function generate(directory: Directory, model: Model) {
     namedImports: [ 'Request', 'Response', 'Server' ]
   });
 
-  //export default async function ProfileAdminImportPage(req: Request, res: Response, ctx: Server) {}
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Exports
+
+  //export default async function ProfileAdminImportPage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,

@@ -9,31 +9,16 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function createView(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/views/create.tsx
+
   const filepath = model.name.toPathName('%s/admin/views/create.tsx');
-  //load Profile/admin/views/create.tsx if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
-  //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'NestedObject', 'ServerPageProps' ]
-  });
-  //import type { AdminConfigProps } from 'stackpress/admin/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/admin/types',
-    namedImports: [ 'AdminConfigProps' ]
-  });
-  //import type { ProfileInput, Profile } from '../../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../../types.js',
-    namedImports: [ 
-      model.name.toTypeName('%sInput'), 
-      model.name.toTypeName()
-    ]
-  });
+  //------------------------------------------------------------------//
+  // Import Modules
+
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
@@ -49,10 +34,39 @@ export default function createView(directory: Directory, model: Model) {
     moduleSpecifier: 'frui/Bread',
     defaultImport: 'Bread'
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
+  //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'NestedObject', 'ServerPageProps' ]
+  });
+  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/admin/types',
+    namedImports: [ 'AdminConfigProps' ]
+  });
   //import { useServer, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useServer', 'LayoutAdmin' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
+  //import type { ProfileInput, Profile } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ 
+      model.name.toTypeName('%sInput'), 
+      model.name.toTypeName()
+    ]
   });
   //import { ActiveFieldControl } from '../../components/form/ActiveField.js';
   model.component.formFields.forEach(column => {
@@ -70,6 +84,9 @@ export default function createView(directory: Directory, model: Model) {
       ]
     });
   });
+
+  //------------------------------------------------------------------//
+  // Exports
   
   //export function ProfileAdminCreateCrumbs() {}
   source.addFunction({
@@ -115,8 +132,8 @@ export default function createView(directory: Directory, model: Model) {
     isExported: true,
     name: model.name.toComponentName('%sAdminCreateBody'),
     statements: renderCode(TEMPLATE.CREATE_BODY, {
-      input: model.name.toTypeName('%sInput'),
       type: model.name.toTypeName(),
+      input: model.name.toTypeName('%sInput'),
       crumbs: model.name.toComponentName('%sAdminCreateCrumbs'),
       form: model.name.toComponentName('%sAdminCreateForm')
     })

@@ -1,28 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress/schema
-import type Column from '../../../../schema/Column.js';
-import type Fieldset from '../../../../schema/Fieldset.js';
 import type Model from '../../../../schema/Model.js';
 import { 
   loadProjectFile, 
   renderCode 
 } from '../../../../schema/transform/helpers.js';
-
-export type Relationship = {
-  foreign: {
-      model: Model,
-      column: Column,
-      key: Column,
-      type: number
-  },
-  local: {
-      model: Fieldset,
-      column: Column,
-      key: Column,
-      type: number
-  };
-};
+//stackpress/admin
+import type { Relationship } from '../../types.js';
 
 export default function generate(
   directory: Directory, 
@@ -31,6 +16,9 @@ export default function generate(
 ) {
   const foreign = relationship.local.model as Model;
 
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/Auth/create.ts
+
   const filepath = renderCode(
     '<%model%>/admin/pages/<%relation%>/create.ts', 
     {
@@ -38,8 +26,11 @@ export default function generate(
       relation: foreign.name.toPathName()
     }
   );
-  //load Profile/admin/pages/Auth/create.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import type { UnknownNest } from '@stackpress/lib/types';
   source.addImportDeclaration({
@@ -47,6 +38,15 @@ export default function generate(
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
+  //import { isObject } from '@stackpress/lib/Nest';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/lib/Nest',
+    namedImports: [ 'isObject' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -71,19 +71,21 @@ export default function generate(
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
-  //import { isObject } from '@stackpress/lib/Nest';
-  source.addImportDeclaration({
-    moduleSpecifier: '@stackpress/lib/Nest',
-    namedImports: [ 'isObject' ]
-  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileExtended } from '../../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../../types.js',
     namedImports: [ model.name.toTypeName('%sExtended') ]
   });
+
+  //------------------------------------------------------------------//
+  // Exports
   
-  //export default async function ProfileAdminAuthCreatePage(req: Request, res: Response, ctx: Server) {}
+  //export default async function ProfileAdminAuthCreatePage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -97,23 +99,22 @@ export default function generate(
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.CREATE, { 
+      model: model.name.toURLPath(),
+      relation: foreign.name.toURLPath(),
       detail: model.name.toEventName('%s-detail'),
       create: foreign.name.toEventName('%s-create'),
       extended: model.name.toTypeName('%sExtended'),
-      pathname: model.name.toURLPath(),
-      idpath: model.store.ids.map(
+      ids: model.store.ids.map(
         column => `\${detail.results!.${column.name.toString()}}`
       ).toArray().join('/'),
-      ids: model.store.ids.map(column => ({
-        column: column.name.toString(),
-        label: column.name.label
-      })).toArray(),
       id: {
         foreign: relationship.foreign.key.name.toString(),
         local: relationship.local.key.name.toString()
       },
-      relation: foreign.name.toPropertyName(),
-      hash: model.value.hashed.size > 0,
+      remove: model.store.ids.map(column => ({
+        column: column.name.toString(),
+        label: column.name.label
+      })).toArray(),
       hashes: model.value.hashed?.map(
         column => ({ column: column.name.toString() })
       ).toArray() || []
@@ -167,14 +168,14 @@ if (detail.code !== 200) {
   res.fromStatusResponse(detail);
   return;
 }
-<%#hash%>
+<%#hashes.length%>
   //remove hashed data
   <%#hashes%>
     if (typeof detail.results?.<%column%> !== 'undefined') {
       delete detail.results.<%column%>;
     }
   <%/hashes%>
-<%/hash%>
+<%/hashes.length%>
 
 //if form submitted
 if (req.method === 'POST') {
@@ -182,9 +183,9 @@ if (req.method === 'POST') {
   const input = req.data();
   //set the foreign id
   input.<%id.local%> = detail.results?.<%id.foreign%>;
-  <%#ids%>
+  <%#remove%>
     delete input.<%column%>;
-  <%/ids%>
+  <%/remove%>
   //emit the create event
   const response = await ctx.resolve<UnknownNest>('<%create%>', input);
   //if error
@@ -206,7 +207,7 @@ if (req.method === 'POST') {
   //redirect
   const base = admin.base || '/admin';
   res.redirect(
-    \`\${base}/<%pathname%>/detail/<%idpath%>/<%relation%>/search\`
+    \`\${base}/<%model%>/detail/<%ids%>/<%relation%>/search\`
   );
   return;
 }

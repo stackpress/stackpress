@@ -1,28 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress/schema
-import type Column from '../../../../schema/Column.js';
-import type Fieldset from '../../../../schema/Fieldset.js';
 import type Model from '../../../../schema/Model.js';
 import { 
   loadProjectFile, 
   renderCode 
 } from '../../../../schema/transform/helpers.js';
-
-export type Relationship = {
-  foreign: {
-      model: Model,
-      column: Column,
-      key: Column,
-      type: number
-  },
-  local: {
-      model: Fieldset,
-      column: Column,
-      key: Column,
-      type: number
-  };
-};
+//stackpress/admin
+import type { Relationship } from '../../types.js';
 
 export default function generate(
   directory: Directory, 
@@ -31,6 +16,9 @@ export default function generate(
 ) {
   const foreign = relationship.local.model as Model;
 
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/Auth/search.ts
+
   const filepath = renderCode(
     '<%model%>/admin/pages/<%relation%>/search.ts', 
     {
@@ -38,8 +26,11 @@ export default function generate(
       relation: foreign.name.toPathName()
     }
   );
-  //load Profile/admin/pages/Auth/search.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
   
   //import type { UnknownNest } from '@stackpress/lib/types';
   source.addImportDeclaration({
@@ -47,6 +38,10 @@ export default function generate(
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -71,6 +66,10 @@ export default function generate(
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileExtended } from '../../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -78,7 +77,11 @@ export default function generate(
     namedImports: [ model.name.toClassName('%sExtended') ]
   });
 
-  //export default async function ProfileAdminAuthSearchPage(req: Request, res: Response, ctx: Server) {}
+
+  //------------------------------------------------------------------//
+  // Exports
+
+  //export default async function ProfileAdminAuthSearchPage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -92,6 +95,7 @@ export default function generate(
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.SEARCH, { 
+      relation: foreign.name.toPropertyName(),
       extended: model.name.toClassName('%sExtended'),
       detail: model.name.toEventName('%s-detail'),
       search: foreign.name.toEventName('%s-search'),
@@ -99,8 +103,6 @@ export default function generate(
         foreign: relationship.foreign.key.name.toString(),
         local: relationship.local.key.name.toString()
       },
-      relation: foreign.name.toPropertyName(),
-      hash: model.value.hashed.size > 0,
       hashes: model.value.hashed?.map(
         column => ({ column: column.name.toString() })
       ).toArray() || []
@@ -154,14 +156,14 @@ if (detail.code !== 200) {
   res.fromStatusResponse(detail);
   return;
 }
-<%#hash%>
+<%#hashes.length%>
   //remove hashed data
   <%#hashes%>
     if (typeof detail.results?.<%column%> !== 'undefined') {
       delete detail.results.<%column%>;
     }
   <%/hashes%>
-<%/hash%>
+<%/hashes.length%>
 
 //next get the relation rows
 

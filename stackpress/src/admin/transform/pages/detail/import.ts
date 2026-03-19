@@ -1,28 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress/schema
-import type Column from '../../../../schema/Column.js';
-import type Fieldset from '../../../../schema/Fieldset.js';
 import type Model from '../../../../schema/Model.js';
 import { 
   loadProjectFile, 
   renderCode 
 } from '../../../../schema/transform/helpers.js';
-
-export type Relationship = {
-  foreign: {
-      model: Model,
-      column: Column,
-      key: Column,
-      type: number
-  },
-  local: {
-      model: Fieldset,
-      column: Column,
-      key: Column,
-      type: number
-  };
-};
+//stackpress/admin
+import type { Relationship } from '../../types.js';
 
 export default function generate(
   directory: Directory, 
@@ -31,6 +16,9 @@ export default function generate(
 ) {
   const foreign = relationship.local.model as Model;
 
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/Auth/import.ts
+
   const filepath = renderCode(
     '<%model%>/admin/pages/<%relation%>/import.ts', 
     {
@@ -38,23 +26,13 @@ export default function generate(
       relation: foreign.name.toPathName()
     }
   );
-  //load Profile/admin/pages/Auth/import.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
-  //import type { ProfileExtended } from '../../../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../../../types.js',
-    namedImports: [ model.name.toTypeName('%sExtended') ]
-  });
-  //import type { Auth } from '../../../../Auth/types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: foreign.name.toPathName('../../../../%s/types.js'),
-    namedImports: [ 
-      foreign.name.toTypeName() 
-    ]
-  });
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
@@ -63,7 +41,28 @@ export default function generate(
     namedImports: [ 'Request', 'Response', 'Server' ]
   });
 
-  //export default async function ProfileAdminImportPage(req: Request, res: Response, ctx: Server) {}
+  //------------------------------------------------------------------//
+  // Import Client
+
+  //import type { Auth } from '../../../../Auth/types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: foreign.name.toPathName('../../../../%s/types.js'),
+    namedImports: [ 
+      foreign.name.toTypeName() 
+    ]
+  });
+  //import type { ProfileExtended } from '../../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../../types.js',
+    namedImports: [ model.name.toTypeName('%sExtended') ]
+  });
+
+  //------------------------------------------------------------------//
+  // Exports
+
+  //export default async function ProfileAdminImportPage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -85,8 +84,6 @@ export default function generate(
         foreign: relationship.foreign.key.name.toString(),
         local: relationship.local.key.name.toString()
       },
-      relation: foreign.name.toPropertyName(),
-      hash: model.value.hashed.size > 0,
       hashes: model.value.hashed?.map(
         column => ({ column: column.name.toString() })
       ).toArray() || []
@@ -110,14 +107,14 @@ if (detail.code !== 200) {
   res.fromStatusResponse(detail);
   return;
 }
-<%#hash%>
+<%#hashes.length%>
   //remove hashed data
   <%#hashes%>
     if (typeof detail.results?.<%column%> !== 'undefined') {
       delete detail.results.<%column%>;
     }
   <%/hashes%>
-<%/hash%>
+<%/hashes.length%>
 
 //if form submitted
 if (req.method === 'POST') {

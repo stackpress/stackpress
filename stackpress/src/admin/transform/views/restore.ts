@@ -15,9 +15,29 @@ export default function restoreView(directory: Directory, model: Model) {
   const path = ids.map(name => `\${results.${name}}`).join('/');
   const link = (action: string) => `\`\${base}/${model.name.dashCase}/${action}/${path}\``;
 
+  //------------------------------------------------------------------//
+  // Profile/admin/views/restore.tsx
+
   const filepath = model.name.toPathName('%s/admin/views/restore.tsx');
-  //load Profile/admin/views/restore.tsx if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+
+  //import { useLanguage } from 'r22n';
+  source.addImportDeclaration({
+    moduleSpecifier: 'r22n',
+    namedImports: [ 'useLanguage' ]
+  });
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -37,27 +57,24 @@ export default function restoreView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/sql/types',
     namedImports: [ 'StoreSearchQuery' ]
   });
+  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'useServer', 'LayoutAdmin' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
     namedImports: [ model.name.toTypeName('%sExtended') ]
   });
-  //import { useLanguage } from 'r22n';
-  source.addImportDeclaration({
-    moduleSpecifier: 'r22n',
-    namedImports: [ 'useLanguage' ]
-  });
-  //import Bread from 'frui/Bread';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/Bread',
-    defaultImport: 'Bread'
-  });
-  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'LayoutAdmin' ]
-  });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function AdminProfileRestoreCrumbs() {}
   source.addFunction({

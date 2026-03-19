@@ -30,14 +30,43 @@ export default function detailView(directory: Directory, model: Model) {
     )
   ).map(column => column.store.localRelationship!).toArray();
 
+  //------------------------------------------------------------------//
+  // Profile/admin/views/Auth/create.tsx
+  // Profile/admin/views/Auth/search.tsx
+
   for (const relationship of related) {
     generateCreate(directory, model, relationship);
     generateSearch(directory, model, relationship);
   }
 
+  //------------------------------------------------------------------//
+  // Profile/admin/views/detail.tsx
+
   const filepath = model.name.toPathName('%s/admin/views/detail.tsx');
   //load Profile/admin/views/detail.tsx if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+
+  //import { useLanguage } from 'r22n';
+  source.addImportDeclaration({
+    moduleSpecifier: 'r22n',
+    namedImports: [ 'useLanguage' ]
+  });
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+  //import Table from 'frui/Table';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Table',
+    defaultImport: 'Table'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { ServerPageProps, AdminConfigProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -57,31 +86,20 @@ export default function detailView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/sql/types',
     namedImports: [ 'StoreSearchQuery' ]
   });
+  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'useServer', 'LayoutAdmin' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { ProfileExtended } from '../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../types.js',
     namedImports: [ model.name.toTypeName('%sExtended') ]
-  });
-  //import { useLanguage } from 'r22n';
-  source.addImportDeclaration({
-    moduleSpecifier: 'r22n',
-    namedImports: [ 'useLanguage' ]
-  });
-  //import Bread from 'frui/Bread';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/Bread',
-    defaultImport: 'Bread'
-  });
-  //import Table from 'frui/Table';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/Table',
-    defaultImport: 'Table'
-  });
-  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'LayoutAdmin' ]
   });
   //import CreatedViewFormat from '../../components/view/CreatedViewFormat.js';
   model.component.viewFormats.toArray().forEach(column => {
@@ -92,6 +110,9 @@ export default function detailView(directory: Directory, model: Model) {
       defaultImport: column.name.toComponentName('%sViewFormat')
     });
   });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function AdminProfileDetailCrumbs() {}
   source.addFunction({
@@ -124,6 +145,7 @@ export default function detailView(directory: Directory, model: Model) {
       }) 
     }],
     statements: renderCode(TEMPLATE.DETAIL_ACTIONS_BODY, {
+      active: model.store.active ? model.store.active.name.toString() : null,
       update: link('update'),
       remove: link('remove'),
       restore: link('restore')
@@ -309,18 +331,28 @@ return (
         {_('Update')}
       </a>
     )}
-    {results.active && can(routes.remove) && (
-      <a className="action remove" href={routes.remove.route}>
-        <i className="icon fas fa-trash"></i>
-        {_('Remove')}
-      </a>
-    )}
-    {!results.active && can(routes.restore) && (
-      <a className="action restore" href={routes.restore.route}>
-        <i className="icon fas fa-check-circle"></i>
-        {_('Restore')}
-      </a>
-    )}
+    <%#active%>
+      {results.<%active%> && can(routes.remove) && (
+        <a className="action remove" href={routes.remove.route}>
+          <i className="icon fas fa-trash"></i>
+          {_('Remove')}
+        </a>
+      )}
+      {!results.<%active%> && can(routes.restore) && (
+        <a className="action restore" href={routes.restore.route}>
+          <i className="icon fas fa-check-circle"></i>
+          {_('Restore')}
+        </a>
+      )}
+    <%/active%>
+    <%^active%>
+      {can(routes.remove) && (
+        <a className="action remove" href={routes.remove.route}>
+          <i className="icon fas fa-trash"></i>
+          {_('Remove')}
+        </a>
+      )}
+    <%/active%>
   </div>
 );`,
 

@@ -12,39 +12,21 @@ export default function searchView(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(column => column.name);
   const path = ids.map(name => `\${row.${name}}`).join('/');
 
+  //------------------------------------------------------------------//
+  // Profile/admin/views/search.tsx
+
   const filepath = model.name.toPathName('%s/admin/views/search.tsx');
-  //load Profile/admin/views/search.tsx if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import type { ChangeEvent, MouseEventHandler, SetStateAction } from 'react';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'react',
     namedImports: [ 'ChangeEvent', 'MouseEventHandler', 'SetStateAction' ]
-  });
-  //import type { StoreSearchQuery } from 'stackpress/sql/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql/types',
-    namedImports: [ 'StoreSearchQuery' ]
-  });
-  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
-  });
-  //import type { AdminConfigProps } from 'stackpress/admin/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/admin/types',
-    namedImports: [ 'AdminConfigProps' ]
-  });
-  //import type { ProfileExtended } from '../../types.js';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '../../types.js',
-    namedImports: [ model.name.toTypeName('%sExtended') ]
   });
   //import { useState } from 'react';
   source.addImportDeclaration({
@@ -93,6 +75,28 @@ export default function searchView(directory: Directory, model: Model) {
     moduleSpecifier: 'frui/Notifier',
     namedImports: [ 'notify', 'flash' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
+  //import type { StoreSearchQuery } from 'stackpress/sql/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/sql/types',
+    namedImports: [ 'StoreSearchQuery' ]
+  });
+  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
+  });
+  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/admin/types',
+    namedImports: [ 'AdminConfigProps' ]
+  });
   //import { paginate, filter, order, useServer, 
   // LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -109,6 +113,16 @@ export default function searchView(directory: Directory, model: Model) {
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/import',
     namedImports: [ 'batchAndSend' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
+  //import type { ProfileExtended } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ model.name.toTypeName('%sExtended') ]
   });
   //import CreatedListFormat from '../../components/list/CreatedListFormat.js';
   model.component.listFormats.toArray().forEach(column => {
@@ -137,6 +151,9 @@ export default function searchView(directory: Directory, model: Model) {
       namedImports: [ column.name.toComponentName('%sSpanFieldControl') ]
     });
   });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function AdminProfileSearchCrumbs() {}
   source.addFunction({

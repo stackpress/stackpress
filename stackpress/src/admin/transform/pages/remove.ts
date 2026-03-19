@@ -8,9 +8,17 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/remove.ts
+
   const filepath = model.name.toPathName('%s/admin/pages/remove.ts');
-  //load Profile/admin/pages/remove.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
@@ -37,7 +45,12 @@ export default function generate(directory: Directory, model: Model) {
     namedImports: [ 'AdminConfig' ]
   });
 
-  //export default async function ProfileAdminRemovePage(req: Request, res: Response, ctx: Server) {}
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Exports
+
+  //export default async function ProfileAdminRemovePage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -49,11 +62,7 @@ export default function generate(directory: Directory, model: Model) {
     ],
     statements: renderCode(TEMPLATE.REMOVE, { 
       event: model.name.toEventName(),
-      pathname: model.name.toURLPath(),
-      ids: model.store.ids.map(column => ({
-        column: column.name.toString(),
-        label: column.name.label
-      })).toArray()
+      model: model.name.toURLPath()
     })
   });
 };
@@ -97,18 +106,6 @@ res.data.set('admin', {
   menu: admin.menu || []
 });
 
-//validate id/s
-const errors: Record<string, string> = {};
-<%#ids%>
-  if (!req.data.has('<%column%>')) {
-    errors['<%column%>'] = 'Missing <%label%>';
-  }
-<%/ids%>
-if (Object.keys(errors).length) {
-  res.setError('Invalid parameters', errors, [], 404, 'Not Found');
-  return;
-}
-
 //if confirmed
 if (req.data('confirmed')) {
   //emit remove event
@@ -117,7 +114,7 @@ if (req.data('confirmed')) {
   if (res.code === 200) {
     //redirect
     const base = admin.base || '/admin';
-    res.redirect(\`\${base}/<%pathname%>/search\`);
+    res.redirect(\`\${base}/<%model%>/search\`);
   }
   //let the error pass through
   return;

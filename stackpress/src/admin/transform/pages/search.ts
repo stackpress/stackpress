@@ -8,9 +8,15 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/search.ts
+  
   const filepath = model.name.toPathName('%s/admin/pages/search.ts');
-  //load Profile/admin/pages/search.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import type { UnknownNest } from '@stackpress/lib/types';
   source.addImportDeclaration({
@@ -18,6 +24,10 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -43,7 +53,12 @@ export default function generate(directory: Directory, model: Model) {
     namedImports: [ 'AdminConfig' ]
   });
 
-  //export default async function ProfileAdminSearchPage(req: Request, res: Response, ctx: Server) {}
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Exports
+
+  //export default async function ProfileAdminSearchPage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,

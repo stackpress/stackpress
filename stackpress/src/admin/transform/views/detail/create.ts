@@ -2,30 +2,14 @@
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
 //stackpress/schema
-import type Column from '../../../../schema/Column.js';
-import type Fieldset from '../../../../schema/Fieldset.js';
 import type Model from '../../../../schema/Model.js';
 import { 
   loadProjectFile, 
   renderCode 
 } from '../../../../schema/transform/helpers.js';
 //stackpress/admin
+import type { Relationship } from '../../types.js';
 import { render } from '../../helpers.js';
-
-export type Relationship = {
-  foreign: {
-      model: Model,
-      column: Column,
-      key: Column,
-      type: number
-  },
-  local: {
-      model: Fieldset,
-      column: Column,
-      key: Column,
-      type: number
-  };
-};
 
 export default function generate(
   directory: Directory, 
@@ -35,6 +19,9 @@ export default function generate(
   const ids = model.store.ids.toArray().map(column => column.name);
   const foreign = relationship.local.model as Model;
 
+  //------------------------------------------------------------------//
+  // Profile/admin/views/Auth/create.tsx
+
   const filepath = renderCode(
     '<%model%>/admin/views/<%relation%>/create.tsx', 
     {
@@ -42,8 +29,30 @@ export default function generate(
       relation: foreign.name.toPathName()
     }
   );
-  //load Profile/admin/views/Auth/search.tsx if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+
+  //import { useLanguage } from 'r22n';
+  source.addImportDeclaration({
+    moduleSpecifier: 'r22n',
+    namedImports: [ 'useLanguage' ]
+  });
+  //import Bread from 'frui/Bread';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Bread',
+    defaultImport: 'Bread'
+  });
+  //import Button from 'frui/Button';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Button',
+    defaultImport: 'Button'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -60,26 +69,15 @@ export default function generate(
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
   });
-  //import { useLanguage } from 'r22n';
-  source.addImportDeclaration({
-    moduleSpecifier: 'r22n',
-    namedImports: [ 'useLanguage' ]
-  });
-  //import Bread from 'frui/Bread';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/Bread',
-    defaultImport: 'Bread'
-  });
-  //import Button from 'frui/Button';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/Button',
-    defaultImport: 'Button'
-  });
   //import { useServer, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'useServer', 'LayoutAdmin' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+  
   //import type { Profile, ProfileExtended } from '../../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -118,6 +116,9 @@ export default function generate(
       ]
     });
   });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function AdminProfileAuthCreateCrumbs() {}
   source.addFunction({

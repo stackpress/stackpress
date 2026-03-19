@@ -8,11 +8,15 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
-  const relations = model.store.foreignRelationships.toArray();
+  //------------------------------------------------------------------//
+  // Profile/admin/pages/export.ts
 
   const filepath = model.name.toPathName('%s/admin/pages/export.ts');
-  //load Profile/admin/pages/export.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import type { UnknownNest } from '@stackpress/lib/types';
   source.addImportDeclaration({
@@ -20,6 +24,10 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { Request, Response, Server } from 'stackpress/server';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -27,7 +35,15 @@ export default function generate(directory: Directory, model: Model) {
     namedImports: [ 'Request', 'Response', 'Server' ]
   });
 
-  //export default async function ProfileAdminExportPage(req: Request, res: Response, ctx: Server) {}
+  //------------------------------------------------------------------//
+  // Exports
+
+  const relations = model.store.foreignRelationships.toArray();
+  const template = relations.length > 0 
+    ? TEMPLATE.EXPORT_RELATIONS 
+    : TEMPLATE.EXPORT;
+
+  //export default async function ProfileAdminExportPage(req, res, ctx) {}
   source.addFunction({
     isDefaultExport: true,
     isAsync: true,
@@ -37,12 +53,8 @@ export default function generate(directory: Directory, model: Model) {
       { name: 'res', type: 'Response' },
       { name: 'ctx', type: 'Server' }
     ],
-    statements: renderCode(relations.length > 0 
-      ? TEMPLATE.EXPORT_RELATIONS 
-      : TEMPLATE.EXPORT, 
-      { 
+    statements: renderCode(template, { 
       event: model.name.toEventName(),
-      hasRelations: relations.length > 0,
       relations: JSON.stringify(relations.map(
         column => column.name.toString()
       ))
