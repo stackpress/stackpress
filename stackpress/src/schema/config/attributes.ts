@@ -878,6 +878,60 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
       "message": "Must be less than or equal to {{arg}} words."
     }
   },
+  "lowercase": {
+    "type": [ "flag", "method" ],
+    "name": "is.lowercase",
+    "description": "Validates that the value is all lowercase characters.",
+    "args": [
+      {
+        "spread": false,
+        "type": [ "string" ],
+        "required": false,
+        "description": "Custom error message.",
+        "examples": [ "Value must be all lowercase characters." ]
+      }
+    ],
+    "data": {
+      "name": "lowercase",
+      "message": "Must be all lowercase characters."
+    }
+  },
+  "uppercase": {
+    "type": [ "flag", "method" ],
+    "name": "is.uppercase",
+    "description": "Validates that the value is all uppercase characters.",
+    "args": [
+      {
+        "spread": false,
+        "type": [ "string" ],
+        "required": false,
+        "description": "Custom error message.",
+        "examples": [ "Value must be all uppercase characters." ]
+      }
+    ],
+    "data": {
+      "name": "uppercase",
+      "message": "Must be all uppercase characters."
+    }
+  },
+  "slug": {
+    "type": [ "flag", "method" ],
+    "name": "is.slug",
+    "description": "Validates that the value only contains valid slug characters (lowercase letters, numbers, underscores, and hyphens).",
+    "args": [
+      {
+        "spread": false,
+        "type": [ "string" ],
+        "required": false,
+        "description": "Custom error message.",
+        "examples": [ "Value must only contain lowercase letters, numbers, underscores, and hyphens." ]
+      }
+    ],
+    "data": {
+      "name": "slug",
+      "message": "Must only contain lowercase letters, numbers, underscores, and hyphens."
+    }
+  },
   "cc": {
     "type": [ "flag", "method" ],
     "name": "is.cc",
@@ -1095,6 +1149,16 @@ const assert: AttributeDataMap<AttributeDataAssertion> = {
     }
   }
 };
+
+//aliases
+assert.notempty = { ...assert.ne, name: 'is.notempty' };
+assert.pattern = { ...assert.regex, name: 'is.pattern' };
+assert.gte = { ...assert.ge, name: 'is.gte' };
+assert.lte = { ...assert.le, name: 'is.lte' };
+assert.cgte = { ...assert.cge, name: 'is.cgte' };
+assert.clte = { ...assert.cle, name: 'is.clte' };
+assert.wgte = { ...assert.wge, name: 'is.wgte' };
+assert.wlte = { ...assert.wle, name: 'is.wlte' };
 
 //--------------------------------------------------------------------//
 // Builtin Field Attribute Definitions
@@ -3803,7 +3867,6 @@ field.relation = {
 };
 
 //aliases
-//add aliases
 field.taglist = { ...field.tags, name: 'field.taglist' };
 // type to field aliases
 field.string = { ...field.input, name: 'field.string' };
@@ -5387,4 +5450,3 @@ export {
   filter,
   span
 };
-

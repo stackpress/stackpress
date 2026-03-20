@@ -8,93 +8,102 @@ model Profile
   @display("{{name}}") 
   @icon("user") 
 {
-  id          String
-              @label("ID") 
-              @id @default("cuid()")
-              @list.overflow({ length 10 hellip true })
-              @description("Unique generated identifier.")
-              @examples("pjfdz7tg8bcf7e2lig3iuej3")
+  id            String
+                @label("ID") 
+                @id @default("cuid()")
+                @list.overflow({ length 10 hellip true })
+                @view.string
+                @description("Unique generated identifier.")
+                @examples("pjfdz7tg8bcf7e2lig3iuej3")
 
-  image       String?
-              @label("Image") 
-              @field.url
-              @list.image({ width 20 height 20 }) @view.image({ width 100 height 100 })
-              @description("Profile image URL.")
-              @examples("https://example.com/image.jpg")
+  image         String?
+                @label("Image") 
+                @field.url
+                @list.image({ width 20 height 20 }) 
+                @view.image({ width 100 height 100 })
+                @description("Profile image URL.")
+                @examples("https://example.com/image.jpg")
   
-  name        String
-              @label("Name") 
-              @searchable
-              @field.string({ required true })
-              @list.string @view.string
-              @description("Full name (first middle last).")
-              @examples("John Doe")
+  name          String
+                @label("Name") 
+                @searchable
+                @field.input({ type "text" required true })
+                @is.required("Name is required")
+                @list.string @view.string
+                @description("Full name (first middle last).")
+                @examples("John Doe")
   
-  type        String    
-              @label("Type") 
-              @default("person") 
-              @filter.string
-              @field.string({ required true })
-              @list.string({ lower true }) 
-              @view.string({ lower true })
-              @description("Type of profile (ie. person, company, etc.).")
-              @examples("person")
+  type          String    
+                @label("Type") 
+                @default("person") 
+                @field.input({ type "text" required true })
+                @is.required("Type is required")
+                @filter.input({ type "text" })
+                @list.lowercase
+                @view.lowercase
+                @description("Type of profile (ie. person, company, etc.).")
+                @examples("person")
   
-  roles       String[]  
-              @label("Roles") 
-              @default([ "GUEST" ])
-              @field.stringlist({ add "Add Role" })
-              @list.taglist({ warning true pill true className "frui-mr-md" })
-              @view.taglist({ warning true pill true className "frui-mr-md" })
-              @description("Roles held by the profile. This is used with sessions to determine access levels of the app.")
-              @examples(["admin" "user" "gues"])
+  roles         String[]  
+                @label("Roles") 
+                @default([ "GUEST" ])
+                @field.stringlist({ add "Add Role" })
+                @list.taglist({ warning true pill true className "frui-mr-md" })
+                @view.taglist({ warning true pill true className "frui-mr-md" })
+                @description("Roles held by the profile. This is used with sessions to determine access levels of the app.")
+                @examples(["admin" "user" "guest"])
   
-  tags        String[]
-              @label("Tags") 
-              @default([])
-              @field.taglist
-              @list.taglist({ warning true pill true className "frui-mr-md" })
-              @view.taglist({ warning true pill true className "frui-mr-md" })
-              @description("Abritrary tags for general use.")
-              @examples(["top buyer" "verified" "moderator"])
+  tags          String[]
+                @label("Tags") 
+                @default([])
+                @field.taglist
+                @list.taglist({ warning true pill true className "frui-mr-md" })
+                @view.taglist({ warning true pill true className "frui-mr-md" })
+                @description("Abritrary tags for general use.")
+                @examples(["top buyer" "verified" "moderator"])
   
-  references  Hash?
-              @label("References") 
-              @default({})
-              @field.metadata({ add "Add Reference" })
-              @view.metadata({ className "frui-pt-md frui-pr-md frui-pb-md frui-pl-md"})
-              @description("Arbitrary key/value references for general use.")
-              @examples({ fbid "abc123" })
+  references    Hash?
+                @label("References") 
+                @default({})
+                @field.metadata({ add "Add Reference" })
+                @view.metadata({ className "frui-pt-md frui-pr-md frui-pb-md frui-pl-md"})
+                @description("Arbitrary key/value references for general use.")
+                @examples({ fbid "abc123" })
   
-  active      Boolean   
-              @label("Active") 
-              @default(true) @active
-              @filter.switch
-              @view.yesno
-              @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
-              @examples(true)
+  active        Boolean   
+                @label("Active") 
+                @default(true) @active
+                @filter.switch
+                @view.yesno
+                @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+                @examples(true)
   
-  created     Datetime  
-              @label("Created") 
-              @default("now()") @sortable
-              @span.datetime
-              @list.date("m d, Y h:iA") 
-              @view.date("m d, Y h:iA")
-              @description("Generated timestamp when row was created.")
-              @examples("2025-10-01T12:00:00Z")
+  created       Datetime  
+                @label("Created") 
+                @default("now()") @sortable
+                @span.datetime
+                @list.date("m d, Y h:iA") 
+                @view.date("m d, Y h:iA")
+                @description("Generated timestamp when row was created.")
+                @examples("2025-10-01T12:00:00Z")
   
-  updated     Datetime
-              @label("Updated") 
-              @default("now()") @timestamp @sortable
-              @span.datetime
-              @list.date("m d, Y h:iA") 
-              @view.date("m d, Y h:iA")
-              @description("Generated timestamp that is updated whenever the row has changed.")
-              @examples("2025-10-01T12:00:00Z")
+  updated       Datetime
+                @label("Updated") 
+                @default("now()") @timestamp @sortable
+                @span.datetime
+                @list.date("m d, Y h:iA") 
+                @view.date("m d, Y h:iA")
+                @description("Generated timestamp that is updated whenever the row has changed.")
+                @examples("2025-10-01T12:00:00Z")
   
-  auth         Auth[]        @label("Authentications")
-  applications Application[] @label("Applications")
-  sessions     Session[]     @label("Sessions")
+  auth          Auth[]        
+                @label("Authentications")
+  
+  applications  Application[]
+                @label("Applications")
+  
+  sessions      Session[]
+                @label("Sessions")
 }
 
 //Auth is used to authenticate a profile and create a session.
@@ -108,6 +117,7 @@ model Auth
             @label("ID") 
             @id @default("cuid()")
             @list.overflow({ length 10 hellip true })
+            @view.string
             @description("Unique generated identifier.")
             @examples("dz7tg8bcf7e2lig3iuej3pjf")
   
@@ -131,8 +141,9 @@ model Auth
   type      String
             @label("Type") 
             @default("username") 
-            @field.string({ required true }) 
-            @filter.string
+            @field.input({ type "text" required true }) 
+            @is.required("Type is required")
+            @filter.input({ type "text" })
             @list.string @view.string
             @description("Type of authentication method (username, email, phone).")
             @examples("username")
@@ -140,7 +151,8 @@ model Auth
   token     String
             @label("Token")
             @unique @encrypted
-            @field.string({ required true })
+            @field.input({ type "text" required true })
+            @is.required("Token is required")
             @is.cge(5 "Must be at least 5 characters")
             @list.string @view.string
             @description("The actual username, email, or phone (depending on type)")
@@ -149,14 +161,17 @@ model Auth
   secret    String
             @label("Secret") 
             @hashed @secret
-            @field.password
+            @field.password({ required true })
+            @is.required("Secret is required")
             @description("Password used to verify.")
             @examples("s3cr3t P@ssw0rd")
   
   verified  Boolean
             @label("Verified") 
             @default(false) 
-            @field.switch @filter.switch 
+            @field.switch 
+            @is.required("Verified is required")
+            @filter.switch 
             @list.yesno @view.yesno
             @description("Indicates if the type has been verified (email, phone, etc.).")
             @examples(true)
@@ -193,7 +208,8 @@ model Auth
             @description("Generated timestamp that is updated whenever the row has changed.")
             @examples("2025-10-01T12:00:00Z")
   
-  profile   Profile @relation({ local "profileId" foreign "id" })
+  profile   Profile 
+            @relation({ local "profileId" foreign "id" })
 }
 
 model Application 
@@ -202,102 +218,108 @@ model Application
   @icon("laptop") 
   @query("*" "profile.*")
 {
-  id        String 
-            @label("ID") 
-            @id @default("cuid()")
-            @description("Unique generated identifier.")
-            @examples("tg8bcf7e2lig3iuej3dz7pjf")
+  id          String 
+              @label("ID") 
+              @id @default("cuid()")
+              @list.string @view.string
+              @description("Unique generated identifier.")
+              @examples("tg8bcf7e2lig3iuej3dz7pjf")
   
-  profileId String 
-            @label("Profile") 
-            @field.relation({ 
-              id "id"
-              search "/admin/profile/search?json&q={{query}}"
-              template "{{name}}" 
-            }) 
-            @filter.relation({
-              id "id"
-              search "/admin/profile/search?json&q={{query}}"
-              template "{{name}}" 
-            }) 
-            @list.template({ template "{{profile.name}}" }) 
-            @view.template({ template "{{profile.name}}" })
-            @description("The profile author of this application.")
-            @examples("pjfdz7tg8bcf7e2lig3iuej3")
+  profileId   String 
+              @label("Profile") 
+              @field.relation({ 
+                id "id"
+                search "/admin/profile/search?json&q={{query}}"
+                template "{{name}}" 
+              }) 
+              @filter.relation({
+                id "id"
+                search "/admin/profile/search?json&q={{query}}"
+                template "{{name}}" 
+              }) 
+              @list.template({ template "{{profile.name}}" }) 
+              @view.template({ template "{{profile.name}}" })
+              @description("The profile author of this application.")
+              @examples("pjfdz7tg8bcf7e2lig3iuej3")
 
-  name    String
-          @label("Name") 
-          @searchable
-          @field.string({ required true })
-          @list.string @view.string
-          @description("Arbitrary name of the application. Used in 3-legged OAuth flows.")
-          @examples("My Awesome App")
+  name        String
+              @label("Name") 
+              @searchable
+              @field.input({ type "text" required true })
+              @is.required("Name is required")
+              @list.string @view.string
+              @description("Arbitrary name of the application. Used in 3-legged OAuth flows.")
+              @examples("My Awesome App")
 
-  logo    String?  
-          @label("Image") 
-          @field.url
-          @list.image(20 20) @view.image(100 100)
-          @description("Logo image URL of the application. Used in 3-legged OAuth flows.")
-          @examples("https://example.com/logo.png")
+  logo        String?  
+              @label("Image") 
+              @field.url
+              @list.image(20 20) @view.image(100 100)
+              @description("Logo image URL of the application. Used in 3-legged OAuth flows.")
+              @examples("https://example.com/logo.png")
 
-  website String?
-          @label("Website") 
-          @searchable
-          @field.url
-          @list.link({ target "blank" }) 
-          @view.link({ target "blank" })
-          @description("Arbitrary website URL of the application. Used in 3-legged OAuth flows.")
+  website     String?
+              @label("Website") 
+              @searchable
+              @field.url
+              @list.link({ target "blank" }) 
+              @view.link({ target "blank" })
+              @description("Arbitrary website URL of the application. Used in 3-legged OAuth flows.")
 
-  secret  String
-          @label("Secret") 
-          @default("cuid()")
-          @description("Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)")
-          @examples("bcf7e2lig3iuej3tg8dz7pjf")
+  secret      String
+              @label("Secret") 
+              @default("cuid()")
+              @list.string @view.string
+              @description("Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)")
+              @examples("bcf7e2lig3iuej3tg8dz7pjf")
   
-  scopes  String[] 
-          @label("Scopes") 
-          @default([])
-          @field.taglist
-          @list.taglist({ warning true pill true className "frui-mr-md" })
-          @view.taglist({ warning true pill true className "frui-mr-md" })
-          @description("API scopes that this application can request. This is mapped with endpoints.")
-          @examples([ "commerce" "location" "account" ])
+  scopes      String[] 
+              @label("Scopes") 
+              @default([])
+              @field.taglist
+              @list.taglist({ warning true pill true className "frui-mr-md" })
+              @view.taglist({ warning true pill true className "frui-mr-md" })
+              @description("API scopes that this application can request. This is mapped with endpoints.")
+              @examples([ "commerce" "location" "account" ])
 
-  active  Boolean  
-          @label("Active") 
-          @default(true) @active
-          @filter.switch
-          @view.yesno
-          @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
-          @examples(true)
+  active      Boolean  
+              @label("Active") 
+              @default(true) @active
+              @filter.switch
+              @view.yesno
+              @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+              @examples(true)
   
-  expires Datetime 
-          @label("Expires") 
-          @sortable
-          @field.datetime
-          @list.date("m d, Y h:iA") 
-          @view.date("m d, Y h:iA")
-          @description("Expiration date of the application. After this date, the application will not be able to perform any operations.")
-          @examples("2025-12-31T23:59:59Z")
+  expires     Datetime 
+              @label("Expires") 
+              @sortable
+              @field.datetime({ required true })
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Expiration date of the application. After this date, the application will not be able to perform any operations.")
+              @examples("2025-12-31T23:59:59Z")
   
-  created Datetime 
-          @label("Created") 
-          @default("now()") @sortable
-          @list.date("m d, Y h:iA") 
-          @view.date("m d, Y h:iA")
-          @description("Generated timestamp when row was created.")
-          @examples("2025-10-01T12:00:00Z")
+  created     Datetime 
+              @label("Created") 
+              @default("now()") @sortable
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Generated timestamp when row was created.")
+              @examples("2025-10-01T12:00:00Z")
   
-  updated Datetime 
-          @label("Updated") 
-          @default("now()") @timestamp @sortable
-          @list.date("m d, Y h:iA") 
-          @view.date("m d, Y h:iA")
-          @description("Generated timestamp that is updated whenever the row has changed.")
-          @examples("2025-10-01T12:00:00Z")
+  updated     Datetime 
+              @label("Updated") 
+              @default("now()") @timestamp @sortable
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Generated timestamp that is updated whenever the row has changed.")
+              @examples("2025-10-01T12:00:00Z")
 
-  session Session[] @label("Sessions") 
-  profile Profile   @relation({ local "profileId" foreign "id" })
+  session     Session[] 
+              @label("Sessions") 
+  
+  profile     Profile
+              @relation({ local "profileId" foreign "id" })
 }
 
 model Session 
@@ -309,6 +331,7 @@ model Session
   id            String   
                 @label("ID") 
                 @id @default("cuid()")
+                @list.string @view.string
                 @description("Unique generated identifier.")
                 @examples("7e2lig3iuej3bcftg8dz7pjf")
   
@@ -349,6 +372,7 @@ model Session
   secret        String
                 @label("Secret") 
                 @default("cuid()")
+                @list.string @view.string
                 @description("Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)")
                 @examples("lig3iuej37e2bcftg8dz7pjf")
   
@@ -394,6 +418,9 @@ model Session
                 @description("Generated timestamp that is updated whenever the row has changed.")
                 @examples("2025-10-01T12:00:00Z")
   
-  application Application  @relation({ local "applicationId" foreign "id" })
-  profile     Profile      @relation({ local "profileId" foreign "id" })
+  application   Application
+                @relation({ local "applicationId" foreign "id" })
+  
+  profile       Profile
+                @relation({ local "profileId" foreign "id" })
 }
