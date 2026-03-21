@@ -10,11 +10,22 @@ export default function generate(
   model: Model,
   definition: ClassDeclaration
 ) {
+  //------------------------------------------------------------------//
+  // Import Modules
+
   //import Delete from '@stackpress/inquire/Delete';
   source.addImportDeclaration({
     moduleSpecifier: '@stackpress/inquire/Delete',
     defaultImport: 'Delete'
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Store Methods
+
   //public delete(query: StoreSelectFilters = {}, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,

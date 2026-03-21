@@ -51,11 +51,6 @@ export default interface ActionsInterface<
   delete(query: StoreSelectFilters): Promise<T[]>;
 
   /**
-   * Hard deletes a record by its ID and returns the deleted record.
-   */
-  deleteById(id: string): Promise<T>;
-
-  /**
    * Finds a single record that matches the provided 
    * query and returns it with relations.
    */
@@ -66,11 +61,6 @@ export default interface ActionsInterface<
    * query and returns them with relations.
    */
   findAll(query: StoreSelectQuery): Promise<E[]>;
-
-  /**
-   * Finds a record by its ID and returns it with relations.
-   */
-  findById(id: string, columns?: string[]): Promise<E | null>;
 
   /**
    * Creates the table in the database based on the schema. 
@@ -93,22 +83,6 @@ export default interface ActionsInterface<
   remove(query: StoreSelectFilters): Promise<T[]>;
 
   /**
-   * Soft deletes a record by its ID and returns the removed record.
-   */
-  removeById(id: string): Promise<T>;
-
-  /**
-   * Restores records that match the provided filters 
-   * and returns the restored record.
-   */
-  restore(query: StoreSelectFilters): Promise<T[]>;
-
-  /**
-   * Restores a record by its ID and returns the restored record.
-   */
-  restoreById(id: string): Promise<T>;
-
-  /**
    * Drops the entire table from the database. 
    * Use with caution. 
    */
@@ -125,12 +99,6 @@ export default interface ActionsInterface<
    * the given input and returns the updated record.
    */
   update(query: StoreSelectFilters, input: Partial<T>): Promise<T[]>;
-
-  /**
-   * Updates a record by its ID with the given 
-   * input and returns the updated record.
-   */
-  updateById(id: string, input: Partial<T>): Promise<T>;
 
   /**
    * Inserts a new record or updates an existing 

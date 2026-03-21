@@ -41,7 +41,9 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // 6. Profile/admin/restore.ts
 
-  generateRestore(directory, model);
+  if (model.store.restorable) {
+    generateRestore(directory, model);
+  }
 
   //------------------------------------------------------------------//
   // 7. Profile/admin/search.ts

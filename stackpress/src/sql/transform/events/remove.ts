@@ -14,6 +14,11 @@ export default function generate(directory: Directory, model: Model) {
   //load Profile/events/remove.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { DatabasePlugin } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -31,11 +36,19 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/Exception',
     defaultImport: 'Exception'
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import ProfileActions from '../ProfileActions.js';
   source.addImportDeclaration({
     moduleSpecifier: model.name.toPathName('../%sActions.js'),
     defaultImport: model.name.toClassName('%sActions')
   });
+
+  //------------------------------------------------------------------//
+  // Exports
+
   //export default async function ProfileRemoveEvent(
   //  req: Request, 
   //  res: Response, 
@@ -93,8 +106,13 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to remove
-  const results = await actions.removeById(<%#ids%><%column%>,<%/ids%>);
-  res.setResults(results);
+  const filter = { 
+    <%#ids%>
+      <%column%>,
+    <%/ids%> 
+  };
+  const results = await actions.remove({ filter });
+  res.setResults(results[0] || null);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());

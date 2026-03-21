@@ -12,6 +12,11 @@ export default function generate(directory: Directory, model: Model) {
   //load Profile/events/purge.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { DatabasePlugin } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -29,6 +34,12 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/Exception',
     defaultImport: 'Exception'
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Exports
+
   //export default async function ProfilePurgeEvent(
   //  _req: Request, 
   //  res: Response, 

@@ -15,7 +15,7 @@ import generateSearch from './search.js';
 import generateUpdate from './update.js';
 import generateUpsert from './upsert.js';
 
-export const actions = [
+export const allActions = [
   'batch',
   'create',
   'detail',
@@ -62,7 +62,9 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // 7. Address/events/restore.ts
 
-  generateRestore(directory, model);
+  if (model.store.restorable) {
+    generateRestore(directory, model);
+  }
 
   //------------------------------------------------------------------//
   // 8. Address/events/search.ts
@@ -81,6 +83,10 @@ export default function generate(directory: Directory, model: Model) {
 
   //------------------------------------------------------------------//
   // 11. Address/events/index.ts
+
+  const actions = allActions.filter(
+    event => event !== 'restore' || model.store.restorable
+  );
   
   const filepath = model.name.toPathName('%s/events/index.ts');
   //load Address/events/index.ts if it exists, if not create it
@@ -99,11 +105,13 @@ export default function generate(directory: Directory, model: Model) {
     source.addImportDeclaration({
       moduleSpecifier: `./${event}.js`,
       defaultImport: event
-    });  
+    });
   });
   
   //export { batch, create, detail, get, purge, remove, restore, search, update, upsert };
-  source.addExportDeclaration({ namedExports: actions });
+  source.addExportDeclaration({ 
+    namedExports: actions, 
+  });
 
   //export default function listen(
   // emitter: Record<string, any> & { on: (event: string, listener: Function) => any }

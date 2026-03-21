@@ -147,7 +147,10 @@ export async function signin(
     }
   }
   //update consumed
-  await authActions.updateById(results.id, { consumed: new Date() });
+  await authActions.update(
+    { filter: { id: results.id } }, 
+    { consumed: new Date() }
+  );
   return results;
 };
 

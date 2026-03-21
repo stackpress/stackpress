@@ -38,11 +38,11 @@ export default function createView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
+  //import type { NestedObject, ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'NestedObject', 'ServerPageProps' ]
+    namedImports: [ 'NestedObject', 'ServerPageProps', 'SessionPermission' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
   source.addImportDeclaration({
@@ -92,10 +92,20 @@ export default function createView(directory: Directory, model: Model) {
   source.addFunction({
     isExported: true,
     name: model.name.toComponentName('%sAdminCreateCrumbs'),
+    parameters: [{ 
+      name: 'props', 
+      type: `{ 
+        base: string, 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`
+    }],
     statements: renderCode(TEMPLATE.CREATE_CRUMBS, { 
       search: {
         label: model.name.plural || model.name.titleCase,
-        icon: model.name.icon
+        icon: model.name.icon,
+        href: renderCode('`${base}/<%model%>/search`', { 
+          model: model.name.toURLPath()
+        })
       }
     })
   });
@@ -105,7 +115,10 @@ export default function createView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminCreateForm'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.CREATE_FORM_PROPS, { 
+      type: renderCode(`{ 
+        input: Partial<<%type%>>, 
+        errors: NestedObject<string | string[]> 
+      }`, { 
         type: model.name.toTypeName('%sInput') 
       }) 
     }],
@@ -180,27 +193,29 @@ export default function createView(directory: Directory, model: Model) {
 export const TEMPLATE = {
 
 CREATE_CRUMBS:
-`//hooks
+`//props
+const { base, can } = props;
+//hooks
 const { _ } = useLanguage();
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
     <Bread.Slicer>
       <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
     </Bread.Slicer>
-    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="search">
-      {_('<%search.label%>')}
-    </Bread.Crumb>
+    {can({ method: 'GET', route: <%search.href%> }) && (
+      <Bread.Crumb 
+        icon="<%search.icon%>" 
+        className="admin-crumb" 
+        href={<%search.href%>}
+      >
+        {_('<%search.label%>')}
+      </Bread.Crumb>
+    )}
     <Bread.Crumb icon="plus">
       {_('Create')}
     </Bread.Crumb>
   </Bread>
 );`,
-  
-CREATE_FORM_PROPS:
-`{ 
-  input: Partial<<%type%>>, 
-  errors: NestedObject<string | string[]> 
-}`,
 
 CREATE_FORM_BODY:
 `const { input, errors } = props;
@@ -232,14 +247,23 @@ CREATE_FORM_FIELD:
 />`,
 
 CREATE_BODY:
-`const { request, response } = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
+`//hooks
+const { 
+  config, 
+  session, 
+  request, 
+  response 
+} = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
+//variables
+const base = config.path('admin.base', '/admin');
+const can = session.can.bind(session);
 const input = { ...response.results, ...request.data() };
 const errors = response.errors();
 //render
 return (
   <main className="admin-page admin-form-page">
     <div className="admin-crumbs">
-      <<%crumbs%> />
+      <<%crumbs%> base={base} can={can} />
     </div>
     <div className="admin-form">
       <<%form%> errors={errors} input={input} />

@@ -12,8 +12,6 @@ import { render } from '../helpers.js';
 
 export default function updateView(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(column => column.name);
-  const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${base}/${model.name.dashCase}/${action}/${path}\``;
 
   //------------------------------------------------------------------//
   // Profile/admin/views/update.tsx
@@ -100,18 +98,28 @@ export default function updateView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminUpdateCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.UPDATE_CRUMBS_PROPS, { 
+      type: renderCode(`{ 
+        base: string, 
+        results: <%type%>, 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`, { 
         type: model.name.toTypeName('%sExtended') 
       })
     }],
     statements: renderCode(TEMPLATE.UPDATE_CRUMBS_BODY, {
       search: {
         label: model.name.plural || model.name.titleCase,
-        icon: model.name.icon
+        icon: model.name.icon,
+        href: renderCode('`${base}/<%model%>/search`', { 
+          model: model.name.toURLPath()
+        })
       },
       detail: {
-        label: render(model, "${results?.%s || ''}"),
-        href: link('detail')
+        label: render(model, "${results?.%s || _('Detail')}"),
+        href: renderCode('`${base}/<%model%>/detail/<%ids%>`', { 
+          model: model.name.toURLPath(),
+          ids: ids.map(name => `\${results.${name}}`).join('/')
+        })
       }
     })
   });
@@ -195,22 +203,27 @@ export default function updateView(directory: Directory, model: Model) {
 
 export const TEMPLATE = {
 
-UPDATE_CRUMBS_PROPS:
-'{ base: string, results: <%type%> }',
-
 UPDATE_CRUMBS_BODY:
-`const { base, results } = props;
+`//props
+const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
+//render
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
     <Bread.Slicer>
       <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
     </Bread.Slicer>
-    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
-      {_('<%search.label%>')}
-    </Bread.Crumb>
-    {!!results && (
+    {can({ method: 'GET', route: <%search.href%> }) && (
+      <Bread.Crumb 
+        icon="<%search.icon%>" 
+        className="admin-crumb" 
+        href={<%search.href%>}
+      >
+        {_('<%search.label%>')}
+      </Bread.Crumb>
+    )}
+    {!!results && can({ method: 'GET', route: <%detail.href%> }) && (
       <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
         {_(\`<%detail.label%>\`)}
       </Bread.Crumb>
@@ -260,12 +273,14 @@ UPDATE_BODY:
 `//props
 const { 
   config, 
+  session,
   request, 
   response 
 } = useServer<AdminConfigProps, Partial<<%input%>>, <%type%>>();
 //hooks
 const { _ } = useLanguage();
 //variables
+const can = session.can.bind(session);
 const base = config.path('admin.base', '/admin');
 const input = { ...response.results, ...request.data() };
 const errors = response.errors();
@@ -274,7 +289,7 @@ const results = response.results as <%type%>;
 return (
   <main className="admin-page admin-form-page">
     <div className="admin-crumbs">
-      <<%crumbs%> base={base} results={results} />
+      <<%crumbs%> base={base} can={can} results={results} />
     </div>
     {response.code === 404 ? (
       <div className="admin-form">

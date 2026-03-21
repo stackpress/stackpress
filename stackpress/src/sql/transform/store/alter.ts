@@ -6,6 +6,9 @@ export default function generate(
   source: SourceFile,
   definition: ClassDeclaration
 ) {
+  //------------------------------------------------------------------//
+  // Import Modules
+
   //import Alter from '@stackpress/inquire/Alter';
   source.addImportDeclaration({
     moduleSpecifier: '@stackpress/inquire/Alter',
@@ -16,6 +19,14 @@ export default function generate(
     moduleSpecifier: '@stackpress/inquire/helpers',
     namedImports: [ 'jsonCompare' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Store Methods
+
   //public alter(to?: Create) {}
   definition.addMethod({
     scope: Scope.Public,

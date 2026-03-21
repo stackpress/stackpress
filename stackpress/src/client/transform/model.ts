@@ -5,7 +5,23 @@ import { VariableDeclarationKind } from 'ts-morph';
 import type Model from '../../schema/Model.js';
 import { loadProjectFile } from '../../schema/transform/helpers.js';
 
+const allActions = [
+  'batch',
+  'create',
+  'detail',
+  'get',
+  'purge',
+  'remove',
+  'restore',
+  'search',
+  'update',
+  'upsert'
+];
+
 export default function generate(directory: Directory, model: Model) {
+  const actions = allActions.filter(
+    action => action !== 'restore' || model.store.restorable
+  );
   const columns = model.columns.filter(
     column => !column.type.model && !column.type.fieldset
   );
@@ -43,18 +59,7 @@ export default function generate(directory: Directory, model: Model) {
   //import { batch, ... } from './events/index.js';
   source.addImportDeclaration({
     moduleSpecifier: './events/index.js',
-    namedImports: [
-      'batch',
-      'create',
-      'detail',
-      'get',
-      'purge',
-      'remove',
-      'restore',
-      'search',
-      'update',
-      'upsert'
-    ]
+    namedImports: actions
   });
   //import admin from './admin/routes.js';
   source.addImportDeclaration({
@@ -83,18 +88,7 @@ export default function generate(directory: Directory, model: Model) {
     declarationKind: VariableDeclarationKind.Const,
     declarations: [{
       name: 'events',
-      initializer: `{
-        batch,
-        create,
-        detail,
-        get,
-        purge,
-        remove,
-        restore,
-        search,
-        update,
-        upsert
-      }`
+      initializer: `{ ${actions.join(', ')} }`
     }]
   });
   //export { AddressActions, AddressStore, events, admin };

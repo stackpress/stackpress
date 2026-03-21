@@ -18,12 +18,6 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Modules
 
-  //import type { UnknownNest } from '@stackpress/lib/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/lib/types',
-    namedImports: [ 'UnknownNest' ]
-  });
   //import { isObject } from '@stackpress/lib/Nest';
   source.addImportDeclaration({
     moduleSpecifier: '@stackpress/lib/Nest',
@@ -62,13 +56,11 @@ export default function generate(directory: Directory, model: Model) {
   // Import Client
 
   //import type { Profile } from '../../types.js';
-  if (model.value.hashed.size > 0) {
-    source.addImportDeclaration({
-      isTypeOnly: true,
-      moduleSpecifier: `../../types.js`,
-      namedImports: [ model.name.toClassName() ]
-    });
-  }
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: `../../types.js`,
+    namedImports: [ model.name.toClassName() ]
+  });
 
   //------------------------------------------------------------------//
   // Exports
@@ -87,6 +79,7 @@ export default function generate(directory: Directory, model: Model) {
       type: model.name.toTypeName(),
       event: model.name.toEventName(),
       model: model.name.toURLPath(),
+      oneid: model.store.ids.size === 1,
       ids: model.store.ids.map(
         column => `\${results.${column.name.toString()}}`
       ).toArray().join('/')
@@ -147,9 +140,17 @@ if (req.method === 'POST') {
   const results = response.results!
   //redirect
   const base = admin.base || '/admin';
-  res.redirect(
-    \`\${base}/<%model%>/detail/<%ids%>\`
-  );
+  <%#oneid%>
+    res.redirect(
+      \`\${base}/<%model%>/detail/<%ids%>\`
+    );
+  <%/oneid%>
+  <%^oneid%>
+    res.redirect(
+      \`\${base}/<%model%>/search\`
+    );
+  <%/oneid%>
+  return;
 }`,
 
 };

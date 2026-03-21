@@ -37,6 +37,9 @@ export default function generate(directory: Directory, model: Model) {
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
+  //------------------------------------------------------------------//
+  // Import Modules
+
   //import type { ScalarInput } from '@stackpress/lib/types';
   if (ids.findValue(column => objects.includes(column.type.name))) {
     source.addImportDeclaration({
@@ -56,6 +59,10 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'StatusResponse' ]
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { StoreSelectFilters } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -77,6 +84,10 @@ export default function generate(directory: Directory, model: Model) {
     defaultImport: 'AbstractActions',
     moduleSpecifier: 'stackpress/sql/AbstractActions'
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { Profile, ProfileExtended, ProfileActionsInterface, ProfileAssertInterfaceMap } from './types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -93,6 +104,9 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: model.name.toPathName('./%sStore.js'),
     defaultImport: model.name.toClassName('%sStore')
   });
+
+  //------------------------------------------------------------------//
+  // Exports
   
   //export default class ProfileActions {};
   const definition = source.addClass({
@@ -139,6 +153,12 @@ export default function generate(directory: Directory, model: Model) {
     statements: renderCode(TEMPLATE.BATCH, {
       type: model.name.toTypeName(),
       store: model.name.toClassName('%sStore'),
+      update: ids.map(
+        column => `typeof input.${column.name.toPropertyName()} !== 'undefined'`
+      ).toArray().join(' && '),
+      ids: ids.map(
+        column => ({ column: column.name.toString() })
+      ).toArray(),
       uniques: model.store.uniques.map(
         column => ({ column: column.name.toString() })
       ).toArray()
@@ -155,47 +175,14 @@ export default function generate(directory: Directory, model: Model) {
     }],
     statements: renderCode(TEMPLATE.CREATE, {
       assert: model.name.toTypeName('%sAssertInterfaceMap'),
-      oneid: ids.size === 1,
+      oneid: ids.size === 1 ? ids.first().name.toString() : null,
       multid: ids.size > 1,
+      type: model.name.toTypeName(),
       noid: ids.size === 0,
-      type: ids.size === 1 
-        ? ids.map(column => typemap[column.type.name]!).toArray()[0] 
-        : 'any',
-      ids: ids.map(column => ({ column: column.name.toString() })).toArray(),
+      ids: ids.map(
+        column => ({ column: column.name.toString() })
+      ).toArray(),
       exists: model.store.uniques.map(
-        column => ({ column: column.name.toString() })
-      ).toArray()
-    })
-  });
-  //public async deleteById(id: number | string) {}
-  definition.addMethod({
-    scope: Scope.Public,
-    isAsync: true,
-    name: 'deleteById',
-    parameters: ids.map(column => ({
-      name: column.name.toPropertyName(),
-      type: typemap[column.type.name]!
-    })).toArray(),
-    statements: renderCode(TEMPLATE.DELETE_BY_ID, {
-      ids: ids.map(
-        column => ({ column: column.name.toString() })
-      ).toArray()
-    })
-  });
-  //public async findById(id: number | string, columns = [ '*' ]) {}
-  definition.addMethod({
-    scope: Scope.Public,
-    isAsync: true,
-    name: 'findById',
-    parameters: [
-      ...ids.map(column => ({
-        name: column.name.toPropertyName(),
-        type: typemap[column.type.name]!
-      })).toArray(),
-      { name: 'columns', initializer: '[ \'*\' ]' }
-    ],
-    statements: renderCode(TEMPLATE.FIND_BY_ID, {
-      ids: ids.map(
         column => ({ column: column.name.toString() })
       ).toArray()
     })
@@ -214,50 +201,22 @@ export default function generate(directory: Directory, model: Model) {
       column: model.store.active?.name.toString() || ''
     })
   });
-  //public async removeById(id: number | string) {}
-  definition.addMethod({
-    scope: Scope.Public,
-    isAsync: true,
-    name: 'removeById',
-    parameters: ids.map(column => ({
-      name: column.name.toPropertyName(),
-      type: typemap[column.type.name]!
-    })).toArray(),
-    statements: renderCode(TEMPLATE.REMOVE_BY_ID, {
-      ids: ids.map(
-        column => ({ column: column.name.toString() })
-      ).toArray()
-    })
-  });
   //public async restore(query: StoreSelectFilters) {}
-  definition.addMethod({
-    scope: Scope.Public,
-    isAsync: true,
-    name: 'restore',
-    parameters: [{
-      name: 'query',
-      type: `StoreSelectFilters`
-    }],
-    statements: renderCode(TEMPLATE.RESTORE, {
-      active: Boolean(model.store.active),
-      column: model.store.active?.name.toString() || ''
-    })
-  });
-  //public async restoreById(id: number | string) {}
-  definition.addMethod({
-    scope: Scope.Public,
-    isAsync: true,
-    name: 'restoreById',
-    parameters: ids.map(column => ({
-      name: column.name.toPropertyName(),
-      type: typemap[column.type.name]!
-    })).toArray(),
-    statements: renderCode(TEMPLATE.RESTORE_BY_ID, {
-      ids: ids.map(
-        column => ({ column: column.name.toString() })
-      ).toArray()
-    })
-  });
+  if (model.store.restorable) {
+    definition.addMethod({
+      scope: Scope.Public,
+      isAsync: true,
+      name: 'restore',
+      parameters: [{
+        name: 'query',
+        type: `StoreSelectFilters`
+      }],
+      statements: renderCode(TEMPLATE.RESTORE, {
+        active: Boolean(model.store.active),
+        column: model.store.active?.name.toString() || ''
+      })
+    });
+  }
   //public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
   definition.addMethod({
     scope: Scope.Public,
@@ -272,27 +231,6 @@ export default function generate(directory: Directory, model: Model) {
       type: model.name.toTypeName(),
       uniques: model.store.uniques.size > 0,
       exists: model.store.uniques.map(
-        column => ({ column: column.name.toString() })
-      ).toArray()
-    })
-  });
-  //public async updateById(id: number | string, input: Partial<Profile>) {}
-  definition.addMethod({
-    scope: Scope.Public,
-    isAsync: true,
-    name: 'updateById',
-    parameters: [
-      ...ids.map(column => ({
-        name: column.name.toPropertyName(),
-        type: typemap[column.type.name]!
-      })).toArray(),
-      {
-        name: 'input',
-        type: model.name.toTypeName('Partial<%s>')
-      }
-    ],
-    statements: renderCode(TEMPLATE.UPDATE_BY_ID, {
-      ids: ids.map(
         column => ({ column: column.name.toString() })
       ).toArray()
     })
@@ -350,21 +288,32 @@ try {
             total: 1
           });
         } else if (mode === 'update') {
-          if (typeof input.id !== 'undefined') {
-            results.push({ 
-              code: 200, 
-              status: 'OK', 
-              results: await this.updateById(input.id, input),
-              total: 1
-            });
-            continue;
-          } 
+          <%#ids.length%>
+            if (<%update%>) {
+              const filter = { 
+                <%#ids%>
+                  <%column%>: input.<%column%>,
+                <%/ids%> 
+              };
+              const exists = await this.find({ filter });
+              if (exists) {
+                const rows = await this.update({ filter }, input);
+                results.push({ 
+                  code: 200, 
+                  status: 'OK', 
+                  results: rows[0] || null,
+                  total: 1
+                });
+                continue;
+              }
+            }
+          <%/ids.length%>
           <%#uniques%>
             if (typeof input.<%column%> !== 'undefined') {
-              const query = { filter: { <%column%>: input.<%column%> } };
-              const exists = await this.find(query);
+              const filter = { <%column%>: input.<%column%> };
+              const exists = await this.find({ filter });
               if (exists) {
-                const rows = await this.update(query, input);
+                const rows = await this.update({ filter }, input);
                 results.push({ 
                   code: 200, 
                   status: 'OK', 
@@ -446,30 +395,20 @@ if (rows.length > 0) {
 }
 //must be mysql or sqlite...
 <%#oneid%>
-  return (await this.findById(
-    this.engine.connection.lastId as <%type%>
-  ))!;
+  if (this.engine.connection.lastId) {
+    const filter = { <%oneid%>: this.engine.connection.lastId };
+    return await this.find({ filter }) || input as unknown as <%type%>;
+  }
+  return input as unknown as <%type%>;
 <%/oneid%>
 <%#multid%>
-  return await this.find({ 
-   filter: { <%#ids%><%column%>: input.<%column%>, <%/ids%> } 
-  });
+  const filter = { <%#ids%><%column%>: input.<%column%>!, <%/ids%> };
+  return await this.find({ filter }) || input as unknown as <%type%>;
 <%/multid%>
 <%#noid%>
-  return input as unknown as T;
+  return input as unknown as <%type%>;
 <%/noid%>
 `,
-
-//public async deleteById(id: number | string) {}
-DELETE_BY_ID:
-`const filter = { <%#ids%><%column%>, <%/ids%> };
-const rows = await this.delete({ filter });
-return rows[0] || null;`,
-
-//public async findById(id: number | string, columns = [ '*' ]) {}
-FIND_BY_ID:
-`const filter = { <%#ids%><%column%>, <%/ids%> };
-return await this.find({ columns, filter });`,
 
 //public async remove(query: StoreSelectFilters) {}
 REMOVE:
@@ -480,23 +419,11 @@ REMOVE:
   return await this.delete(query);
 <%/active%>`,
 
-//public async removeById(id: number | string) {}
-REMOVE_BY_ID:
-`const filter = { <%#ids%><%column%>, <%/ids%> };
-const rows = await this.remove({ filter });
-return rows[0] || null;`,
-
 //public async restore(query: StoreSelectFilters) {}
 RESTORE:
 `<%#active%>
   return await this.update(query, { <%column%>: true });
 <%/active%>`,
-
-//public async restoreById(id: number | string) {}
-RESTORE_BY_ID:
-`const filter = { <%#ids%><%column%>, <%/ids%> };
-const rows = await this.restore({ filter });
-return rows[0] || null;`,
 
 //public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
 UPDATE:
@@ -558,23 +485,25 @@ if (rows.length > 0) {
 // with the existing records
 return rows.map(row => ({ ...row, ...sanitized })) as <%type%>[];`,
 
-//public async updateById(id: number | string, input: Partial<Profile>) {}
-UPDATE_BY_ID:
-`const filter = { <%#ids%><%column%>, <%/ids%> };
-const rows = await this.update({ filter }, input);
-return rows[0] || null;`,
-
 //public async upsert(input: Partial<Profile>) {}
 UPSERT:
-`if (<%update%>) {
-  return await this.updateById(<%#ids%>input.<%column%>, <%/ids%> input);
-}
+`<%#ids.length%>
+  if (<%update%>) {
+    const filter = { 
+      <%#ids%>
+        <%column%>: input.<%column%>,
+      <%/ids%> 
+    };
+    const rows = await this.update({ filter }, input);
+    return rows[0] || null;
+  }
+<%/ids.length%>
 <%#uniques%>
   if (typeof input.<%column%> !== 'undefined') {
-    const query = { filter: { <%column%>: input.<%column%> } };
-    const exists = await this.find(query);
+    const filter = { <%column%>: input.<%column%> };
+    const exists = await this.find({ filter });
     if (exists) {
-      const rows = await this.update(query, input);
+      const rows = await this.update({ filter }, input);
       return rows[0] || null;
     }
   }

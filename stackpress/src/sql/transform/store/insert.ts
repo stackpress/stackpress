@@ -10,11 +10,22 @@ export default function generate(
   model: Model,
   definition: ClassDeclaration
 ) {
+  //------------------------------------------------------------------//
+  // Import Modules
+
   //import Insert from '@stackpress/inquire/Insert';
   source.addImportDeclaration({
     moduleSpecifier: '@stackpress/inquire/Insert',
     defaultImport: 'Insert'
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Store Methods
+
   //public insert(input: PlaceInput) {}
   definition.addMethod({
     scope: Scope.Public,

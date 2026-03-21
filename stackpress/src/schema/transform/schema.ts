@@ -113,7 +113,9 @@ export default function generate(directory: Directory, model: Fieldset) {
     statements: renderCode(TEMPLATE.CONSTRUCTOR, {
       columns: columns.map(column => ({ 
         column: column.name.toPropertyName(), 
-        classname: column.name.toClassName('%sColumn'),
+        classname: column.type.fieldset 
+          ? column.type.fieldset.name.toClassName('%sSchema')
+          : column.name.toClassName('%sColumn'),
         seed: column.value.encrypted ? 'seed': ''
       })).toArray()
     })

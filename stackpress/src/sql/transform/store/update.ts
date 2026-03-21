@@ -10,11 +10,22 @@ export default function generate(
   model: Model,
   definition: ClassDeclaration
 ) {
+  //------------------------------------------------------------------//
+  // Import Modules
+
   //import Update from '@stackpress/inquire/Update';
   source.addImportDeclaration({
     moduleSpecifier: '@stackpress/inquire/Update',
     defaultImport: 'Update'
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Store Methods
+
   //public update(values: Partial<Place>, query: StoreSelectFilters = {}, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,

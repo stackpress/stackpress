@@ -137,8 +137,17 @@ export default class ColumnStore {
     }
     //get the foreign model's relational column
     const foreignColumn = model.columns.findValue(
-      //example: user User @relation(...) === user User[]
-      column => column.type.name ===  this._column.parent.name.toString()
+      //example: user User[] === user User @relation(...)
+      column => {
+        //ie. connections User[]
+        //to. owner User @relation({ name "connections" local "userId" foreign "id" })
+        const withName = !column.store.relation 
+          || !column.store.relation.name 
+          || column.store.relation.name === this._column.name.toString();
+        return column.type.name === this._column.parent.name.toString()
+          //...and if the foreign column has a relation name
+          && withName
+      }
     );
     return foreignColumn?.store.foreignRelationship || null;
   }
@@ -189,7 +198,7 @@ export default class ColumnStore {
   /**
    * Sets the column reference
    */
-  constructor(column: Column) {
+  public constructor(column: Column) {
     this._column = column;
   }
 };

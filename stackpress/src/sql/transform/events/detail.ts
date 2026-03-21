@@ -29,6 +29,11 @@ export default function generate(directory: Directory, model: Model) {
   //load Profile/events/detail.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { DatabasePlugin } from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -52,11 +57,19 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/Exception',
     defaultImport: 'Exception'
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import ProfileActions from '../ProfileActions.js';
   source.addImportDeclaration({
     moduleSpecifier: model.name.toPathName('../%sActions.js'),
     defaultImport: model.name.toClassName('%sActions')
   });
+
+  //------------------------------------------------------------------//
+  // Exports
+
   //export default async function ProfileDetailEvent(
   //  req: Request, 
   //  res: Response, 

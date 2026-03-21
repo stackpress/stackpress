@@ -11,6 +11,7 @@ export default function generate(directory: Directory, model: Model) {
   //not like this: (local keys)
   // users User[]
   const relations = model.store.foreignRelationships;
+  const modelImported: string[] = [];
 
   const filepath = model.name.toPathName('%s/types.ts');
   //load Profile/ProfileSchema.ts if it exists, if not create it
@@ -31,11 +32,14 @@ export default function generate(directory: Directory, model: Model) {
   for (const column of relations.values()) {
     //this should never happen...
     if (!column.type.model) continue;
+    const store = column.type.model.name.toClassName('%sStore');
+    if (modelImported.includes(store)) continue;
+    modelImported.push(store);
     //import ProfileStore from '../Profile/ProfileStore.js';
     source.addImportDeclaration({
       isTypeOnly: true,
       moduleSpecifier: column.type.model.name.toPathName('../%s/%sStore.js'),
-      defaultImport: column.type.model.name.toClassName('%sStore')
+      defaultImport: store
     });
   }
 
@@ -55,7 +59,7 @@ export default function generate(directory: Directory, model: Model) {
     type: (`{${
       relations.map(
         column => `${column.name.toString()}: {
-          store: ${column.name.toClassName('%sStore')},
+          store: ${column.type.model!.name.toClassName('%sStore')},
           local: string,
           foreign: string,
           multiple: boolean,

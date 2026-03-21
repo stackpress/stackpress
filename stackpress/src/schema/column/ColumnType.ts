@@ -44,11 +44,13 @@ export default class ColumnType {
       } : { ...assertion, args: [] });
     }
     //if type is an enum
-    const enumOptions = this.enum;
-    const optionToken = dictionary.assertions.definition('is.option');
-    if (enumOptions && optionToken) {
-      const args = Object.values(enumOptions);
-      assertions.add({...optionToken, args});
+    if (this.hasSchema && this.enum) {
+      const enumOptions = this.enum;
+      const optionToken = dictionary.assertions.definition('is.option');
+      if (enumOptions && optionToken) {
+        const args = Object.values(enumOptions);
+        assertions.add({...optionToken, args});
+      }
     }
     //if type is required
     const requiredToken = dictionary.assertions.definition('is.required');

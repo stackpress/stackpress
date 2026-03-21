@@ -8,8 +8,10 @@ enum PublishStatus {
 }
 
 model Profile {
-  articles Article[] @label("Articles")
-  comments Comment[] @label("Comments")
+  articles   Article[] @label("Articles")
+  comments   Comment[] @label("Comments")
+  network    Network[] @label("Networks")
+  membership Network[] @label("Memberships")
 }
 
 model Category 
@@ -254,8 +256,8 @@ model Article
   
   profile   Profile @relation({ local "profileId" foreign "id" })
 
-  comments   Comment[]         @label("Comments")
-  catalogs   Catalog[] @label("Catalogs")
+  comments  Comment[] @label("Comments")
+  catalogs  Catalog[] @label("Catalogs")
 }
 
 model Comment 
@@ -339,4 +341,47 @@ model Comment
   
   article   Article @relation({ local "articleId" foreign "id" })
   profile   Profile @relation({ local "profileId" foreign "id" })
+}
+
+model Network 
+  @labels("Network" "Networks")
+  @icon("sitemap")
+  @display("{{owner.name}} - {{member.name}}")
+  @query("*" "owner.*" "member.*") 
+{
+  ownerId   String 
+            @label("Owner") @id 
+            @field.relation({ 
+              id "id"
+              search "/admin/profile/search?json&q={{query}}"
+              template "{{name}}" 
+            }) 
+            @filter.relation({
+              id "id"
+              search "/admin/profile/search?json&q={{query}}"
+              template "{{name}}" 
+            }) 
+            @list.template({ template "{{owner.name}}" }) 
+            @view.template({ template "{{owner.name}}" })
+            @description("Profile this auth belongs to.")
+            @examples("pjfdz7tg8bcf7e2lig3iuej3")
+  memberId  String @id
+            @label("Member") @id 
+            @field.relation({ 
+              id "id"
+              search "/admin/profile/search?json&q={{query}}"
+              template "{{name}}" 
+            }) 
+            @filter.relation({
+              id "id"
+              search "/admin/profile/search?json&q={{query}}"
+              template "{{name}}" 
+            }) 
+            @list.template({ template "{{member.name}}" }) 
+            @view.template({ template "{{member.name}}" })
+            @description("Profile this auth belongs to.")
+            @examples("pjfdz7tg8bcf7e2lig3iuej3")
+
+  owner   Profile @relation({ name "network" local "ownerId" foreign "id" })
+  member  Profile @relation({ name "membership" local "memberId" foreign "id" })
 }

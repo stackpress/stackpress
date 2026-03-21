@@ -54,11 +54,11 @@ export default function generate(directory: Directory, model: Model) {
           view: model.name.toPathName('${module}/%s/admin/views/remove'),
           import: './pages/remove.js'
         },
-        restore: {
+        restore: model.store.restorable ? {
           route: model.name.toURLPath('${root}/%s/restore/' + ids),
           view: model.name.toPathName('${module}/%s/admin/views/restore'),
           import: './pages/restore.js'
-        },
+        } : null,
         search: {
           route: model.name.toURLPath('${root}/%s/search'),
           view: model.name.toPathName('${module}/%s/admin/views/search'),
@@ -84,48 +84,56 @@ export default function generate(directory: Directory, model: Model) {
               route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/create', {
                 model: model.name.toURLPath(),
                 ids: ids,
-                relation: relationship.local.model.name.toURLPath()
+                relation: relationship.foreign.column.name.toURLPath()
               }),
-              import: relationship.local.model.name.toPathName('./pages/%s/create.js'),
+              import: renderCode('./pages/<%relation%>/create.js', {
+                relation: relationship.foreign.column.name.toString()
+              }),
               view: renderCode('${module}/<%model%>/admin/views/<%relation%>/create', {
                 model: model.name.toString(),
-                relation: relationship.local.model.name.toString()
+                relation: relationship.foreign.column.name.toString()
               })
             },
             export: {
               route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/export', {
                 model: model.name.toURLPath(),
                 ids: ids,
-                relation: relationship.local.model.name.toURLPath()
+                relation: relationship.foreign.column.name.toURLPath()
               }),
-              import: relationship.local.model.name.toPathName('./pages/%s/export.js'),
+              import: renderCode('./pages/<%relation%>/export.js', {
+                relation: relationship.foreign.column.name.toString()
+              }),
               view: renderCode('${module}/<%model%>/admin/views/<%relation%>/export', {
                 model: model.name.toString(),
-                relation: relationship.local.model.name.toString()
+                relation: relationship.foreign.column.name.toString()
               })
             },
             import: {
               route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/import', {
                 model: model.name.toURLPath(),
                 ids: ids,
-                relation: relationship.local.model.name.toURLPath()
+                relation: relationship.foreign.column.name.toURLPath()
               }),
-              import: relationship.local.model.name.toPathName('./pages/%s/import.js'),
+              import: renderCode('./pages/<%relation%>/import.js', {
+                relation: relationship.foreign.column.name.toString()
+              }),
               view: renderCode('${module}/<%model%>/admin/views/<%relation%>/import', {
                 model: model.name.toString(),
-                relation: relationship.local.model.name.toString()
+                relation: relationship.foreign.column.name.toString()
               })
             },
             search: {
               route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/search', {
                 model: model.name.toURLPath(),
                 ids: ids,
-                relation: relationship.local.model.name.toURLPath()
+                relation: relationship.foreign.column.name.toURLPath()
               }),
-              import: relationship.local.model.name.toPathName('./pages/%s/search.js'),
+              import: renderCode('./pages/<%relation%>/search.js', {
+                relation: relationship.foreign.column.name.toString()
+              }),
               view: renderCode('${module}/<%model%>/admin/views/<%relation%>/search', {
                 model: model.name.toString(),
-                relation: relationship.local.model.name.toString()
+                relation: relationship.foreign.column.name.toString()
               })
             }
           };
@@ -164,10 +172,12 @@ server.import.all(
     \`<%remove.route%>\`, 
     () => import('<%remove.import%>')
   );
-  server.import.all(
-    \`<%restore.route%>\`, 
-    () => import('<%restore.import%>')
-  );
+  <%#restore%>
+    server.import.all(
+      \`<%restore.route%>\`, 
+      () => import('<%restore.import%>')
+    );
+  <%/restore%>
   server.import.all(
     \`<%update.route%>\`, 
     () => import('<%update.import%>')
@@ -215,11 +225,13 @@ if (module) {
       \`<%remove.view%>\`,
       -100
     );
-    server.view.all(
-      \`<%restore.route%>\`, 
-      \`<%restore.view%>\`,
-      -100
-    );
+    <%#restore%>
+      server.view.all(
+        \`<%restore.route%>\`, 
+        \`<%restore.view%>\`,
+        -100
+      );
+    <%/restore%>
     server.view.all(
       \`<%update.route%>\`, 
       \`<%update.view%>\`,

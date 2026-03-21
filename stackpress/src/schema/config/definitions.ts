@@ -2,10 +2,12 @@
 import type { 
   AttributeDataMap,
   AttributeDataAssertion,
-  AttributeDataComponent
+  AttributeDataComponent,
+  TypeAssertionMap
 } from '../types.js';
 //stackpress/schema/config
 import * as attributes from './attributes.js';
+import { assertions as typeAssertions } from './types.js';
 import dictionary from '../dictionary.js';
 
 /**
@@ -63,6 +65,15 @@ export function defineComponents(
 };
 
 /**
+ * Defines type map entries from a data map
+ */
+export function defineTypes(key: string, map: TypeAssertionMap) {
+  for (const [ type, value ] of Object.entries(map)) {
+    dictionary.types.define(type, key, value);
+  }
+};
+
+/**
  * Defines all built-in attributes
  */
 export function defineBuiltIn() {
@@ -82,4 +93,6 @@ export function defineBuiltIn() {
   defineComponents('span', attributes.span);
   defineComponents('list', attributes.list);
   defineComponents('view', attributes.view);
+
+  defineTypes('assertion', typeAssertions);
 };

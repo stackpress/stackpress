@@ -25,7 +25,20 @@ export default function generate(
         && column.store.localRelationship.foreign.type === 2
     )
   ).map(column => column.store.localRelationship!).toArray();
-  const foreign = relationship.local.model as Model;
+  //NOTE: in related, the local model is the foreign 
+  // model, and the foreign model is this model
+  const foreignModel = relationship.local.model as Model;
+  //relation used for filepaths and function names
+  const relatedColumn = relationship.foreign.column;
+
+  const filterable = Boolean(foreignModel.component.listFormats.find(
+    column => column.store.filterable
+      && relationship.local.key.name.toString() !== column.name.toString()
+  ));
+  const sortable = Boolean(foreignModel.component.listFormats.find(
+    column => column.store.sortable
+      && relationship.local.key.name.toString() !== column.name.toString()
+  ));
 
   //------------------------------------------------------------------//
   // Profile/admin/views/Auth/search.tsx
@@ -34,7 +47,7 @@ export default function generate(
     '<%model%>/admin/views/<%relation%>/search.tsx', 
     {
       model: model.name.toPathName(),
-      relation: foreign.name.toPathName()
+      relation: relationship.foreign.column.name.toString()
     }
   );
   //load file if it exists, if not create it
@@ -75,7 +88,7 @@ export default function generate(
     defaultImport: 'Button'
   });
   //import Input from 'frui/form/Input';
-  if (foreign.store.searchables.size > 0) {
+  if (foreignModel.store.searchables.size > 0) {
     source.addImportDeclaration({
       moduleSpecifier: 'frui/form/Input',
       defaultImport: 'Input'
@@ -123,9 +136,11 @@ export default function generate(
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [
+      //import filter if there are any filterables
+      ...filterable ? [ 'filter' ]: [],
+      //import order if there are any sortables
+      ...sortable ? [ 'order' ]: [],
       'paginate',
-      'filter',
-      'order',
       'useServer',
       'LayoutAdmin'
     ]
@@ -148,42 +163,42 @@ export default function generate(
   //import type { AuthExtended } from '../../../../Auth/types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: foreign.name.toPathName('../../../../%s/types.js'),
-    namedImports: [ foreign.name.toTypeName('%sExtended') ]
+    moduleSpecifier: foreignModel.name.toPathName('../../../../%s/types.js'),
+    namedImports: [ foreignModel.name.toTypeName('%sExtended') ]
   });
   //import CreatedListFormat from '../../../../Auth/components/list/CreatedListFormat.js';
-  foreign.component.listFormats.toArray().forEach(column => {
+  foreignModel.component.listFormats.toArray().forEach(column => {
     //skip profileId
     if (relationship.local.key.name.toString() === column.name.toString()) {
       return;
     }
     source.addImportDeclaration({
       moduleSpecifier: renderCode('../../../../<%model%>/components/list/<%column%>ListFormat.js', {
-        model: foreign.name.toPathName(),
+        model: foreignModel.name.toPathName(),
         column: column.name.toPathName()
       }),
       defaultImport: column.name.toComponentName('%sListFormat')
     });
   });
   //import { ActiveFilterControl } from '../../../../Auth/components/filter/ActiveFilterField.js';
-  foreign.component.filterFields.toArray().forEach(column => {
+  foreignModel.component.filterFields.toArray().forEach(column => {
     //skip profileId
     if (relationship.local.key.name.toString() === column.name.toString()) {
       return;
     }
     source.addImportDeclaration({
       moduleSpecifier: renderCode('../../../../<%model%>/components/filter/<%column%>FilterField.js', {
-        model: foreign.name.toPathName(),
+        model: foreignModel.name.toPathName(),
         column: column.name.toPathName()
       }),
       namedImports: [ column.name.toComponentName('%sFilterFieldControl') ]
     });
   });
   //import { ActiveSpanControl } from '../../../../Auth/components/span/ActiveSpanField.js';
-  foreign.component.spanFields.toArray().forEach(column => {
+  foreignModel.component.spanFields.toArray().forEach(column => {
     source.addImportDeclaration({
       moduleSpecifier: renderCode('../../../../<%model%>/components/span/<%column%>SpanField.js', {
-        model: foreign.name.toPathName(),
+        model: foreignModel.name.toPathName(),
         column: column.name.toPathName()
       }),
       namedImports: [ column.name.toComponentName('%sSpanFieldControl') ]
@@ -198,18 +213,25 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>SearchCrumbs', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
-      type: renderCode('{ base: string, results: <%type%> }', { 
+      type: renderCode(`{ 
+        base: string, 
+        results: <%type%>, 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`, { 
         type: model.name.toTypeName('%sExtended')
       })
     }],
     statements: renderCode(TEMPLATE.SEARCH_CRUMBS_BODY, {
       search: {
         label: model.name.plural || model.name.titleCase,
-        icon: model.name.icon
+        icon: model.name.icon,
+        href: renderCode('`${base}/<%model%>/search`', {
+          model: model.name.toURLPath()
+        })
       },
       detail: {
         label: render(model, "${results?.%s || ''}"),
@@ -219,8 +241,10 @@ export default function generate(
         })
       },
       relation: {
-        label: foreign.name.plural || foreign.name.titleCase,
-        icon: foreign.name.icon
+        label: relatedColumn.attributes.value<string>('label') 
+          || foreignModel.name.plural 
+          || foreignModel.name.titleCase,
+        icon: foreignModel.name.icon
       }
     })
   });
@@ -229,7 +253,7 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>SearchTabs', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
@@ -244,15 +268,16 @@ export default function generate(
       }),
       //where this model is 1, get the many relations...
       related: related.map(related => ({
-        label: related.local.model.name.plural 
+        label: related.foreign.column.attributes.value<string>('label')
+          || related.local.model.name.plural 
           || related.local.model.name.singular
           || related.local.model.name.titleCase,
-        link: renderCode('`${base}/<%model%>/detail/<%ids%>/<%relation%>/search`', {
+        link: renderCode('`${base}/<%model%>/detail/<%ids%>/<%relation%>/search`', { 
           model: model.name.toURLPath(),
           ids: ids.map(name => `\${results.${name}}`).join('/'),
-          relation: related.local.model.name.toURLPath()
+          relation: related.foreign.column.name.toURLPath()
         }),
-        active: related.local.model.name.toString() === foreign.name.toString()
+        active: related.foreign.column.name.toString() === relatedColumn.name.toString()
       }))
     })
   });
@@ -261,7 +286,7 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>SearchFilters', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
@@ -271,7 +296,7 @@ export default function generate(
       }` 
     }],
     statements: renderCode(TEMPLATE.SEARCH_FILTERS_BODY, {
-      fields: foreign.columns
+      fields: foreignModel.columns
         .toArray()
         .filter(column => relationship.local.key.name.toString() !== column.name.toString())
         .map(column => {
@@ -295,7 +320,7 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>SearchForm', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
@@ -310,21 +335,21 @@ export default function generate(
       })
     }],
     statements: renderCode(TEMPLATE.SEARCH_FORM_BODY, {
-      searchable: foreign.store.searchables.size > 0,
+      searchable: foreignModel.store.searchables.size > 0,
       export: renderCode('`${base}/<%model%>/detail/<%ids%>/<%relation%>/export`', {
         model: model.name.toURLPath(),
         ids: ids.map(name => `\${results.${name}}`).join('/'),
-        relation: foreign.name.toURLPath()
+        relation: relatedColumn.name.toURLPath()
       }),
       import: renderCode('`${base}/<%model%>/detail/<%ids%>/<%relation%>/import`', {
         model: model.name.toURLPath(),
         ids: ids.map(name => `\${results.${name}}`).join('/'),
-        relation: foreign.name.toURLPath()
+        relation: relatedColumn.name.toURLPath()
       }),
       create: renderCode('`${base}/<%model%>/detail/<%ids%>/<%relation%>/create`', {
         model: model.name.toURLPath(),
         ids: ids.map(name => `\${results.${name}}`).join('/'),
-        relation: foreign.name.toURLPath()
+        relation: relatedColumn.name.toURLPath()
       })
     })
   });
@@ -333,19 +358,20 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>SearchResults', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
       type: `{ 
         base: string,
         query: Partial<StoreSearchQuery>, 
-        results: ${foreign.name.toTypeName('%sExtended')}[], 
+        results: ${foreignModel.name.toTypeName('%sExtended')}[], 
         can: (...permits: SessionPermission[]) => boolean 
       }`
     }],
     statements: renderCode(TEMPLATE.SEARCH_RESULTS_BODY, {
-      headers: foreign.component.listFormats
+      sortable,
+      headers: foreignModel.component.listFormats
         .toArray()
         .filter(column => relationship.local.key.name.toString() !== column.name.toString())
         .map(column => renderCode(
@@ -358,7 +384,7 @@ export default function generate(
           }
         )
       ).join('\n'),
-      columns: foreign.component.listFormats
+      columns: foreignModel.component.listFormats
         .toArray()
         .filter(column => relationship.local.key.name.toString() !== column.name.toString())
         .map(column => renderCode(
@@ -373,8 +399,8 @@ export default function generate(
           }
         )
       ).join('\n'),
-      model: foreign.name.toURLPath(),
-      ids: foreign.store.ids
+      model: foreignModel.name.toURLPath(),
+      ids: foreignModel.store.ids
         .toArray()
         .map(column => column.name)
         .map(name => `\${row.${name}}`)
@@ -386,33 +412,33 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>SearchBody', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     statements: renderCode(TEMPLATE.SEARCH_BODY, {
       type: {
         model: model.name.toTypeName('%sExtended'),
-        foreign: foreign.name.toTypeName('%sExtended'),
-        column: foreign.name.toPropertyName()
+        foreign: foreignModel.name.toTypeName('%sExtended'),
+        column: relatedColumn.name.toString()
       },
       crumbs: renderCode('<%model%>Admin<%relation%>SearchCrumbs', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName(),
       }),
       tabs: renderCode('<%model%>Admin<%relation%>SearchTabs', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName(),
       }),
       filters: renderCode('<%model%>Admin<%relation%>SearchFilters', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName(),
       }),
       form: renderCode('<%model%>Admin<%relation%>SearchForm', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName(),
       }),
       results: renderCode('<%model%>Admin<%relation%>SearchResults', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName(),
       })
     })
   });
@@ -421,7 +447,7 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>SearchHead', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
@@ -429,9 +455,9 @@ export default function generate(
     }],
     statements: renderCode(TEMPLATE.SEARCH_HEAD, { 
       name: model.name.singular,
-      relation: foreign.name.plural 
-        || foreign.name.singular 
-        || foreign.name.titleCase
+      relation: relatedColumn.attributes.value<string>('label') 
+        || foreignModel.name.plural 
+        || foreignModel.name.titleCase
     })
   });
   //export function AdminProfileAuthSearchPage() {}
@@ -439,7 +465,7 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>SearchPage', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
@@ -448,7 +474,7 @@ export default function generate(
     statements: renderCode(TEMPLATE.SEARCH_PAGE, { 
       component: renderCode('<%model%>Admin<%relation%>SearchBody', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName()
       })
     })
   });
@@ -460,7 +486,7 @@ export default function generate(
       name: 'Head',
       initializer: renderCode('<%model%>Admin<%relation%>SearchHead', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName()
       })
     }]
   });
@@ -468,7 +494,7 @@ export default function generate(
   source.addStatements(
     `export default ${renderCode('<%model%>Admin<%relation%>SearchPage', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     })};`
   );
 };
@@ -477,7 +503,7 @@ export const TEMPLATE = {
 
 SEARCH_CRUMBS_BODY:
 `//props
-const { base, results } = props;
+const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -486,10 +512,16 @@ return (
     <Bread.Slicer>
       <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
     </Bread.Slicer>
-    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../../../search">
-      {_('<%search.label%>')}
-    </Bread.Crumb>
-    {!!results && (
+    {can({ method: 'GET', route: <%search.href%> }) && (
+      <Bread.Crumb 
+        icon="<%search.icon%>" 
+        className="admin-crumb" 
+        href={<%search.href%>}
+      >
+        {_('<%search.label%>')}
+      </Bread.Crumb>
+    )}
+    {!!results && can({ method: 'GET', route: <%detail.href%> }) && (
       <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
         {_(\`<%detail.label%>\`)}
       </Bread.Crumb>
@@ -660,8 +692,13 @@ SEARCH_RESULTS_COLUMN:
 </Table.Col>`,
 
 SEARCH_RESULTS_BODY:
-`const { can, base, query, results } = props;
-const { sort = {} } = query;
+`<%#sortable%>
+  const { can, base, query, results } = props;
+  const { sort = {} } = query;
+<%/sortable%>
+<%^sortable%>
+  const { can, base, results } = props;
+<%/sortable%>
 const { _ } = useLanguage();
 return (
   <Table
@@ -705,8 +742,8 @@ const {
 >();
 const [ opened, open ] = useState(false);
 //variables
-const base = config.path('admin.base', '/admin');
 const can = session.can.bind(session);
+const base = config.path('admin.base', '/admin');
 const query = request.data();
 const skip = query.skip || 0;
 const take = query.take || 50;
@@ -718,7 +755,7 @@ const page = (skip: number) => paginate('skip', skip);
 return (
   <main className="admin-detail-page admin-search-page admin-page">
     <div className="admin-crumbs">
-      <<%crumbs%> base={base} results={results} />
+      <<%crumbs%> base={base} can={can} results={results} />
     </div>
     {response.code === 200 ? (
       <>
@@ -750,10 +787,12 @@ return (
           )}
           <div className="admin-search-results">
             {!results?.<%type.column%>.length ? (
-              <Alert info>
-                <i className="no-results-icon fas fa-fw fa-info-circle"></i>
-                {_('No results found.')}
-              </Alert>
+              <div className="admin-no-results">
+                <Alert info>
+                  <i className="no-results-icon fas fa-fw fa-info-circle"></i>
+                  {_('No results found.')}
+                </Alert>
+              </div>
             ): (
               <<%results%>
                 base={base}
@@ -764,7 +803,7 @@ return (
             )}
           </div>
           {total > take && (
-            <div className="px-py-10 flex justify-center">
+            <div className="admin-pager">
               <Pager 
                 className={({ active }) => active 
                   ? 'px-w-32 px-h-32 !font-normal' 

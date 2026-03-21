@@ -7,6 +7,7 @@
   "scripts": {
     "build": "yarn --cwd stackpress build",
     "test": "yarn --cwd stackpress test",
+    "test:teardown": "yarn --cwd stackpress test:teardown",
     "blog": "yarn --cwd templates/blog",
     "store": "yarn --cwd templates/store",
     "website": "yarn --cwd templates/website"

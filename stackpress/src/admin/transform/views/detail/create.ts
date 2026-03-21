@@ -17,7 +17,11 @@ export default function generate(
   relationship: Relationship
 ) {
   const ids = model.store.ids.toArray().map(column => column.name);
-  const foreign = relationship.local.model as Model;
+  //NOTE: in related, the local model is the foreign 
+  // model, and the foreign model is this model
+  const foreignModel = relationship.local.model as Model;
+  //relation used for filepaths and function names
+  const relatedColumn = relationship.foreign.column;
 
   //------------------------------------------------------------------//
   // Profile/admin/views/Auth/create.tsx
@@ -26,7 +30,7 @@ export default function generate(
     '<%model%>/admin/views/<%relation%>/create.tsx', 
     {
       model: model.name.toPathName(),
-      relation: foreign.name.toPathName()
+      relation: relationship.foreign.column.name.toString()
     }
   );
   //load file if it exists, if not create it
@@ -54,13 +58,14 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
+  //import type { NestedObject, ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 
       'NestedObject', 
-      'ServerPageProps'
+      'ServerPageProps',
+      'SessionPermission'
     ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
@@ -90,13 +95,13 @@ export default function generate(
   //import type { AuthInput } from '../../../../Auth/types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: foreign.name.toPathName('../../../../%s/types.js'),
+    moduleSpecifier: foreignModel.name.toPathName('../../../../%s/types.js'),
     namedImports: [ 
-      foreign.name.toTypeName('%sInput') 
+      foreignModel.name.toTypeName('%sInput') 
     ]
   });
   //import { ActiveFormFieldControl } from '../../../../Auth/components/form/ActiveFormField.js';
-  foreign.component.formFields.forEach(column => {
+  foreignModel.component.formFields.forEach(column => {
     //skip profileId
     if (relationship.local.key.name.toString() === column.name.toString()) {
       return;
@@ -106,7 +111,7 @@ export default function generate(
     //import { ActiveFormFieldsetControl } from '../../../../Auth/components/form/ActiveFormField.js';
     source.addImportDeclaration({
       moduleSpecifier: renderCode('../../../../<%model%>/components/form/<%column%>FormField.js', {
-        model: foreign.name.toPathName(),
+        model: foreignModel.name.toPathName(),
         column: column.name.toPathName()
       }),
       namedImports: [ 
@@ -125,18 +130,25 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>CreateCrumbs', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
-      type: renderCode('{ base: string, results: <%type%> }', { 
+      type: renderCode(`{ 
+        base: string, 
+        results: <%type%>, 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`, { 
         type: model.name.toTypeName('%sExtended')
       })
     }],
     statements: renderCode(TEMPLATE.CREATE_CRUMBS_BODY, {
       search: {
         label: model.name.plural || model.name.titleCase,
-        icon: model.name.icon
+        icon: model.name.icon,
+        href: renderCode('`${base}/<%model%>/search`', {
+          model: model.name.toURLPath()
+        })
       },
       detail: {
         label: render(model, "${results?.%s || ''}"),
@@ -146,12 +158,14 @@ export default function generate(
         })
       },
       relation: {
-        label: foreign.name.plural || foreign.name.titleCase,
-        icon: foreign.name.icon,
+        label: relatedColumn.attributes.value<string>('label') 
+          || foreignModel.name.plural 
+          || foreignModel.name.titleCase,
+        icon: foreignModel.name.icon,
         href: renderCode('`${base}/<%model%>/detail/<%ids%>/<%relation%>/search`', {
           model: model.name.toURLPath(),
           ids: ids.map(name => `\${results.${name}}`).join('/'),
-          relation: foreign.name.toURLPath()
+          relation: relatedColumn.name.toURLPath()
         })
       }
     })
@@ -161,16 +175,16 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>CreateForm', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
       type: renderCode(TEMPLATE.CREATE_FORM_PROPS, { 
-        type: foreign.name.toTypeName('%sInput') 
+        type: foreignModel.name.toTypeName('%sInput') 
       }) 
     }],
     statements: renderCode(TEMPLATE.CREATE_FORM_BODY,{
-      fields: foreign.component.formFields
+      fields: foreignModel.component.formFields
         .toArray()
         .filter(column => relationship.local.key.name.toString() !== column.name.toString())
         .map(column => {
@@ -195,18 +209,18 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>CreateBody', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     statements: renderCode(TEMPLATE.CREATE_BODY, {
-      input: foreign.name.toTypeName('%sInput'),
+      input: foreignModel.name.toTypeName('%sInput'),
       type: model.name.toTypeName(),
       crumbs: renderCode('<%model%>Admin<%relation%>CreateCrumbs', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName(),
       }),
       form: renderCode('<%model%>Admin<%relation%>CreateForm', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName(),
       })
     })
   });
@@ -215,7 +229,7 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>CreateHead', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
@@ -223,8 +237,9 @@ export default function generate(
     }],
     statements: renderCode(TEMPLATE.CREATE_HEAD, { 
       name: model.name.singular,
-      relation: foreign.name.singular 
-        || foreign.name.titleCase
+      relation: relatedColumn.attributes.value<string>('label') 
+        || foreignModel.name.plural 
+        || foreignModel.name.titleCase
     })
   });
   //export function AdminProfileAuthCreatePage() {}
@@ -232,7 +247,7 @@ export default function generate(
     isExported: true,
     name: renderCode('<%model%>Admin<%relation%>CreatePage', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [{ 
       name: 'props', 
@@ -241,7 +256,7 @@ export default function generate(
     statements: renderCode(TEMPLATE.CREATE_PAGE, { 
       component: renderCode('<%model%>Admin<%relation%>CreateBody', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName(),
       })
     })
   });
@@ -253,7 +268,7 @@ export default function generate(
       name: 'Head',
       initializer: renderCode('<%model%>Admin<%relation%>CreateHead', {
         model: model.name.toComponentName(),
-        relation: foreign.name.toComponentName(),
+        relation: relatedColumn.name.toComponentName()
       })
     }]
   });
@@ -261,7 +276,7 @@ export default function generate(
   source.addStatements(
     `export default ${renderCode('<%model%>Admin<%relation%>CreatePage', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     })};`
   );
 };
@@ -270,7 +285,7 @@ export const TEMPLATE = {
 
 CREATE_CRUMBS_BODY:
 `//props
-const { base, results } = props;
+const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -279,17 +294,29 @@ return (
     <Bread.Slicer>
       <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
     </Bread.Slicer>
-    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../../../search">
-      {_('<%search.label%>')}
-    </Bread.Crumb>
-    {!!results && (
+    {can({ method: 'GET', route: <%search.href%> }) && (
+      <Bread.Crumb 
+        icon="<%search.icon%>" 
+        className="admin-crumb" 
+        href={<%search.href%>}
+      >
+        {_('<%search.label%>')}
+      </Bread.Crumb>
+    )}
+    {!!results && can({ method: 'GET', route: <%detail.href%> }) && (
       <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
         {_(\`<%detail.label%>\`)}
       </Bread.Crumb>
     )}
-    <Bread.Crumb icon="<%relation.icon%>" className="admin-crumb" href={<%relation.href%>}>
-      {_('<%relation.label%>')}
-    </Bread.Crumb>
+    {!!results && can({ method: 'GET', route: <%relation.href%> }) && (
+      <Bread.Crumb 
+        icon="<%relation.icon%>" 
+        className="admin-crumb" 
+        href={<%relation.href%>}
+      >
+        {_('<%relation.label%>')}
+      </Bread.Crumb>
+    )}
     <Bread.Crumb icon="plus">
       {_('Create')}
     </Bread.Crumb>
@@ -336,6 +363,7 @@ CREATE_BODY:
 const { _ } = useLanguage();
 const { 
   config, 
+  session,
   request, 
   response 
 } = useServer<
@@ -344,6 +372,7 @@ const {
   <%type%>
 >();
 //variables
+const can = session.can.bind(session);
 const base = config.path('admin.base', '/admin');
 const input = { ...request.data() };
 const errors = response.errors();
@@ -352,7 +381,7 @@ const results = response.results!;
 return (
   <main className="admin-detail-page admin-form-page admin-page">
     <div className="admin-crumbs">
-      <<%crumbs%> base={base} results={results} />
+      <<%crumbs%> base={base} can={can} results={results} />
     </div>
     {response.code === 200 ? (
       <div className="admin-form">

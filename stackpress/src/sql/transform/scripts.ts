@@ -16,6 +16,11 @@ export default function generate(directory: Directory, schema: Schema) {
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, 'scripts.ts');
 
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type Create from "@stackpress/inquire/Create";
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -28,6 +33,10 @@ export default function generate(directory: Directory, schema: Schema) {
     moduleSpecifier: '@stackpress/inquire/Engine',
     defaultImport: 'Engine'
   });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import ProfileActions from './Profile/ProfileActions.js';
   for (const model of models) {
     source.addImportDeclaration({
@@ -35,6 +44,9 @@ export default function generate(directory: Directory, schema: Schema) {
       defaultImport: model.name.toClassName('%sActions')
     });
   }
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export function actions(engine: Engine) {}
   source.addFunction({

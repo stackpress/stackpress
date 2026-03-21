@@ -12,13 +12,9 @@ import { render } from '../helpers.js';
 import generateCreate from './detail/create.js';
 import generateSearch from './detail/search.js';
 
-export default function detailView(directory: Directory, model: Model) {
+export default function generate(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(column => column.name);
-  const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (
-    action: string,
-    extras = ''
-  ) => `\`\${base}/${model.name.dashCase}/${action}/${path}${extras}\``;
+
   const relations = model.columns.filter(
     column => Boolean(column.type.model && column.store.foreignRelationship)
   ).map(column => column.store.foreignRelationship!).toArray();
@@ -68,7 +64,7 @@ export default function detailView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { ServerPageProps, AdminConfigProps } from 'stackpress/view/client';
+  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
@@ -120,17 +116,24 @@ export default function detailView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminDetailCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode('{ base: string, results: <%type%> }', { 
+      type: renderCode(`{ 
+        base: string, 
+        results: <%type%>, 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`, { 
         type: model.name.toTypeName('%sExtended')
       })
     }],
     statements: renderCode(TEMPLATE.DETAIL_CRUMBS_BODY, {
       search: {
         label: model.name.plural || model.name.titleCase,
-        icon: model.name.icon
+        icon: model.name.icon,
+        href: renderCode('`${base}/<%model%>/search`', { 
+          model: model.name.toURLPath()
+        })
       },
       detail: {
-        label: render(model, "${results?.%s || ''}")
+        label: render(model, "${results?.%s || _('Detail')}")
       }
     })
   });
@@ -140,34 +143,58 @@ export default function detailView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminDetailActions'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.DETAIL_ACTIONS_PROPS, { 
+      type: renderCode(`{
+        base: string,
+        results: <%type%>,
+        can: (...permits: SessionPermission[]) => boolean,
+      }`, { 
         type: model.name.toTypeName('%sExtended') 
       }) 
     }],
     statements: renderCode(TEMPLATE.DETAIL_ACTIONS_BODY, {
       active: model.store.active ? model.store.active.name.toString() : null,
-      update: link('update'),
-      remove: link('remove'),
-      restore: link('restore')
+      update: renderCode('`${base}/<%model%>/update/<%ids%>`', { 
+        model: model.name.toURLPath(),
+        ids: ids.map(name => `\${results.${name}}`).join('/')
+      }),
+      remove: renderCode('`${base}/<%model%>/remove/<%ids%>`', { 
+        model: model.name.toURLPath(),
+        ids: ids.map(name => `\${results.${name}}`).join('/')
+      }),
+      restore: renderCode('`${base}/<%model%>/restore/<%ids%>`', { 
+        model: model.name.toURLPath(),
+        ids: ids.map(name => `\${results.${name}}`).join('/')
+      })
     })
   });
   //export function AdminProfileDetailTabs() {}
   source.addFunction({
     isExported: true,
     name: model.name.toComponentName('%sAdminDetailTabs'),
-    parameters: [{ 
+    parameters: related.length > 0 ?[{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.DETAIL_ACTIONS_PROPS, { 
+      type: renderCode(`{
+        base: string,
+        results: <%type%>,
+        can: (...permits: SessionPermission[]) => boolean,
+      }`, { 
         type: model.name.toTypeName('%sExtended') 
       }) 
-    }],
+    }] : [],
     statements: renderCode(TEMPLATE.DETAIL_TABS, {
       //where this model is 1, get the many relations...
+      //NOTE: in related, the local model is the foreign 
+      // model, and the foreign model is this model
       related: related.map(related => ({
-        label: related.local.model.name.plural 
+        label: related.foreign.column.attributes.value<string>('label')
+          || related.local.model.name.plural 
           || related.local.model.name.singular
           || related.local.model.name.titleCase,
-        link: link('detail', `/${related.local.model.name.toURLPath()}/search`)
+        link: renderCode('`${base}/<%model%>/detail/<%ids%>/<%relation%>/search`', { 
+          model: model.name.toURLPath(),
+          ids: ids.map(name => `\${results.${name}}`).join('/'),
+          relation: related.foreign.column.name.toURLPath()
+        })
       }))
     })
   });
@@ -177,14 +204,17 @@ export default function detailView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminDetailResults'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(
-        `{ results: <%type%> }`, 
-        { type: model.name.toTypeName('%sExtended') } 
-      )
+      type: renderCode(`{ 
+        base: string, 
+        results: <%type%>, 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`, { 
+        type: model.name.toTypeName('%sExtended') 
+      })
     }],
     statements: renderCode(TEMPLATE.DETAIL_RESULTS_BODY, {
-      rows: model.component.viewFormats.toArray().map((column, index) => {
-        return renderCode(TEMPLATE.DETAIL_RESULTS_ROW, {
+      rows: model.component.viewFormats.toArray().map(
+        (column, index) => renderCode(TEMPLATE.DETAIL_RESULTS_ROW, {
           index,
           label: column.name.label,
           value: !column.type.nullable
@@ -198,7 +228,10 @@ export default function detailView(directory: Directory, model: Model) {
                 if (relation) {
                   const fieldset = relation.foreign.model.name.dashCase;
                   const name = column.name.toString();
-                  return `\`../../${fieldset}/detail/\${results.${name}}\``;
+                  return renderCode(
+                    '`${base}/<%fieldset%>/detail/${results.<%name%>}`', 
+                    { fieldset, name }
+                  );
                 }
                 return null;
               })()
@@ -213,13 +246,15 @@ export default function detailView(directory: Directory, model: Model) {
                 if (relation) {
                   const fieldset = relation.foreign.model.name.dashCase;
                   const name = column.name.toString();
-                  return `\`../../${fieldset}/detail/\${results.${name}}\``;
+                  return renderCode(
+                    '`${base}/<%fieldset%>/detail/${results.<%name%>}`', 
+                    { fieldset, name }
+                  );
                 }
                 return null;
               })()
             })
-        });
-      }).join('\n')
+        })).join('\n')
     })
   });
   //export function AdminProfileDetailBody() {}
@@ -227,6 +262,7 @@ export default function detailView(directory: Directory, model: Model) {
     isExported: true,
     name: model.name.toComponentName('%sAdminDetailBody'),
     statements: renderCode(TEMPLATE.DETAIL_BODY, {
+      related: related.length > 0,
       type: model.name.toTypeName('%sExtended'),
       crumbs: model.name.toComponentName('%sAdminDetailCrumbs'),
       tabs: model.name.toComponentName('%sAdminDetailTabs'),
@@ -277,7 +313,7 @@ export const TEMPLATE = {
 
 DETAIL_CRUMBS_BODY:
 `//props
-const { results } = props;
+const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -286,21 +322,20 @@ return (
     <Bread.Slicer>
       <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
     </Bread.Slicer>
-    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
-      {_('<%search.label%>')}
-    </Bread.Crumb>
+    {can({ method: 'GET', route: <%search.href%> }) && (
+      <Bread.Crumb 
+        icon="<%search.icon%>" 
+        className="admin-crumb" 
+        href={<%search.href%>}
+      >
+        {_('<%search.label%>')}
+      </Bread.Crumb>
+    )}
     <Bread.Crumb>
       {_(\`<%detail.label%>\`)}
     </Bread.Crumb>
   </Bread>
 );`,
-
-DETAIL_ACTIONS_PROPS:
-`{
-  base: string,
-  results: <%type%>,
-  can: (...permits: SessionPermission[]) => boolean,
-}`,
 
 DETAIL_ACTIONS_BODY:
 `//props
@@ -357,8 +392,10 @@ return (
 );`,
 
 DETAIL_TABS:
-`//props
-const { base, results, can } = props;
+`<%#related.length%>
+  //props
+  const { base, results, can } = props;
+<%/related.length%>
 //hooks
 const { _ } = useLanguage();
 //render
@@ -375,9 +412,11 @@ return (
 
 DETAIL_RESULTS_VALUE_REQUIRED:
 `<%#link%>
-  <a className="theme-info" href={<%link%>}>
-    <<%component%> data={results} value={results.<%name%>} />
-  </a>
+  {can({ method: 'GET', route: <%link%> }) && (
+    <a className="theme-info" href={<%link%>}>
+      <<%component%> data={results} value={results.<%name%>} />
+    </a>
+  )}
 <%/link%>
 <%^link%>
   <<%component%> data={results} value={results.<%name%>} />
@@ -385,9 +424,11 @@ DETAIL_RESULTS_VALUE_REQUIRED:
 
 DETAIL_RESULTS_VALUE_OPTIONAL:
 `<%#link%>
-  <a className="theme-info" href={<%link%>}>
-    {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
-  </a>
+  {can({ method: 'GET', route: <%link%> }) && (
+    <a className="theme-info" href={<%link%>}>
+      {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
+    </a>
+  )}
 <%/link%>
 <%^link%>
   {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
@@ -405,7 +446,7 @@ DETAIL_RESULTS_ROW:
 
 DETAIL_RESULTS_BODY:
 `//props
-const { results } = props;
+const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -438,15 +479,20 @@ if (response.code !== 200 && response.code !== 404) {
 return (
   <main className="admin-detail-page admin-page">
     <div className="admin-crumbs">
-      <<%crumbs%> base={base} results={results} />
+      <<%crumbs%> base={base} can={can} results={results} />
     </div>
     {response.code === 200 ? (
       <>
-        <<%tabs%> 
-          can={can} 
-          base={base} 
-          results={results} 
-        />
+        <%#related%>
+          <<%tabs%> 
+            can={can} 
+            base={base} 
+            results={results} 
+          />
+        <%/related%>
+        <%^related%>
+          <<%tabs%> />
+        <%/related%>
         <div className="admin-tab-body">
           <div className="admin-actions">
             <<%actions%>
@@ -456,7 +502,7 @@ return (
             />
           </div>
           <div className="admin-results">
-            <<%results%> results={results} />
+            <<%results%> base={base} can={can} results={results} />
           </div>
         </div>
       </>

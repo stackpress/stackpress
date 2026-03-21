@@ -30,10 +30,16 @@ export default function generate(directory: Directory, model: Model) {
   //not like this: (local keys)
   // users User[]
   const relations = model.store.foreignRelationships;
+  const modelImported: string[] = [];
 
   const filepath = model.name.toPathName('%s/%sStore.ts');
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
 
   //import type { 
   //  StoreSelectColumnPath, 
@@ -77,16 +83,10 @@ export default function generate(directory: Directory, model: Model) {
       ) ? [ 'toSqlDate' ] : [] 
     ]
   });
-  //import ProfileStore from '../Profile/ProfileStore.js';
-  for (const column of relations.values()) {
-    //this should never happen...
-    if (!column.type.model) continue;
-    //import ProfileStore from '../Profile/ProfileStore.js';
-    source.addImportDeclaration({
-      moduleSpecifier: column.type.model.name.toPathName('../%s/%sStore.js'),
-      defaultImport: column.type.model.name.toClassName('%sStore')
-    });
-  }
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { Profile, ProfileExtended, ProfileStoreInterface } from './types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -97,11 +97,27 @@ export default function generate(directory: Directory, model: Model) {
       model.name.toClassName('%sStoreInterface')
     ]
   });
+  //import ProfileStore from '../Profile/ProfileStore.js';
+  for (const column of relations.values()) {
+    //this should never happen...
+    if (!column.type.model) continue;
+    const store = column.type.model.name.toClassName('%sStore');
+    if (modelImported.includes(store)) continue;
+    modelImported.push(store);
+    //import ProfileStore from '../Profile/ProfileStore.js';
+    source.addImportDeclaration({
+      moduleSpecifier: column.type.model.name.toPathName('../%s/%sStore.js'),
+      defaultImport: store
+    });
+  }
   //import ProfileSchema from './ProfileSchema.js';
   source.addImportDeclaration({
     moduleSpecifier: `./${model.name.toClassName('%sSchema.js')}`,
     defaultImport: model.name.toClassName('%sSchema')
   });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export default class ProfileStore extends ProfileSchema {}
   const definition = source.addClass({
@@ -132,7 +148,7 @@ export default function generate(directory: Directory, model: Model) {
         const relation = column.store.foreignRelationship!;
         return { 
           column: column.name.toString(),
-          store: column.name.toClassName('%sStore'),
+          store: column.type.model!.name.toClassName('%sStore'),
           local: relation.local.key.name.snakeCase,
           foreign: relation.foreign.key.name.snakeCase,
           multiple: relation.foreign.type === 2,

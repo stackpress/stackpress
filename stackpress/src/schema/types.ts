@@ -41,6 +41,8 @@ export type AttributeDataAssertion = {
   message: string
 };
 
+export type TypeAssertionMap = Record<string, AttributeDataAssertion>;
+
 //used in config/definitions
 export type DefinitionBook = Map<string, Record<string, unknown>>;
 export type AttributeDefinitionInput = {

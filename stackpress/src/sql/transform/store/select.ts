@@ -15,6 +15,9 @@ export default function generate(
   //not like this: (local keys)
   // users User[]
   const relations = model.store.foreignRelationships;
+
+  //------------------------------------------------------------------//
+  // Import Modules
   
   //import type { FlatValue } from '@stackpress/inquire/types';
   source.addImportDeclaration({
@@ -27,6 +30,14 @@ export default function generate(
     defaultImport: 'Select',
     moduleSpecifier: '@stackpress/inquire/Select'
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Store Methods
+
   //public select(query: StoreSelectQuery = {}, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,

@@ -17,7 +17,9 @@ export default function generate(directory: Directory, model: Model) {
   if (ids.size) {
     detailView(directory, model);
     removeView(directory, model);
-    restoreView(directory, model);
+    if (model.store.restorable) {
+      restoreView(directory, model);
+    }
     updateView(directory, model);
   }
 };

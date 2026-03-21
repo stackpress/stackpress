@@ -14,7 +14,11 @@ export default function generate(
   model: Model, 
   relationship: Relationship
 ) {
-  const foreign = relationship.local.model as Model;
+  //NOTE: in related, the local model is the foreign 
+  // model, and the foreign model is this model
+  const foreignModel = relationship.local.model as Model;
+  //relation used for filepaths and function names
+  const relatedColumn = relationship.foreign.column;
 
   //------------------------------------------------------------------//
   // Profile/admin/pages/Auth/create.ts
@@ -23,7 +27,7 @@ export default function generate(
     '<%model%>/admin/pages/<%relation%>/create.ts', 
     {
       model: model.name.toPathName(),
-      relation: foreign.name.toPathName()
+      relation: relatedColumn.name.toString()
     }
   );
   //load file if it exists, if not create it
@@ -91,7 +95,7 @@ export default function generate(
     isAsync: true,
     name: renderCode('<%model%>Admin<%relation%>CreatePage', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName()
     }),
     parameters: [
       { name: 'req', type: 'Request' },
@@ -100,9 +104,9 @@ export default function generate(
     ],
     statements: renderCode(TEMPLATE.CREATE, { 
       model: model.name.toURLPath(),
-      relation: foreign.name.toURLPath(),
+      relation: relatedColumn.name.toURLPath(),
       detail: model.name.toEventName('%s-detail'),
-      create: foreign.name.toEventName('%s-create'),
+      create: foreignModel.name.toEventName('%s-create'),
       extended: model.name.toTypeName('%sExtended'),
       ids: model.store.ids.map(
         column => `\${detail.results!.${column.name.toString()}}`

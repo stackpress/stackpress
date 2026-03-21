@@ -19,11 +19,23 @@ export default function generate(
     const local = relation.local.key.name.snakeCase as string;
     return { table, foreign, local, delete: 'CASCADE', update: 'RESTRICT' };
   });
+
+  //------------------------------------------------------------------//
+  // Import Modules
+
   //import Create from '@stackpress/inquire/Create';
   source.addImportDeclaration({
     moduleSpecifier: '@stackpress/inquire/Create',
     defaultImport: 'Create'
   });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Store Methods
+
   //public create() {}
   definition.addMethod({
     scope: Scope.Public,

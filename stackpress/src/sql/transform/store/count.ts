@@ -9,6 +9,15 @@ export default function generate(
   model: Model,
   definition: ClassDeclaration
 ) {
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Store Methods
+
   //public count(query: StoreSelectFilters = {}, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,

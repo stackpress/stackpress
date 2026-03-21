@@ -10,7 +10,12 @@ import {
 
 export default function searchView(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(column => column.name);
-  const path = ids.map(name => `\${row.${name}}`).join('/');
+  const filterable = Boolean(model.component.listFormats.find(
+    column => column.store.filterable
+  ));
+  const sortable = Boolean(model.component.listFormats.find(
+    column => column.store.sortable
+  ));
 
   //------------------------------------------------------------------//
   // Profile/admin/views/search.tsx
@@ -102,9 +107,11 @@ export default function searchView(directory: Directory, model: Model) {
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [
+      //import filter if there are any filterables
+      ...filterable ? [ 'filter' ]: [],
+      //import order if there are any sortables
+      ...sortable ? [ 'order' ]: [],
       'paginate',
-      'filter',
-      'order',
       'useServer',
       'LayoutAdmin'
     ]
@@ -228,6 +235,7 @@ export default function searchView(directory: Directory, model: Model) {
       }`
     }],
     statements: renderCode(TEMPLATE.SEARCH_RESULTS_BODY, {
+      sortable,
       headers: (
         model.component.listFormats
       ).toArray().map(column => renderCode(
@@ -253,7 +261,7 @@ export default function searchView(directory: Directory, model: Model) {
         }
       )).join('\n'),
       model: model.name.toURLPath(),
-      path
+      path: ids.map(name => `\${row.${name}}`).join('/')
     })
   });
   //export function AdminProfileSearchBody() {}
@@ -452,8 +460,13 @@ SEARCH_RESULTS_COLUMN:
 </Table.Col>`,
 
 SEARCH_RESULTS_BODY:
-`const { can, base, query, results } = props;
-const { sort = {} } = query;
+`<%#sortable%>
+  const { can, base, query, results } = props;
+  const { sort = {} } = query;
+<%/sortable%>
+<%^sortable%>
+  const { can, base, results } = props;
+<%/sortable%>
 const { _ } = useLanguage();
 return (
   <Table
@@ -529,10 +542,12 @@ return (
     )}
     <div className="admin-search-results">
       {!results?.length ? (
-        <Alert info>
-          <i className="no-results-icon fas fa-fw fa-info-circle"></i>
-          {_('No results found.')}
-        </Alert>
+        <div className="admin-no-results">
+          <Alert info>
+            <i className="no-results-icon fas fa-fw fa-info-circle"></i>
+            {_('No results found.')}
+          </Alert>
+        </div>
       ): (
         <<%results%>
           base={base}
@@ -543,7 +558,7 @@ return (
       )}
     </div>
     {total > take && (
-      <div className="px-py-10 flex justify-center">
+      <div className="admin-pager">
         <Pager 
           className={({ active }) => active 
             ? 'px-w-32 px-h-32 !font-normal' 

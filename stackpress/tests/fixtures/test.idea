@@ -80,7 +80,7 @@ model KitchenSink
   title       String
               @label("Title") 
               @searchable @unique
-              @is.notempty @is.unique @is.ne("Untitled") @is.cge(5) @is.clt(255)
+              @is.notempty @is.unique @is.neq("Untitled") @is.cge(5) @is.clt(255)
               @field.input({ type "text" placeholder "Enter title here" })
               @list.link({ to "/admin/kitchensink/{{id}}" })
               @view.string
@@ -188,4 +188,18 @@ model KitchenSink
               @default("{}")
   cache       Object?
   basic       BasicModel @relation({ local "basicId" foreign "title" })
+}
+
+model User {
+  id          String @id @default("cuid()")
+  name        String
+  networks    Network[]
+  memberships Network[]
+}
+
+model Network @query("*" "owner.*" "member.*") {
+  ownerId  String @id
+  memberId String @id
+  owner   User @relation({ name "networks" local "ownerId" foreign "id" })
+  member  User @relation({ name "memberships" local "memberId" foreign "id" })
 }

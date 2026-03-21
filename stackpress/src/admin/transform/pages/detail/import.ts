@@ -14,7 +14,11 @@ export default function generate(
   model: Model, 
   relationship: Relationship
 ) {
-  const foreign = relationship.local.model as Model;
+  //NOTE: in related, the local model is the foreign 
+  // model, and the foreign model is this model
+  const foreignModel = relationship.local.model as Model;
+  //relation used for filepaths and function names
+  const relatedColumn = relationship.foreign.column;
 
   //------------------------------------------------------------------//
   // Profile/admin/pages/Auth/import.ts
@@ -23,7 +27,7 @@ export default function generate(
     '<%model%>/admin/pages/<%relation%>/import.ts', 
     {
       model: model.name.toPathName(),
-      relation: foreign.name.toPathName()
+      relation: relatedColumn.name.toString()
     }
   );
   //load file if it exists, if not create it
@@ -47,9 +51,9 @@ export default function generate(
   //import type { Auth } from '../../../../Auth/types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: foreign.name.toPathName('../../../../%s/types.js'),
+    moduleSpecifier: foreignModel.name.toPathName('../../../../%s/types.js'),
     namedImports: [ 
-      foreign.name.toTypeName() 
+      foreignModel.name.toTypeName() 
     ]
   });
   //import type { ProfileExtended } from '../../../types.js';
@@ -68,7 +72,7 @@ export default function generate(
     isAsync: true,
     name: renderCode('<%model%>Admin<%relation%>ImportPage', {
       model: model.name.toComponentName(),
-      relation: foreign.name.toComponentName(),
+      relation: relatedColumn.name.toComponentName(),
     }),
     parameters: [
       { name: 'req', type: 'Request' },
@@ -76,10 +80,10 @@ export default function generate(
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.IMPORT, { 
-      type: foreign.name.toTypeName(),
+      type: foreignModel.name.toTypeName(),
       extended: model.name.toClassName('%sExtended'),
       detail: model.name.toEventName('%s-detail'),
-      batch: foreign.name.toEventName('%s-batch'),
+      batch: foreignModel.name.toEventName('%s-batch'),
       id: {
         foreign: relationship.foreign.key.name.toString(),
         local: relationship.local.key.name.toString()

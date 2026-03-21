@@ -12,8 +12,6 @@ import { render } from '../helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(column => column.name);
-  const path = ids.map(name => `\${results.${name}}`).join('/');
-  const link = (action: string) => `\`\${base}/${model.name.dashCase}/${action}/${path}\``;
 
   //------------------------------------------------------------------//
   // Profile/admin/views/remove.tsx
@@ -24,7 +22,6 @@ export default function generate(directory: Directory, model: Model) {
 
   //------------------------------------------------------------------//
   // Import Modules
-
 
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -83,18 +80,28 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminRemoveCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.REMOVE_CRUMBS_PROPS, { 
+      type: renderCode(`{ 
+        base: string, 
+        results: <%type%>, 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`, { 
         type: model.name.toTypeName('%sExtended') 
       }) 
     }],
     statements: renderCode(TEMPLATE.REMOVE_CRUMBS_BODY, {
       search: {
         label: model.name.plural || model.name.titleCase,
-        icon: model.name.icon
+        icon: model.name.icon,
+        href: renderCode('`${base}/<%model%>/search`', { 
+          model: model.name.toURLPath()
+        })
       },
       detail: {
         label: render(model, "${results?.%s || ''}"),
-        href: link('detail')
+        href: renderCode('`${base}/<%model%>/detail/<%ids%>`', { 
+          model: model.name.toURLPath(),
+          ids: ids.map(name => `\${results.${name}}`).join('/')
+        })
       }
     })
   });
@@ -104,13 +111,20 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminRemoveForm'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.REMOVE_FORM_PROPS, { 
+      type: renderCode(`{ 
+        base: string, 
+        results: <%type%>, 
+        can: (...permits: SessionPermission[]) => boolean 
+      }`, { 
         type: model.name.toTypeName('%sExtended') 
       }) 
     }],
     statements: renderCode(TEMPLATE.REMOVE_FORM_BODY, { 
       label: render(model, "${results?.%s || ''}"),
-      href: link('detail')
+      href: renderCode('`${base}/<%model%>/detail/<%ids%>`', { 
+        model: model.name.toURLPath(),
+        ids: ids.map(name => `\${results.${name}}`).join('/')
+      })
     })
   });
   //export function AdminProfileRemoveBody() {}
@@ -164,12 +178,9 @@ export default function generate(directory: Directory, model: Model) {
 
 export const TEMPLATE = {
 
-REMOVE_CRUMBS_PROPS:
-'{ base: string, results: <%type%> }',
-
 REMOVE_CRUMBS_BODY:
 `//props
-const { base, results } = props;
+const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
 //render
@@ -178,10 +189,16 @@ return (
     <Bread.Slicer>
       <i className="icon fas fa-fw fa-chevron-right frui-block frui-tx-md"></i>
     </Bread.Slicer>
-    <Bread.Crumb icon="<%search.icon%>" className="admin-crumb" href="../search">
-      {_('<%search.label%>')}
-    </Bread.Crumb>
-    {!!results && (
+    {can({ method: 'GET', route: <%search.href%> }) && (
+      <Bread.Crumb 
+        icon="<%search.icon%>" 
+        className="admin-crumb" 
+        href={<%search.href%>}
+      >
+        {_('<%search.label%>')}
+      </Bread.Crumb>
+    )}
+    {!!results && can({ method: 'GET', route: <%detail.href%> }) && (
       <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
         {_(\`<%detail.label%>\`)}
       </Bread.Crumb>
@@ -192,12 +209,12 @@ return (
   </Bread>
 );`,
 
-REMOVE_FORM_PROPS:
-'{ base: string, results: <%type%> }',
-
 REMOVE_FORM_BODY:
-`const { base, results } = props;
+`//props
+const { base, can, results } = props;
+//hooks
 const { _ } = useLanguage();
+//render
 return (
   <div>
     <div className="message">
@@ -212,10 +229,12 @@ return (
       <em>{_('(Thats a real long time)')}</em>
     </div>
     <div className="actions">
-      <a className="action cancel" href={<%href%>}>
-        <i className="icon fas fa-fw fa-arrow-left"></i>
-        <span>Nevermind.</span>
-      </a>
+      {can({ method: 'GET', route: <%href%> }) && (
+        <a className="action cancel" href={<%href%>}>
+          <i className="icon fas fa-fw fa-arrow-left"></i>
+          <span>{_('Nevermind.')}</span>
+        </a>
+      )}
       <a className="action remove" href="?confirmed=true">
         <i className="icon fas fa-fw fa-trash"></i>
         <span>{_('Confirmed')}</span>
@@ -228,11 +247,13 @@ REMOVE_BODY:
 `//props
 const { 
   config, 
+  session,
   response 
 } = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
 //hooks
 const { _ } = useLanguage();
 //variables
+const can = session.can.bind(session);
 const base = config.path('admin.base', '/admin');
 const results = response.results as <%type%>;
 if (response.code !== 200 && response.code !== 404) {
@@ -242,11 +263,11 @@ if (response.code !== 200 && response.code !== 404) {
 return (
   <main className="admin-page admin-confirm-page">
     <div className="admin-crumbs">
-      <<%crumbs%> base={base} results={results} />
+      <<%crumbs%> base={base} can={can} results={results} />
     </div>
     {response.code === 200 ? (
       <div className="admin-confirm">
-        <<%form%> base={base} results={results} />
+        <<%form%> base={base} can={can} results={results} />
       </div>
     ) : response.code === 404 ? (
       <div className="flex-grow">
