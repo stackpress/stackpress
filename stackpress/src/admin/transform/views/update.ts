@@ -201,6 +201,9 @@ export default function updateView(directory: Directory, model: Model) {
   );
 };
 
+//------------------------------------------------------------------//
+// Templates
+
 export const TEMPLATE = {
 
 UPDATE_CRUMBS_BODY:

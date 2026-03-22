@@ -40,6 +40,15 @@ export default function generate(directory: Directory, model: Fieldset) {
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
+  //------------------------------------------------------------------//
+  // Import Modules
+
+  //import type Engine from '@stackpress/inquire/Engine';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '@stackpress/inquire/Engine',
+    defaultImport: 'Engine'
+  });
   //import { describe, it } from 'mocha';
   source.addImportDeclaration({
     moduleSpecifier: 'mocha',
@@ -50,12 +59,12 @@ export default function generate(directory: Directory, model: Fieldset) {
     moduleSpecifier: 'chai',
     namedImports: [ 'expect' ]
   });
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import ProfileSchema from '../ProfileSchema.js';
   source.addImportDeclaration({
     moduleSpecifier: model.name.toPathName('../%sSchema.js'),
@@ -79,6 +88,9 @@ export default function generate(directory: Directory, model: Fieldset) {
       });
     }
   }
+  
+  //------------------------------------------------------------------//
+  // Exports
 
   //export default function ProfileSchemaTests(engine: Engine) {}
   source.addFunction({

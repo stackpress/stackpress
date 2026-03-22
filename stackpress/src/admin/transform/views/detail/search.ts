@@ -499,6 +499,9 @@ export default function generate(
   );
 };
 
+//------------------------------------------------------------------//
+// Templates
+
 export const TEMPLATE = {
 
 SEARCH_CRUMBS_BODY:

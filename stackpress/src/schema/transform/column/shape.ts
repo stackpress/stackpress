@@ -26,7 +26,7 @@ export const typemap: Record<string, string> = {
 
 export const assertions: Record<string, string> = {
   'required': `.refine(
-    data => typeof data !== 'undefined' && data !== null && String(data) !== '', 
+    (data: any) => typeof data !== 'undefined' && data !== null && String(data) !== '', 
     { message: '<%m%>' }
   )`,
   'ne': `.nonempty({ message: '<%m%>' })`,
@@ -83,7 +83,7 @@ export default function generate(
     : column.type.enum
     ? `z.enum(${column.type.name})`
     : column.type.fieldset
-    ? column.type.fieldset.name.toClassName('<%s%>Model.shape')
+    ? 'this._fieldset.shape'
     : typemap.Unknown;
   //add description
   shape += column.document.description 
@@ -132,10 +132,11 @@ export default function generate(
   )) {
     shape += renderCode(assertions['required'], { m: 'Required' });
   }
-  //public shape = z.string()...
+  //public readonly shape = z.string()...
   definition.addProperty({
-    name: 'shape',
     scope: Scope.Public,
-    initializer: shape
+    isReadonly: true,
+    name: 'shape'
   });
+  return shape;
 };

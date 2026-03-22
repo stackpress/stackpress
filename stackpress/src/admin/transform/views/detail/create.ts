@@ -281,6 +281,9 @@ export default function generate(
   );
 };
 
+//------------------------------------------------------------------//
+// Templates
+
 export const TEMPLATE = {
 
 CREATE_CRUMBS_BODY:

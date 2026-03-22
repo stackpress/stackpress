@@ -315,6 +315,9 @@ export default function searchView(directory: Directory, model: Model) {
   );
 };
 
+//------------------------------------------------------------------//
+// Templates
+
 export const TEMPLATE = {
 
 SEARCH_CRUMBS:

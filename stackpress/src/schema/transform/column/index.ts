@@ -9,7 +9,7 @@ import type Column from '../../Column.js';
 //stackpress/schema/transform
 import generateAssert from './assert.js';
 import generateShape from './shape.js';
-import generateSerializer from './serializer.js';
+import generateSerializer from './serializer/index.js';
 
 const objects = [ 'Object', 'Json', 'Hash' ];
 
@@ -67,7 +67,7 @@ const serialmap: Record<string, string> = {
   'Hash[]': 'string'
 };
 
-export const zodmap: Record<string, string> = {
+const zodmap: Record<string, string> = {
   Boolean: 'z.ZodBoolean',
   Integer: 'z.ZodInt',
   Date: 'z.ZodDate',
@@ -104,43 +104,44 @@ export default function generate(directory: Directory, column: Column) {
     ? (column.type.name + '[]') 
     : column.type.name;
 
+  //------------------------------------------------------------------//
+  // Address/columns/NameColumn.ts
+
   //NOTE: column would never be model or fieldset. see schema.ts.
   const filepath = renderCode('<%fieldset%>/columns/<%column%>Column.ts', {
     fieldset: column.parent.name.toPathName(),
     column: column.name.toPathName(),
   });
-  //load Address/index.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import * as z from 'zod';
   source.addImportDeclaration({
     moduleSpecifier: 'zod',
     namespaceImport: 'z'
   });
+  //import { nanoid } from 'nanoid';
   if (defaults === 'nanoid()' || forNano) {
-    //import { nanoid } from 'nanoid';
     source.addImportDeclaration({
       moduleSpecifier: 'nanoid',
       namedImports: ['nanoid']
     });
+  //import { createId as cuid } from '@paralleldrive/cuid2';
   } else if (defaults === 'cuid()') {
-    //import { createId as cuid } from '@paralleldrive/cuid2';
     source.addImportDeclaration({
       moduleSpecifier: '@paralleldrive/cuid2',
       namedImports: [ 'createId as cuid' ]
     });
+  //import { init } from '@paralleldrive/cuid2';
   } else if (forCuid) {
-    //import { init } from '@paralleldrive/cuid2';
     source.addImportDeclaration({
       moduleSpecifier: '@paralleldrive/cuid2',
       namedImports: [ 'init' ]
     });
   }
-  //import ColumnInterface from 'stackpress/ColumnInterface';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/ColumnInterface',
-    defaultImport: 'ColumnInterface'
-  });
   //import type { ScalarInput } from '@stackpress/lib';
   if (defaults && objects.includes(column.type.name)) {
     source.addImportDeclaration({
@@ -148,14 +149,46 @@ export default function generate(directory: Directory, column: Column) {
       namedImports: [ 'ScalarInput' ]
     });
   }
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  
+  //import ColumnInterface from 'stackpress/ColumnInterface';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/ColumnInterface',
+    defaultImport: 'ColumnInterface'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
+  //import type { Role } from '../../enum.js';
   if (column.type.enum) {
-    //import type { Role } from '../../enum.js';
     source.addImportDeclaration({
       moduleSpecifier: '../../enums.js',
       namedImports: [ column.type.name ]
     });
   }
+  //import type { Address, AddressColumns } from '../../Address/types.js';
+  //import AddressSchema from '../../Address/AddressSchema.js';
+  if (column.type.fieldset) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: column.type.fieldset.name.toPathName('../../%s/types.js'),
+      namedImports: [ 
+        column.type.fieldset.name.toClassName(),
+        column.type.fieldset.name.toClassName('%sColumns') 
+      ]
+    });
+    source.addImportDeclaration({
+      moduleSpecifier: column.type.fieldset.name.toPathName('../../%s/%sSchema.js'),
+      defaultImport: column.type.fieldset.name.toClassName('%sSchema')
+    });
+  }
 
+  //------------------------------------------------------------------//
+  // Exports
+  
   //export default class StreetColumn implements ColumnInterface<D, S, U, Z> {};
   const definition = source.addClass({
     isDefaultExport: true,
@@ -163,7 +196,11 @@ export default function generate(directory: Directory, column: Column) {
     implements: [
       `ColumnInterface<${[
         //default type
-        typeof defaults === 'undefined' ? 'undefined'
+        column.type.fieldset ? renderCode(
+          `{ [key in keyof <%columns%>]: <%columns%>[key]['defaults'] }`, 
+          { columns: column.type.fieldset.name.toClassName('%sColumns') }
+        )
+          : typeof defaults === 'undefined' ? 'undefined'
           : defaults === null ? 'null'
           : defaults === 'now()' ? 'Date'
           : typemapKey in typemap ? typemap[typemapKey] 
@@ -177,40 +214,78 @@ export default function generate(directory: Directory, column: Column) {
           ? `${serialmap[typemapKey]} | null`
           : column.type.nullable && column.type.enum 
           ? 'string | null'
+          : column.type.nullable && column.type.fieldset 
+          ? 'string | null'
           : typemapKey in serialmap 
           ? serialmap[typemapKey]
           : column.type.enum 
+          ? 'string'
+          : column.type.fieldset 
           ? 'string'
           : 'unknown',
         //unserialized return type
         column.type.nullable && typemapKey in typemap 
           ? `${typemap[typemapKey]} | null`
+          : column.type.multiple && column.type.enum 
+          ? 'string[]'
           : column.type.nullable && column.type.enum 
           ? 'string | null'
+          : column.type.multiple && column.type.fieldset 
+          ? `Array<${column.type.fieldset.name.toTypeName()}>`
+          : column.type.nullable && column.type.fieldset 
+          ? `${column.type.fieldset.name.toTypeName()} | null`
           : typemapKey in typemap 
           ? typemap[typemapKey]
           : column.type.enum 
           ? 'string'
+          : column.type.fieldset 
+          ? column.type.fieldset.name.toTypeName()
           : 'unknown',
         //zod shape type
         column.type.nullable && typemapKey in zodmap
           ? `z.ZodOptional<z.ZodNullable<${zodmap[typemapKey]}>>`
+          : column.type.multiple && column.type.enum 
+          ? `z.ZodArray<z.ZodEnum<typeof ${column.type.name}>>`
           : column.type.nullable && column.type.enum 
           ? `z.ZodOptional<z.ZodNullable<z.ZodEnum<typeof ${column.type.name}>>>`
+          : column.type.multiple && column.type.fieldset 
+          ? renderCode(
+            `z.ZodArray<z.ZodObject<{ [key in keyof <%columns%>]: <%columns%>[key]['shape'] }>>`, 
+            { columns: column.type.fieldset.name.toClassName('%sColumns') }
+          )
+          : column.type.nullable && column.type.fieldset 
+          ? renderCode(
+            `z.ZodOptional<z.ZodNullable<z.ZodObject<{ [key in keyof <%columns%>]: <%columns%>[key]['shape'] }>>>`, 
+            { columns: column.type.fieldset.name.toClassName('%sColumns') }
+          )
           : typemapKey in zodmap ? zodmap[typemapKey]
           : column.type.enum ? `z.ZodEnum<typeof ${column.type.name}>`
+          : column.type.fieldset 
+          ? renderCode(
+            `z.ZodObject<{ [key in keyof <%columns%>]: <%columns%>[key]['shape'] }>`, 
+            { columns: column.type.fieldset.name.toClassName('%sColumns') }
+          )
           : 'z.ZodType'
       ].join(', ')}>`
     ]
   });
-  //public name = 'streetAddress';
+  //public readonly name = 'streetAddress';
   definition.addProperty({
     scope: Scope.Public,
+    isReadonly: true,
     name: 'name',
     initializer: JSON.stringify(column.name.toString())
   });
   //public shape = z.boolean()...
-  generateShape(definition, column);
+  const shape =generateShape(definition, column);
+  //protected _fieldset: AddressSchema;
+  if (column.type.fieldset) {
+    definition.addProperty({
+      scope: Scope.Protected,
+      name: '_fieldset',
+      type: column.type.fieldset.name.toClassName('%sSchema')
+    });
+  }
   //public get defaults() {}
   definition.addGetAccessor({
     name: 'defaults',
@@ -235,13 +310,44 @@ export default function generate(directory: Directory, column: Column) {
       
       : typeof defaults !== 'undefined'
       ? `return this.unserialize(${JSON.stringify(defaults)})!;`
+
+      : column.type.fieldset
+      ? 'return this._fieldset.defaults;'
       
       : 'return undefined;'
   });
   //public assert<T>(value: T) {}
-  generateAssert(definition);
+  generateAssert(definition, column);
+  //public constructor(seed = '') {}
+  definition.addConstructor({
+    scope: Scope.Public,
+    parameters: column.value.encrypted ? [{
+      name: 'seed',
+      initializer: "''"
+    }] : [],
+    statements: renderCode(TEMPLATE.CONSTRUCTOR, {
+      shape,
+      seed: column.value.encrypted,
+      fieldset: column.type.fieldset
+        ? column.type.fieldset.name.toClassName('%sSchema') 
+        : null
+    })
+  });
   // public serialize<T>(value: T, scalar = false) {}
   // public unserialize<T>(value: T, scalar = false) {}
   generateSerializer(source, definition, column);
   return definition;
+};
+
+export const TEMPLATE = {
+
+CONSTRUCTOR:
+`<%#seed%>
+  this._seed = seed;
+<%/seed%>
+<%#fieldset%>
+  this._fieldset = new <%fieldset%>(<%#seed%>seed<%/seed%>);
+<%/fieldset%>
+this.shape = <%shape%>;`,
+
 };

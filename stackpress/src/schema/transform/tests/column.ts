@@ -167,7 +167,16 @@ export default function generate(
   //load Profile/tests/columns/NameColumn.test.ts 
   //if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
-  
+
+  //------------------------------------------------------------------//
+  // Import Modules
+
+  //import type Engine from '@stackpress/inquire/Engine';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '@stackpress/inquire/Engine',
+    defaultImport: 'Engine'
+  });
   //import { describe, it } from 'mocha';
   source.addImportDeclaration({
     moduleSpecifier: 'mocha',
@@ -178,17 +187,20 @@ export default function generate(
     moduleSpecifier: 'chai',
     namedImports: [ 'expect' ]
   });
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+  
   //import NameColumn from '../../columns/NameColumn.js';
   source.addImportDeclaration({
     moduleSpecifier: column.name.toPathName('../../columns/%sColumn.js'),
     defaultImport: column.name.toClassName('%sColumn')
   });
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export default function NameColumnTests(engine: Engine) {}
   source.addFunction({

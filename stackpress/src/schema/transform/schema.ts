@@ -7,31 +7,58 @@ import type Fieldset from '../Fieldset.js';
 import { loadProjectFile, renderCode } from './helpers.js';
 
 export default function generate(directory: Directory, model: Fieldset) {
+  const imported: string[] = [];
+  
   //dont include columns that are models 
   //(those are more of relational information)
   const columns = model.columns.filter(
     column => !column.type.model
   );
 
+  //------------------------------------------------------------------//
+  // Address/AddressSchema.ts
+
   const filepath = model.name.toPathName('%s/%sSchema.ts');
-  //load Profile/ProfileSchema.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import * as z from 'zod';
   source.addImportDeclaration({
     moduleSpecifier: 'zod',
     namespaceImport: 'z'
   });
-  //import AbstractSchema from 'stackpress/AbstractSchema';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/AbstractSchema',
-    defaultImport: 'AbstractSchema'
-  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import { removeUndefined } from 'stackpress/schema/helpers';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/schema/helpers',
     namedImports: [ 'removeUndefined' ]
   });
+  //import AbstractSchema from 'stackpress/AbstractSchema';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/AbstractSchema',
+    defaultImport: 'AbstractSchema'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+
+  //import StreetColumn from './columns/StreetColumn.js';
+  for (const column of columns.values()) {
+    const name = column.name.toClassName('%sColumn')
+    if (imported.includes(name)) continue;
+    imported.push(name);
+    //import StreetColumn from './columns/StreetColumn.js';
+    source.addImportDeclaration({
+      moduleSpecifier: column.name.toPathName('./columns/%sColumn.js'),
+      defaultImport: column.name.toClassName('%sColumn')
+    });
+  }
   //import type { Profile, ProfileSchemaInterface } from './types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -41,23 +68,9 @@ export default function generate(directory: Directory, model: Fieldset) {
       model.name.toClassName('%sSchemaInterface') 
     ]
   });
-  //import AddressSchema from '../Address/AddressSchema.js';
-  //import StreetColumn from './columns/StreetColumn.js';
-  for (const column of columns.values()) {
-    if (column.type.fieldset) {
-      //import AddressSchema from '../Address/AddressSchema.js';
-      source.addImportDeclaration({
-        moduleSpecifier: column.type.fieldset.name.toPathName('../%s/%sSchema.js'),
-        defaultImport: column.type.fieldset.name.toClassName('%sSchema')
-      });
-    } else {
-      //import StreetColumn from './columns/StreetColumn.js';
-      source.addImportDeclaration({
-        moduleSpecifier: column.name.toPathName('./columns/%sColumn.js'),
-        defaultImport: column.name.toClassName('%sColumn')
-      });
-    }
-  }
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export default class AddressSchema {};
   const definition = source.addClass({
@@ -66,11 +79,7 @@ export default function generate(directory: Directory, model: Fieldset) {
     //extends AbstractSchema<Address, { ColumnSchema, ... }>
     extends: `AbstractSchema<${model.name.toTypeName()}, {${
       columns.map(
-        column => `${column.name.toString()}: ${
-          column.type.fieldset 
-            ? column.type.fieldset.name.toClassName('%sSchema')
-            : column.name.toClassName('%sColumn')
-        }`
+        column => `${column.name.toString()}: ${column.name.toClassName('%sColumn')}`
       ).toArray().join(', ')
     }}>`,
     //implements ProfileSchemaInterface
@@ -113,9 +122,7 @@ export default function generate(directory: Directory, model: Fieldset) {
     statements: renderCode(TEMPLATE.CONSTRUCTOR, {
       columns: columns.map(column => ({ 
         column: column.name.toPropertyName(), 
-        classname: column.type.fieldset 
-          ? column.type.fieldset.name.toClassName('%sSchema')
-          : column.name.toClassName('%sColumn'),
+        classname: column.name.toClassName('%sColumn'),
         seed: column.value.encrypted ? 'seed': ''
       })).toArray()
     })
@@ -159,6 +166,9 @@ export default function generate(directory: Directory, model: Fieldset) {
   });
   return definition;
 };
+
+//------------------------------------------------------------------//
+// Templates
 
 export const TEMPLATE = {
 

@@ -8,23 +8,35 @@ import generateColumn from './column/index.js';
 export default function generate(directory: Directory, model: Fieldset) {
   //dont include columns that are models 
   //(those are more of relational information)
-  const columns = model.columns.filter(
-    column => !column.type.model && !column.type.fieldset
-  );
+  const columns = model.columns.filter(column => !column.type.model);
+
+  //------------------------------------------------------------------//
+  // Address/columns/index.ts
 
   const filepath = model.name.toPathName('%s/columns/index.ts');
-  //load Address/columns/index.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+
+  //import StreetColumn from './columns/StreetColumn.js';
   for (const column of columns.values()) {
-    //Address/columns/StreetSchema.ts
+    //Address/columns/StreetColumn.ts
     generateColumn(directory, column);
-    //import StreetColumn from './columns/StreetColumn.js';
     source.addImportDeclaration({
       moduleSpecifier: column.name.toPathName('./%sColumn.js'),
       defaultImport: column.name.toClassName('%sColumn')
     });
   }
+  
+  //------------------------------------------------------------------//
+  // Exports
+
   //export { StreetColumn };
   source.addExportDeclaration({
     namedExports: columns.map(

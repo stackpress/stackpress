@@ -176,6 +176,9 @@ export default function generate(directory: Directory, model: Model) {
   );
 };
 
+//------------------------------------------------------------------//
+// Templates
+
 export const TEMPLATE = {
 
 REMOVE_CRUMBS_BODY:

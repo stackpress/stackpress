@@ -1,31 +1,20 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress/schema
-import type Schema from '../../schema/Schema.js';
-import type Column from '../../schema/Column.js';
-import type Model from '../../schema/Model.js';
+import type Column from '../../../schema/Column.js';
+import type Model from '../../../schema/Model.js';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../schema/transform/helpers.js';
+} from '../../../schema/transform/helpers.js';
 
-export default function generate(directory: Directory, schema: Schema) {
-  //for each model
-  for (const model of schema.models.values()) {
-    //generate all column fields
-    model.columns.forEach(
-      column => generateSpan(directory, model, column)
-    );
-  }
-};
-
-export function generateSpan(
+export default function generate(
   directory: Directory, 
   model: Model,
   column: Column
 ) {
   //get the filter field attribute
-  const attribute = column.component.spanField;
+  const attribute = column.component.filterField;
   //skip if no filter field 
   if (!attribute?.component.defined) return;
   //this is the component definition token...
@@ -33,14 +22,14 @@ export function generateSpan(
   //this is the component props from the pre-defined 
   // definitions and the value set in the attribute.
   const props = attribute.component.props;
-  
+
   //------------------------------------------------------------------//
-  // Profile/components/span/NameSpanField.tsx
+  // Profile/components/filter/NameFilterField.tsx
 
   //get the path where this should be saved
-  const filepath = renderCode('<%model%>/components/span/<%component%>.tsx', {
+  const filepath = renderCode('<%model%>/components/filter/<%component%>.tsx', {
     model: model.name.toPathName(),
-    component: column.name.toComponentName('%sSpanField')
+    component: column.name.toComponentName('%sFilterField')
   });
   //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
@@ -76,35 +65,38 @@ export function generateSpan(
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
-  
+
   //------------------------------------------------------------------//
   // Import Client
   //------------------------------------------------------------------//
   // Exports
-  
-  //export function NameSpanField(props: FieldProps) {
+
+  //export function NameFiter(props: FieldProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}SpanField`,
+    name: column.name.toComponentName('%sFilterField'),
     parameters: [
       { name: 'props', type: 'FieldProps' }
     ],
     statements: renderCode(TEMPLATE.FIELD, {
       props: JSON.stringify(props),
       component: component.name,
-      column: column.name.toString()
+      column: column.name.toString(),
+      multiple: column.type.multiple ? '[]': ''
     })
   });
-  //export function NameSpanFieldControl(props: ControlProps) {
+  //export function NameFilterFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}SpanFieldControl`,
+    name: column.name.toComponentName('%sFilterFieldControl'),
     parameters: [
       { name: 'props', type: 'ControlProps' }
     ],
     statements: renderCode(TEMPLATE.CONTROL, {
       label: column.name.label,
-      component: column.name.titleCase
+      column: column.name.toString(),
+      multiple: column.type.multiple ? '[]': '',
+      component: column.name.toComponentName('%sFilterField')
     })
   });
 };
@@ -118,28 +110,17 @@ FIELD:
 `//props
 const { className, value, onUpdate, error = false } = props;
 const attributes = <%props%>;
-const values = Array.isArray(value) ? value : [];
 //render
 return (
-  <>
-    <<%component%>
-      {...attributes}
-      name="span[<%column%>][0]}"
-      className={className}
-      error={error} 
-      defaultValue={values[0]} 
-      onUpdate={value => onUpdate && onUpdate('span[<%column%>][0]', value)}
-    />
-    <br />
-    <<%component%>
-      {...attributes}
-      name="span[<%column%>][1]}"
-      className={className}
-      error={error} 
-      defaultValue={values[1]} 
-      onUpdate={value => onUpdate && onUpdate('span[<%column%>][1]', value)}
-    />
-  </>
+  <<%component%> 
+    {...attributes}
+    name="filter[<%column%>]<%multiple%>"
+    className={className}
+    error={error} 
+    defaultValue="1"
+    defaultChecked={!!value}
+    onUpdate={value => onUpdate && onUpdate('filter[<%column%>]<%multiple%>', value)}
+  />
 );`,
 
 CONTROL:
@@ -150,8 +131,8 @@ const { _ } = useLanguage();
 //render
 return (
   <FieldControl label={_('<%label%>')} error={error} className={className}>
-    <<%component%>SpanField
-      className="!border-b2 dark:bg-gray-300 outline-none"
+    <input type="hidden" name="filter[<%column%>]<%multiple%>" value="0" />
+    <<%component%>
       error={!!error} 
       value={value} 
       onUpdate={onUpdate}

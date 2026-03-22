@@ -1,5 +1,7 @@
 //modules
 import type { ZodType } from 'zod';
+//stackpress/schema
+import type { ErrorReport } from '../types.js';
 //stackpress/schema/interface
 import DefinitionInterface from './DefinitionInterface.js';
 
@@ -14,12 +16,12 @@ export default interface ColumnInterface<
   U = unknown,
   //shape (zod) type
   Z extends ZodType = ZodType
-> extends DefinitionInterface<D, string, S, U, Z> {
+> extends DefinitionInterface<D, ErrorReport, S, U, Z> {
   /**
    * Assert that a value is valid for this column, 
    * returning an error message if not
    */
-  assert<T>(value: T): string | null;
+  assert<T>(value: T): ErrorReport | null;
 
   /**
    * Serialize a value for this column (for like a database...)

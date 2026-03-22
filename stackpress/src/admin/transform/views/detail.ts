@@ -309,6 +309,9 @@ export default function generate(directory: Directory, model: Model) {
   );
 };
 
+//------------------------------------------------------------------//
+// Templates
+
 export const TEMPLATE = {
 
 DETAIL_CRUMBS_BODY:

@@ -1,5 +1,7 @@
 //node
 import crypto from 'node:crypto';
+//modules
+import { isObject } from '@stackpress/lib/Nest';
 
 export const generators = [
   'cuid()',
@@ -115,24 +117,6 @@ export function lowerize(word: string) {
 };
 
 /**
- * Converts a string into dash format
- * ie. "some string" to "some_string"
- * ie. "someString" to "some_string"
- */
-export function snakerize(string: string) {
-  return string.trim()
-    //replace special characters with dashes
-    .replace(/[^a-zA-Z0-9]/g, '_')
-    //replace multiple dashes with a single dash
-    .replace(/-{2,}/g, '_')
-    //trim dashes from the beginning and end of the string
-    .replace(/^_+|_+$/g, '')
-    //replace "someString" to "some-string"
-    .replace(/([a-z])([A-Z0-9])/g, '$1_$2')
-    .toLowerCase();
-};
-
-/**
  * Removes undefined values from an object
  */
 export function removeUndefined<T extends Record<string, any>>(value: T) {
@@ -154,4 +138,95 @@ export function removeEmptyStrings<T extends Record<string, any>>(value: T) {
   return Object.fromEntries(entries) as { 
     [key in keyof T]: Exclude<T[key], ''> 
   };
+};
+
+/**
+ * Converts a string into dash format
+ * ie. "some string" to "some_string"
+ * ie. "someString" to "some_string"
+ */
+export function snakerize(string: string) {
+  return string.trim()
+    //replace special characters with dashes
+    .replace(/[^a-zA-Z0-9]/g, '_')
+    //replace multiple dashes with a single dash
+    .replace(/-{2,}/g, '_')
+    //trim dashes from the beginning and end of the string
+    .replace(/^_+|_+$/g, '')
+    //replace "someString" to "some-string"
+    .replace(/([a-z])([A-Z0-9])/g, '$1_$2')
+    .toLowerCase();
+};
+
+/**
+ * Checks if a string is a valid JSON array string
+ */
+export function validJSONArrayString(value: string) {
+  try {
+    return Array.isArray(JSON.parse(value));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Checks if a string is a valid JSON object string
+ */
+export function validJSONObjectString(value: string) {
+  try {
+    return isObject(JSON.parse(value));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Checks if a string is a valid JSON string
+ */
+export function validJSONString(value: string) {
+  try {
+    JSON.parse(value);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Parses a JSON string value into its original type
+ */
+export function parseJSONValue<R = any, T = any>(value: T)
+  : T extends null ? null
+  : T extends undefined ? undefined
+  : T extends Number ? Number
+  : T extends Boolean ? Boolean
+  : T extends Array<any> ? Array<any>
+  : T extends { [key: string]: any } ? { [key: string]: any }
+  : R
+{
+  if (typeof value !== 'string') {
+    return value as T extends null ? null
+      : T extends undefined ? undefined
+      : T extends Number ? Number
+      : T extends Boolean ? Boolean
+      : T extends Array<any> ? Array<any>
+      : T extends { [key: string]: any } ? { [key: string]: any }
+      : R;
+  }
+  if (validJSONString(value)) {
+    return JSON.parse(value) as T extends null ? null
+      : T extends undefined ? undefined
+      : T extends Number ? Number
+      : T extends Boolean ? Boolean
+      : T extends Array<any> ? Array<any>
+      : T extends { [key: string]: any } ? { [key: string]: any }
+      : R;
+  }
+  return value as T extends null ? null
+    : T extends undefined ? undefined
+    : T extends Number ? Number
+    : T extends Boolean ? Boolean
+    : T extends Array<any> ? Array<any>
+    : T extends { [key: string]: any } ? { [key: string]: any }
+    : R;
 };

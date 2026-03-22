@@ -47,9 +47,15 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
       )
     ].includes(column.type.name));
 
+  //------------------------------------------------------------------//
+  // Address/types.ts
+
   const filepath = fieldset.name.toPathName('%s/types.ts');
-  //load Address/types.ts if it exists, if not create it
+  //load file if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+
+  //------------------------------------------------------------------//
+  // Import Modules
 
   //import type { ScalarInput } from '@stackpress/lib/types';
   if (columns.some(column => objects.includes(column.type.name))) {
@@ -58,6 +64,10 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
       namedImports: [ 'ScalarInput' ]
     });
   }
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
   //import type { 
   //  AssertInterfaceMap, 
   //  SerializeInterfaceMap, 
@@ -78,33 +88,10 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
     moduleSpecifier: 'stackpress/SchemaInterface',
     defaultImport: 'SchemaInterface'
   });
-  //import type { Address } from '../Address/types.js'
-  for (const fieldset of fieldsets) {
-    source.addImportDeclaration({
-      isTypeOnly: true,
-      moduleSpecifier: fieldset.name.toPathName('../%s/types.js'),
-      namedImports: [ fieldset.name.toTypeName() ]
-    });
-  }
-  //import type AddressSchema from '../Address/AddressSchema.js';
-  //import type StreetSchema from './columns/StreetSchema.js';
-  for (const column of columns.values()) {
-    if (column.type.fieldset) {
-      //import type AddressSchema from '../Address/AddressSchema.js';
-      source.addImportDeclaration({
-        isTypeOnly: true,
-        moduleSpecifier: column.type.fieldset.name.toPathName('../%s/%sSchema.js'),
-        defaultImport: column.type.fieldset.name.toClassName('%sSchema')
-      });
-    } else {
-      //import type StreetColumn from './columns/StreetColumn.js';
-      source.addImportDeclaration({
-        isTypeOnly: true,
-        moduleSpecifier: column.name.toPathName('./columns/%sColumn.js'),
-        defaultImport: column.name.toClassName('%sColumn')
-      });
-    }
-  }
+
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import { Roles } from '../enums.js'
   if (enums.length > 0) {
     source.addImportDeclaration({
@@ -115,6 +102,26 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
       )
     });
   }
+  //import type { Address } from '../Address/types.js'
+  for (const fieldset of fieldsets) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: fieldset.name.toPathName('../%s/types.js'),
+      namedImports: [ fieldset.name.toTypeName() ]
+    });
+  }
+  //import type StreetColumn from './columns/StreetColumn.js'
+  for (const column of columns.values()) {
+    //import type StreetColumn from './columns/StreetColumn.js';
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: column.name.toPathName('./columns/%sColumn.js'),
+      defaultImport: column.name.toClassName('%sColumn')
+    });
+  }
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export type Address
   source.addTypeAlias({
@@ -157,11 +164,7 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
     name: fieldset.name.toTypeName('%sColumns'),
     type: (`{${
       columns.map(
-        column => `${column.name.toString()}: ${
-          column.type.fieldset 
-            ? column.type.fieldset.name.toClassName('%sSchema')
-            : column.name.toClassName('%sColumn')
-        }`
+        column => `${column.name.toString()}: ${column.name.toClassName('%sColumn')}`
       ).join(', ')
     }}`)
   });
@@ -209,6 +212,13 @@ export function generateModelTypes(directory: Directory, model: Model) {
   //load profile/types.ts if it exists, if not create it
   const source = generateFieldsetTypes(directory, model);
 
+  //------------------------------------------------------------------//
+  // Import Modules
+  //------------------------------------------------------------------//
+  // Import Stackpress
+  //------------------------------------------------------------------//
+  // Import Client
+
   //import type { Profile } from '../Profile/types.js'
   for (const model of models) {
     source.addImportDeclaration({
@@ -216,6 +226,9 @@ export function generateModelTypes(directory: Directory, model: Model) {
       namedImports: [ model.name.toTypeName() ]
     });
   }
+
+  //------------------------------------------------------------------//
+  // Exports
 
   //export type ProfileExtended
   if (model.store.foreignRelationships.size > 0) {
@@ -240,6 +253,4 @@ export function generateModelTypes(directory: Directory, model: Model) {
       type: model.name.toTypeName()
     });
   }
-
-  
 };

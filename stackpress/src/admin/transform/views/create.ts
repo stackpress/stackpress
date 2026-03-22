@@ -190,6 +190,9 @@ export default function createView(directory: Directory, model: Model) {
   );
 };
 
+//------------------------------------------------------------------//
+// Templates
+
 export const TEMPLATE = {
 
 CREATE_CRUMBS:

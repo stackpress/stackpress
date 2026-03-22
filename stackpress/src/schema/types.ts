@@ -128,3 +128,8 @@ export type UnserializeInterfaceMap<C extends DefinitionInterfaceMap> = {
     ? U 
     : unknown;
 };
+
+export type ErrorReport =
+  | string
+  | ErrorReport[]
+  | { [key: string]: ErrorReport };

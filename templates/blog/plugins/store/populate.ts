@@ -1,12 +1,16 @@
 //modules
 import type { UnknownNest } from '@stackpress/lib/types';
+import { control } from '@stackpress/lib/Terminal';
 //stackpress
 import type { ProfileAuth } from 'stackpress';
 import { action } from 'stackpress/server';
 
 const secret = process.env.ADMIN_PASS || 'admin';
 
+const controls = control('[BLOG]')
+
 export default action.props(async function Populate({ ctx }) {
+  controls.system('Populating database with example data...');
   const admin = await ctx.resolve<ProfileAuth>('auth-signup', {
     type: 'person',
     name: 'John Doe',
@@ -116,4 +120,5 @@ export default action.props(async function Populate({ ctx }) {
     scopes: [ 'profile-write', 'auth-read' ],
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
   });
+  controls.success('Database population complete!');
 });

@@ -3,10 +3,10 @@ import type { IdeaProjectPluginProps } from '../../types.js';
 //stackpress/schema
 import Schema from '../../schema/Schema.js';
 //stackpress/view/transform
-import generateViews from './view.js';
-import generateFields from './form.js';
-import generateFilters from './filter.js';
-import generateLists from './list.js';
+import generateViews from './view/index.js';
+import generateFields from './form/index.js';
+import generateFilters from './filter/index.js';
+import generateLists from './list/index.js';
 import generateSpans from './span.js';
 
 /**

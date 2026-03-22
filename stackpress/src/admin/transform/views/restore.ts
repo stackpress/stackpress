@@ -176,6 +176,9 @@ export default function restoreView(directory: Directory, model: Model) {
   );
 };
 
+//------------------------------------------------------------------//
+// Templates
+
 export const TEMPLATE = {
 
 RESTORE_CRUMBS_BODY:

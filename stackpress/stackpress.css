@@ -537,10 +537,11 @@
 .admin-page .admin-tabs {
   align-items: center;
   display: flex;
-  margin-left: 10px;
-  margin-top: 10px;
-  margin-right: 10px;
+  min-height: 41px;
   overflow-x: auto;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-right: 10px;
 }
 .admin-page .admin-tabs span,
 .admin-page .admin-tabs a.active {
@@ -579,6 +580,38 @@
   border-color: var(--bg-second) !important;
 }
 
+.admin-page .fieldset-single .frui-form-fieldset {
+  border: 1px solid var(--bg-third);
+  padding: 10px;
+}
+
+.admin-page .fieldset-multiple .form-fieldset {
+  border: 1px solid var(--bg-third);
+  margin-bottom: 10px;
+}
+
+.admin-page .frui-form-fieldset .form-fieldset header {
+  align-items: center;
+  background-color: var(--bg-third);
+  display: flex;
+  padding: 10px;
+}
+
+.admin-page .frui-form-fieldset .form-fieldset header h6 {
+  flex-grow: 1;
+}
+
+.admin-page .frui-form-fieldset .form-fieldset header a {
+  color: var(--error);
+}
+
+.admin-page .frui-form-fieldset .form-fieldset main {
+  padding: 10px;
+}
+
+.admin-page .frui-form-fieldset > button {
+  background-color: var(--bg-third) !important;
+}
 
 /* Admin Form Page */
 
