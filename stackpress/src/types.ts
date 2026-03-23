@@ -85,7 +85,8 @@ export type {
   DefinitionInterfaceMap,
   AssertInterfaceMap,
   SerializeInterfaceMap,
-  UnserializeInterfaceMap
+  UnserializeInterfaceMap,
+  ErrorReport
 } from './schema/types.js';
 
 export type {

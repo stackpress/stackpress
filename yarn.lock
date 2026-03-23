@@ -2332,10 +2332,10 @@ fromentries@^1.2.0:
   resolved "https://registry.yarnpkg.com/fromentries/-/fromentries-1.3.2.tgz#e4bca6808816bf8f93b52750f1127f5a6fd86e3a"
   integrity sha512-cHEpEQHUg0f8XdtZCc2ZAhrHzKzT0MrFUTcvx+hfxYu7rGMDc5SKoXFh+n4YigxsHXRzc6OrCshdR1bWH6HHyg==
 
-frui@0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/frui/-/frui-0.2.5.tgz#614745048845d1dda4f790a4f0a4de2489bacd8a"
-  integrity sha512-2uil30/2EOq73lGYF6Xj6DuyJd614WDPgLCVxrO1fyfHuBo/Si/E3Brux01jX18CDbdMkXBY50CDbWQ7HC3WjA==
+frui@0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/frui/-/frui-0.2.6.tgz#c04a354d0ab81d8221cf50724c93138e03ae43c9"
+  integrity sha512-np9EAa8o04dYOSND9wAoPNaN4nvGpXh6tc7+PMXVi5v5CuboF885qK8HrJ3X+M+914cFAUj+Ep6t8LN+Z+rtTQ==
 
 fs.realpath@^1.0.0:
   version "1.0.0"

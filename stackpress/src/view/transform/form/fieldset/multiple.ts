@@ -72,6 +72,14 @@ export default function generate(
 
   //------------------------------------------------------------------//
   // Import Stackpress
+
+  //import type { ErrorReport } from 'stackpress/schema/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/schema/types',
+    namedImports: [ 'ErrorReport' ]
+  });
+
   //------------------------------------------------------------------//
   // Import Client
 
@@ -233,8 +241,8 @@ TYPE_CONTROL_PROPS:
   name?: string,
   label?: string,
   error?: string,
-  value?: <%type%>|<%type%>[],
-  errors?: Record<string, any>|Record<string, any>[],
+  value?: <%type%>[],
+  errors?: Record<string, ErrorReport>[],
   style?: CSSProperties,
   className?: string
 }`,
@@ -354,13 +362,13 @@ let {
   ...attributes
 } = props;
 //format value
-value = Array.isArray(value)
+const valueList = Array.isArray(value)
   ? value
   : value && typeof value === 'object'
   ? [ value ]
   : undefined;
 //format errors
-errors = Array.isArray(errors)
+const errorList = Array.isArray(errors)
   ? errors
   : errors && typeof errors === 'object'
   ? [ errors ]
@@ -382,15 +390,27 @@ return (
     )}
     <div className="frui-control-field">
       <<%component%> 
-        error={errors.length > 0} 
-        errors={errors as Record<string, any>[]} 
+        error={errorList.length > 0} 
+        errors={errorList} 
         name={name} 
-        value={value} 
+        value={valueList} 
       />
     </div>
-    {errors.length > 0 && (
-      <div className="frui-control-error">{error || ''}</div>
-    )}
+    {errorList.length > 0 && errorList.map((error, index) => (
+      <div className="frui-control-error" key={index}>
+        {typeof error === 'string' ? error 
+          : error && typeof error === 'object'
+          ? (
+            <ul>
+              {Object.entries(error).map(([key, value]) => (
+                <li key={key}>{\`\${key}: \${String(value)}\`}</li>
+              ))}
+            </ul>
+          )
+          : ''
+        }
+      </div>
+    ))}
   </div>
 );`
 

@@ -34,21 +34,32 @@ export default function createView(directory: Directory, model: Model) {
     moduleSpecifier: 'frui/Bread',
     defaultImport: 'Bread'
   });
+  //import Tabs from 'frui/Tabs';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/Tabs',
+    defaultImport: 'Tabs'
+  });
 
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { NestedObject, ServerPageProps, SessionPermission } from 'stackpress/view/client';
+  //import type { ErrorReport } from 'stackpress/schema/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'NestedObject', 'ServerPageProps', 'SessionPermission' ]
+    moduleSpecifier: 'stackpress/schema/types',
+    namedImports: [ 'ErrorReport' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfigProps' ]
+  });
+  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
   });
   //import { useServer, LayoutAdmin } from 'stackpress/view/client';
   source.addImportDeclaration({
@@ -117,27 +128,41 @@ export default function createView(directory: Directory, model: Model) {
       name: 'props', 
       type: renderCode(`{ 
         input: Partial<<%type%>>, 
-        errors: NestedObject<string | string[]> 
+        errors: Record<string, ErrorReport>
       }`, { 
         type: model.name.toTypeName('%sInput') 
       }) 
     }],
     statements: renderCode(TEMPLATE.CREATE_FORM_BODY,{
-      fields: model.component.formFields.toArray().map(column => {
-        const attribute = column.component.formField!;
-        const component = attribute.component.definition!;
-        if (component.name === 'Fieldset') {
-          return renderCode(TEMPLATE.CREATE_FORM_FIELDSET, {
-            component: column.name.toComponentName('%sFormFieldsetControl'),
-            column: column.name.toString()
-          });
-        }
-        return renderCode(TEMPLATE.CREATE_FORM_FIELD, {
+      fields: model.component.formFields
+        .toArray()
+        .filter(column => {
+          const attribute = column.component.formField!;
+          const component = attribute.component.definition!;
+          return component.name !== 'Fieldset';
+        })
+        .map(column => ({
           component: column.name.toComponentName('%sFormFieldControl'),
           column: column.name.toString(),
           multiple: column.type.multiple ? '[]' : ''
-        });
-      }).join('\n')
+        })),
+      fieldsets: model.component.formFields
+        .toArray()
+        .filter(column => {
+          const attribute = column.component.formField!;
+          const component = attribute.component.definition!;
+          return component.name === 'Fieldset';
+        })
+        .map(column => ({
+          value: column.name.toString(),
+          label: column.name.label || column.name.titleCase,
+          required: column.type.required && !column.type.multiple,
+          component: column.name.toComponentName('%sFormFieldsetControl'),
+          column: column.name.toString(),
+          errorType: column.type.multiple 
+           ? 'Record<string, ErrorReport>[]' 
+           : 'Record<string, ErrorReport>'
+        }))
     })
   });
   //export function ProfileAdminCreateBody() {}
@@ -225,29 +250,55 @@ CREATE_FORM_BODY:
 const { _ } = useLanguage();
 return (
   <form method="post">
-    <%fields%>
+    <Tabs 
+      className="admin-form-tabs"
+      defaultValue="_info"
+      tab={({ active }) => active 
+        ? 'admin-form-tab-active' 
+        : 'admin-form-tab'
+      }
+      content={({ active }) => active 
+        ? 'admin-form-tab-content' 
+        : 'admin-form-tab-content frui-none'
+      }
+    >
+      <Tabs.Head className="flex">
+        <Tabs.Label value="_info">{_('Info')}</Tabs.Label>
+        <%#fieldsets%>
+          <Tabs.Label value="<%value%>">
+            {_('<%label%>')<%#required%>+ ' *'<%/required%>}
+          </Tabs.Label>
+        <%/fieldsets%>
+      </Tabs.Head>
+      <Tabs.Body>
+        <Tabs.Content value="_info">
+          <%#fields%>
+            <<%component%>
+              className="control"
+              name="<%column%><%multiple%>"
+              value={input['<%column%>']} 
+              error={errors.<%column%>?.toString()} 
+            />
+          <%/fields%>
+        </Tabs.Content>
+        <%#fieldsets%>
+          <Tabs.Content value="<%value%>">
+            <<%component%>
+              className="control"
+              name="<%column%>"
+              value={input['<%column%>']} 
+              errors={errors['<%column%>'] as <%errorType%>} 
+            />
+          </Tabs.Content>
+        <%/fieldsets%>
+      </Tabs.Body>
+    </Tabs>
     <Button className="submit" type="submit">
       <i className="icon fas fa-fw fa-save"></i>
       {_('Save')}
     </Button>
   </form>
 );`,
-
-CREATE_FORM_FIELDSET:
-`<<%component%>
-  className="control"
-  name="<%column%>"
-  value={input['<%column%>']} 
-  errors={errors['<%column%>']} 
-/>`,
-
-CREATE_FORM_FIELD:
-`<<%component%>
-  className="control"
-  name="<%column%><%multiple%>"
-  value={input['<%column%>']} 
-  error={errors.<%column%>?.toString()} 
-/>`,
 
 CREATE_BODY:
 `//hooks

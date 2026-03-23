@@ -580,11 +580,6 @@
   border-color: var(--bg-second) !important;
 }
 
-.admin-page .fieldset-single .frui-form-fieldset {
-  border: 1px solid var(--bg-third);
-  padding: 10px;
-}
-
 .admin-page .fieldset-multiple .form-fieldset {
   border: 1px solid var(--bg-third);
   margin-bottom: 10px;
@@ -603,6 +598,7 @@
 
 .admin-page .frui-form-fieldset .form-fieldset header a {
   color: var(--error);
+  cursor: pointer;
 }
 
 .admin-page .frui-form-fieldset .form-fieldset main {
@@ -626,11 +622,64 @@
 .admin-form-page .admin-form {
   flex-grow: 1;
   overflow: auto;
+}
+
+.admin-form-page .admin-form form > button {
+  margin: 10px;
+}
+
+.admin-form-page .admin-form-tabs .frui-tabs-head {
+  align-items: center;
+  display: flex;
+  min-height: 41px;
+  overflow-x: auto;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-right: 10px;
+}
+
+.admin-form-page .admin-form-tabs .frui-tabs-head .admin-form-tab {
+  display: inline-block;
+  margin-right: 5px;
+  padding: 5px 15px;
+}
+
+.admin-form-page .admin-form-tabs .frui-tabs-head .frui-tabs-label-inactive {
+  cursor: pointer;
+}
+
+.admin-form-page .admin-form-tabs .frui-tabs-head .admin-form-tab-active {
+  background-color: var(--bg-second);
+  display: inline-block;
+  margin-right: 5px;
+  padding: 5px 15px;
+}
+
+.admin-form-page .admin-form-tabs .frui-tabs-body {
+  background-color: var(--bg-second);
   padding: 10px;
+}
+
+.admin-form-page .admin-form-tabs .frui-tabs-body .admin-form-tab-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+.admin-form-page .admin-form-tabs .frui-tabs-body .admin-form-tab-content.frui-none {
+  display: none;
+}
+
+.admin-form-page .admin-form-tabs .frui-tabs-body .admin-form-tab-content .fieldset-control > .frui-control-label {
+  display: none;
 }
 
 .admin-form-page .admin-form .control {
   margin-bottom: 20px;
+}
+.admin-page .admin-form .fieldset-single.control,
+.admin-page .admin-form .fieldset-multiple.control {
+  margin-bottom: 0;
 }
 
 .admin-form-page .admin-form .submit {

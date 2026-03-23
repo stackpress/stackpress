@@ -475,9 +475,6 @@ const {
 const can = session.can.bind(session);
 const base = config.path('admin.base', '/admin');
 const results = response.results as <%type%>;
-if (response.code !== 200 && response.code !== 404) {
-  console.error(response.toStatusResponse());
-}
 //render
 return (
   <main className="admin-detail-page admin-page">
