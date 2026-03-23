@@ -212,24 +212,6 @@ model Article
             @description("Arbitrary tags for general use.")
             @examples(["top buyer" "verified" "moderator"])
 
-  author    FullName
-            @label("Author")
-            @default({})
-            @field.fieldset
-            @view.fieldset
-
-  coauthor  FullName?
-            @label("Co-Author")
-            @default({})
-            @field.fieldset
-            @view.fieldset
-
-  contributors    FullName[]
-            @label("Contributors")
-            @default([])
-            @field.fieldset
-            @view.fieldset
-
   status    PublishStatus
             @label("Status")
             @default("DRAFT")
