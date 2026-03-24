@@ -220,7 +220,7 @@ let { q, filter = {}, span, sort } = req.data<{
 filter.<%id.local%> = req.data<string>('<%id.foreign%>');
 //search using the filters
 const response = await ctx.resolve<UnknownNest[]>(
-  '<%event%>-search',
+  '<%search%>',
   { q, filter, span, sort, take: 0 }
 );
 //if successfully searched
