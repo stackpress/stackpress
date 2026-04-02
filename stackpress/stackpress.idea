@@ -27,7 +27,7 @@ model Profile
   name          String
                 @label("Name") 
                 @searchable
-                @field.input({ type "text" required true })
+                @field.input({ type "text" })
                 @is.required("Name is required")
                 @list.string @view.string
                 @description("Full name (first middle last).")
@@ -36,7 +36,7 @@ model Profile
   type          String    
                 @label("Type") 
                 @default("person") 
-                @field.input({ type "text" required true })
+                @field.input({ type "text" })
                 @is.required("Type is required")
                 @filter.input({ type "text" })
                 @list.lowercase
@@ -128,6 +128,7 @@ model Auth
               search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
+            @is.required("Profile is required")
             @filter.relation({
               id "id"
               search "/admin/profile/search?json&q={{query}}"
@@ -141,7 +142,7 @@ model Auth
   type      String
             @label("Type") 
             @default("username") 
-            @field.input({ type "text" required true }) 
+            @field.input({ type "text" }) 
             @is.required("Type is required")
             @filter.input({ type "text" })
             @list.string @view.string
@@ -151,7 +152,7 @@ model Auth
   token     String
             @label("Token")
             @unique @encrypted
-            @field.input({ type "text" required true })
+            @field.input({ type "text" })
             @is.required("Token is required")
             @is.cge(5 "Must be at least 5 characters")
             @list.string @view.string
@@ -161,7 +162,7 @@ model Auth
   secret    String
             @label("Secret") 
             @hashed @secret
-            @field.password({ required true })
+            @field.password
             @is.required("Secret is required")
             @description("Password used to verify.")
             @examples("s3cr3t P@ssw0rd")
@@ -232,6 +233,7 @@ model Application
                 search "/admin/profile/search?json&q={{query}}"
                 template "{{name}}" 
               }) 
+              @is.required("Profile is required")
               @filter.relation({
                 id "id"
                 search "/admin/profile/search?json&q={{query}}"
@@ -245,7 +247,7 @@ model Application
   name        String
               @label("Name") 
               @searchable
-              @field.input({ type "text" required true })
+              @field.input({ type "text" })
               @is.required("Name is required")
               @list.string @view.string
               @description("Arbitrary name of the application. Used in 3-legged OAuth flows.")
@@ -293,7 +295,8 @@ model Application
   expires     Datetime 
               @label("Expires") 
               @sortable
-              @field.datetime({ required true })
+              @field.datetime
+              @is.required("Expires is required")
               @list.date("m d, Y h:iA") 
               @view.date("m d, Y h:iA")
               @description("Expiration date of the application. After this date, the application will not be able to perform any operations.")
@@ -342,6 +345,7 @@ model Session
                   search "/admin/application/search?json"
                   template "{{name}}" 
                 }) 
+                @is.required("App is required")
                 @filter.relation({ 
                   id "id"
                   search "/admin/application/search?json"
@@ -359,6 +363,7 @@ model Session
                   search "/admin/profile/search?json&q={{query}}"
                   template "{{name}}" 
                 }) 
+                @is.required("Profile is required")
                 @filter.relation({
                   id "id"
                   search "/admin/profile/search?json&q={{query}}"
@@ -397,6 +402,7 @@ model Session
                 @label("Expires") 
                 @sortable
                 @field.datetime
+                @is.required("Expires is required")
                 @list.date("m d, Y h:iA") 
                 @view.date("m d, Y h:iA")
                 @description("Expiration date of the session. After this date, the session will not be able to perform any operations.")
