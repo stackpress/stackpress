@@ -27,7 +27,8 @@ model Category
   name        String
               @label("Name") 
               @searchable
-              @field.string({ required true })
+              @field.string
+              @is.required("Name is required")
               @list.string @view.string
               @description("Name of the category.")
               @examples("Introduction to Stackpress")
@@ -35,7 +36,8 @@ model Category
   slug        String
               @label("URL Slug") 
               @unique
-              @field.slug({ required true })
+              @field.slug
+              @is.required("URL Slug is required")
               @list.string @view.string
               @description("URL-friendly version of the category name.")
               @examples("introduction-to-stackpress")
@@ -96,6 +98,7 @@ model Catalog
                 search "/admin/category/search?json"
                 template "{{name}}" 
               }) 
+              @is.required("Category is required")
               @list.template({ template "{{category.name}}" }) 
               @view.template({ template "{{category.name}}" })
               @description("Unique generated identifier for the category.")
@@ -109,6 +112,7 @@ model Catalog
                 search "/admin/article/search?json"
                 template "{{title}}" 
               }) 
+              @is.required("Article is required")
               @list.template({ template "{{article.title}}" }) 
               @view.template({ template "{{article.title}}" })
               @description("Unique generated identifier for the article.")
@@ -138,6 +142,7 @@ model Article
               search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
+            @is.required("Profile is required")
             @filter.relation({
               id "id"
               search "/admin/profile/search?json&q={{query}}"
@@ -151,7 +156,8 @@ model Article
   title     String
             @label("Title") 
             @searchable
-            @field.string({ required true })
+            @field.string
+            @is.required("Title is required")
             @list.string @view.string
             @description("Title of the article.")
             @examples("Introduction to Stackpress")
@@ -159,7 +165,8 @@ model Article
   slug      String
             @label("URL Slug") 
             @unique
-            @field.slug({ required true })
+            @field.slug
+            @is.required("URL Slug is required")
             @list.string @view.string
             @description("URL-friendly version of the title.")
             @examples("introduction-to-stackpress")
@@ -215,7 +222,8 @@ model Article
   status    PublishStatus
             @label("Status")
             @default("DRAFT")
-            @field.select({ required true options [ "DRAFT" "REVIEW" "PUBLISHED" "ARCHIVED" ] })
+            @field.select({ options [ "DRAFT" "REVIEW" "PUBLISHED" "ARCHIVED" ] })
+            @is.required("Status is required")
             @list.string @view.string
             @description("Status of the article.")
             @examples("DRAFT")
@@ -278,6 +286,7 @@ model Comment
               search "/admin/article/search?json"
               template "{{title}}" 
             }) 
+            @is.required("Article is required")
             @filter.relation({
               id "id"
               search "/admin/article/search?json"
@@ -295,6 +304,7 @@ model Comment
               search "/admin/profile/search?json&q={{query}}"
               template "{{name}}" 
             }) 
+            @is.required("Profile is required")
             @filter.relation({
               id "id"
               search "/admin/profile/search?json&q={{query}}"
