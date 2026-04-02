@@ -309,7 +309,11 @@ try {
             }
           <%/ids.length%>
           <%#uniques%>
-            if (typeof input.<%column%> !== 'undefined') {
+            if (
+              typeof input.<%column%> !== 'undefined'
+              && input.<%column%> !== null
+              && input.<%column%> !== ''
+            ) {
               const filter = { <%column%>: input.<%column%> };
               const exists = await this.find({ filter });
               if (exists) {
@@ -362,7 +366,11 @@ const errors = this.store.assert(sanitized, true) || {} as <%assert%>;
 
 <%#exists%>
   //if there's a <%column%> value
-  if (typeof sanitized.<%column%> !== 'undefined') {
+  if (
+    typeof sanitized.<%column%> !== 'undefined'
+    && sanitized.<%column%> !== null
+    && sanitized.<%column%> !== ''
+  ) {
     //check to see if exists already
     const exists = await this.find({ 
       filter: { <%column%>: sanitized.<%column%> } 
@@ -443,7 +451,11 @@ const errors = this.store.assert(sanitized) || {} as <%assert%>;
   const queue = await this.findAll(query);
   <%#exists%>
     //if there's a <%column%> value
-    if (typeof sanitized.<%column%> !== 'undefined') {
+    if (
+      typeof sanitized.<%column%> !== 'undefined'
+      && sanitized.<%column%> !== null
+      && sanitized.<%column%> !== ''
+    ) {
       //check to see if exists already
       const exists = await this.findAll({ 
         filter: { <%column%>: sanitized.<%column%> } 
@@ -499,7 +511,11 @@ UPSERT:
   }
 <%/ids.length%>
 <%#uniques%>
-  if (typeof input.<%column%> !== 'undefined') {
+  if (
+    typeof input.<%column%> !== 'undefined'
+    && input.<%column%> !== null
+    && input.<%column%> !== ''
+  ) {
     const filter = { <%column%>: input.<%column%> };
     const exists = await this.find({ filter });
     if (exists) {
