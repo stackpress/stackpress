@@ -39,6 +39,11 @@ export default function generate(directory: Directory, model: Model) {
     statements: renderCode(TEMPLATE.ROUTES,
       {
         ids: ids,
+        copy: {
+          route: model.name.toURLPath('${root}/%s/create/' + ids),
+          view: model.name.toPathName('${module}/%s/admin/views/create'),
+          import: './pages/copy.js'
+        },
         create: {
           route: model.name.toURLPath('${root}/%s/create'),
           view: model.name.toPathName('${module}/%s/admin/views/create'),
@@ -165,6 +170,10 @@ server.import.all(
 );
 <%#ids%>
   server.import.all(
+    \`<%copy.route%>\`, 
+    () => import('<%copy.import%>')
+  );
+  server.import.all(
     \`<%detail.route%>\`, 
     () => import('<%detail.import%>')
   );
@@ -215,6 +224,11 @@ if (module) {
     -100
   );
   <%#ids%>
+    server.view.all(
+      \`<%copy.route%>\`, 
+      \`<%copy.view%>\`,
+      -100
+    );
     server.view.all(
       \`<%detail.route%>\`, 
       \`<%detail.view%>\`,
