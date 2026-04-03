@@ -12,22 +12,29 @@ import {
   arrangeModelSequence, 
   makeCreateQuery 
 } from '../sql/transform/helpers.js';
+//stackpress/terminal
+import Terminal from '../terminal/Terminal.js';
 
 export default async function migrate(
   server: Server<any, any, any>, 
-  database: Engine
+  database: Engine,
+  terminal?: Terminal
 ) {
   //get config
   const root = server.config.path<string>('client.revisions');
   const { migrations } = server.config<DatabaseConfig>('database') || {}; 
   //if there is not a migrations or revisions folder
   if (!migrations || !root) {
+    terminal?.verbose && terminal.control.error(
+      'Missing database.migrations or client.revisions in config.'
+    );
     return;
   }
   //collect all the revisions
   const revisions = new Revisions(root, server.loader);
   //if there are no revisions
   if (!await revisions.last()) {
+    terminal?.verbose && terminal.control.error('No revisions found.');
     return;
   }
   const fs = server.loader.fs;
@@ -54,12 +61,20 @@ export default async function migrate(
     }
     if (queries.length) {
       if (!await fs.exists(migrations)) {
+        terminal?.verbose && terminal.control.system(
+          'Creating migrations directory...'
+        );
         await fs.mkdir(migrations, { recursive: true });
       }
+      const migrationFile = path.join(migrations, `${first.date.getTime()}.sql`);
       //add migration file
       await fs.writeFile(
-        path.join(migrations, `${first.date.getTime()}.sql`),
+        migrationFile,
         queries.map(query => query.query).join(';\n')
+      );
+      terminal?.verbose && terminal.control.success(
+        'Migration file created: %s',
+        [ migrationFile ]
       );
     }
   }
@@ -111,12 +126,20 @@ export default async function migrate(
     //if there are queries to be made...
     if (queries.length) {
       if (!await fs.exists(migrations)) {
+        terminal?.verbose && terminal.control.system(
+          'Creating migrations directory...'
+        );
         await fs.mkdir(migrations, { recursive: true });
       }
+      const migrationFile = path.join(migrations, `${to.date.getTime()}.sql`);
       //add migration file
       await fs.writeFile(
-        path.join(migrations, `${to.date.getTime()}.sql`),
+        migrationFile,
         queries.map(query => query.query).join(';\n')
+      );
+      terminal?.verbose && terminal.control.success(
+        'Migration file created: %s',
+        [ migrationFile ]
       );
     }
   }

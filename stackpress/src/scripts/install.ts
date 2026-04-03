@@ -18,8 +18,10 @@ export default async function install(
 
   terminal?.verbose && terminal.control.system('Installing...');
   await database.transaction(async () => {
+    terminal?.verbose && terminal.control.system('Dropping tables...');
     //uninstall first to drop tables and such
     await client.scripts.uninstall(database);
+    terminal?.verbose && terminal.control.system('Creating tables...');
     //then install to create tables and such
     await client.scripts.install(database);
   });
@@ -31,6 +33,7 @@ export default async function install(
     const revisions = new Revisions(config.revisions, server.loader);
     if (revisions.size() === 0) {
       revisions.insert(client.config);
+      terminal?.verbose && terminal.control.success('Revision inserted.');
     }
   }
 };
