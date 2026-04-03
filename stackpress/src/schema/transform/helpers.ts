@@ -5,8 +5,6 @@ import path from 'node:path';
 import type { Project, Directory } from 'ts-morph';
 import mustache from 'mustache';
 import { decode } from 'html-entities';
-//stackpress/schema
-import type Model from '../Model';
 
 export const cwd = process.cwd();
 
@@ -29,26 +27,6 @@ export async function createProject(to = 'schema') {
       indentationText: IndentationText.TwoSpaces
     }
   });
-};
-
-/**
- * Collects all columns that should be cleared on copy,
- * deduped via Set — ids, active, timestamp, hashed, encrypted
- */
-export function collectClearColumns(
-  store: Model['store'],
-  value: Model['value']
-) {
-  //initialize set
-  const names = new Set<string>();
-  //add all columns that should be cleared on copy
-  for (const col of store.ids.values())       names.add(col.name.toString());
-  if (store.active)                           names.add(store.active.name.toString());
-  if (store.timestamp)                        names.add(store.timestamp.name.toString());
-  for (const col of value.hashed.values())    names.add(col.name.toString());
-  for (const col of value.encrypted.values()) names.add(col.name.toString());
-  //return columns
-  return [...names].map(column => ({ column }));
 };
 
 export function loadProjectFile(

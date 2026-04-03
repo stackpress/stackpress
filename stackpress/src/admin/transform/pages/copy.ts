@@ -3,7 +3,6 @@ import type { Directory } from 'ts-morph';
 //stackpress/schema
 import type Model from '../../../schema/Model.js';
 import { 
-  collectClearColumns,
   loadProjectFile, 
   renderCode 
 } from '../../../schema/transform/helpers.js';
@@ -85,10 +84,12 @@ export default function generate(directory: Directory, model: Model) {
       event: model.name.toEventName(),
       model: model.name.toURLPath(),
       oneid: model.store.ids.size === 1,
+      fields: model.component.formFields.map(column => ({
+        column: column.name.toString()
+      })).toArray(),
       ids: model.store.ids.map(
         column => `\${results.${column.name.toString()}}`
-      ).toArray().join('/'),
-      clear: collectClearColumns(model.store, model.value)
+      ).toArray().join('/')
     })
   });
 };
@@ -134,15 +135,20 @@ res.data.set('admin', {
 
 //if form submitted
 if (req.method === 'POST') {
-  //clear columns that should be cleared on copy
-  <%#clear.length%>
-    <%#clear%>
-      req.data.delete('<%column%>');
-    <%/clear%>
-  <%/clear.length%>
-
+  const input: Partial<<%type%>> = {};
+  <%#fields%>
+    if (req.data.has('<%column%>')) {
+      input.<%column%> = req.data('<%column%>');
+    }
+  <%/fields%>
   //emit the create event
-  const response = await ctx.resolve<<%type%>>('<%event%>-create', req, res);
+  const response = await ctx.resolve<<%type%>>('<%event%>-create', input, res);
+  //if error
+  if (response.code !== 200) {
+    //sync response to res
+    res.fromStatusResponse(response);
+    return;
+  }
   //if error
   if (res.code !== 200) {
     return;
@@ -165,18 +171,8 @@ if (req.method === 'POST') {
   <%/oneid%>
   return;
 }
-
 //if form not submitted, get the details of the thing to copy
 const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
-//clear columns that should be cleared on copy
-<%#clear.length%>
-  if (response.results) {
-    <%#clear%>
-    req.data.delete('<%column%>');
-    delete (response.results as Partial<typeof response.results>).<%column%>;
-    <%/clear%>
-  }
-<%/clear.length%>
 res.fromStatusResponse(response);`,
 
 };
