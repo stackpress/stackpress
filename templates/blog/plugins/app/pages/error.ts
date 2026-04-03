@@ -5,11 +5,10 @@ import path from 'node:path';
 import { action } from 'stackpress/server';
 
 export default action(async function ErrorPage(req, res, ctx) {
-  //if this is a terminal error or there is already a body
-  if (req.method.toUpperCase() !== 'GET' 
-    || req.mimetype === 'terminal/arguments' 
-    || res.body
-  ) return;
+  //if this is a terminal error, not from HTTP/WHATWG, abort
+  if (req.mimetype === 'terminal/arguments') return false;
+  //if method is not GET or there is already a body
+  if (req.method.toUpperCase() !== 'GET' || res.body) return;
   //set data for template layer
   res.data.set('server', { 
     mode: ctx.config.path('server.mode', 'production'),
