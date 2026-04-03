@@ -153,6 +153,10 @@ export default function generate(directory: Directory, model: Model) {
     }],
     statements: renderCode(TEMPLATE.DETAIL_ACTIONS_BODY, {
       active: model.store.active ? model.store.active.name.toString() : null,
+      copy: renderCode('`${base}/<%model%>/create/<%ids%>`', {
+        model: model.name.toURLPath(),
+        ids: ids.map(name => `\${results.${name}}`).join('/')
+      }),
       update: renderCode('`${base}/<%model%>/update/<%ids%>`', { 
         model: model.name.toURLPath(),
         ids: ids.map(name => `\${results.${name}}`).join('/')
@@ -347,6 +351,10 @@ const { base, results, can } = props;
 const { _ } = useLanguage();
 //variables
 const routes = {
+  copy: {
+    method: 'GET',
+    route: <%copy%>
+  },
   update: { 
     method: 'GET', 
     route: <%update%>
@@ -363,6 +371,12 @@ const routes = {
 //render
 return (
   <div className="actions">
+    {can(routes.copy) && (
+      <a className="action copy" href={routes.copy.route}>
+        <i className="icon fas fa-copy"></i>
+        {_('Copy')}
+      </a>
+    )}
     {can(routes.update) && (
       <a className="action update" href={routes.update.route}>
         <i className="icon fas fa-edit"></i>

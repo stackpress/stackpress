@@ -13,6 +13,7 @@ import generateRoutes from './routes.js';
  * - profile/
  * | - admin/
  * | | - pages/
+ * | | | - copy.ts
  * | | | - create.ts
  * | | | - detail.ts
  * | | | - remove.ts
@@ -20,6 +21,7 @@ import generateRoutes from './routes.js';
  * | | | - search.ts
  * | | | - update.ts
  * | | - views/
+ * | | | - copy.tsx
  * | | | - create.tsx
  * | | | - detail.tsx
  * | | | - remove.tsx

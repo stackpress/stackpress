@@ -684,6 +684,9 @@
   padding: 8px 10px;
 }
 
+.admin-detail-page .admin-actions .actions .action.copy {
+  background-color: var(--success);
+}
 .admin-detail-page .admin-actions .actions .action.update {
   background-color: var(--warning);
 }
