@@ -5387,6 +5387,7 @@ view.template = {
 
 //aliases
 view.taglist = { ...view.tags, name: 'view.taglist' };
+view.clip = { ...view.overflow, name: 'view.clip' };
 //type to view aliases
 view.string = { ...view.text, name: 'view.string' };
 view.float = { ...view.number, name: 'view.float' };

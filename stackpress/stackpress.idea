@@ -11,7 +11,7 @@ model Profile
   id            String
                 @label("ID") 
                 @id @default("cuid()")
-                @list.overflow({ length 10 hellip true })
+                @list.clip({ length 10 hellip true })
                 @view.string
                 @description("Unique generated identifier.")
                 @examples("pjfdz7tg8bcf7e2lig3iuej3")
@@ -116,7 +116,7 @@ model Auth
   id        String
             @label("ID") 
             @id @default("cuid()")
-            @list.overflow({ length 10 hellip true })
+            @list.clip({ length 10 hellip true })
             @view.string
             @description("Unique generated identifier.")
             @examples("dz7tg8bcf7e2lig3iuej3pjf")
