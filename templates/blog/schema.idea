@@ -20,7 +20,7 @@ model Category
   id          String
               @label("ID") 
               @id @default("cuid()")
-              @list.overflow({ length 10 hellip true })
+              @list.clip({ length 10 hellip true })
               @description("Unique generated identifier.")
               @examples("dz7tg8bcf7e2lig3iuej3pjf")
   
@@ -131,7 +131,7 @@ model Article
   id        String
             @label("ID") 
             @id @default("cuid()")
-            @list.overflow({ length 10 hellip true })
+            @list.clip({ length 10 hellip true })
             @description("Unique generated identifier.")
             @examples("dz7tg8bcf7e2lig3iuej3pjf")
   
@@ -275,7 +275,7 @@ model Comment
   id        String
             @label("ID") 
             @id @default("cuid()")
-            @list.overflow({ length 10 hellip true })
+            @list.clip({ length 10 hellip true })
             @description("Unique generated identifier.")
             @examples("dz7tg8bcf7e2lig3iuej3pjf")
   
