@@ -9,7 +9,6 @@ import {
 } from '../../../schema/transform/helpers.js';
 //stackpress/sql
 import generateAlter from './alter.js';
-import generateCount from './count.js';
 import generateCreate from './create.js';
 import generateDelete from './delete.js';
 import generateInsert from './insert.js';
@@ -45,6 +44,7 @@ export default function generate(directory: Directory, model: Model) {
   //  StoreSelectColumnPath, 
   //  StoreSelectFilters,
   //  StoreSelectJoinMap, 
+  //  StoreSelectOrWhere,
   //  StoreSelectQuery,
   //  ValuePrimitive,
   //  ValueScalar
@@ -56,6 +56,7 @@ export default function generate(directory: Directory, model: Model) {
       'StoreSelectColumnPath',
       'StoreSelectFilters',
       'StoreSelectJoinMap',
+      'StoreSelectOrWhere',
       'StoreSelectQuery',
       'ValuePrimitive',
       'ValueScalar'
@@ -157,8 +158,6 @@ export default function generate(directory: Directory, model: Model) {
       }).toArray()
     })
   });
-  //public count(query: StoreSearchParams = {}, q = '"') {}
-  generateCount(model, definition);
   //public alter() {}
   generateAlter(source, definition);
   //public create() {}

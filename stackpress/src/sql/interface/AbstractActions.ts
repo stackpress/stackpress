@@ -31,9 +31,26 @@ export default abstract class AbstractActions<
    * Returns the count of records that match the provided filters.
    */
   public async count(query: StoreSelectFilters & { columns?: string[] }) {
-    const count = this.store.count(query, this.engine.dialect.q);
+    //extract params
+    const { q, filter, span } = query;
+    //valid columns:
+    // - createdAt
+    // - user.emailAddress
+    // - user.address.streetName
+    // - user.address.*
+    // - user.*
+    // - *
+    //reference: user User @relation({ local "userId" foreign "id" })
+    const columns = (query.columns || [ '*' ]).map(
+      column => this.store.getColumnSelectors(column)
+    ).flat();
+    //now build the select query
+    const where = query.where || this.where({ q, filter, span });
+    const params = { columns, where, take: 0 };
+    const count = this.store.select(params, this.engine.dialect.q);
+    count.select('COUNT(*) as total');
     count.engine = this.engine;
-    const results = await count;
+    const results = (await count) as unknown as Array<{ total: number }>;
     return results?.[0]?.total || 0;
   }
 
@@ -69,7 +86,7 @@ export default abstract class AbstractActions<
    */
   public async findAll(query: StoreSelectQuery) {
     //extract params
-    let { columns = [ '*' ] } = query;
+    const { q, filter, span, sort, skip, take } = query;
     //valid columns:
     // - createdAt
     // - user.emailAddress
@@ -78,7 +95,16 @@ export default abstract class AbstractActions<
     // - user.*
     // - *
     //reference: user User @relation({ local "userId" foreign "id" })
-    columns = columns.map((column) => this.store.getColumnSelectors(column)).flat();
+    const columns = (query.columns || [ '*' ]).map(
+      column => this.store.getColumnSelectors(column)
+    ).flat();
+    //now build the select query
+    const where = query.where || this.where({ q, filter, span });
+    const params = { columns, where, sort, skip, take };
+    const select = this.store.select(params, this.engine.dialect.q);
+    select.engine = this.engine;
+    //remote call and get the raw results
+    const results = await select;
     //collect info for each column
     //ex. group.owner.address.streetName
     // - name: group.owner.address.streetName
@@ -92,12 +118,7 @@ export default abstract class AbstractActions<
     const info = columns
       .map((column) => this.store.getColumnInfo(column))
       .filter((column) => column.path.length > 0);
-    //now build the select query
-    const select = this.store.select(query, this.engine.dialect.q);
-    select.engine = this.engine;
-    //remote call and get the raw results
-    const results = await select;
-    //return the formatted and expanded results
+    //now we can return the formatted and expanded results
     return results.map(row => {
       const nest = new Nest();
       //ex. created_at: "2021-01-01T00:00:00.000Z"

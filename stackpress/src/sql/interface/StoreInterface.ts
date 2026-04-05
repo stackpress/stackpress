@@ -12,9 +12,7 @@ import SchemaInterface from '../../schema/interface/SchemaInterface.js';
 //stackpress/sql
 import type { 
   StoreRelation,
-  StoreSelectColumnPath,
-  StoreSelectFilters, 
-  StoreSelectJoinMap,
+  StoreSelectFilters,
   StoreSelectQuery,
   ValueScalar
 } from '../types.js';
@@ -40,14 +38,6 @@ export default interface StoreInterface<
   alter(to?: Create): Alter;
 
   /**
-   * Query builder for counting the number of records matching the query
-   */
-  count(
-    query?: StoreSelectFilters & { columns?: string[]; }, 
-    q?: string
-  ): Select<{ total: number }>;
-
-  /**
    * Query builder for creating a new table structure
    */
   create(): Create;
@@ -63,18 +53,24 @@ export default interface StoreInterface<
   insert(input: Partial<T>): Insert<T>;
 
   /**
-   * Query builder for selecting records
+   * Serializes value, then scalarizes it, then assigns 
+   * it to the SQL column name (ex. snake case)
    */
-  select(query?: StoreSelectQuery, q?: string): Select<E>;
+  scalarize(values: Record<string, unknown>): Record<string, ValueScalar>;
 
   /**
-   * Helper method for generating the where clause and values for 
-   * a query based on the provided filters and the store's schema.
+   * Query builder for selecting records
    */
-  where(query?: StoreSelectFilters, q?: string): { 
-    clause: string, 
-    values: FlatValue[] 
-  };
+  select<T extends { [key: string]: unknown } = E>(
+    query?: StoreSelectQuery, 
+    q?: string
+  ): Select<T>;
+
+  /**
+   * Unserializes value, then assigns it to 
+   * the model column name (ex. camel case)
+   */
+  unscalarize(values: Record<string, unknown>): Partial<T>;
 
   /**
    * Query builder for updating records
@@ -86,45 +82,11 @@ export default interface StoreInterface<
   ): Update<T>;
 
   /**
-   * Helper method for generating the column info for a given selector
-   * 
-   * ex. user.address.streetName -> {
-   *   name: 'user.address.streetName',
-   *   table: 'user__address',
-   *   column: 'street_name',
-   *   alias: 'user__address__street_name',
-   *   path: [...],
-   *   last: ...,
-   *   joins: ...
-   * }
+   * Helper method for generating the where clause and values for 
+   * a query based on the provided filters and the store's schema.
    */
-  getColumnInfo(selector: string): {
-    name: string,
-    table: string,
-    column: string,
-    alias: string,
-    path: Array<StoreSelectColumnPath>,
-    last: StoreSelectColumnPath,
-    joins: StoreSelectJoinMap
+  where(query?: StoreSelectFilters, q?: string): { 
+    clause: string, 
+    values: FlatValue[] 
   };
-
-  /**
-   * Helper method for generating the column selectors for 
-   * a given column path.
-   * 
-   * ex. user.address.streetName -> user__address__street_name
-   */
-  getColumnSelectors(column: string, prefixes?: string[]): string[];
-
-  /**
-   * Serializes value, then scalarizes it, then assigns 
-   * it to the SQL column name (ex. snake case)
-   */
-  scalarize(values: Record<string, unknown>): Record<string, ValueScalar>;
-
-  /**
-   * Unserializes value, then assigns it to 
-   * the model column name (ex. camel case)
-   */
-  unscalarize(values: Record<string, unknown>): Partial<T>;
 }

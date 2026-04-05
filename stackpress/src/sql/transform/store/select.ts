@@ -184,7 +184,7 @@ if (take) {
   select.limit(take);
 }
 //where
-const where = this.where({ q: keywords, filter, span }, q);
+const where = query.where || this.where({ q: keywords, filter, span }, q);
 if (where.clause) {
   select.where(where.clause, where.values);
 }
@@ -382,17 +382,27 @@ const values: FlatValue[] = [];
 Object.entries(filter).forEach(([ key, value ]) => {
   const info = this.getColumnInfo(key).last;
   if (!info) return;
-  const selector = \`\${q}\${info.store.table}\${q}.\${q}\${getAlias(info.column)}\${q}\`;
-  const serialized = info.store.columns[info.column].serialize(value, true);
-  if (typeof serialized !== 'undefined' 
-    && serialized !== null 
-    && serialized !== ''
-  ) {
-    const scalar = this.toSqlValue(info.column, serialized);
-    if (typeof scalar !== 'undefined') {
-      where.push(\`\${selector} = ?\`);
-      values.push(scalar);
-    }
+  const table = \`\${q}\${info.store.table}\${q}\`;
+  const column = \`\${q}\${getAlias(info.column)}\${q}\`;
+  const selector = \`\${table}.\${column}\`;
+  const or: StoreSelectOrWhere = { clause: [], values: [] };
+  (!Array.isArray(value) ? [ value ] : value).forEach(value => {
+    const serialized = info.store.columns[info.column].serialize(value, true);
+    if (
+      typeof serialized !== "undefined" &&
+      serialized !== null &&
+      serialized !== ""
+    ) {
+      const scalar = this.toSqlValue(info.column, serialized);
+      if (typeof scalar !== "undefined") {
+        or.clause.push(\`\${selector} = ?\`);
+        or.values.push(scalar);
+      }
+    }  
+  });
+  if (or.clause.length > 0 && or.values.length > 0) {
+    where.push(\`(\${or.clause.join(' OR ')})\`);
+    values.push(...or.values);
   }
 });
 //spans

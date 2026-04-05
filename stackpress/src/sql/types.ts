@@ -1,4 +1,5 @@
 //modules
+import type { FlatValue } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 //stackpress/sql
 import type StoreInterface from './interface/StoreInterface.js';
@@ -57,10 +58,21 @@ export type StoreSelectJoin = {
 
 export type StoreSelectJoinMap = Record<string, StoreSelectJoin>;
 
+export type StoreSelectWhere = {
+  clause: string,
+  values: FlatValue[]
+};
+
+export type StoreSelectOrWhere = {
+  clause: string[],
+  values: FlatValue[]
+};
+
 export type StoreSelectFilters = {
   q?: string,
-  filter?: Record<string, ValueScalar>,
-  span?: Record<string, ValueScalar[]>
+  filter?: Record<string, ValueScalar | ValueScalar[]>,
+  span?: Record<string, ValueScalar[]>,
+  where?: StoreSelectWhere
 };
 
 export type StoreSelectQuery = StoreSelectFilters & {
@@ -109,6 +121,7 @@ export type {
   StrictValue,
   StrictOptValue,
   FlatValue,
+  JSONScalarValue,
   Value,
   Resolve,
   Reject,
@@ -116,6 +129,8 @@ export type {
   Join,
   Dialect,
   QueryObject,
+  OrQueryObject,
   Transaction,
+  WhereBuilder,
   Connection
 } from '@stackpress/inquire/types';

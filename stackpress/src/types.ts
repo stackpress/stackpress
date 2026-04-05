@@ -125,6 +125,7 @@ export type {
   StrictValue,
   StrictOptValue,
   FlatValue,
+  JSONScalarValue,
   Value,
   Resolve,
   Reject,
@@ -132,7 +133,9 @@ export type {
   Join,
   Dialect,
   QueryObject,
+  OrQueryObject,
   Transaction,
+  WhereBuilder,
   Connection,
   //for store interface
   ValueScalar,

@@ -95,3 +95,59 @@ export function getAlias(selector: string) {
     .toLowerCase()
   ).join('__');
 };
+
+/**
+ * Flattens the entire data into dot notation paths and values. 
+ * 
+ * For example:
+ * { user: { name: 'John', address: { street: '123 Main St' } } }
+ * becomes
+ * { 'user.name': 'John', 'user.address.street': '123 Main St' }
+ */
+export function flatObject<T = unknown>(
+  data: Record<string, unknown> | Array<unknown>, 
+  prefix = '', 
+  results: Record<string, T> = {}
+): Record<string, T> {
+  for (const [ key, value ] of Object.entries(data)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (Array.isArray(value)) {
+      value.forEach((value, index) => {
+        if (typeof value === 'object' && value !== null) {
+          flatObject(value, `${path}.${index}`, results);
+        } else {
+          results[`${path}.${index}`] = value as T;
+        }
+      });
+    } else if (typeof value === 'object' && value !== null) {
+      flatObject(value as Record<string, unknown>, path, results);
+    } else {
+      results[path] = value as T;
+    }
+  }
+  return results;
+};
+
+/**
+ * Flattens the entire data into dot notation paths and array values. 
+ * 
+ * For example:
+ * { created: [ DateString, DateString ], profile: { age: [ 20, 30 ] } }
+ * becomes
+ * { created: [ DateString, DateString ], profile.age: [ 20, 30 ] }
+ */
+export function flatSpans<T = unknown>(
+  data: Record<string, unknown> | Array<unknown>, 
+  prefix = '', 
+  results: Record<string, [ T, T ]> = {}
+) {
+  for (const [ key, value ] of Object.entries(data)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (Array.isArray(value) && value.length === 2) {
+      results[path] = value as [ T, T ];
+    } else if (typeof value === 'object' && value !== null) {
+      flatSpans(value as Record<string, unknown>, path, results);
+    }
+  }
+  return results;
+};
