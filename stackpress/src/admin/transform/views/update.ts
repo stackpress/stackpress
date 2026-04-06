@@ -42,11 +42,11 @@ export default function updateView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
+  //import type { NestedObject, ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'NestedObject', 'ServerPageProps' ]
+    namedImports: [ 'NestedObject', 'ServerPageProps', 'SessionPermission' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
   source.addImportDeclaration({
