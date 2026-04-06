@@ -74,10 +74,10 @@ export default function generate(
     moduleSpecifier: 'react',
     namedImports: [ 'useState', 'useEffect' ]
   });
-  //import mustache from 'mustache';
+  //import Handlebars from 'stackpress/view/handlebars';
   source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
+    moduleSpecifier: 'stackpress/view/handlebars',
+    defaultImport: 'Handlebars'
   });
   //import Select from 'frui/form/Select';
   source.addImportDeclaration({
@@ -149,6 +149,8 @@ const [
   updateOptions 
 ] = useState<{ label: string , value: any }[]>([]);
 const [ loading, isLoading  ] = useState(false);
+//variables
+const html = Handlebars.compile('<%template%>');
 //handlers
 const handlers = {
   fetch(query = '') {
@@ -159,7 +161,7 @@ const handlers = {
       .then(response => {
         updateOptions(response.results.map(
           (row: Record<string, unknown>) => ({
-            label: mustache.render('<%template%>', row),
+            label: html(row),
             value: row.<%id%>
           })
         ));

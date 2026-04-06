@@ -8,7 +8,6 @@ import {
   renderCode 
 } from '../../../schema/transform/helpers.js';
 //stackpress/admin
-import { render } from '../helpers.js';
 import generateCreate from './detail/create.js';
 import generateSearch from './detail/search.js';
 
@@ -59,6 +58,12 @@ export default function generate(directory: Directory, model: Model) {
   source.addImportDeclaration({
     moduleSpecifier: 'frui/Table',
     defaultImport: 'Table'
+  });
+
+  //import Handlebars from 'stackpress/view/handlebars';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/handlebars',
+    defaultImport: 'Handlebars'
   });
 
   //------------------------------------------------------------------//
@@ -133,7 +138,7 @@ export default function generate(directory: Directory, model: Model) {
         })
       },
       detail: {
-        label: render(model, "${results?.%s || _('Detail')}")
+        template: JSON.stringify(model.name.display || '')
       }
     })
   });
@@ -323,6 +328,9 @@ DETAIL_CRUMBS_BODY:
 const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
+//variables
+const html = Handlebars.compile(<%detail.template%>);
+const label = html(results) || _('Detail');
 //render
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
@@ -338,9 +346,7 @@ return (
         {_('<%search.label%>')}
       </Bread.Crumb>
     )}
-    <Bread.Crumb>
-      {_(\`<%detail.label%>\`)}
-    </Bread.Crumb>
+    <Bread.Crumb>{label}</Bread.Crumb>
   </Bread>
 );`,
 
