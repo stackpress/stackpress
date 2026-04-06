@@ -17,7 +17,7 @@ export default action(async function MigrateScript(_req, res, ctx) {
     return;
   }
   cli?.verbose && cli.control.system('Creating migration file...');
-  await migrate(ctx, database);
+  await migrate(ctx, database, cli);
   //OK
   cli?.verbose && cli.control.success('Migration file created.');
   res.setStatus(200);
