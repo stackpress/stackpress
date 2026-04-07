@@ -37,11 +37,11 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { ServerPageProps } from 'stackpress/view/client';
+  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'ServerPageProps' ]
+    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
   source.addImportDeclaration({
