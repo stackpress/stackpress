@@ -625,7 +625,7 @@ return (
     <div className="form">
       <%#searchable%>
         <form>
-          <Input className="input" />
+          <Input className="input" name="q" />
           <Button className="submit" type="submit">
             <i className="icon fas fa-fw fa-search"></i>
           </Button>
