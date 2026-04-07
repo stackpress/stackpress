@@ -151,7 +151,8 @@ export default function generate(directory: Directory, model: Model) {
 export const TEMPLATE = {
 
 ROUTES:
-`const root = server.config.path('admin.root', '/admin');
+`const base = server.config.path('admin.base', '/admin');
+const root = server.config.path('admin.root', base);
 server.import.all(
   \`<%create.route%>\`, 
   () => import('<%create.import%>')
