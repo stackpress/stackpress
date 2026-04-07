@@ -101,8 +101,8 @@ res.data.set('language', {
   languages: language.languages || {}
 });
 res.data.set('admin', { 
-  name: admin.name || 'Admin',
-  base: admin.base || '/admin',
+  name: admin.name ?? 'Admin',
+  base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
 
@@ -113,7 +113,7 @@ if (req.data('confirmed')) {
   //if OK
   if (res.code === 200) {
     //redirect
-    const base = admin.base || '/admin';
+    const base = admin.base ?? '/admin';
     res.redirect(\`\${base}/<%model%>/search\`);
   }
   //let the error pass through

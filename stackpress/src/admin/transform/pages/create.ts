@@ -121,8 +121,8 @@ res.data.set('language', {
   languages: language.languages || {}
 });
 res.data.set('admin', { 
-  name: admin.name || 'Admin',
-  base: admin.base || '/admin',
+  name: admin.name ?? 'Admin',
+  base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
 
@@ -139,7 +139,7 @@ if (req.method === 'POST') {
   }
   const results = response.results!
   //redirect
-  const base = admin.base || '/admin';
+  const base = admin.base ?? '/admin';
   <%#oneid%>
     res.redirect(
       \`\${base}/<%model%>/detail/<%ids%>\`

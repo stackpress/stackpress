@@ -118,8 +118,8 @@ res.data.set('language', {
   languages: language.languages || {}
 });
 res.data.set('admin', { 
-  name: admin.name || 'Admin',
-  base: admin.base || '/admin',
+  name: admin.name ?? 'Admin',
+  base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
 
@@ -130,7 +130,7 @@ if (req.method === 'POST' || req.method === 'PUT') {
   //if OK
   if (res.code === 200) {
     //redirect
-    const base = admin.base || '/admin';
+    const base = admin.base ?? '/admin';
     res.redirect(\`\${base}/<%model%>/detail/<%ids%>\`);
     return;
   }
