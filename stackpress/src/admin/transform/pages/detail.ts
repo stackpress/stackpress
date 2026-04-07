@@ -140,8 +140,8 @@ res.data.set('language', {
   languages: language.languages || {}
 });
 res.data.set('admin', { 
-  name: admin.name || 'Admin',
-  base: admin.base || '/admin',
+  name: admin.name ?? 'Admin',
+  base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
 
