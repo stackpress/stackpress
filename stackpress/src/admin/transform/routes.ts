@@ -40,53 +40,53 @@ export default function generate(directory: Directory, model: Model) {
       {
         ids: ids,
         copy: {
-          route: model.name.toURLPath('${root}/%s/create/' + ids),
+          route: model.name.toURLPath('${base}/%s/create/' + ids),
           view: model.name.toPathName('${module}/%s/admin/views/create'),
           import: './pages/copy.js'
         },
         create: {
-          route: model.name.toURLPath('${root}/%s/create'),
+          route: model.name.toURLPath('${base}/%s/create'),
           view: model.name.toPathName('${module}/%s/admin/views/create'),
           import: './pages/create.js'
         },
         detail: {
-          route: model.name.toURLPath('${root}/%s/detail/' + ids),
+          route: model.name.toURLPath('${base}/%s/detail/' + ids),
           view: model.name.toPathName('${module}/%s/admin/views/detail'),
           import: './pages/detail.js'
         },
         remove: {
-          route: model.name.toURLPath('${root}/%s/remove/' + ids),
+          route: model.name.toURLPath('${base}/%s/remove/' + ids),
           view: model.name.toPathName('${module}/%s/admin/views/remove'),
           import: './pages/remove.js'
         },
         restore: model.store.restorable ? {
-          route: model.name.toURLPath('${root}/%s/restore/' + ids),
+          route: model.name.toURLPath('${base}/%s/restore/' + ids),
           view: model.name.toPathName('${module}/%s/admin/views/restore'),
           import: './pages/restore.js'
         } : null,
         search: {
-          route: model.name.toURLPath('${root}/%s/search'),
+          route: model.name.toURLPath('${base}/%s/search'),
           view: model.name.toPathName('${module}/%s/admin/views/search'),
           import: './pages/search.js'
         },
         update: {
-          route: model.name.toURLPath('${root}/%s/update/' + ids),
+          route: model.name.toURLPath('${base}/%s/update/' + ids),
           view: model.name.toPathName('${module}/%s/admin/views/update'),
           import: './pages/update.js'
         },
         import: {
-          route: model.name.toURLPath('${root}/%s/import'),
+          route: model.name.toURLPath('${base}/%s/import'),
           import: './pages/import.js'
         },
         export: {
-          route: model.name.toURLPath('${root}/%s/export'),
+          route: model.name.toURLPath('${base}/%s/export'),
           import: './pages/export.js'
         },
         details: related.map(column => {
           const relationship = column.store.localRelationship!;
           return {
             create: {
-              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/create', {
+              route: renderCode('${base}/<%model%>/detail/<%ids%>/<%relation%>/create', {
                 model: model.name.toURLPath(),
                 ids: ids,
                 relation: relationship.foreign.column.name.toURLPath()
@@ -100,7 +100,7 @@ export default function generate(directory: Directory, model: Model) {
               })
             },
             export: {
-              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/export', {
+              route: renderCode('${base}/<%model%>/detail/<%ids%>/<%relation%>/export', {
                 model: model.name.toURLPath(),
                 ids: ids,
                 relation: relationship.foreign.column.name.toURLPath()
@@ -114,7 +114,7 @@ export default function generate(directory: Directory, model: Model) {
               })
             },
             import: {
-              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/import', {
+              route: renderCode('${base}/<%model%>/detail/<%ids%>/<%relation%>/import', {
                 model: model.name.toURLPath(),
                 ids: ids,
                 relation: relationship.foreign.column.name.toURLPath()
@@ -128,7 +128,7 @@ export default function generate(directory: Directory, model: Model) {
               })
             },
             search: {
-              route: renderCode('${root}/<%model%>/detail/<%ids%>/<%relation%>/search', {
+              route: renderCode('${base}/<%model%>/detail/<%ids%>/<%relation%>/search', {
                 model: model.name.toURLPath(),
                 ids: ids,
                 relation: relationship.foreign.column.name.toURLPath()
@@ -152,7 +152,6 @@ export const TEMPLATE = {
 
 ROUTES:
 `const base = server.config.path('admin.base', '/admin');
-const root = server.config.path('admin.root', base);
 server.import.all(
   \`<%create.route%>\`, 
   () => import('<%create.import%>')
