@@ -10,6 +10,7 @@ import type { LanguageConfig } from '../../language/types.js';
 import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //admin
 import type { AdminConfig } from '../types.js';
+import { CsrfPlugin } from '../../csrf/types.js';
 
 export default function AdminRestorePageFactory(model: Model) {
   return async function AdminRestorePage(
@@ -22,6 +23,10 @@ export default function AdminRestorePageFactory(model: Model) {
       //let the response pass through
       return;
     }
+    //get csrf plugin
+    const csrf = ctx.plugin<CsrfPlugin>('csrf');
+    //generate token
+    csrf.generateToken(res);
     //get the view, brandm lang and admin config
     const view = ctx.config.path<ViewConfig>('view', {});
     const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -57,6 +62,8 @@ export default function AdminRestorePageFactory(model: Model) {
     if (ids.length === model.ids.length) {
       //if confirmed
       if (req.data('confirmed')) {
+        //validate csrf
+        csrf.validateToken(req, res);
         //emit restore event
         await ctx.emit(`${model.dash}-restore`, req, res);
         //if error

@@ -107,7 +107,18 @@
       "require": "./cjs/client/index.js",
       "import": "./esm/client/index.js"
     },
-
+    "./csrf/plugin": {
+      "require": "./cjs/csrf/plugin.js",
+      "import": "./esm/csrf/plugin.js"
+    },
+    "./csrf/types": {
+      "require": "./cjs/csrf/types.js",
+      "import": "./esm/csrf/types.js"
+    },
+    "./csrf": {
+      "require": "./cjs/csrf/index.js",
+      "import": "./esm/csrf/index.js"
+    },
     "./email/plugin": {
       "require": "./cjs/email/plugin.js",
       "import": "./esm/email/plugin.js"

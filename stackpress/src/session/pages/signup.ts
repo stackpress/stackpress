@@ -6,6 +6,7 @@ import type Server from '@stackpress/ingest/Server';
 import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //session
 import type { SessionPlugin, AuthConfig } from '../types.js';
+import { CsrfPlugin } from '../../csrf/types.js';
 
 export default async function SignupPage(
   req: Request, 
@@ -17,6 +18,10 @@ export default async function SignupPage(
     //let the response pass through
     return;
   }
+  //get csrf plugin
+  const csrf = ctx.plugin<CsrfPlugin>('csrf');
+  //generate a csrf token for the form
+  csrf.generateToken(res);
   //get the view, brand and auth config
   const view = ctx.config.path<ViewConfig>('view', {});
   const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -47,6 +52,8 @@ export default async function SignupPage(
   const guest = await me.guest();
   //form submission
   if (req.method === 'POST') {
+    //validate csrf
+    csrf.validateToken(req, res);
     await ctx.emit('auth-signup', req, res);
     //if signup successful, redirect
     if (res.code === 200) {

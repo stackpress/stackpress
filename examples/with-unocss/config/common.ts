@@ -14,6 +14,9 @@ export const seed = {
   database: process.env.DATABASE_SEED || 'abc123',
   session: process.env.SESSION_SEED || 'abc123'
 };
+export const csrf = {
+  name: 'csrf'
+};
 //common config
 export const admin = {
   //name of the admin section. shown on the top left of the page

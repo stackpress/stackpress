@@ -116,8 +116,12 @@ export default function updateView(directory: Directory, _registry: Registry, mo
     statements: (`
       const { input, errors } = props;
       const { _ } = useLanguage();
+      const { config } = useServer();
+      const tokenKey = config.path('csrf.name', 'csrf');
+      const token = config.path('csrf.token', '');
       return (
         <form method="post">
+          <input type="hidden" name={tokenKey} value={token} />
           ${model.fields.map(column => column.field.method === 'fieldset' ? (`
             <${column.title}FieldsetControl 
               className="control"

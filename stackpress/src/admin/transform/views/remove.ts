@@ -99,6 +99,10 @@ export default function removeView(directory: Directory, _registry: Registry, mo
     statements: (`
       const { base, results } = props;
       const { _ } = useLanguage();
+      const { config } = useServer();
+      const tokenKey = config.path('csrf.name', 'csrf');
+      const token = config.path('csrf.token', '');
+      const url = "?confirmed=true&" + tokenKey + "=" + token;
       return (
         <div>
           <div className="message">
@@ -117,7 +121,7 @@ export default function removeView(directory: Directory, _registry: Registry, mo
               <i className="icon fas fa-fw fa-arrow-left"></i>
               <span>Nevermind.</span>
             </a>
-            <a className="action remove" href="?confirmed=true">
+            <a className="action remove" href={url}>
               <i className="icon fas fa-fw fa-trash"></i>
               <span>{_('Confirmed')}</span>
             </a>

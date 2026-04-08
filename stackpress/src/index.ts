@@ -148,7 +148,9 @@ export type {
   ExtendsType,
   IdeaProjectProps,
   IdeaPluginWithProject,
-  Config
+  Config,
+  CsrfConfig,
+  CsrfPlugin
 } from './types/index.js';
 
 import Session from './session/Session.js';

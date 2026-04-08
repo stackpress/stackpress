@@ -11,6 +11,7 @@ import type { LanguageConfig } from '../../language/types.js';
 import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //admin
 import type { AdminConfig } from '../types.js';
+import { CsrfPlugin } from '../../csrf/types.js';
 
 export default function AdminUpdatePageFactory(model: Model) {
   return async function AdminUpdatePage(
@@ -23,6 +24,10 @@ export default function AdminUpdatePageFactory(model: Model) {
       //let the response pass through
       return;
     }
+    //get csrf plugin
+    const csrf = ctx.plugin<CsrfPlugin>('csrf');
+    //generate token
+    csrf.generateToken(res);
     //get the view, brandm lang and admin config
     const view = ctx.config.path<ViewConfig>('view', {});
     const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -60,6 +65,8 @@ export default function AdminUpdatePageFactory(model: Model) {
     if (ids.length === model.ids.length) {
       //if form submitted
       if (req.method === 'POST') {
+        //validate csrf
+        csrf.validateToken(req, res);
         //emit update with the fixed fields
         await ctx.emit(`${model.dash}-update`, req, res);
         //if error
