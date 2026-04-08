@@ -147,7 +147,7 @@ const [
 ] = useState<{ label: string , value: any }[]>([]);
 const [ loading, isLoading  ] = useState(false);
 //variables
-const html = Handlebars.compile('<%template%>');
+const template = Handlebars.compile('<%template%>');
 //handlers
 const handlers = {
   fetch(query = '') {
@@ -158,7 +158,7 @@ const handlers = {
       .then(response => {
         updateOptions(response.results.map(
           (row: Record<string, unknown>) => ({
-            label: html(row),
+            label: template(row),
             value: row.<%id%>
           })
         ));

@@ -123,8 +123,8 @@ export const TEMPLATE = {
 FORMAT:
 `//props
 const { data } = props;
-const html = Handlebars.compile('<%template%>');
-const value = html(data);
+const template = Handlebars.compile('<%template%>');
+const value = template(data);
 //render
 return (<>{value}</>);`
 

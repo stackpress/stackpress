@@ -191,8 +191,8 @@ const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
 //variables
-const html = Handlebars.compile(<%detail.template%>);
-const label = html(results) || _('Detail');
+const template = Handlebars.compile(<%detail.template%>);
+const label = template(results) || _('Detail');
 //render
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
@@ -225,8 +225,8 @@ const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
 //variables
-const html = Handlebars.compile(<%template%>);
-const label = html(results) || _('Detail');
+const template = Handlebars.compile(<%template%>);
+const label = template(results) || _('Detail');
 //render
 return (
   <div>
