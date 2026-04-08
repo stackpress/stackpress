@@ -54,10 +54,10 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Modules
 
-  //import mustache from 'mustache';
+  //import Handlebars from 'stackpress/view/handlebars';
   source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
+    moduleSpecifier: 'stackpress/view/handlebars',
+    defaultImport: 'Handlebars'
   });
   //import Text from 'frui/list/Text';
   if (!attribute.component.isVirtual) {
@@ -123,10 +123,8 @@ export const TEMPLATE = {
 FORMAT:
 `//props
 const { data } = props;
-const value = mustache.render(
-  '<%template%>',
-  data
-);
+const template = Handlebars.compile('<%template%>');
+const value = template(data);
 //render
 return (<>{value}</>);`
 

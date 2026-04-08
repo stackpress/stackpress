@@ -9,7 +9,6 @@ import {
 } from '../../../../schema/transform/helpers.js';
 //stackpress/admin
 import type { Relationship } from '../../types.js';
-import { render } from '../../helpers.js';
 
 export default function generate(
   directory: Directory, 
@@ -53,6 +52,12 @@ export default function generate(
   source.addImportDeclaration({
     moduleSpecifier: 'frui/Button',
     defaultImport: 'Button'
+  });
+
+  //import Handlebars from 'stackpress/view/handlebars';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/handlebars',
+    defaultImport: 'Handlebars'
   });
 
   //------------------------------------------------------------------//
@@ -151,7 +156,7 @@ export default function generate(
         })
       },
       detail: {
-        label: render(model, "${results?.%s || ''}"),
+        template: JSON.stringify(model.name.display || ''),
         href: renderCode('`${base}/<%model%>/detail/<%ids%>`', {
           model: model.name.toURLPath(),
           ids: ids.map(name => `\${results.${name}}`).join('/')
@@ -291,6 +296,9 @@ CREATE_CRUMBS_BODY:
 const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
+//variables
+const template = Handlebars.compile(<%detail.template%>);
+const label = template(results) || _('Detail');
 //render
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
@@ -308,7 +316,7 @@ return (
     )}
     {!!results && can({ method: 'GET', route: <%detail.href%> }) && (
       <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
-        {_(\`<%detail.label%>\`)}
+        {label}
       </Bread.Crumb>
     )}
     {!!results && can({ method: 'GET', route: <%relation.href%> }) && (

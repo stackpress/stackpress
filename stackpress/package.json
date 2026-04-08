@@ -413,6 +413,10 @@
       "require": "./cjs/view/helpers.js",
       "import": "./esm/view/helpers.js"
     },
+    "./view/handlebars": {
+      "require": "./cjs/view/handlebars.js",
+      "import": "./esm/view/handlebars.js"
+    },
     "./view/import": {
       "require": "./cjs/view/import.js",
       "import": "./esm/view/import.js"
@@ -579,6 +583,7 @@
       "view/transform": [ "./cjs/view/transform/index.d.ts" ],
       "view/client": [ "./cjs/view/client.d.ts" ],
       "view/helpers": [ "./cjs/view/helpers.d.ts" ],
+      "view/handlebars": [ "./cjs/view/handlebars.d.ts" ],
       "view/import": [ "./cjs/view/import.d.ts" ],
       "view/plugin": [ "./cjs/view/plugin.d.ts" ],
       "view/types": [ "./cjs/view/types.d.ts" ],
@@ -630,6 +635,7 @@
     "@stackpress/ingest": "0.7.2",
     "@stackpress/inquire": "0.7.2",
     "@stackpress/lib": "0.7.2",
+    "handlebars": "4.7.9",
     "html-entities": "2.6.0",
     "jose": "6.2.0",
     "moment": "2.30.1",

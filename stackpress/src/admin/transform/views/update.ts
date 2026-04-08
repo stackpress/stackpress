@@ -7,8 +7,6 @@ import {
   loadProjectFile, 
   renderCode 
 } from '../../../schema/transform/helpers.js';
-//stackpress/admin
-import { render } from '../helpers.js';
 
 export default function updateView(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(column => column.name);
@@ -37,6 +35,12 @@ export default function updateView(directory: Directory, model: Model) {
   source.addImportDeclaration({
     moduleSpecifier: 'frui/Button',
     defaultImport: 'Button'
+  });
+
+  //import Handlebars from 'stackpress/view/handlebars';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/handlebars',
+    defaultImport: 'Handlebars'
   });
 
   //------------------------------------------------------------------//
@@ -115,7 +119,7 @@ export default function updateView(directory: Directory, model: Model) {
         })
       },
       detail: {
-        label: render(model, "${results?.%s || _('Detail')}"),
+        template: JSON.stringify(model.name.display || ''),
         href: renderCode('`${base}/<%model%>/detail/<%ids%>`', { 
           model: model.name.toURLPath(),
           ids: ids.map(name => `\${results.${name}}`).join('/')
@@ -211,6 +215,9 @@ UPDATE_CRUMBS_BODY:
 const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
+//variables
+const template = Handlebars.compile(<%detail.template%>);
+const label = template(results) || _('Detail');
 //render
 return (
   <Bread crumb={({ active }) => active ? 'font-bold' : 'font-normal'}>
@@ -228,7 +235,7 @@ return (
     )}
     {!!results && can({ method: 'GET', route: <%detail.href%> }) && (
       <Bread.Crumb className="admin-crumb" href={<%detail.href%>}>
-        {_(\`<%detail.label%>\`)}
+        {label}
       </Bread.Crumb>
     )}
     <Bread.Crumb icon="edit">

@@ -58,10 +58,10 @@ export default function generate(
     moduleSpecifier: 'react',
     namedImports: [ 'useState', 'useEffect' ]
   });
-  //import mustache from 'mustache';
+  //import Handlebars from 'stackpress/view/handlebars';
   source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
+    moduleSpecifier: 'stackpress/view/handlebars',
+    defaultImport: 'Handlebars'
   });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
@@ -146,6 +146,8 @@ const [
   updateOptions 
 ] = useState<{ label: string , value: any }[]>([]);
 const [ loading, isLoading  ] = useState(false);
+//variables
+const template = Handlebars.compile('<%template%>');
 //handlers
 const handlers = {
   fetch(query = '') {
@@ -156,7 +158,7 @@ const handlers = {
       .then(response => {
         updateOptions(response.results.map(
           (row: Record<string, unknown>) => ({
-            label: mustache.render('<%template%>', row),
+            label: template(row),
             value: row.<%id%>
           })
         ));
