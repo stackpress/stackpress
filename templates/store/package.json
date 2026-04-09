@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "stackpress build --b config/build -v",
-    "dev": "dotenv -e .env -- stackpress serve --b config/develop -v",
+    "dev": "dotenv -e .env -- tsx scripts/develop.ts",
     "emit": "dotenv -e .env -- stackpress emit",
     "generate": "stackpress generate --b config/develop -v",
     "migrate": "dotenv -e .env -- stackpress migrate --b config/develop -v",
@@ -33,6 +33,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.1.4",
+    "chokidar": "4.0.3",
     "dotenv-cli": "11.0.0",
     "fast-glob": "3.3.3",
     "prettier": "3.8.1",
