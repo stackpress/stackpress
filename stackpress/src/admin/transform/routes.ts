@@ -85,6 +85,7 @@ export default function generate(directory: Directory, model: Model) {
         details: related.map(column => {
           const relationship = column.store.localRelationship!;
           return {
+            name: column.name.toString(),
             create: {
               route: renderCode('${base}/<%model%>/detail/<%ids%>/<%relation%>/create', {
                 model: model.name.toURLPath(),
@@ -152,112 +153,224 @@ export const TEMPLATE = {
 
 ROUTES:
 `const base = server.config.path('admin.base', '/admin');
-server.import.all(
+
+//------------------------------------------------------------------//
+// Page Routes
+
+//create
+server.import.get(
   \`<%create.route%>\`, 
   () => import('<%create.import%>')
 );
-server.import.all(
+server.import.post(
+  \`<%create.route%>\`, 
+  () => import('<%create.import%>')
+);
+
+//search
+server.import.get(
   \`<%search.route%>\`, 
   () => import('<%search.import%>')
 );
-server.import.all(
+
+//export
+server.import.get(
   \`<%export.route%>\`, 
   () => import('<%export.import%>')
 );
-server.import.all(
+
+//import
+server.import.post(
   \`<%import.route%>\`, 
   () => import('<%import.import%>')
 );
+
 <%#ids%>
-  server.import.all(
+  //copy
+  server.import.get(
     \`<%copy.route%>\`, 
     () => import('<%copy.import%>')
   );
-  server.import.all(
+  server.import.post(
+    \`<%copy.route%>\`, 
+    () => import('<%copy.import%>')
+  );
+
+  //detail
+  server.import.get(
     \`<%detail.route%>\`, 
     () => import('<%detail.import%>')
   );
-  server.import.all(
+
+  //remove
+  server.import.get(
     \`<%remove.route%>\`, 
     () => import('<%remove.import%>')
   );
+  server.import.delete(
+    \`<%remove.route%>\`, 
+    () => import('<%remove.import%>')
+  );
+
   <%#restore%>
-    server.import.all(
+    //restore
+    server.import.get(
+      \`<%restore.route%>\`, 
+      () => import('<%restore.import%>')
+    );
+    server.import.post(
       \`<%restore.route%>\`, 
       () => import('<%restore.import%>')
     );
   <%/restore%>
-  server.import.all(
+
+  //update
+  server.import.get(
     \`<%update.route%>\`, 
     () => import('<%update.import%>')
   );
+  server.import.post(
+    \`<%update.route%>\`, 
+    () => import('<%update.import%>')
+  );
+  server.import.put(
+    \`<%update.route%>\`, 
+    () => import('<%update.import%>')
+  );
+
   <%#details%>
-    server.import.all(
+    //<%name%> create
+    server.import.get(
       \`<%create.route%>\`, 
       () => import('<%create.import%>')
     );
-    server.import.all(
+    server.import.post(
+      \`<%create.route%>\`, 
+      () => import('<%create.import%>')
+    );
+
+    //<%name%> export
+    server.import.get(
       \`<%export.route%>\`, 
       () => import('<%export.import%>')
     );
-    server.import.all(
+
+    //<%name%> import
+    server.import.post(
       \`<%import.route%>\`, 
       () => import('<%import.import%>')
     );
-    server.import.all(
+
+    //<%name%> search
+    server.import.get(
       \`<%search.route%>\`, 
       () => import('<%search.import%>')
     );
   <%/details%>
 <%/ids%>
 
+//------------------------------------------------------------------//
+// View Routes
+
 const module = server.config.path<string>('client.module');
 if (module) {
-  server.view.all(
+  //create
+  server.view.get(
     \`<%create.route%>\`, 
     \`<%create.view%>\`,
     -100
   );
-  server.view.all(
+  server.view.post(
+    \`<%create.route%>\`, 
+    \`<%create.view%>\`,
+    -100
+  );
+
+  //search
+  server.view.get(
     \`<%search.route%>\`, 
     \`<%search.view%>\`,
     -100
   );
+
   <%#ids%>
-    server.view.all(
+    //copy
+    server.view.get(
       \`<%copy.route%>\`, 
       \`<%copy.view%>\`,
       -100
     );
-    server.view.all(
+    server.view.post(
+      \`<%copy.route%>\`, 
+      \`<%copy.view%>\`,
+      -100
+    );
+
+    //detail
+    server.view.get(
       \`<%detail.route%>\`, 
       \`<%detail.view%>\`,
       -100
     );
-    server.view.all(
+
+    //remove
+    server.view.get(
       \`<%remove.route%>\`, 
       \`<%remove.view%>\`,
       -100
     );
+    server.view.delete(
+      \`<%remove.route%>\`, 
+      \`<%remove.view%>\`,
+      -100
+    );
+
     <%#restore%>
-      server.view.all(
+      //restore
+      server.view.get(
+        \`<%restore.route%>\`, 
+        \`<%restore.view%>\`,
+        -100
+      );
+      server.view.post(
         \`<%restore.route%>\`, 
         \`<%restore.view%>\`,
         -100
       );
     <%/restore%>
-    server.view.all(
+
+    //update
+    server.view.get(
       \`<%update.route%>\`, 
       \`<%update.view%>\`,
       -100
     );
+    server.view.post(
+      \`<%update.route%>\`, 
+      \`<%update.view%>\`,
+      -100
+    );
+    server.view.put(
+      \`<%update.route%>\`, 
+      \`<%update.view%>\`,
+      -100
+    );
+
     <%#details%>
-      server.view.all(
+      //<%name%> create
+      server.view.get(
         \`<%create.route%>\`, 
         \`<%create.view%>\`,
         -100
       );
-      server.view.all(
+      server.view.post(
+        \`<%create.route%>\`, 
+        \`<%create.view%>\`,
+        -100
+      );
+
+      //<%name%> search
+      server.view.get(
         \`<%search.route%>\`, 
         \`<%search.view%>\`,
         -100
