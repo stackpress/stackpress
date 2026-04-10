@@ -156,19 +156,24 @@ if (req.method === 'POST') {
     res.setError('Unknown creation response results');
     return;
   }
-  const results = response.results!
-  //redirect
-  const base = admin.base ?? '/admin';
-  <%#oneid%>
-    res.redirect(
-      \`\${base}/<%model%>/detail/<%ids%>\`
-    );
-  <%/oneid%>
-  <%^oneid%>
-    res.redirect(
-      \`\${base}/<%model%>/search\`
-    );
-  <%/oneid%>
+  //get the noview flag name
+  const noview = ctx.config.path('view.noview', 'json');
+  //if no, noview, then okay to redirect
+  if (!req.data.has(noview)) {
+    const results = response.results!
+    //redirect
+    const base = admin.base ?? '/admin';
+    <%#oneid%>
+      res.redirect(
+        \`\${base}/<%model%>/detail/<%ids%>\`
+      );
+    <%/oneid%>
+    <%^oneid%>
+      res.redirect(
+        \`\${base}/<%model%>/search\`
+      );
+    <%/oneid%>
+  }
   return;
 }
 //if form not submitted, get the details of the thing to copy

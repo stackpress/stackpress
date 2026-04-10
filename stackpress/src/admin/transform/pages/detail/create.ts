@@ -208,11 +208,16 @@ if (req.method === 'POST') {
     }
     return;
   }
-  //redirect
-  const base = admin.base ?? '/admin';
-  res.redirect(
-    \`\${base}/<%model%>/detail/<%ids%>/<%relation%>/search\`
-  );
+  //get the noview flag name
+  const noview = ctx.config.path('view.noview', 'json');
+  //if no, noview, then okay to redirect
+  if (!req.data.has(noview)) {
+    //redirect
+    const base = admin.base ?? '/admin';
+    res.redirect(
+      \`\${base}/<%model%>/detail/<%ids%>/<%relation%>/search\`
+    );
+  }
   return;
 }
   

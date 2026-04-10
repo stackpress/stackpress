@@ -129,10 +129,14 @@ if (req.method === 'POST' || req.method === 'PUT') {
   await ctx.emit('<%event%>-update', req, res);
   //if OK
   if (res.code === 200) {
-    //redirect
-    const base = admin.base ?? '/admin';
-    res.redirect(\`\${base}/<%model%>/detail/<%ids%>\`);
-    return;
+    //get the noview flag name
+    const noview = ctx.config.path('view.noview', 'json');
+    //if no, noview, then okay to redirect
+    if (!req.data.has(noview)) {
+      //redirect
+      const base = admin.base ?? '/admin';
+      res.redirect(\`\${base}/<%model%>/detail/<%ids%>\`);
+    }
   }
   //let the error pass through
   return;
