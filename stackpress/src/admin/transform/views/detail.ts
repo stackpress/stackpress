@@ -429,10 +429,14 @@ return (
 
 DETAIL_RESULTS_VALUE_REQUIRED:
 `<%#link%>
-  {can({ method: 'GET', route: <%link%> }) && (
+  {can({ method: 'GET', route: <%link%> }) ? (
     <a className="theme-info" href={<%link%>}>
       <<%component%> data={results} value={results.<%name%>} />
     </a>
+  ) : (
+    <span>
+      <<%component%> data={results} value={results.<%name%>} />
+    </span>
   )}
 <%/link%>
 <%^link%>
@@ -441,10 +445,14 @@ DETAIL_RESULTS_VALUE_REQUIRED:
 
 DETAIL_RESULTS_VALUE_OPTIONAL:
 `<%#link%>
-  {can({ method: 'GET', route: <%link%> }) && (
+  {can({ method: 'GET', route: <%link%> }) ? (
     <a className="theme-info" href={<%link%>}>
       {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
     </a>
+  ) : (
+   <span>
+     {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
+   </span>
   )}
 <%/link%>
 <%^link%>
