@@ -78,23 +78,28 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
+  //export type AddressViewFormatProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sViewFormatProps'),
+    type: renderCode(`{ 
+      data: <%data%>,
+      value: <%value%><%multiple%> 
+    }`, {
+      data: fieldset.name.toTypeName('%sExtended'),
+      value: columnFieldset.name.toTypeName(),
+      multiple: column.type.multiple ? '[]' : ''
+    }) 
+  });
+
   //export function AddressViewFormat() {
   source.addFunction({
     isDefaultExport: true,
     name: column.name.toComponentName('%sViewFormat'),
-    parameters: [ 
-      { 
-        name: 'props', 
-        type: renderCode(`{ 
-          data: <%data%>,
-          value: <%value%><%multiple%> 
-        }`, {
-          data: fieldset.name.toTypeName('%sExtended'),
-          value: columnFieldset.name.toTypeName(),
-          multiple: column.type.multiple ? '[]' : ''
-        }) 
-      } 
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sViewFormatProps')
+    }],
     statements: renderCode(TEMPLATE.TABLE, {
       heads: columnFieldset.component.viewFormats.toArray().map(
         column => renderCode(TEMPLATE.HEAD, {

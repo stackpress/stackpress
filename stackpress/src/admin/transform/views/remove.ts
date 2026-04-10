@@ -73,20 +73,50 @@ export default function generate(directory: Directory, model: Model) {
 
   //------------------------------------------------------------------//
   // Exports
-  
+
+  //export type AdminProfileRemoveCrumbsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminRemoveCrumbsProps'),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended') 
+    }) 
+  });
+  //export type AdminProfileRemoveFormProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminRemoveFormProps'),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended') 
+    }) 
+  });
+  //export type AdminProfileRemoveHeadProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminRemoveHeadProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+  //export type AdminProfileRemovePageProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminRemovePageProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
   //export function AdminProfileRemoveCrumbs() {}
   source.addFunction({
     isExported: true,
     name: model.name.toComponentName('%sAdminRemoveCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended') 
-      }) 
+      type: model.name.toTypeName('%sAdminRemoveCrumbsProps')
     }],
     statements: renderCode(TEMPLATE.REMOVE_CRUMBS_BODY, {
       search: {
@@ -111,13 +141,7 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminRemoveForm'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended') 
-      }) 
+      type: model.name.toTypeName('%sAdminRemoveFormProps')
     }],
     statements: renderCode(TEMPLATE.REMOVE_FORM_BODY, { 
       label: render(model, "${results?.%s || ''}"),
@@ -143,7 +167,7 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminRemoveHead'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toTypeName('%sAdminRemoveHeadProps')
     }],
     statements: renderCode(TEMPLATE.REMOVE_HEAD, { 
       name: model.name.singular 
@@ -155,7 +179,7 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminRemovePage'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toTypeName('%sAdminRemovePageProps')
     }],
     statements: renderCode(TEMPLATE.REMOVE_PAGE, { 
       component: model.name.toComponentName('%sAdminRemoveBody') 

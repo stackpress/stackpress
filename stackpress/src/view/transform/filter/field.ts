@@ -71,13 +71,28 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
-  //export function NameFiter(props: FieldProps) {
+  //export type NameFilterFieldProps = FieldProps;
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sFilterFieldProps'),
+    type: 'FieldProps'
+  });
+
+  //export type NameFilterFieldControlProps = ControlProps;
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sFilterFieldControlProps'),
+    type: 'ControlProps'
+  });
+
+  //export function NameFilterField(props: FieldProps) {
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('%sFilterField'),
-    parameters: [
-      { name: 'props', type: 'FieldProps' }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sFilterFieldProps') 
+    }],
     statements: renderCode(TEMPLATE.FIELD, {
       props: JSON.stringify(props),
       component: component.name,
@@ -85,13 +100,14 @@ export default function generate(
       multiple: column.type.multiple ? '[]': ''
     })
   });
-  //export function NameFilterControl(props: ControlProps) {
+  //export function NameFilterFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('%sFilterFieldControl'),
-    parameters: [
-      { name: 'props', type: 'ControlProps' }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sFilterFieldControlProps') 
+    }],
     statements: renderCode(TEMPLATE.CONTROL, {
       label: column.name.label,
       component: column.name.toComponentName('%sFilterField')

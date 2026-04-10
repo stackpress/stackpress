@@ -87,6 +87,39 @@ export default function createView(directory: Directory, model: Model) {
 
   //------------------------------------------------------------------//
   // Exports
+
+  //export type ProfileAdminCreateCrumbsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminCreateCrumbsProps'),
+    type: `{ 
+      base: string, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`
+  });
+  //export type ProfileAdminCreateFormProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminCreateFormProps'),
+    type: renderCode(`{ 
+      input: Partial<<%type%>>, 
+      errors: NestedObject<string | string[]> 
+    }`, { 
+      type: model.name.toTypeName('%sInput') 
+    }) 
+  });
+  //export type ProfileAdminCreateHeadProps = ServerPageProps<AdminConfigProps>
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminCreateHeadProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+  //export type ProfileAdminCreatePageProps = ServerPageProps<AdminConfigProps>
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminCreatePageProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
   
   //export function ProfileAdminCreateCrumbs() {}
   source.addFunction({
@@ -94,10 +127,7 @@ export default function createView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminCreateCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: `{ 
-        base: string, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`
+      type: model.name.toComponentName('%sAdminCreateCrumbsProps')
     }],
     statements: renderCode(TEMPLATE.CREATE_CRUMBS, { 
       search: {
@@ -115,12 +145,7 @@ export default function createView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminCreateForm'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        input: Partial<<%type%>>, 
-        errors: NestedObject<string | string[]> 
-      }`, { 
-        type: model.name.toTypeName('%sInput') 
-      }) 
+      type: model.name.toComponentName('%sAdminCreateFormProps')
     }],
     statements: renderCode(TEMPLATE.CREATE_FORM_BODY,{
       fields: model.component.formFields.toArray().map(column => {
@@ -159,7 +184,7 @@ export default function createView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminCreateHead'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toComponentName('%sAdminCreateHeadProps')
     }],
     statements: renderCode(TEMPLATE.CREATE_HEAD, { 
       name: model.name.singular 
@@ -171,7 +196,7 @@ export default function createView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminCreatePage'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toComponentName('%sAdminCreatePageProps')
     }],
     statements: renderCode(TEMPLATE.CREATE_PAGE, { 
       component: model.name.toComponentName('%sAdminCreateBody') 

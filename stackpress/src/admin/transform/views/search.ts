@@ -162,6 +162,50 @@ export default function searchView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
+  //export type AdminProfileSearchFiltersProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminSearchFiltersProps'),
+    type: `{ 
+      query: StoreSearchQuery, 
+      close: MouseEventHandler<HTMLElement> 
+    }` 
+  });
+  //export type AdminProfileSearchFormProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminSearchFormProps'),
+    type: `{ 
+      base: string,
+      token: string, 
+      open: (value: SetStateAction<boolean>) => void,
+      can: (...permits: SessionPermission[]) => boolean
+    }`
+  });
+  //export type AdminProfileSearchResultsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminSearchResultsProps'),
+    type: `{ 
+      base: string,
+      query: Partial<StoreSearchQuery>, 
+      results: ${model.name.toTypeName('%sExtended')}[], 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`
+  });
+  //export type AdminProfileSearchHeadProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminSearchHeadProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+  //export type AdminProfileSearchPageProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminSearchPageProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+
   //export function AdminProfileSearchCrumbs() {}
   source.addFunction({
     isExported: true,
@@ -179,10 +223,7 @@ export default function searchView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminSearchFilters'),
     parameters: [{ 
       name: 'props', 
-      type: `{ 
-        query: StoreSearchQuery, 
-        close: MouseEventHandler<HTMLElement> 
-      }` 
+      type: model.name.toTypeName('%sAdminSearchFiltersProps')
     }],
     statements: renderCode(TEMPLATE.SEARCH_FILTERS_BODY, {
       fields: Array.from(model.columns.values()).map(column => {
@@ -207,12 +248,7 @@ export default function searchView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminSearchForm'),
     parameters: [{ 
       name: 'props', 
-      type: `{ 
-        base: string,
-        token: string, 
-        open: (value: SetStateAction<boolean>) => void,
-        can: (...permits: SessionPermission[]) => boolean
-      }`
+      type: model.name.toTypeName('%sAdminSearchFormProps')
     }],
     statements: renderCode(TEMPLATE.SEARCH_FORM_BODY, {
       searchable: model.store.searchables.size > 0,
@@ -227,12 +263,7 @@ export default function searchView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminSearchResults'),
     parameters: [{ 
       name: 'props', 
-      type: `{ 
-        base: string,
-        query: Partial<StoreSearchQuery>, 
-        results: ${model.name.toTypeName('%sExtended')}[], 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`
+      type: model.name.toTypeName('%sAdminSearchResultsProps')
     }],
     statements: renderCode(TEMPLATE.SEARCH_RESULTS_BODY, {
       sortable,
@@ -282,7 +313,7 @@ export default function searchView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminSearchHead'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toTypeName('%sAdminSearchHeadProps')
     }],
     statements: renderCode(TEMPLATE.SEARCH_HEAD, { 
       label: model.name.plural 
@@ -294,7 +325,7 @@ export default function searchView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminSearchPage'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toTypeName('%sAdminSearchPageProps')
     }],
     statements: renderCode(TEMPLATE.SEARCH_PAGE, { 
       component: model.name.toComponentName('%sAdminSearchBody') 

@@ -80,32 +80,50 @@ export default function generate(
     ]
   });
 
+  //import type { Address } from '../../../Address/types.js';
+  if (column.type.fieldset 
+    && column.type.name !== fieldset.name.toString()
+  ) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: column.type.fieldset.name.toPathName('../../../%s/types.js'),
+      namedImports: [ column.type.fieldset.name.toTypeName() ]
+    });
+  }
+
   //------------------------------------------------------------------//
   // Exports
+
+  //export type AddressViewFormatProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sViewFormatProps'),
+    type: renderCode(`{ 
+      data: <%data%>,
+      value: <%value%><%multiple%> 
+    }`, {
+      data: isModel
+        ? fieldset.name.toTypeName('%sExtended')
+        : fieldset.name.toTypeName(),
+      value: column.type.name in formatType 
+        ? formatType[column.type.name]
+        : column.type.enum
+        ? 'string'
+        : column.type.fieldset
+        ? column.type.fieldset.name.toTypeName()
+        : 'unknown',
+      multiple: column.type.multiple ? '[]' : ''
+    })
+  });
 
   //export function NameViewFormat() {
   source.addFunction({
     isDefaultExport: true,
     name: `${column.name.titleCase}ViewFormat`,
-    parameters: [
-      { 
-        name: 'props', 
-        type: renderCode(`{ 
-          data: <%data%>,
-          value: <%value%><%multiple%> 
-        }`, {
-          data: isModel
-            ? fieldset.name.toTypeName('%sExtended')
-            : fieldset.name.toTypeName(),
-          value: column.type.name in formatType 
-            ? formatType[column.type.name]
-            : column.type.enum
-            ? 'string'
-            : 'unknown',
-          multiple: column.type.multiple ? '[]' : ''
-        })
-      }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sViewFormatProps')
+    }],
     statements: renderCode(TEMPLATE.FORMAT, { 
       props: JSON.stringify(props),
       component: component.name

@@ -208,6 +208,93 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
+  //export type AdminProfileAuthSearchCrumbsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>SearchCrumbsProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended')
+    })
+  });
+  //export type AdminProfileAuthSearchTabsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>SearchTabsProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: renderCode(TEMPLATE.SEARCH_TABS_PROPS, { 
+      type: model.name.toTypeName('%sExtended') 
+    }) 
+  });
+  //export type AdminProfileAuthSearchFiltersProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>SearchFiltersProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: `{ 
+      query: StoreSearchQuery, 
+      close: MouseEventHandler<HTMLElement> 
+    }`
+  });
+  //export type AdminProfileAuthSearchFormProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>SearchFormProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: renderCode(`{ 
+      base: string,
+      token: string, 
+      results: <%type%>,
+      open: (value: SetStateAction<boolean>) => void,
+      can: (...permits: SessionPermission[]) => boolean
+    }`, { 
+      type: model.name.toTypeName('%sExtended')
+    })
+  });
+  //export type AdminProfileAuthSearchResultsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>SearchResultsProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: `{ 
+      base: string,
+      query: Partial<StoreSearchQuery>, 
+      results: ${foreignModel.name.toTypeName('%sExtended')}[], 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`
+  });
+  //export type AdminProfileAuthSearchHeadProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>SearchHeadProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+  //export type AdminProfileAuthSearchPageProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>SearchPageProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
   //export function AdminProfileAuthSearchCrumbs() {}
   source.addFunction({
     isExported: true,
@@ -217,12 +304,9 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended')
+      type: renderCode('<%model%>Admin<%relation%>SearchCrumbsProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
       })
     }],
     statements: renderCode(TEMPLATE.SEARCH_CRUMBS_BODY, {
@@ -257,9 +341,10 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.SEARCH_TABS_PROPS, { 
-        type: model.name.toTypeName('%sExtended') 
-      }) 
+      type: renderCode('<%model%>Admin<%relation%>SearchTabsProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
+      })
     }],
     statements: renderCode(TEMPLATE.SEARCH_TABS, {
       info: renderCode('`${base}/<%model%>/detail/<%ids%>`', {
@@ -290,10 +375,10 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: `{ 
-        query: StoreSearchQuery, 
-        close: MouseEventHandler<HTMLElement> 
-      }` 
+      type: renderCode('<%model%>Admin<%relation%>SearchFiltersProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
+      })
     }],
     statements: renderCode(TEMPLATE.SEARCH_FILTERS_BODY, {
       fields: foreignModel.columns
@@ -324,14 +409,9 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string,
-        token: string, 
-        results: <%type%>,
-        open: (value: SetStateAction<boolean>) => void,
-        can: (...permits: SessionPermission[]) => boolean
-      }`, { 
-        type: model.name.toTypeName('%sExtended')
+      type: renderCode('<%model%>Admin<%relation%>SearchFormProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
       })
     }],
     statements: renderCode(TEMPLATE.SEARCH_FORM_BODY, {
@@ -362,12 +442,10 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: `{ 
-        base: string,
-        query: Partial<StoreSearchQuery>, 
-        results: ${foreignModel.name.toTypeName('%sExtended')}[], 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`
+      type: renderCode('<%model%>Admin<%relation%>SearchResultsProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
+      })
     }],
     statements: renderCode(TEMPLATE.SEARCH_RESULTS_BODY, {
       sortable,
@@ -451,7 +529,10 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: renderCode('<%model%>Admin<%relation%>SearchHeadProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
+      })
     }],
     statements: renderCode(TEMPLATE.SEARCH_HEAD, { 
       name: model.name.singular,
@@ -469,7 +550,10 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: renderCode('<%model%>Admin<%relation%>SearchPageProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
+      })
     }],
     statements: renderCode(TEMPLATE.SEARCH_PAGE, { 
       component: renderCode('<%model%>Admin<%relation%>SearchBody', {

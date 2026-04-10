@@ -126,9 +126,10 @@ export default function generate(
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('use%sFormFieldset'),
-    parameters: [
-      { name: 'config', type: `${column.name.titleCase}Config` }
-    ],
+    parameters: [{ 
+      name: 'config', 
+      type: `${column.name.titleCase}Config` 
+    }],
     statements: renderCode(TEMPLATE.HOOK, {
       type: columnFieldset.name.toTypeName('%sInput')
     })
@@ -174,12 +175,10 @@ export default function generate(
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('%sFormFieldset'),
-    parameters: [
-      { 
-        name: 'props', 
-        type: `${column.name.titleCase}FormFieldsetProps` 
-      }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: `${column.name.titleCase}FormFieldsetProps` 
+    }],
     statements: renderCode(TEMPLATE.FIELD, {
       input: columnFieldset.name.toTypeName('%sInput'),
       required: column.type.required ? 'true' : 'false',
@@ -196,16 +195,14 @@ export default function generate(
       props: JSON.stringify(props)
     })
   });
-  //export function AddressFormFieldsetControl(props: ControlProps) {
+  //export function AddressFormFieldsetControl(props: AddressControlProps) {
   source.addFunction({
     isExported: true,
     name: `${column.name.titleCase}FormFieldsetControl`,
-    parameters: [
-      { 
-        name: 'props', 
-        type: `${column.name.titleCase}ControlProps`
-      }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: `${column.name.titleCase}ControlProps`
+    }],
     statements: renderCode(TEMPLATE.CONTROL, {
       label: column.name.label,
       required: column.type.required
@@ -239,6 +236,7 @@ TYPE_CONTROL_PROPS:
 `{
   name?: string,
   label?: string,
+  required?: boolean,
   error?: string,
   value?: <%type%>|<%type%>[],
   errors?: Record<string, any>|Record<string, any>[],
