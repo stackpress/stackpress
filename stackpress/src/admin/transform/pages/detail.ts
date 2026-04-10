@@ -97,6 +97,9 @@ export default function generate(directory: Directory, model: Model) {
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.DETAIL, { 
+      active: model.store.active 
+        ? { column: model.store.active.name.toString() }
+        : null,
       event: model.name.toEventName(),
       extended: model.name.toClassName('%sExtended'),
       hashes: model.value.hashed.map(
@@ -144,7 +147,11 @@ res.data.set('admin', {
   base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
-
+<%#active%>
+  //make sure to set the active column to -1 in order 
+  // to get it returned even if it's soft-deleted
+  req.data.set('filter', '<%column%>', -1);
+<%/active%>
 <%#hashes.length%>
   const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
   <%#hashes%>
