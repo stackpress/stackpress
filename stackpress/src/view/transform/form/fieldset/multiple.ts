@@ -351,8 +351,11 @@ let {
   name, 
   value, 
   errors = [],
+  required,
   ...attributes
 } = props;
+//format label
+required && (label += '*');
 //format value
 value = Array.isArray(value)
   ? value

@@ -353,14 +353,17 @@ CONTROL:
 const { _ } = useLanguage();
 //props
 let { 
-  label = _('<%label%>')<%required%>,
+  label = _('<%label%>'),
   error = _('Invalid <%label%>'),
   className, 
   name, 
   value, 
   errors = [],
+  required,
   ...attributes
 } = props;
+//format label
+required && (label += '*');
 //format value
 value = Array.isArray(value)
   ? value

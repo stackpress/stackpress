@@ -215,6 +215,7 @@ export type ControlProps = {
   className?: string,
   error?: string,
   name?: string,
+  required?: boolean,
   value: any,
   onUpdate?: (name: string, value: any) => void
 }

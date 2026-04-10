@@ -128,11 +128,13 @@ export default function createView(directory: Directory, model: Model) {
         const component = attribute.component.definition!;
         if (component.name === 'Fieldset') {
           return renderCode(TEMPLATE.CREATE_FORM_FIELDSET, {
+            required: !column.type.nullable,
             component: column.name.toComponentName('%sFormFieldsetControl'),
             column: column.name.toString()
           });
         }
         return renderCode(TEMPLATE.CREATE_FORM_FIELD, {
+          required: !column.type.nullable,
           component: column.name.toComponentName('%sFormFieldControl'),
           column: column.name.toString(),
           multiple: column.type.multiple ? '[]' : ''
@@ -237,16 +239,18 @@ CREATE_FORM_FIELDSET:
 `<<%component%>
   className="control"
   name="<%column%>"
-  value={input['<%column%>']} 
-  errors={errors['<%column%>']} 
+  value={input.<%column%>} 
+  errors={errors.<%column%> as Record<string, any>}
+  <%#required%>required<%/required%>
 />`,
 
 CREATE_FORM_FIELD:
 `<<%component%>
   className="control"
   name="<%column%><%multiple%>"
-  value={input['<%column%>']} 
+  value={input.<%column%>} 
   error={errors.<%column%>?.toString()} 
+  <%#required%>required<%/required%>
 />`,
 
 CREATE_BODY:

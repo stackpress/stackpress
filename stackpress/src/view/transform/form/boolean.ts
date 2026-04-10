@@ -97,9 +97,6 @@ export default function generate(
         ? '=' + JSON.stringify(column.value.default) 
         : '',
       label: column.name.label,
-      required: column.type.required && !column.type.multiple
-        ? ` + '*'`
-        : '',
       component: column.name.toComponentName('%sFormField')
     })
   });
@@ -140,12 +137,13 @@ const {
   name = '<%column%><%multiple%>', 
   value<%default%>, 
   onUpdate, 
+  required,
   error 
 } = props;
 //hooks
 const { _ } = useLanguage();
 //determine label
-const label = _('<%label%>')<%required%>;
+const label = _('<%label%>') + (required ? '*' : '');
 //renderCode
 return (
   <FieldControl label={label} error={error} className={className}>

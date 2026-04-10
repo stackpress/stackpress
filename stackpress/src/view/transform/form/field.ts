@@ -99,9 +99,6 @@ export default function generate(
     ],
     statements: renderCode(TEMPLATE.CONTROL, {
       label: column.name.label,
-      required: column.type.required && !column.type.multiple
-        ? ` + '*'`
-        : '',
       component: column.name.toComponentName('%sFormField')
     })
   });
@@ -141,11 +138,11 @@ return (
 
 CONTROL:
 `//props
-const { className, name, value, onUpdate, error } = props;
+const { className, name, value, onUpdate, error, required } = props;
 //hooks
 const { _ } = useLanguage();
 //determine label
-const label = _('<%label%>')<%required%>;
+const label = _('<%label%>') + (required ? '*' : '');
 //renderCode
 return (
   <FieldControl label={label} error={error} className={className}>

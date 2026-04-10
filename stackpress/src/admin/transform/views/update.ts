@@ -139,11 +139,13 @@ export default function updateView(directory: Directory, model: Model) {
         const component = attribute.component.definition!;
         if (component.name === 'Fieldset') {
           return renderCode(TEMPLATE.UPDATE_FORM_FIELDSET, {
+            required: !column.type.nullable,
             component: column.name.toComponentName('%sFormFieldsetControl'),
             column: column.name.toString()
           });
         }
         return renderCode(TEMPLATE.UPDATE_FORM_FIELD, {
+          required: !column.type.nullable,
           component: column.name.toComponentName('%sFormFieldControl'),
           column: column.name.toString(),
           multiple: column.type.multiple ? '[]' : ''
@@ -262,6 +264,7 @@ UPDATE_FORM_FIELDSET:
   name="<%column%>"
   value={input['<%column%>']} 
   errors={errors['<%column%>']} 
+  <%#required%>required<%/required%>
 />`,
 
 UPDATE_FORM_FIELD:
@@ -270,6 +273,7 @@ UPDATE_FORM_FIELD:
   name="<%column%><%multiple%>"
   value={input['<%column%>']} 
   error={errors.<%column%>?.toString()} 
+  <%#required%>required<%/required%>
 />`,
 
 UPDATE_BODY:
