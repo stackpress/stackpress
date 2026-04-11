@@ -7,33 +7,9 @@ enum PublishStatus {
   ARCHIVED "ARCHIVED"
 }
 
-type File {
-  url       String
-            @label("File URL") 
-            @field.url
-            @list.link({ text "Download" }) @view.link({ text "Download" })
-            @description("URL of the file.")
-            @examples("https://example.com/file.pdf")
-
-  filename  String
-            @label("Filename") 
-            @list.string @view.string
-            @description("Original name of the uploaded file.")
-            @examples("file.pdf")
-}
-
 model Profile {
   articles   Article[] @label("Articles")
   comments   Comment[] @label("Comments")
-  files      File[] 
-             @label("Files")
-             @field.fieldset
-             @list.table @view.table
-             @description("List of files associated with the profile.")
-             @examples([
-               { url "https://example.com/file1.pdf" filename "file1.pdf" }
-               { url "https://example.com/file2.pdf" filename "file2.pdf" }
-             ])
 }
 
 model Category 
