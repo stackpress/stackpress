@@ -1,6 +1,10 @@
 //modules
 import type Engine from '@stackpress/inquire/Engine';
+//stackpress/schema
+import type { DefinitionInterfaceMap } from '../schema/types.js';
+import type ColumnInterface from '../schema/interface/ColumnInterface.js';
 //stackpress/sql
+import type { FlatValue } from '@stackpress/inquire/types';
 import type StoreInterface from './interface/StoreInterface.js';
 
 export type ValueScalar = string | number | boolean | null;
@@ -17,15 +21,6 @@ export type StoreRelation<
   foreign: string,
   multiple: boolean,
   required: boolean
-};
-
-export type StoreSelectColumnPath = {
-  type: string,
-  column: string,
-  store: StoreInterface<
-    Record<string, unknown>, 
-    Record<string, unknown>
-  >
 };
 
 export type StoreSelectRelation<
@@ -48,14 +43,60 @@ export type StoreSelectRelationMap<
   E extends Record<string, unknown>
 > = Record<string, StoreSelectRelation<T, E>>;
 
-export type StoreSelectJoin = {
-  table: string,
-  from: string,
-  to: string,
-  alias: string
+export type StoreSelector = {
+  //if auth.userProfile.addressLocation.references.googleId
+  //WHERE:
+  // - auth is this store's table
+  // - userProfile is a relation on the auth store
+  // - addressLocation is a json column in the related profile store
+  // - references is a key in the json column that is also an object
+  // - googleId is a key in the references object that is a scalar value
+  //THEN:
+  // - expression should be auth.userProfile.addressLocation.references.googleId
+  expression: string,
+  // - column should be [ auth, user_profile, address_location ]
+  column: string[],
+  // - json should be [ references', googleId ]
+  json: string[],
+  // - alias should be [ auth, user_profile, address_location, references, google_id ]
+  alias: string[]
+  //whatever uses this should add quotes and merge strings on their own...
 };
 
-export type StoreSelectJoinMap = Record<string, StoreSelectJoin>;
+export type StorePath<
+  //the basic type of the records in the store
+  T extends Record<string, unknown> = Record<string, unknown>,
+  //the extended type of the records in the store, with relations included
+  E extends Record<string, unknown> = Record<string, unknown>,
+  //the column map
+  C extends DefinitionInterfaceMap = DefinitionInterfaceMap,
+  //the relation map
+  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}>>
+> = {
+  selector: StoreSelector,
+  store: StoreInterface<T, E, C, R>,
+  column: ColumnInterface
+};
+
+export type StoreJoin = {
+  //inner, left, right, outer, etc
+  type: string, 
+  //ex. user_profile
+  table: string, 
+  //ex. auth__user_profile
+  alias: string,
+  //ex. auth__user_profile.id
+  //NOTE: there should only be 2 selectors
+  from: { table: string, column: string },
+  //ex. auth.profile_id
+  //NOTE: there should only be 2 selectors
+  to: { table: string, column: string }
+};
+
+export type StoreWhere = { 
+  clause: (q?: string) => string, 
+  values: FlatValue[] 
+};
 
 export type StoreSelectFilters = {
   q?: string,

@@ -1,5 +1,5 @@
 //modules
-import type { FlatValue } from '@stackpress/inquire/types';
+import type { WhereBuilder } from '@stackpress/inquire/types';
 import type Alter from '@stackpress/inquire/Alter';
 import type Create from '@stackpress/inquire/Create';
 import type Delete from '@stackpress/inquire/Delete';
@@ -8,17 +8,18 @@ import type Select from '@stackpress/inquire/Select';
 import type Update from '@stackpress/inquire/Update';
 //stackpress/schema
 import type { DefinitionInterfaceMap } from '../../schema/types.js';
-import SchemaInterface from '../../schema/interface/SchemaInterface.js';
+import type SchemaInterface from '../../schema/interface/SchemaInterface.js';
 //stackpress/sql
 import type { 
+  StoreJoin,
+  StorePath,
   StoreRelation,
-  StoreSelectColumnPath,
-  StoreSelectFilters, 
-  StoreSelectJoinMap,
+  StoreSelectFilters,
+  StoreSelector,
   StoreSelectQuery,
+  StoreWhere,
   ValueScalar
 } from '../types.js';
-
 export default interface StoreInterface<
   //the basic type of the records in the store
   T extends Record<string, unknown>,
@@ -40,14 +41,6 @@ export default interface StoreInterface<
   alter(to?: Create): Alter;
 
   /**
-   * Query builder for counting the number of records matching the query
-   */
-  count(
-    query?: StoreSelectFilters & { columns?: string[]; }, 
-    q?: string
-  ): Select<{ total: number }>;
-
-  /**
    * Query builder for creating a new table structure
    */
   create(): Create;
@@ -65,56 +58,31 @@ export default interface StoreInterface<
   /**
    * Query builder for selecting records
    */
-  select(query?: StoreSelectQuery, q?: string): Select<E>;
+  select<T = Select<E>>(query?: StoreSelectQuery, q?: string): T;
 
   /**
-   * Helper method for generating the where clause and values for 
-   * a query based on the provided filters and the store's schema.
+   * Given the expression, will return SQL column selectors, 
+   * json paths and aliases
    */
-  where(query?: StoreSelectFilters, q?: string): { 
-    clause: string, 
-    values: FlatValue[] 
-  };
+  selectors(
+    expression: string|string[], 
+    tables?: string[]
+  ): StoreSelector[];
 
   /**
-   * Query builder for updating records
+   * Given the expression, will return the necessary join parts
    */
-  update(
-    query: StoreSelectFilters, 
-    input: Partial<T>, 
-    q?: string
-  ): Update<T>;
+  joins(
+    expression: string|string[], 
+    joins?: string[],
+    index?: number
+  ): StoreJoin[];
 
   /**
-   * Helper method for generating the column info for a given selector
-   * 
-   * ex. user.address.streetName -> {
-   *   name: 'user.address.streetName',
-   *   table: 'user__address',
-   *   column: 'street_name',
-   *   alias: 'user__address__street_name',
-   *   path: [...],
-   *   last: ...,
-   *   joins: ...
-   * }
+   * Given the expression will traverse 
+   * through stores and collect store and column instances
    */
-  getColumnInfo(selector: string): {
-    name: string,
-    table: string,
-    column: string,
-    alias: string,
-    path: Array<StoreSelectColumnPath>,
-    last: StoreSelectColumnPath,
-    joins: StoreSelectJoinMap
-  };
-
-  /**
-   * Helper method for generating the column selectors for 
-   * a given column path.
-   * 
-   * ex. user.address.streetName -> user__address__street_name
-   */
-  getColumnSelectors(column: string, prefixes?: string[]): string[];
+  path(expression: string, path?: StorePath[]): StorePath[];
 
   /**
    * Serializes value, then scalarizes it, then assigns 
@@ -127,4 +95,19 @@ export default interface StoreInterface<
    * the model column name (ex. camel case)
    */
   unscalarize(values: Record<string, unknown>): Partial<T>;
+
+  /**
+   * Query builder for updating records
+   */
+  update(
+    query: StoreSelectFilters, 
+    input: Partial<T>, 
+    q?: string
+  ): Update<T>;
+
+  /**
+   * Helper method for generating the where clause and values for 
+   * a query based on the provided filters and the store's schema.
+   */
+  where(builder: WhereBuilder, query?: StoreSelectFilters): StoreWhere;
 }

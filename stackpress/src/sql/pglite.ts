@@ -26,15 +26,16 @@ export type {
   //for store interface
   ValueScalar,
   ValuePrimitive,
+  StoreJoin,
+  StorePath,
   StoreRelation,
-  StoreSelectColumnPath,
+  StoreSelector,
   StoreSelectRelation,
   StoreSelectRelationMap,
-  StoreSelectJoin,
-  StoreSelectJoinMap,
   StoreSelectFilters,
   StoreSelectQuery,
   StoreSearchQuery,
+  StoreWhere,
   //for ingest
   DatabaseConfig,
   DatabasePlugin
