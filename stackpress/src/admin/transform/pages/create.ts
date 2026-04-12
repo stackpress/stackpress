@@ -51,6 +51,12 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+  //import type { CsrfPlugin } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ 'CsrfPlugin' ]
+  });
 
   //------------------------------------------------------------------//
   // Import Client
@@ -103,6 +109,10 @@ const language = ctx.config.path<LanguageConfig>('language', {
   locale: 'en_US',
   languages: {}
 });
+//get the csrf plugin
+const csrf = ctx.plugin<CsrfPlugin>('csrf');
+//generate token
+csrf.generateToken(res);
 const admin = ctx.config.path<AdminConfig>('admin', {});
 //set data for template layer
 res.data.set('view', { 
@@ -128,6 +138,8 @@ res.data.set('admin', {
 
 //if form submitted
 if (req.method === 'POST') {
+  //validate csrf
+  csrf.validateToken(req);
   //emit the create event
   const response = await ctx.resolve<<%type%>>('<%event%>-create', req, res);
   //if error

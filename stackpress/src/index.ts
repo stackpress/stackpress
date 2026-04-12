@@ -210,6 +210,9 @@ export type {
   BuildConfig,
   ProductionConfig,
   ReactusConfig,
+  //stackpress/csrf
+  CsrfConfig,
+  CsrfPlugin,
   //others
   Scalar,
   ExtendsType,

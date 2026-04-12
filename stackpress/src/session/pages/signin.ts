@@ -6,6 +6,7 @@ import type Server from '@stackpress/ingest/Server';
 import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //session
 import type { AuthConfig, SessionPlugin } from '../types.js';
+import type { CsrfPlugin } from '../../types.js';
 
 export default async function SignInPage(
   req: Request, 
@@ -17,6 +18,10 @@ export default async function SignInPage(
     //let the response pass through
     return;
   }
+  //get csrf plugin
+  const csrf = ctx.plugin<CsrfPlugin>('csrf');
+  //generate a token
+  csrf.generateToken(res);
   //get the view, brand and auth config
   const view = ctx.config.path<ViewConfig>('view', {});
   const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -51,6 +56,8 @@ export default async function SignInPage(
   const guest = await me.guest();
   //form submission
   if (req.method === 'POST') {
+    //validate csrf
+    csrf.validateToken(req);
     //prevent passwordless sign in on this page...
     req.data.set('password', true);
     //sign in

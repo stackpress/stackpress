@@ -249,6 +249,11 @@ export type {
   ServerConfig as ReactusConfig
 } from 'reactus/types';
 
+export type {
+  CsrfConfig,
+  CsrfPlugin
+} from './csrf/types.js';
+
 //--------------------------------------------------------------------//
 // General Types
 
