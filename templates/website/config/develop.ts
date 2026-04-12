@@ -111,7 +111,8 @@ export const config: Config = {
   cookie: common.cookie,
   database: common.database,
   email: common.email,
-  language: common.language
+  language: common.language,
+  csrf: common.csrf
 };
 
 export default async function bootstrap() {
