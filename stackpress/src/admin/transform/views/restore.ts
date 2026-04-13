@@ -41,11 +41,11 @@ export default function restoreView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { ServerPageProps } from 'stackpress/view/client';
+  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'ServerPageProps' ]
+    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
   source.addImportDeclaration({
@@ -78,19 +78,49 @@ export default function restoreView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
+  //export type AdminProfileRestoreCrumbsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminRestoreCrumbsProps'),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended') 
+    }) 
+  });
+  //export type AdminProfileRestoreFormProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminRestoreFormProps'),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended') 
+    })
+  });
+  //export type AdminProfileRestoreHeadProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminRestoreHeadProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+  //export type AdminProfileRestorePageProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminRestorePageProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
   //export function AdminProfileRestoreCrumbs() {}
   source.addFunction({
     isExported: true,
     name: model.name.toComponentName('%sAdminRestoreCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended') 
-      }) 
+      type: model.name.toTypeName('%sAdminRestoreCrumbsProps')
     }],
     statements: renderCode(TEMPLATE.RESTORE_CRUMBS_BODY, {
       search: {
@@ -115,13 +145,7 @@ export default function restoreView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminRestoreForm'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended') 
-      }) 
+      type: model.name.toTypeName('%sAdminRestoreFormProps')
     }],
     statements: renderCode(TEMPLATE.RESTORE_FORM_BODY, { 
       template: JSON.stringify(model.name.display || ''),
@@ -147,7 +171,7 @@ export default function restoreView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminRestoreHead'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toTypeName('%sAdminRestoreHeadProps')
     }],
     statements: renderCode(TEMPLATE.RESTORE_HEAD, { 
       name: model.name.singular 
@@ -159,7 +183,7 @@ export default function restoreView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminRestorePage'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toTypeName('%sAdminRestorePageProps')
     }],
     statements: renderCode(TEMPLATE.RESTORE_PAGE, { 
       component: model.name.toComponentName('%sAdminRestoreBody') 

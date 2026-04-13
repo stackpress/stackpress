@@ -88,27 +88,32 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
-  //export function NameFormat() {
+  //export type AddressViewFormatProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sViewFormatProps'),
+    type: renderCode(`{ 
+      data: <%data%>,
+      value: <%value%><%multiple%> 
+    }`, {
+      data: fieldset.name.toTypeName('%sExtended'),
+      value: column.type.name in formatType 
+        ? formatType[column.type.name]
+        : column.type.enum
+        ? 'string'
+        : 'unknown',
+      multiple: column.type.multiple ? '[]' : ''
+    })
+  });
+
+  //export function NameViewFormat() {
   source.addFunction({
     isDefaultExport: true,
-    name: column.name.toComponentName('%sFormat'),
-    parameters: [
-      { 
-        name: 'props', 
-        type: renderCode(`{ 
-          data: <%data%>,
-          value: <%value%><%multiple%> 
-        }`, {
-          data: fieldset.name.toTypeName('%sExtended'),
-          value: column.type.name in formatType 
-            ? formatType[column.type.name]
-            : column.type.enum
-            ? 'string'
-            : 'unknown',
-          multiple: column.type.multiple ? '[]' : ''
-        })
-      }
-    ],
+    name: column.name.toComponentName('%sViewFormat'),
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sViewFormatProps')
+    }],
     statements: renderCode(TEMPLATE.FORMAT, {
       template: String(props.template)
     })

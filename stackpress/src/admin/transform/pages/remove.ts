@@ -101,8 +101,8 @@ res.data.set('language', {
   languages: language.languages || {}
 });
 res.data.set('admin', { 
-  name: admin.name || 'Admin',
-  base: admin.base || '/admin',
+  name: admin.name ?? 'Admin',
+  base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
 
@@ -112,9 +112,14 @@ if (req.data('confirmed')) {
   await ctx.emit('<%event%>-remove', req, res);
   //if OK
   if (res.code === 200) {
-    //redirect
-    const base = admin.base || '/admin';
-    res.redirect(\`\${base}/<%model%>/search\`);
+    //get the noview flag name
+    const noview = ctx.config.path('view.noview', 'json');
+    //if no, noview, then okay to redirect
+    if (!req.data.has(noview)) {
+      //redirect
+      const base = admin.base ?? '/admin';
+      res.redirect(\`\${base}/<%model%>/search\`);
+    }
   }
   //let the error pass through
   return;

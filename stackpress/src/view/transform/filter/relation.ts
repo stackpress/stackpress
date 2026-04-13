@@ -50,12 +50,6 @@ export default function generate(
 
   //------------------------------------------------------------------//
   // Import Modules
-  //------------------------------------------------------------------//
-  // Import Stackpress
-  //------------------------------------------------------------------//
-  // Import Client
-  //------------------------------------------------------------------//
-  // Exports
 
   //import type { KeyboardEvent, MouseEvent } from 'react';
   source.addImportDeclaration({
@@ -63,16 +57,15 @@ export default function generate(
     moduleSpecifier: 'react',
     namedImports: [ 'KeyboardEvent', 'MouseEvent' ]
   });
-  //import type { FieldProps, ControlProps } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'FieldProps', 'ControlProps' ]
-  });
   //import { useState, useEffect } from 'react';
   source.addImportDeclaration({
     moduleSpecifier: 'react',
     namedImports: [ 'useState', 'useEffect' ]
+  });
+  //import { useLanguage } from 'r22n';
+  source.addImportDeclaration({
+    moduleSpecifier: 'r22n',
+    namedImports: [ 'useLanguage' ]
   });
   //import Handlebars from 'stackpress/view/handlebars';
   source.addImportDeclaration({
@@ -89,19 +82,59 @@ export default function generate(
     moduleSpecifier: 'r22n',
     namedImports: [ 'useLanguage' ]
   });
+  //import Select from 'frui/form/Select';
+  source.addImportDeclaration({
+    moduleSpecifier: 'frui/form/Select',
+    defaultImport: 'Select'
+  });
   //import FieldControl from 'frui/form/FieldControl';
   source.addImportDeclaration({
     moduleSpecifier: 'frui/form/FieldControl',
     defaultImport: 'FieldControl'
+  });
+  //import mustache from 'mustache';
+  source.addImportDeclaration({
+    moduleSpecifier: 'mustache',
+    defaultImport: 'mustache'
+  });
+
+  //------------------------------------------------------------------//
+  // Import Stackpress
+
+  //import type { FieldProps, ControlProps } from 'stackpress/view/client';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/view/client',
+    namedImports: [ 'FieldProps', 'ControlProps' ]
+  });
+
+  //------------------------------------------------------------------//
+  // Import Client
+  //------------------------------------------------------------------//
+  // Exports
+
+  //export type NameFilterFieldProps = FieldProps;
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sFilterFieldProps'),
+    type: 'FieldProps'
+  });
+
+  //export type NameFilterFieldControlProps = ControlProps;
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sFilterFieldControlProps'),
+    type: 'ControlProps'
   });
   
   //export function NameFilterField(props: FieldProps) {
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('%sFilterField'),
-    parameters: [
-      { name: 'props', type: 'FieldProps' }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sFilterFieldProps') 
+    }],
     statements: renderCode(TEMPLATE.FIELD, {
       url: String(props.search || ''),
       template: props.template,
@@ -114,9 +147,10 @@ export default function generate(
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('%sFilterFieldControl'),
-    parameters: [
-      { name: 'props', type: 'ControlProps' }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sFilterFieldControlProps') 
+    }],
     statements: renderCode(TEMPLATE.CONTROL, {
       label: column.name.label,
       hidden: isBoolComponent 

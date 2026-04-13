@@ -115,19 +115,74 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
+  //export type AdminProfileDetailCrumbsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminDetailCrumbsProps'),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended')
+    })
+  });
+  //export type AdminProfileDetailActionsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminDetailActionsProps'),
+    type: renderCode(`{
+      base: string,
+      results: <%type%>,
+      can: (...permits: SessionPermission[]) => boolean,
+    }`, { 
+      type: model.name.toTypeName('%sExtended') 
+    }) 
+  });
+  //export type AdminProfileDetailTabsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminDetailTabsProps'),
+    type: renderCode(`{
+      base: string,
+      results: <%type%>,
+      can: (...permits: SessionPermission[]) => boolean,
+    }`, { 
+      type: model.name.toTypeName('%sExtended') 
+    }) 
+  });
+  //export type AdminProfileDetailResultsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminDetailResultsProps'),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended') 
+    })
+  });
+  //export type AdminProfileDetailHeadProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminDetailHeadProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+  //export type AdminProfileDetailPageProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toComponentName('%sAdminDetailPageProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+
   //export function AdminProfileDetailCrumbs() {}
   source.addFunction({
     isExported: true,
     name: model.name.toComponentName('%sAdminDetailCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended')
-      })
+      type: model.name.toComponentName('%sAdminDetailCrumbsProps')
     }],
     statements: renderCode(TEMPLATE.DETAIL_CRUMBS_BODY, {
       search: {
@@ -148,13 +203,7 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminDetailActions'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{
-        base: string,
-        results: <%type%>,
-        can: (...permits: SessionPermission[]) => boolean,
-      }`, { 
-        type: model.name.toTypeName('%sExtended') 
-      }) 
+      type: model.name.toComponentName('%sAdminDetailActionsProps')
     }],
     statements: renderCode(TEMPLATE.DETAIL_ACTIONS_BODY, {
       active: model.store.active ? model.store.active.name.toString() : null,
@@ -182,13 +231,7 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminDetailTabs'),
     parameters: related.length > 0 ?[{ 
       name: 'props', 
-      type: renderCode(`{
-        base: string,
-        results: <%type%>,
-        can: (...permits: SessionPermission[]) => boolean,
-      }`, { 
-        type: model.name.toTypeName('%sExtended') 
-      }) 
+      type: model.name.toComponentName('%sAdminDetailTabsProps')
     }] : [],
     statements: renderCode(TEMPLATE.DETAIL_TABS, {
       //where this model is 1, get the many relations...
@@ -213,13 +256,7 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminDetailResults'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended') 
-      })
+      type: model.name.toComponentName('%sAdminDetailResultsProps')
     }],
     statements: renderCode(TEMPLATE.DETAIL_RESULTS_BODY, {
       rows: model.component.viewFormats.toArray().map(
@@ -285,7 +322,7 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminDetailHead'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toComponentName('%sAdminDetailHeadProps')
     }],
     statements: renderCode(TEMPLATE.DETAIL_HEAD, { 
       name: model.name.singular 
@@ -297,7 +334,7 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminDetailPage'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toComponentName('%sAdminDetailPageProps')
     }],
     statements: renderCode(TEMPLATE.DETAIL_PAGE, { 
       component: model.name.toComponentName('%sAdminDetailBody')
@@ -435,10 +472,14 @@ return (
 
 DETAIL_RESULTS_VALUE_REQUIRED:
 `<%#link%>
-  {can({ method: 'GET', route: <%link%> }) && (
+  {can({ method: 'GET', route: <%link%> }) ? (
     <a className="theme-info" href={<%link%>}>
       <<%component%> data={results} value={results.<%name%>} />
     </a>
+  ) : (
+    <span>
+      <<%component%> data={results} value={results.<%name%>} />
+    </span>
   )}
 <%/link%>
 <%^link%>
@@ -447,10 +488,14 @@ DETAIL_RESULTS_VALUE_REQUIRED:
 
 DETAIL_RESULTS_VALUE_OPTIONAL:
 `<%#link%>
-  {can({ method: 'GET', route: <%link%> }) && (
+  {can({ method: 'GET', route: <%link%> }) ? (
     <a className="theme-info" href={<%link%>}>
       {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
     </a>
+  ) : (
+   <span>
+     {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
+   </span>
   )}
 <%/link%>
 <%^link%>

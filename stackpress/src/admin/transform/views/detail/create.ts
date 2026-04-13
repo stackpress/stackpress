@@ -88,12 +88,11 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Client
   
-  //import type { Profile, ProfileExtended } from '../../../types.js';
+  //import type { ProfileExtended } from '../../../types.js';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: '../../../types.js',
     namedImports: [
-      model.name.toTypeName(),
       model.name.toTypeName('%sExtended')
     ]
   });
@@ -130,6 +129,50 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
+  //export type AdminProfileAuthCreateCrumbsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>CreateCrumbsProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended')
+    })
+  });
+  //export type ProfileAdminAuthCreateFormProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>CreateFormProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: renderCode(TEMPLATE.CREATE_FORM_PROPS, { 
+      type: foreignModel.name.toTypeName('%sInput') 
+    })
+  });
+  //export type AdminProfileAuthCreateHeadProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>CreateHeadProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+  //export type AdminProfileAuthCreatePageProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: renderCode('<%model%>Admin<%relation%>CreatePageProps', {
+      model: model.name.toTypeName(),
+      relation: relatedColumn.name.toComponentName()
+    }),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
   //export function AdminProfileAuthCreateCrumbs() {}
   source.addFunction({
     isExported: true,
@@ -139,12 +182,9 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended')
+      type: renderCode('<%model%>Admin<%relation%>CreateCrumbsProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
       })
     }],
     statements: renderCode(TEMPLATE.CREATE_CRUMBS_BODY, {
@@ -184,9 +224,10 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.CREATE_FORM_PROPS, { 
-        type: foreignModel.name.toTypeName('%sInput') 
-      }) 
+      type: renderCode('<%model%>Admin<%relation%>CreateFormProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
+      })
     }],
     statements: renderCode(TEMPLATE.CREATE_FORM_BODY,{
       fields: foreignModel.component.formFields
@@ -197,11 +238,13 @@ export default function generate(
           const component = attribute.component.definition!;
           if (component.name === 'Fieldset') {
             return renderCode(TEMPLATE.CREATE_FORM_FIELDSET, {
+              required: !column.type.nullable,
               component: column.name.toComponentName('%sFormFieldsetControl'),
               column: column.name.toString()
             });
           }
           return renderCode(TEMPLATE.CREATE_FORM_FIELD, {
+            required: !column.type.nullable,
             component: column.name.toComponentName('%sFormFieldControl'),
             column: column.name.toString(),
             multiple: column.type.multiple ? '[]' : ''
@@ -218,7 +261,7 @@ export default function generate(
     }),
     statements: renderCode(TEMPLATE.CREATE_BODY, {
       input: foreignModel.name.toTypeName('%sInput'),
-      type: model.name.toTypeName(),
+      extended: model.name.toTypeName('%sExtended'),
       crumbs: renderCode('<%model%>Admin<%relation%>CreateCrumbs', {
         model: model.name.toComponentName(),
         relation: relatedColumn.name.toComponentName(),
@@ -238,7 +281,10 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: renderCode('<%model%>Admin<%relation%>CreateHeadProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
+      })
     }],
     statements: renderCode(TEMPLATE.CREATE_HEAD, { 
       name: model.name.singular,
@@ -256,7 +302,10 @@ export default function generate(
     }),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: renderCode('<%model%>Admin<%relation%>CreatePageProps', {
+        model: model.name.toTypeName(),
+        relation: relatedColumn.name.toComponentName()
+      })
     }],
     statements: renderCode(TEMPLATE.CREATE_PAGE, { 
       component: renderCode('<%model%>Admin<%relation%>CreateBody', {
@@ -357,16 +406,18 @@ CREATE_FORM_FIELDSET:
 `<<%component%>
   className="control"
   name="<%column%>"
-  value={input['<%column%>']} 
-  errors={errors['<%column%>']} 
+  value={input.<%column%>} 
+  errors={errors.<%column%> as Record<string, any>} 
+  <%#required%>required<%/required%>
 />`,
 
 CREATE_FORM_FIELD:
 `<<%component%>
   className="control"
   name="<%column%><%multiple%>"
-  value={input['<%column%>']} 
+  value={input.<%column%>} 
   error={errors.<%column%>?.toString()} 
+  <%#required%>required<%/required%>
 />`,
 
 CREATE_BODY:
@@ -380,7 +431,7 @@ const {
 } = useServer<
   AdminConfigProps, 
   Partial<<%input%>>, 
-  <%type%>
+  <%extended%>
 >();
 //variables
 const can = session.can.bind(session);

@@ -94,13 +94,28 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
+  //export type NameFormFieldProps = FieldProps;
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sFormFieldProps'),
+    type: 'FieldProps'
+  });
+
+  //export type NameFormFieldControlProps = ControlProps;
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sFormFieldControlProps'),
+    type: 'ControlProps'
+  });
+
   //export function NameFormField(props: FieldProps) {
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('%sFormField'),
-    parameters: [
-      { name: 'props', type: 'FieldProps' }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sFormFieldProps') 
+    }],
     statements: renderCode(TEMPLATE.FIELD, {
       column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': '',
@@ -113,14 +128,12 @@ export default function generate(
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('%sFormFieldControl'),
-    parameters: [
-      { name: 'props', type: 'ControlProps' }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sFormFieldControlProps') 
+    }],
     statements: renderCode(TEMPLATE.CONTROL, {
       label: column.name.label,
-      required: column.type.required && !column.type.multiple
-        ? ` + '*'`
-        : '',
       component: column.name.toComponentName('%sFormField')
     })
   });
@@ -245,11 +258,11 @@ return (
 
 CONTROL:
 `//props
-const { className, name, value, onUpdate, error } = props;
+const { className, name, value, onUpdate, error, required } = props;
 //hooks
 const { _ } = useLanguage();
 //variables
-const label = _('<%label%>')<%required%>;
+const label = _('<%label%>') + (required ? '*' : '');
 //renderCode
 return (
   <FieldControl label={label} error={error} className={className}>

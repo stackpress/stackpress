@@ -46,11 +46,11 @@ export default function updateView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { NestedObject, ServerPageProps } from 'stackpress/view/client';
+  //import type { NestedObject, ServerPageProps, SessionPermission } from 'stackpress/view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'NestedObject', 'ServerPageProps' ]
+    namedImports: [ 'NestedObject', 'ServerPageProps', 'SessionPermission' ]
   });
   //import type { AdminConfigProps } from 'stackpress/admin/types';
   source.addImportDeclaration({
@@ -96,19 +96,46 @@ export default function updateView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
+  //export type AdminProfileUpdateCrumbsProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminUpdateCrumbsProps'),
+    type: renderCode(`{ 
+      base: string, 
+      results: <%type%>, 
+      can: (...permits: SessionPermission[]) => boolean 
+    }`, { 
+      type: model.name.toTypeName('%sExtended') 
+    })
+  });
+  //export type AdminProfileUpdateFormProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminUpdateFormProps'),
+    type: renderCode(TEMPLATE.UPDATE_FORM_PROPS, { 
+      type: model.name.toTypeName('%sInput') 
+    }) 
+  });
+  //export type AdminProfileUpdateHeadProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminUpdateHeadProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+  //export type AdminProfileUpdatePageProps = ServerPageProps<AdminConfigProps>;
+  source.addTypeAlias({
+    isExported: true,
+    name: model.name.toTypeName('%sAdminUpdatePageProps'),
+    type: 'ServerPageProps<AdminConfigProps>'
+  });
+
   //export function AdminProfileUpdateCrumbs() {}
   source.addFunction({
     isExported: true,
     name: model.name.toComponentName('%sAdminUpdateCrumbs'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(`{ 
-        base: string, 
-        results: <%type%>, 
-        can: (...permits: SessionPermission[]) => boolean 
-      }`, { 
-        type: model.name.toTypeName('%sExtended') 
-      })
+      type: model.name.toTypeName('%sAdminUpdateCrumbsProps')
     }],
     statements: renderCode(TEMPLATE.UPDATE_CRUMBS_BODY, {
       search: {
@@ -133,9 +160,7 @@ export default function updateView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminUpdateForm'),
     parameters: [{ 
       name: 'props', 
-      type: renderCode(TEMPLATE.UPDATE_FORM_PROPS, { 
-        type: model.name.toTypeName('%sInput') 
-      }) 
+      type: model.name.toTypeName('%sAdminUpdateFormProps')
     }],
     statements: renderCode(TEMPLATE.UPDATE_FORM_BODY,{
       fields: model.component.formFields.toArray().map(column => {
@@ -143,11 +168,13 @@ export default function updateView(directory: Directory, model: Model) {
         const component = attribute.component.definition!;
         if (component.name === 'Fieldset') {
           return renderCode(TEMPLATE.UPDATE_FORM_FIELDSET, {
+            required: !column.type.nullable,
             component: column.name.toComponentName('%sFormFieldsetControl'),
             column: column.name.toString()
           });
         }
         return renderCode(TEMPLATE.UPDATE_FORM_FIELD, {
+          required: !column.type.nullable,
           component: column.name.toComponentName('%sFormFieldControl'),
           column: column.name.toString(),
           multiple: column.type.multiple ? '[]' : ''
@@ -172,7 +199,7 @@ export default function updateView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminUpdateHead'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toTypeName('%sAdminUpdateHeadProps')
     }],
     statements: renderCode(TEMPLATE.UPDATE_HEAD, { 
       name: model.name.singular 
@@ -184,7 +211,7 @@ export default function updateView(directory: Directory, model: Model) {
     name: model.name.toComponentName('%sAdminUpdatePage'),
     parameters: [{ 
       name: 'props', 
-      type: 'ServerPageProps<AdminConfigProps>'
+      type: model.name.toTypeName('%sAdminUpdatePageProps')
     }],
     statements: renderCode(TEMPLATE.UPDATE_PAGE, { 
       component: model.name.toComponentName('%sAdminUpdateBody') 
@@ -267,16 +294,18 @@ UPDATE_FORM_FIELDSET:
 `<<%component%>
   className="control"
   name="<%column%>"
-  value={input['<%column%>']} 
-  errors={errors['<%column%>']} 
+  value={input.<%column%>} 
+  errors={errors.<%column%> as Record<string, any>} 
+  <%#required%>required<%/required%>
 />`,
 
 UPDATE_FORM_FIELD:
 `<<%component%>
   className="control"
   name="<%column%><%multiple%>"
-  value={input['<%column%>']} 
+  value={input.<%column%>} 
   error={errors.<%column%>?.toString()} 
+  <%#required%>required<%/required%>
 />`,
 
 UPDATE_BODY:

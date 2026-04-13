@@ -275,6 +275,14 @@ export const session = {
       { method: 'ALL', route: '/admin/**' },
       { method: 'ALL', route: '/api/**' }
     ],
+    MANAGER: [
+      //page routes
+      { method: 'ALL', route: '/' },
+      { method: 'ALL', route: '/articles/**' },
+      { method: 'ALL', route: '/auth/**' },
+      { method: 'ALL', route: '/admin/auth/**' },
+      { method: 'ALL', route: '/api/**' }
+    ],
     USER: [
       //page routes
       { method: 'ALL', route: '/' },

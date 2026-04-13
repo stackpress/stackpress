@@ -121,8 +121,8 @@ res.data.set('language', {
   languages: language.languages || {}
 });
 res.data.set('admin', { 
-  name: admin.name || 'Admin',
-  base: admin.base || '/admin',
+  name: admin.name ?? 'Admin',
+  base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
 
@@ -137,20 +137,24 @@ if (req.method === 'POST') {
     res.setError('Unknown creation response results');
     return;
   }
-  const results = response.results!
-  //redirect
-  const base = admin.base || '/admin';
-  <%#oneid%>
-    res.redirect(
-      \`\${base}/<%model%>/detail/<%ids%>\`
-    );
-  <%/oneid%>
-  <%^oneid%>
-    res.redirect(
-      \`\${base}/<%model%>/search\`
-    );
-  <%/oneid%>
-  return;
+  //get the noview flag name
+  const noview = ctx.config.path('view.noview', 'json');
+  //if no, noview, then okay to redirect
+  if (!req.data.has(noview)) {
+    const results = response.results!
+    //redirect
+    const base = admin.base ?? '/admin';
+    <%#oneid%>
+      res.redirect(
+        \`\${base}/<%model%>/detail/<%ids%>\`
+      );
+    <%/oneid%>
+    <%^oneid%>
+      res.redirect(
+        \`\${base}/<%model%>/search\`
+      );
+    <%/oneid%>
+  }
 }`,
 
 };

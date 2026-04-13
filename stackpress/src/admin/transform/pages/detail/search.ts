@@ -148,13 +148,14 @@ res.data.set('language', {
   languages: language.languages || {}
 });
 res.data.set('admin', { 
-  name: admin.name || 'Admin',
-  base: admin.base || '/admin',
+  name: admin.name ?? 'Admin',
+  base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
 
 //first get the detail
-const detail = await ctx.resolve<Partial<<%extended%>>>('<%detail%>', req);
+const id = req.data<string>('<%id.foreign%>');
+const detail = await ctx.resolve<Partial<<%extended%>>>('<%detail%>', { id });
 //if there's an error, let it pass
 if (detail.code !== 200) {
   res.fromStatusResponse(detail);
@@ -199,7 +200,7 @@ if (take && !isNaN(Number(take))) {
 }
 
 //add relation id/s to filters
-filter.<%id.local%> = req.data<string>('<%id.foreign%>');
+filter.<%id.local%> = id;
 
 //search using the filters
 const search = await ctx.resolve(

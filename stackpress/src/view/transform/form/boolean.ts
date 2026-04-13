@@ -69,13 +69,28 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
+  //export type NameFormFieldProps = FieldProps;
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sFormFieldProps'),
+    type: 'FieldProps'
+  });
+
+  //export type NameFormFieldControlProps = ControlProps;
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sFormFieldControlProps'),
+    type: 'ControlProps'
+  });
+
   //export function NameFormField(props: FieldProps) {
   source.addFunction({
     isExported: true,
     name: column.name.toComponentName('%sFormField'),
-    parameters: [
-      { name: 'props', type: 'FieldProps' }
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sFormFieldProps') 
+    }],
     statements: renderCode(TEMPLATE.FIELD, {
       column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': '',
@@ -86,10 +101,11 @@ export default function generate(
   //export function NameFormFieldControl(props: ControlProps) {
   source.addFunction({
     isExported: true,
-    name: `${column.name.titleCase}FormFieldControl`,
-    parameters: [
-      { name: 'props', type: 'ControlProps' }
-    ],
+    name: column.name.toComponentName('%sFormFieldControl'),
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sFormFieldControlProps')
+    }],
     statements: renderCode(TEMPLATE.CONTROL, {
       column: column.name.toURLPath(),
       multiple: column.type.multiple ? '[]': '',
@@ -97,9 +113,6 @@ export default function generate(
         ? '=' + JSON.stringify(column.value.default) 
         : '',
       label: column.name.label,
-      required: column.type.required && !column.type.multiple
-        ? ` + '*'`
-        : '',
       component: column.name.toComponentName('%sFormField')
     })
   });
@@ -140,12 +153,13 @@ const {
   name = '<%column%><%multiple%>', 
   value<%default%>, 
   onUpdate, 
+  required,
   error 
 } = props;
 //hooks
 const { _ } = useLanguage();
 //determine label
-const label = _('<%label%>')<%required%>;
+const label = _('<%label%>') + (required ? '*' : '');
 //renderCode
 return (
   <FieldControl label={label} error={error} className={className}>

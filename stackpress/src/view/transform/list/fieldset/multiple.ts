@@ -78,23 +78,28 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
+  //export type AddressListFormatProps = {};
+  source.addTypeAlias({
+    isExported: true,
+    name: column.name.toComponentName('%sListFormatProps'),
+    type: renderCode(`{ 
+      data: <%data%>,
+      value: <%value%><%multiple%> 
+    }`, {
+      data: fieldset.name.toTypeName('%sExtended'),
+      value: columnFieldset.name.toTypeName(),
+      multiple: column.type.multiple ? '[]' : ''
+    }) 
+  });
+
   //export function AddressListFormat() {
   source.addFunction({
     isDefaultExport: true,
     name: column.name.toComponentName('%sListFormat'),
-    parameters: [ 
-      { 
-        name: 'props', 
-        type: renderCode(`{ 
-          data: <%data%>,
-          value: <%value%><%multiple%> 
-        }`, {
-          data: fieldset.name.toTypeName('%sExtended'),
-          value: columnFieldset.name.toTypeName(),
-          multiple: column.type.multiple ? '[]' : ''
-        }) 
-      } 
-    ],
+    parameters: [{ 
+      name: 'props', 
+      type: column.name.toComponentName('%sListFormatProps')
+    }],
     statements: renderCode(TEMPLATE.TABLE, {
       heads: columnFieldset.component.listFormats.toArray().map(
         column => renderCode(TEMPLATE.HEAD, {
