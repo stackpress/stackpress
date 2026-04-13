@@ -1,3 +1,6 @@
+//modules
+import { isObject } from '@stackpress/lib/Nest';
+
 /**
  * Formats an inputted value to an acceptable SQL string
  */
@@ -94,4 +97,64 @@ export function getAlias(selector: string) {
     .replace(/^_+|_+$/g, '')
     .toLowerCase()
   ).join('__');
+};
+
+/**
+ * Flattens the entire data into dot notation paths and values. 
+ * 
+ * For example:
+ * { user: { name: 'John', address: { street: '123 Main St' } } }
+ * becomes
+ * { 'user.name': 'John', 'user.address.street': '123 Main St' }
+ * 
+ * if arrays flag is true then should also flatten 
+ * arrays with the index as the key, for example:
+ * { created: [ DateString ], profile: { age: [ 20, 30 ] } }
+ * becomes
+ * { 'created.0': DateString, 'profile.age.0': 20, 'profile.age.1': 30 }
+ * 
+ * if array flag is false then should ignore 
+ * arrays and not flatten them, for example:
+ * { created: [ DateString, DateString ], profile: { age: [ 20, 30 ] } }
+ * becomes
+ * { created: [ DateString, DateString ], profile.age: [ 20, 30 ] }
+ */
+export function flatten(
+  object: Record<string, unknown>, 
+  arrays = false,
+  prefix = ''
+) {
+  const result: Record<string, unknown> = {};
+  Object.entries(object).forEach(([ key, value ]) => {
+    //append the key to the prefix
+    const path = prefix ? `${prefix}.${key}` : key;
+    //if the value is an array
+    if (Array.isArray(value)) {
+      //and if arrays flag
+      if (arrays) {
+        //then flatten each item in the array with the index as the key
+        value.forEach((item, index) => Object.assign(
+          result, 
+          //recurse
+          flatten({ [index]: item }, arrays, path)
+        ));
+        return;
+      }
+      result[path] = value;
+      return;
+    //if the value is a hash object
+    } else if (isObject(value) 
+      && typeof value === 'object' 
+      && value !== null
+    ) {
+      //recurse and assign the flattened value to the result
+      Object.assign(
+        result, 
+        flatten(value as Record<string, unknown>, arrays, path)
+      );
+      return;
+    }
+    result[path] = value;
+  });
+  return result;
 };

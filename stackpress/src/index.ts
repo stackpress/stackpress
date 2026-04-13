@@ -83,22 +83,32 @@ export type {
   //stackpress/sql
   // inquire types
   Field,
-  Relation,
   ForeignKey,
   AlterFields,
   AlterKeys,
   AlterUnqiues,
   AlterPrimaries,
   AlterForeignKeys,
+  SelectColumn,
+  JoinType,
+  Join,
+  Selector,
+  Sort,
+  OrderType,
+  Table,
+  Where,
+  WhereJson,
+  WhereBuilder,
   StrictValue,
   StrictOptValue,
   FlatValue,
+  JSONScalarValue,
   Value,
   Resolve,
   Reject,
-  Order,
-  Join,
+  JsonDialect,
   Dialect,
+  OrQueryObject,
   QueryObject,
   Transaction,
   Connection,
@@ -109,6 +119,7 @@ export type {
   StorePath,
   StoreRelation,
   StoreSelector,
+  StoreSelectOrWhere,
   StoreSelectRelation,
   StoreSelectRelationMap,
   StoreSelectFilters,
@@ -282,7 +293,16 @@ export {
   Document, 
   Server
 } from 'reactus';
-export  { jsonCompare } from '@stackpress/inquire/helpers';
+export  { 
+  joinTypes,
+  isIndex,
+  backSlashes,
+  doubleQuotes,
+  escapeBackSlashes,
+  escapeDoubleQuotes,
+  safeJsonValue,
+  jsonCompare  
+} from '@stackpress/inquire/helpers';
 export {
   camelize,
   capitalize,

@@ -2,7 +2,6 @@
 import type Engine from '@stackpress/inquire/Engine';
 //stackpress/schema
 import type { DefinitionInterfaceMap } from '../schema/types.js';
-import type ColumnInterface from '../schema/interface/ColumnInterface.js';
 //stackpress/sql
 import type { FlatValue } from '@stackpress/inquire/types';
 import type StoreInterface from './interface/StoreInterface.js';
@@ -43,24 +42,35 @@ export type StoreSelectRelationMap<
   E extends Record<string, unknown>
 > = Record<string, StoreSelectRelation<T, E>>;
 
-export type StoreSelector = {
-  //if auth.userProfile.addressLocation.references.googleId
-  //WHERE:
-  // - auth is this store's table
-  // - userProfile is a relation on the auth store
-  // - addressLocation is a json column in the related profile store
-  // - references is a key in the json column that is also an object
-  // - googleId is a key in the references object that is a scalar value
-  //THEN:
-  // - expression should be auth.userProfile.addressLocation.references.googleId
-  expression: string,
-  // - column should be [ auth, user_profile, address_location ]
-  column: string[],
-  // - json should be [ references', googleId ]
-  json: string[],
-  // - alias should be [ auth, user_profile, address_location, references, google_id ]
-  alias: string[]
-  //whatever uses this should add quotes and merge strings on their own...
+//IF: auth.userProfile.addressLocation.references.googleId
+//   |                    expression                     |
+//   |             selector           |       json       |
+//   |     parents    |    column     |       json       |
+//   |nav |   table   |    column     |       json       |    
+//WHERE:
+// - auth (and everything before it) is the Navigation that 
+//   leads to the main table.
+// - userProfile is the main Table
+// - addressLocation is the main Column (also a json column)
+// - references.googleId is the json Path
+//THEN:
+// - expression is the entire expression
+// - selector is the parents and column ( userProfile.addressLocation )
+// - parents is everything before the column
+
+export type AliasPath = {
+  //auth__user_profile__address_location__references__google_id
+  format: string,
+  //[ auth, user_profile, address_location ]
+  selector: string[],
+  //[ auth, user_profile ]
+  parents: string[],
+  //[ auth ]
+  navigation: string[],
+  //user_profile
+  table?: string,
+  //address_location
+  column: string
 };
 
 export type StorePath<
@@ -73,9 +83,41 @@ export type StorePath<
   //the relation map
   R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}>>
 > = {
-  selector: StoreSelector,
-  store: StoreInterface<T, E, C, R>,
-  column: ColumnInterface
+  //column, relation, wildcard
+  type: string,
+  //auth.userProfile.addressLocation:references.googleId
+  expression: string,
+  //[ auth, userProfile, addressLocation ]
+  selector: string[],
+  //[ auth, userProfile ]
+  parents: string[],
+  //[ auth ]
+  navigation: string[],
+  //userProfile
+  table?: string,
+  //addressLocation
+  column: string,
+  //[ references, googleId ]
+  json: string[]
+  store: StoreInterface<T, E, C, R>
+};
+
+export type StoreSelector = {
+  //auth__user_profile__address_location__references__google_id
+  alias: string,
+  //[ auth, user_profile, address_location ]
+  selector: string[],
+  //[ auth, user_profile ]
+  parents: string[],
+  //[ auth ]
+  navigation: string[],
+  //user_profile
+  table?: string,
+  //address_location
+  column: string,
+  //[ references, googleId ]
+  json: string[],
+  path: StorePath
 };
 
 export type StoreJoin = {
@@ -94,8 +136,13 @@ export type StoreJoin = {
 };
 
 export type StoreWhere = { 
-  clause: (q?: string) => string, 
+  clause: string, 
   values: FlatValue[] 
+};
+
+export type StoreSelectOrWhere = {
+  clause: string[],
+  values: FlatValue[]
 };
 
 export type StoreSelectFilters = {
@@ -140,22 +187,32 @@ export type DatabasePlugin = Engine;
 
 export type {
   Field,
-  Relation,
   ForeignKey,
   AlterFields,
   AlterKeys,
   AlterUnqiues,
   AlterPrimaries,
   AlterForeignKeys,
+  Column as SelectColumn,
+  JoinType,
+  Join,
+  Selector,
+  Sort,
+  OrderType,
+  Table,
+  Where,
+  WhereJson,
+  WhereBuilder,
   StrictValue,
   StrictOptValue,
   FlatValue,
+  JSONScalarValue,
   Value,
   Resolve,
   Reject,
-  Order,
-  Join,
+  JsonDialect,
   Dialect,
+  OrQueryObject,
   QueryObject,
   Transaction,
   Connection

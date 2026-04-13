@@ -17,7 +17,6 @@ import type {
   StoreSelectFilters,
   StoreSelector,
   StoreSelectQuery,
-  StoreWhere,
   ValueScalar
 } from '../types.js';
 export default interface StoreInterface<
@@ -48,7 +47,7 @@ export default interface StoreInterface<
   /**
    * Query builder for deleting records
    */
-  delete(query?: StoreSelectFilters, q?: string): Delete<T>;
+  delete(query?: StoreSelectFilters): Delete<T>;
 
   /**
    * Query builder for inserting records
@@ -58,31 +57,24 @@ export default interface StoreInterface<
   /**
    * Query builder for selecting records
    */
-  select<T = Select<E>>(query?: StoreSelectQuery, q?: string): T;
+  select<T = E>(query?: StoreSelectQuery): Select<T>;
 
   /**
    * Given the expression, will return SQL column selectors, 
    * json paths and aliases
    */
-  selectors(
-    expression: string|string[], 
-    tables?: string[]
-  ): StoreSelector[];
+  selectors(expression: string|string[]): StoreSelector[];
 
   /**
    * Given the expression, will return the necessary join parts
    */
-  joins(
-    expression: string|string[], 
-    joins?: string[],
-    index?: number
-  ): StoreJoin[];
+  joins(expression: string|string[]): StoreJoin[];
 
   /**
    * Given the expression will traverse 
    * through stores and collect store and column instances
    */
-  path(expression: string, path?: StorePath[]): StorePath[];
+  paths(expression: string, paths?: StorePath[]): StorePath[];
 
   /**
    * Serializes value, then scalarizes it, then assigns 
@@ -99,15 +91,11 @@ export default interface StoreInterface<
   /**
    * Query builder for updating records
    */
-  update(
-    query: StoreSelectFilters, 
-    input: Partial<T>, 
-    q?: string
-  ): Update<T>;
+  update(query: StoreSelectFilters, input: Partial<T>): Update<T>;
 
   /**
    * Helper method for generating the where clause and values for 
    * a query based on the provided filters and the store's schema.
    */
-  where(builder: WhereBuilder, query?: StoreSelectFilters): StoreWhere;
+  where(builder: WhereBuilder, query?: StoreSelectFilters): WhereBuilder;
 }

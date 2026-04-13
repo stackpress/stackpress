@@ -31,7 +31,7 @@ export default abstract class AbstractActions<
    * Returns the count of records that match the provided filters.
    */
   public async count(query: StoreSelectFilters & { columns?: string[] }) {
-    const count = this.store.select(query, this.engine.dialect.q);
+    const count = this.store.select(query);
     count.engine = this.engine;
     const results = await count.select('COUNT(*) AS total');
     return results?.[0]?.total || 0;
@@ -45,7 +45,7 @@ export default abstract class AbstractActions<
     const rows = await this.findAll(query);
     //if there are no rows, it doesn't make sense to delete...
     if (rows.length > 0) {
-      const remove = this.store.delete(query, this.engine.dialect.q);
+      const remove = this.store.delete(query);
       remove.engine = this.engine;
       //dont rely on native delete... 
       // pgsql returns different things than sqlite and mysql....
@@ -71,48 +71,24 @@ export default abstract class AbstractActions<
     //extract params
     //valid columns:
     // - createdAt
-    // - auth.profileId
-    // - auth.userProfile.emailAddress
-    // - auth.userProfile.addressLocation.streetName
-    // - auth.userProfile.addressLocation.*
-    // - auth.userProfile.*
+    // - userProfile.createdAt
+    // - auth.userProfile.addressLocation:references.googleId
+    // - userProfile.*
     // - *
     const { columns = [ '*' ] } = query;
     //get all selectors based on the provided columns
     //example selector:
-    // - column: [ references', googleId ]
-    // - json: [ references', googleId ],
-    // - alias [ auth, user_profile, address_location, references, google_id ]
+    // - alias: auth__user_profile__address_location__references__google_id
+    // - selector: [ auth, user_profile, address_location ]
+    // - parents: [ auth, user_profile ]
+    // - navigation: [ auth ]
+    // - table: user_profile
+    // - column: address_location
+    // - json: [ references, googleId ]
+    // - path: StorePath
     const selectors = this.store.selectors(columns);
     //now get the select query builder
-    //NOTE: the store select method will formulate all the joins, where 
-    // and other select parts based on the provided query and the 
-    // store's schema and relations, so we just need to pass the query 
-    // (and columns) and let it handle the rest.
-    const select = this.store.select({ 
-      ...query, 
-      //so what we are doing here is converting the above column examples
-      //to the actual SQL columns (with proper quotes and aliases) that 
-      //will be used in the select builder.
-      columns: selectors.map(selector => {
-        const q = this.engine.dialect.q;
-        //selector.column will look like: 
-        // [ auth, user_profile, address_location ]
-        //selector.alias will look like: 
-        // [ auth, user_profile, address_location, references, google_id ]
-        //selector.json will look like:
-        // [ references', googleId ]
-        //NOTE: selector.json is not supported for selectors at the 
-        // moment because we need to know the sql engine format in order
-        // to formulate the correct json format...
-        return [
-          //"auth"."user_profile"."address_location"
-          `${q}${selector.column.join(`${q}.${q}`)}${q}`,
-          //"auth__user_profile__address_location"
-          `${q}${selector.alias.join('__')}${q}`
-        ].join(' AS ')
-      }) 
-    }, this.engine.dialect.q);
+    const select = this.store.select(query);
     select.engine = this.engine;
     //remote call and get the raw results
     const results = await select;
@@ -121,23 +97,13 @@ export default abstract class AbstractActions<
       //the nest object will help us make a nested object result set 
       // to return instead of a flat one...
       const nest = new Nest();
-      //get the last paths for each selector
-      const paths = selectors.map(selector => {
-        const path = this.store.path(selector.expression);
-        return path.length > 0 ? path[path.length - 1] : undefined;
-      });
       //ex. created_at: "2021-01-01T00:00:00.000Z"
       //ex. user__email_address: "john@doe.com"
       //ex. user__address__street_name: "123 Main St"
       Object.entries(row).forEach(([ alias, value ]) => {
-        //selector.alias will look like: 
-        // [ auth, user_profile, address_location, references, google_id ]
-        //so we just gotta merge with __ in order to compare
-        const path = paths.find(
-          path => path && path.selector.alias.join('__') === alias
-        );
+        const selector = selectors.find(selector => selector.alias === alias);
         //if no selector was found
-        if (!path) {
+        if (!selector) {
           //we can use heuristics to form the object key path to make 
           // and assign into a nested object, but we wont be able to 
           // unserialize the value without the selector's column 
@@ -154,14 +120,34 @@ export default abstract class AbstractActions<
             value
           );
         }
-        //if we are here, then a selector was found...
-        const column = path.column;
-        nest.withPath.set(
-          path.selector.expression,
-          //unknown to any because of the dynamic nature of 
-          //the selectors and columns, but it should be correct
-          column.unserialize(value as any, true)
-        );
+        //extract column and store from the selector path
+        const { column, store: { columns, relations } } = selector.path;
+        //from: auth.userProfile.addressLocation:references.googleId
+        //  to: auth.userProfile.addressLocation.references.googleId
+        const keys = selector.path.expression.replaceAll(':', '.');
+        //if we are here, then a path was found...
+        //if column is a store column (as opposed to a relation column)
+        if (column in columns) {
+          //then we can unserialize the value
+          const unserialized = columns[column].unserialize(
+            //unknown to any because of the dynamic nature of 
+            //the selectors and columns, but it should be correct
+            value as any, 
+            true
+          );
+          //add to the nest
+          nest.withPath.set(keys, unserialized);
+        } else if (column in relations) {
+          //then we can unserialize the value
+          const unserialized = relations[column].store.unserialize(
+            //unknown to any because of the dynamic nature of 
+            //the selectors and columns, but it should be correct
+            value as Record<string, any>, 
+            true
+          );
+          //add to the nest
+          nest.withPath.set(keys, unserialized);
+        }
       });
       return nest.get<E>();
     });
