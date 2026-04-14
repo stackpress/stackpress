@@ -130,10 +130,6 @@
       "import": "./esm/language/index.js"
     },
 
-    "./AbstractSchema": {
-      "require": "./cjs/schema/interface/AbstractSchema.js",
-      "import": "./esm/schema/interface/AbstractSchema.js"
-    },
     "./ColumnInterface": {
       "require": "./cjs/schema/interface/ColumnInterface.js",
       "import": "./esm/schema/interface/ColumnInterface.js"
@@ -499,7 +495,6 @@
       "language/types": [ "./cjs/language/types.d.ts" ],
       "language": [ "./cjs/language/index.d.ts" ],
 
-      "AbstractSchema": [ "./cjs/schema/interface/AbstractSchema.d.ts" ],
       "ColumnInterface": [ "./cjs/schema/interface/ColumnInterface.d.ts" ],
       "DefinitionInterface": [ "./cjs/schema/interface/DefinitionInterface.d.ts" ],
       "SchemaInterface": [ "./cjs/schema/interface/SchemaInterface.d.ts" ],

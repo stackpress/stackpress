@@ -265,7 +265,10 @@ export {
   AssertionDictionary,
   ComponentDictionary,
   dictionary,
-  Schema
+  Schema,
+  ColumnInterface,
+  DefinitionInterface,
+  SchemaInterface
 } from './schema/index.js';
 
 export {

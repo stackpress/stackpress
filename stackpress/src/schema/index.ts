@@ -89,7 +89,6 @@ import FieldsetName from './fieldset/FieldsetName.js';
 import FieldsetType from './fieldset/FieldsetType.js';
 import FieldsetValue from './fieldset/FieldsetValue.js';
 
-import AbstractSchema from './interface/AbstractSchema.js';
 import ColumnInterface from './interface/ColumnInterface.js';
 import DefinitionInterface from './interface/DefinitionInterface.js';
 import SchemaInterface from './interface/SchemaInterface.js';
@@ -126,7 +125,6 @@ export {
   FieldsetName,
   FieldsetType,
   FieldsetValue,
-  AbstractSchema,
   ColumnInterface,
   DefinitionInterface,
   SchemaInterface,
