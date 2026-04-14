@@ -88,8 +88,7 @@ export {
   storeSelectorToSqlSelector
 } from './helpers.js';
 
-import AbstractActions from './interface/AbstractActions.js';
 import ActionsInterface from './interface/ActionsInterface.js';
 import StoreInterface from './interface/StoreInterface.js';
 
-export type { AbstractActions, ActionsInterface, StoreInterface };
+export type { ActionsInterface, StoreInterface };

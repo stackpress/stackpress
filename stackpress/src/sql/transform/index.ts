@@ -8,7 +8,7 @@ import Schema from '../../schema/Schema.js';
 //stackpress/sql
 import generateEvents from './events/index.js';
 import generateStore from './store/index.js';
-import generateActions from './actions.js';
+import generateActions from './actions/index.js';
 import generateScripts from './scripts.js';
 import generateTypes from './types.js';
 import generateActionsTests from './tests/actions.js';

@@ -326,11 +326,6 @@
       "import": "./esm/session/index.js"
     },
     
-    
-    "./sql/AbstractActions": {
-      "require": "./cjs/sql/interface/AbstractActions.js",
-      "import": "./esm/sql/interface/AbstractActions.js"
-    },
     "./sql/ActionsInterface": {
       "require": "./cjs/sql/interface/ActionsInterface.js",
       "import": "./esm/sql/interface/ActionsInterface.js"
@@ -556,7 +551,6 @@
       "session/types": [ "./cjs/session/types.d.ts" ],
       "session": [ "./cjs/session/index.d.ts" ],
       
-      "sql/AbstractActions": [ "./cjs/sql/interface/AbstractActions.d.ts" ],
       "sql/ActionsInterface": [ "./cjs/sql/interface/ActionsInterface.d.ts" ],
       "sql/StoreInterface": [ "./cjs/sql/interface/StoreInterface.d.ts" ],
       "sql/plugin": [ "./cjs/sql/plugin.d.ts" ],
