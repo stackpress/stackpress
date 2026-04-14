@@ -290,14 +290,14 @@ try {
         } else if (mode === 'update') {
           <%#ids.length%>
             if (<%update%>) {
-              const filter = { 
+              const eq = { 
                 <%#ids%>
                   <%column%>: input.<%column%>,
                 <%/ids%> 
               };
-              const exists = await this.find({ filter });
+              const exists = await this.find({ eq });
               if (exists) {
-                const rows = await this.update({ filter }, input);
+                const rows = await this.update({ eq }, input);
                 results.push({ 
                   code: 200, 
                   status: 'OK', 
@@ -314,10 +314,10 @@ try {
               && input.<%column%> !== null
               && input.<%column%> !== ''
             ) {
-              const filter = { <%column%>: input.<%column%> };
-              const exists = await this.find({ filter });
+              const eq = { <%column%>: input.<%column%> };
+              const exists = await this.find({ eq });
               if (exists) {
-                const rows = await this.update({ filter }, input);
+                const rows = await this.update({ eq }, input);
                 results.push({ 
                   code: 200, 
                   status: 'OK', 
@@ -373,7 +373,7 @@ const errors = this.store.assert(sanitized, true) || {} as <%assert%>;
   ) {
     //check to see if exists already
     const exists = await this.find({ 
-      filter: { <%column%>: sanitized.<%column%> } 
+      eq: { <%column%>: sanitized.<%column%> } 
     });
     //if it does exist
     if (exists) {
@@ -404,14 +404,14 @@ if (rows.length > 0) {
 //must be mysql or sqlite...
 <%#oneid%>
   if (this.engine.connection.lastId) {
-    const filter = { <%oneid%>: this.engine.connection.lastId };
-    return await this.find({ filter }) || input as unknown as <%type%>;
+    const eq = { <%oneid%>: this.engine.connection.lastId };
+    return await this.find({ eq }) || input as unknown as <%type%>;
   }
   return input as unknown as <%type%>;
 <%/oneid%>
 <%#multid%>
-  const filter = { <%#ids%><%column%>: input.<%column%>!, <%/ids%> };
-  return await this.find({ filter }) || input as unknown as <%type%>;
+  const eq = { <%#ids%><%column%>: input.<%column%>!, <%/ids%> };
+  return await this.find({ eq }) || input as unknown as <%type%>;
 <%/multid%>
 <%#noid%>
   return input as unknown as <%type%>;
@@ -458,7 +458,7 @@ const errors = this.store.assert(sanitized) || {} as <%assert%>;
     ) {
       //check to see if exists already
       const exists = await this.findAll({ 
-        filter: { <%column%>: sanitized.<%column%> } 
+        eq: { <%column%>: sanitized.<%column%> } 
       });
       //if it does exist
       if (exists.length > 0) {
@@ -486,7 +486,7 @@ if (Object.keys(errors).length > 0) {
 const rows = await this.findAll(query);
 //if there are no rows, it doesn't make sense to update...
 if (rows.length > 0) {
-  const update = this.store.update(query, input, this.engine.dialect.q);
+  const update = this.store.update(query, input);
   update.engine = this.engine;
   //dont rely on native update... 
   // pgsql returns different things than sqlite and mysql....
@@ -501,12 +501,12 @@ return rows.map(row => ({ ...row, ...sanitized })) as <%type%>[];`,
 UPSERT:
 `<%#ids.length%>
   if (<%update%>) {
-    const filter = { 
+    const eq = { 
       <%#ids%>
         <%column%>: input.<%column%>,
       <%/ids%> 
     };
-    const rows = await this.update({ filter }, input);
+    const rows = await this.update({ eq }, input);
     return rows[0] || null;
   }
 <%/ids.length%>
@@ -516,10 +516,10 @@ UPSERT:
     && input.<%column%> !== null
     && input.<%column%> !== ''
   ) {
-    const filter = { <%column%>: input.<%column%> };
-    const exists = await this.find({ filter });
+    const eq = { <%column%>: input.<%column%> };
+    const exists = await this.find({ eq });
     if (exists) {
-      const rows = await this.update({ filter }, input);
+      const rows = await this.update({ eq }, input);
       return rows[0] || null;
     }
   }

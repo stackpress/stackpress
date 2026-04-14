@@ -26,14 +26,13 @@ export default function generate(
   //------------------------------------------------------------------//
   // Store Methods
 
-  //public update(values: Partial<Place>, query: StoreSelectFilters = {}, q = '"') {}
+  //public update(values: Partial<Place>, query: StoreSelectFilters = {}) {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'update',
     parameters: [
       { name: 'query', type: 'StoreSelectFilters', initializer: '{}' }, 
-      { name: 'input', type: model.name.toTypeName('Partial<%s>') },
-      { name: 'q', initializer: `'"'` }
+      { name: 'input', type: model.name.toTypeName('Partial<%s>') }
     ],
     statements: renderCode(TEMPLATE.UPDATE, {
       type: model.name.toTypeName(),
@@ -56,15 +55,11 @@ UPDATE:
 // relative SQL column names (snake case)
 const values = this.scalarize(input);
 
-//extract params
-let { q: keywords, filter = {}, span = {} } = query;
 //make the update builder
 const update = new Update<<%type%>>(this.table);
 //where
-const where = this.where({ q: keywords, filter, span }, q);
-if (where.clause) {
-  update.where(where.clause, where.values);
-}
+this.where(update, query);
+
 return update.set(values);`,
 
 };

@@ -9,7 +9,6 @@ import {
 } from '../../../schema/transform/helpers.js';
 //stackpress/sql
 import generateAlter from './alter.js';
-import generateCount from './count.js';
 import generateCreate from './create.js';
 import generateDelete from './delete.js';
 import generateInsert from './insert.js';
@@ -42,30 +41,39 @@ export default function generate(directory: Directory, model: Model) {
   // Import Stackpress
 
   //import type { 
-  //  StoreSelectColumnPath, 
+  //  StoreJoin,
+  //  StorePath,
   //  StoreSelectFilters,
-  //  StoreSelectJoinMap, 
+  //  StoreSelector,
+  //  StoreSelectOrWhere,
   //  StoreSelectQuery,
   //  ValuePrimitive,
-  //  ValueScalar
+  //  ValueScalar,
+  //  JSONScalarValue
   //} from 'stackpress/sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/sql/types',
     namedImports: [ 
-      'StoreSelectColumnPath',
+      ...(relations.size > 0 ? [ 'StoreJoin' ] : []),
+      'StorePath',
       'StoreSelectFilters',
-      'StoreSelectJoinMap',
+      'StoreSelector',
+      'StoreSelectOrWhere',
       'StoreSelectQuery',
       'ValuePrimitive',
-      'ValueScalar'
+      'ValueScalar',
+      'JSONScalarValue'
     ]
   });
   //import { getAlias, toSqlString, ... } from 'stackpress/sql/helpers';
   source.addImportDeclaration({
     moduleSpecifier: 'stackpress/sql/helpers',
     namedImports: [ 
-      'getAlias',
+      ...(relations.size > 0 ? [ 'getAlias' ] : []),
+      'flatten',
+      'storePathToAlias', 
+      'storeSelectorToSqlSelector',
       ...model.columns.findValue(
         column => stringable.includes(column.type.name)
       ) ? [ 'toSqlString' ] : [],
@@ -157,19 +165,17 @@ export default function generate(directory: Directory, model: Model) {
       }).toArray()
     })
   });
-  //public count(query: StoreSearchParams = {}, q = '"') {}
-  generateCount(model, definition);
   //public alter() {}
   generateAlter(source, definition);
   //public create() {}
   generateCreate(source, model, definition);
-  //public delete(query: StoreSearchParams = {}, q = '"') {}
+  //public delete(query: StoreSearchParams = {}) {}
   generateDelete(source, model, definition);
   //public insert(input: Partial<Place>) {}
   generateInsert(source, model, definition);
-  //public select(query: StoreSearchParams = {}, q = '"') {}
+  //public select(query: StoreSearchParams = {}) {}
   generateSelect(source, model, definition);
-  //public update(query: StoreSearchParams = {}, input: Partial<Place>, q = '"') {}
+  //public update(query: StoreSearchParams = {}, input: Partial<Place>) {}
   generateUpdate(source, model, definition);
   //public scalarize(values: Record<string, unknown>) {}
   definition.addMethod({

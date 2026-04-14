@@ -31,7 +31,7 @@ export default abstract class AbstractActions<
    * Returns the count of records that match the provided filters.
    */
   public async count(query: StoreSelectFilters & { columns?: string[] }) {
-    const count = this.store.select(query);
+    const count = this.store.select<{ total: number }>(query);
     count.engine = this.engine;
     const results = await count.select('COUNT(*) AS total');
     return results?.[0]?.total || 0;
