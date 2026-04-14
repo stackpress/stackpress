@@ -76,7 +76,9 @@ export {
   toSqlDate,
   toSqlInteger,
   toSqlFloat,
-  getAlias
+  getAlias,
+  storePathToAlias,
+  storeSelectorToSqlSelector
 } from './helpers.js';
 
 import AbstractActions from './interface/AbstractActions.js';

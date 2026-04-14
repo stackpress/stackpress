@@ -147,13 +147,16 @@ export type StoreSelectOrWhere = {
 
 export type StoreSelectFilters = {
   q?: string,
-  filter?: Record<string, ValueScalar>,
-  span?: Record<string, ValueScalar[]>
+  eq?: Record<string, ValueScalar>,
+  ne?: Record<string, ValueScalar>,
+  ge?: Record<string, ValueScalar>,
+  le?: Record<string, ValueScalar>,
+  has?: Record<string, ValueScalar>,
+  hasnt?: Record<string, ValueScalar>
 };
 
 export type StoreSelectQuery = StoreSelectFilters & {
   columns?: string[],
-  include?: string[],
   sort?: Record<string, string>,
   skip?: number,
   take?: number

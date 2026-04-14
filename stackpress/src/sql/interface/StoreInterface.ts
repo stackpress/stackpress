@@ -68,7 +68,7 @@ export default interface StoreInterface<
   /**
    * Given the expression, will return the necessary join parts
    */
-  joins(expression: string|string[]): StoreJoin[];
+  joins(query: StoreSelectQuery): StoreJoin[];
 
   /**
    * Given the expression will traverse 

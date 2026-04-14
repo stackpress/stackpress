@@ -124,7 +124,7 @@ export async function signin(
   //get form body
   const results = await authActions.find({
     columns: [ '*', 'profile.*' ],
-    filter: { type, token: String(input[type]) }
+    eq: { type, token: String(input[type]) }
   }) as AuthExtended | null;
   //if null (no user found)
   if (results === null) {
@@ -148,7 +148,7 @@ export async function signin(
   }
   //update consumed
   await authActions.update(
-    { filter: { id: results.id } }, 
+    { eq: { id: results.id } }, 
     { consumed: new Date() }
   );
   return results;

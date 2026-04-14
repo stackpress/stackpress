@@ -1,5 +1,7 @@
 //modules
 import { isObject } from '@stackpress/lib/Nest';
+//stackpress/sql
+import type { StorePath, StoreSelector } from './types.js';
 
 /**
  * Formats an inputted value to an acceptable SQL string
@@ -84,22 +86,6 @@ export function toSqlFloat(value: any, strict = false) {
 };
 
 /**
- * Converts dot format to snake case (for an SQL query)
- * used by `getColumnInfo()` above
- */
-export function getAlias(selector: string) {
-  return selector.split('.').map(part => part.trim()
-    //replace "someString" to "some_string"
-    .replace(/([a-z])([A-Z0-9])/g, '$1_$2')
-    //replace multiple lines with a single lines
-    .replace(/-{2,}/g, '_')
-    //trim lines from the beginning and end of the string
-    .replace(/^_+|_+$/g, '')
-    .toLowerCase()
-  ).join('__');
-};
-
-/**
  * Flattens the entire data into dot notation paths and values. 
  * 
  * For example:
@@ -158,3 +144,89 @@ export function flatten(
   });
   return result;
 };
+
+/**
+ * Converts dot format to snake case (for an SQL query)
+ * used by `getColumnInfo()` above
+ */
+export function getAlias(selector: string) {
+  return selector.split('.').map(part => part.trim()
+    //replace "someString" to "some_string"
+    .replace(/([a-z])([A-Z0-9])/g, '$1_$2')
+    //replace multiple lines with a single lines
+    .replace(/-{2,}/g, '_')
+    //trim lines from the beginning and end of the string
+    .replace(/^_+|_+$/g, '')
+    .toLowerCase()
+  ).join('__');
+};
+
+/**
+ * Formats a StorePath to an alias format for SQL queries. For example:
+ * 
+ * {
+ *   selector: [ 'auth', 'user_profile' ],
+ *   parents: [ 'auth' ],
+ *   navigation: [ 'auth', 'user_profile', 'address_location' ],
+ *   table: 'user_profile',
+ *   column: 'address_location',
+ *   json: [ 'references', 'google_id' ]
+ * }
+ * becomes
+ * {
+ *   format: 'auth__user_profile__address_location__references__google_id',
+ *   selector: [ 'auth', 'user_profile' ],
+ *   parents: [ 'auth' ],
+ *   navigation: [ 'auth', 'user_profile', 'address_location' ],
+ *   table: 'user_profile',
+ *   column: 'address_location'
+ * }
+ */
+export function storePathToAlias(path: StorePath) {
+  return {
+    //auth__user_profile__address_location__references__google_id
+    format: [ ...path.selector, ...path.json ].map(getAlias).join('__'),
+    //[ auth, user_profile, address_location ]
+    selector: [ ...path.selector ].map(getAlias),
+    //[ auth, user_profile ]
+    parents: [ ...path.parents ].map(getAlias),
+    //[ auth ]
+    navigation: [ ...path.navigation ].map(getAlias),
+    //user_profile
+    table: path.table ? getAlias(path.table) : undefined,
+    //address_location
+    column: getAlias(path.column) 
+  };
+};
+
+/**
+ * Formats a StoreSelector to an SQL selector string. For example:
+ * {
+ *   parents: [ 'auth' ],
+ *   column: 'address_location',
+ *   json: [ 'references', 'google_id' ]
+ * }
+ * becomes
+ * auth.address_location:references.google_id 
+ */
+export function storeSelectorToSqlSelector(selector: StoreSelector) {
+  //auth__user_profile
+  const table = selector.parents.join('__');
+  //address_location
+  const column = selector.column;
+  //references.googleId
+  const json = selector.json.join('.');
+  //if no column, skip
+  if (!column) return null;
+  return table.length > 0 && json.length > 0
+    //auth__user_profile.address_location:references.googleId
+    ? `${table}.${column}:${json}`
+    : table.length > 0
+    //auth__user_profile.address_location
+    ? `${table}.${column}`
+    : json.length > 0
+    //address_location:references.googleId
+    ? `${column}:${json}`
+    //address_location
+    : column;
+}
