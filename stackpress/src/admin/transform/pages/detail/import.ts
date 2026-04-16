@@ -111,14 +111,14 @@ if (detail.code !== 200) {
   res.fromStatusResponse(detail);
   return;
 }
-<%#hashes.length%>
+<%#if hashes.length%>
   //remove hashed data
   <%#hashes%>
     if (typeof detail.results?.<%column%> !== 'undefined') {
       delete detail.results.<%column%>;
     }
   <%/hashes%>
-<%/hashes.length%>
+<%/if%>
 
 //if form submitted
 if (req.method === 'POST') {

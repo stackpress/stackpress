@@ -257,7 +257,7 @@ if (alias.parent.length > 0) {
 } else {
   alias.parent = this.table + '.';
 }
-<%#relations%>
+<%#if relations%>
   //model: product -> group
   const relation = this.relations[
     selectors[index] as keyof typeof this.relations
@@ -277,7 +277,7 @@ if (alias.parent.length > 0) {
     //return the join info
     return relation.store.getColumnJoins(selector, index + 1, joins);
   }
-<%/relations%>
+<%/if%>
 return joins;`,
 
 GET_COLUMN_PATH:
@@ -285,7 +285,7 @@ GET_COLUMN_PATH:
 const selectors = selector.split(".");
 //ex. user or address or streetName
 const column = selectors[0];
-<%^relations%>
+<%#unless relations%>
 //if no column (this would happen if the column is not in the schema)
 if (!(column in this.columns)) {
   //return an empty array signifying that the selector is invalid
@@ -295,8 +295,7 @@ if (!(column in this.columns)) {
 } else if (selectors.length === 1) {
   return path.concat([{ type: 'column', column, store: this }]);
 }
-<%/relations%>
-<%#relations%>
+<%else%>
   if (column in this.columns) {
     if (selectors.length === 1) {
       return path.concat([{ type: 'column', column, store: this }]);
@@ -314,7 +313,7 @@ if (!(column in this.columns)) {
       path.concat([{ type: 'relation', column, store: this }])
     );
   }
-<%/relations%>
+<%/unless%>
 //return an empty array signifying that the selector is invalid
 return [];`,
 
@@ -327,7 +326,7 @@ if (column === '*') {
     column => \`\${prefix}\${column}\`
   );
 }
-<%#relations%>
+<%#if relations%>
   const path = column.split('.');
   if (path.length > 1 && path[0] in this.relations) {
     const relation = path[0] as keyof typeof this.relations;
@@ -336,7 +335,7 @@ if (column === '*') {
       [ ...prefixes, path[0] ]
     );
   }
-<%/relations%>
+<%/if%>
 if (prefixes.length > 0) {
   return [ \`\${prefixes.join('.')}.\${column}\` ];
 }
@@ -344,32 +343,31 @@ return [ column ];`,
 
 WHERE:
 `//extract params
-<%#searchable%>
+<%#if searchable%>
   let { q: keywords, filter = {}, span = {} } = query;
-<%/searchable%>
-<%^searchable%>
+<%else%>
   let { filter = {}, span = {} } = query;
-<%/searchable%>
+<%/if%>
 const where: string[] = [];
 const values: FlatValue[] = [];
-<%#searchable%>
+<%#if searchable%>
   //searchable
   if (keywords) {
     where.push(\`(\${[
-      <%#searchables%>
+      <%#each searchables%>
         '<%column%> ILIKE ?',
-      <%/searchables%>
+      <%/each%>
     ].join(' OR ')})\`);
     values.push(...[
-      <%#searchables%>
+      <%#each searchables%>
         \`%\${keywords}%\`,
-      <%/searchables%>
+      <%/each%>
     ]);
   }
-<%/searchable%>
+<%/if%>
 
 //default active value
-<%#active%>
+<%#if active%>
   const name = '<%active%>';
   if (typeof filter[name] === 'undefined') {
     filter = { ...filter, [name]: true };
@@ -377,7 +375,7 @@ const values: FlatValue[] = [];
     filter = { ...filter, [name]: -1 };
     delete filter[name];
   }
-<%/active%>
+<%/if%>
 //filters
 Object.entries(filter).forEach(([ key, value ]) => {
   const info = this.getColumnInfo(key).last;

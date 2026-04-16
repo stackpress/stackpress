@@ -42,11 +42,11 @@ SERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#if nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/if%>
 //if value is a date
 if (value instanceof Date) {
   return [
@@ -75,11 +75,11 @@ UNSERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#if nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/if%>
 //if value is a date
 if (value instanceof Date) {
   return value;

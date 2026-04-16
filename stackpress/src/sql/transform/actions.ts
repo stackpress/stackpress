@@ -288,12 +288,12 @@ try {
             total: 1
           });
         } else if (mode === 'update') {
-          <%#ids.length%>
+          <%#if ids.length%>
             if (<%update%>) {
               const filter = { 
-                <%#ids%>
+                <%#each ids%>
                   <%column%>: input.<%column%>,
-                <%/ids%> 
+                <%/each%> 
               };
               const exists = await this.find({ filter });
               if (exists) {
@@ -307,8 +307,8 @@ try {
                 continue;
               }
             }
-          <%/ids.length%>
-          <%#uniques%>
+          <%/if%>
+          <%#each uniques%>
             if (
               typeof input.<%column%> !== 'undefined'
               && input.<%column%> !== null
@@ -327,7 +327,7 @@ try {
                 continue;
               }
             }
-          <%/uniques%>
+          <%/each%>
           results.push({ error: 'ID or unique field is required for update mode' });
         }
       } catch (e) {
@@ -364,7 +364,7 @@ const sanitized = removeUndefined(defined);
 //collect errors, if any
 const errors = this.store.assert(sanitized, true) || {} as <%assert%>;
 
-<%#exists%>
+<%#each exists%>
   //if there's a <%column%> value
   if (
     typeof sanitized.<%column%> !== 'undefined'
@@ -381,7 +381,7 @@ const errors = this.store.assert(sanitized, true) || {} as <%assert%>;
       errors.<%column%> = 'Already exists';
     }
   }
-<%/exists%>
+<%/each%>
 
 //if there were errors
 if (Object.keys(errors).length > 0) {
@@ -402,36 +402,35 @@ if (rows.length > 0) {
   return this.store.unserialize(rows[0]);
 }
 //must be mysql or sqlite...
-<%#oneid%>
+<%#if oneid%>
   if (this.engine.connection.lastId) {
     const filter = { <%oneid%>: this.engine.connection.lastId };
     return await this.find({ filter }) || input as unknown as <%type%>;
   }
   return input as unknown as <%type%>;
-<%/oneid%>
-<%#multid%>
-  const filter = { <%#ids%><%column%>: input.<%column%>!, <%/ids%> };
+<%/if%>
+<%#if multid%>
+  const filter = { <%#each ids%><%column%>: input.<%column%>!, <%/each%> };
   return await this.find({ filter }) || input as unknown as <%type%>;
-<%/multid%>
-<%#noid%>
+<%/if%>
+<%#if noid%>
   return input as unknown as <%type%>;
-<%/noid%>
+<%/if%>
 `,
 
 //public async remove(query: StoreSelectFilters) {}
 REMOVE:
-`<%#active%>
+`<%#if active%>
   return await this.update(query, { <%column%>: false });
-<%/active%>
-<%^active%>
+<%else%>
   return await this.delete(query);
-<%/active%>`,
+<%/if%>`,
 
 //public async restore(query: StoreSelectFilters) {}
 RESTORE:
-`<%#active%>
+`<%#if active%>
   return await this.update(query, { <%column%>: true });
-<%/active%>`,
+<%/if%>`,
 
 //public async update(query: StoreSelectFilters, input: Partial<Profile>) {}
 UPDATE:
@@ -445,11 +444,11 @@ const sanitized = removeUndefined(defined);
 //collect errors, if any
 const errors = this.store.assert(sanitized) || {} as <%assert%>;
 
-<%#uniques%>
+<%#if uniques%>
   //we need to check if the existing record 
   // is the same as the one about to be updated
   const queue = await this.findAll(query);
-  <%#exists%>
+  <%#each exists%>
     //if there's a <%column%> value
     if (
       typeof sanitized.<%column%> !== 'undefined'
@@ -471,8 +470,8 @@ const errors = this.store.assert(sanitized) || {} as <%assert%>;
         }
       }
     }
-  <%/exists%>
-<%/uniques%>
+  <%/each%>
+<%/if%>
 
 //if there were errors
 if (Object.keys(errors).length > 0) {
@@ -499,17 +498,17 @@ return rows.map(row => ({ ...row, ...sanitized })) as <%type%>[];`,
 
 //public async upsert(input: Partial<Profile>) {}
 UPSERT:
-`<%#ids.length%>
+`<%#if ids.length%>
   if (<%update%>) {
     const filter = { 
-      <%#ids%>
+      <%#each ids%>
         <%column%>: input.<%column%>,
-      <%/ids%> 
+      <%/each%> 
     };
     const rows = await this.update({ filter }, input);
     return rows[0] || null;
   }
-<%/ids.length%>
+<%/if%>
 <%#uniques%>
   if (
     typeof input.<%column%> !== 'undefined'

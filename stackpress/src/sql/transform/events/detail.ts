@@ -114,7 +114,7 @@ if (!engine) return;
 const filter = req.data.path<StoreSelectFilters["filter"]>('filter', {});
 
 //check for id/s
-<%#ids%>
+<%#each ids%>
   //get id
   filter.<%column%> = req.data<<%type%>>('<%column%>');
   //let it naturally 404 if invalid id
@@ -126,7 +126,7 @@ const filter = req.data.path<StoreSelectFilters["filter"]>('filter', {});
     res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
     return;
   }
-<%/ids%>
+<%/each%>
 
 const selectors = req.data<string[]>('columns');
 const columns = Array.isArray(selectors) && selectors.every(

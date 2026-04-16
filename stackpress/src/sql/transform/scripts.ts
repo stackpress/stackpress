@@ -117,39 +117,39 @@ export const TEMPLATE = {
 
 ACTIONS:
 `return {
-  <%#actions%>
+  <%#each actions%>
     <%name%>: new <%action%>(engine),
-  <%/actions%>
+  <%/each%>
 };`,
 
 INSTALL:
 `const action = actions(engine);
 
-<%#actions%>
+<%#each actions%>
   await action.<%name%>.install();
-<%/actions%>`,
+<%/each%>`,
 
 PURGE:
 `const action = actions(engine);
 
-<%#actions%>
+<%#each actions%>
   await action.<%name%>.purge(true);
-<%/actions%>`,
+<%/each%>`,
 
 UNINSTALL:
 `const action = actions(engine);
 
-<%#actions%>
+<%#each actions%>
   await action.<%name%>.uninstall();
-<%/actions%>`,
+<%/each%>`,
 
 UPGRADE:
 `const action = actions(engine);
 
-<%#actions%>
+<%#each actions%>
   if ('<%name%>' in updates) {
     await action.<%name%>.upgrade(updates.<%name%>);
   }
-<%/actions%>`,
+<%/each%>`,
 
 };

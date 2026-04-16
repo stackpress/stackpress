@@ -422,14 +422,14 @@ return (
       <i className="icon fas fa-fw fa-filter"></i>
     </Button>
     <div className="form">
-      <%#searchable%>
+      <%#if searchable%>
         <form>
           <Input className="input" name="q" />
           <Button className="submit" type="submit">
             <i className="icon fas fa-fw fa-search"></i>
           </Button>
         </form>
-      <%/searchable%>
+      <%/if%>
     </div>
     {can({ method: 'GET', route: <%export%> }) ?(
       <Button info className="action" href="export">
@@ -474,33 +474,30 @@ SEARCH_RESULTS_TABLE_HEAD:
 SEARCH_RESULTS_COLUMN_FILTERABLE:
 `<Table.Col noWrap addClassName="results-value <%align%> filterable">
   <span onClick={() => filter('filter[<%column%>]', row.<%column%>)}>
-    <%#required%>
+    <%#if required%>
       <<%component%> data={row} value={row.<%column%>} />
-    <%/required%>
-    <%^required%>
+    <%else%>
       {row.<%column%> ? (<<%component%> data={row} value={row.<%column%>} />) : ''}
-    <%/required%>
+    <%/if%>
   </span>
 </Table.Col>`,
 
 SEARCH_RESULTS_COLUMN:
 `<Table.Col noWrap addClassName="results-value <%align%>">
-  <%#required%>
+  <%#if required%>
     <<%component%> data={row} value={row.<%column%>} />
-  <%/required%>
-  <%^required%>
+  <%else%>
     {row.<%column%> ? (<<%component%> data={row} value={row.<%column%>} />) : ''}
-  <%/required%>
+  <%/if%>
 </Table.Col>`,
 
 SEARCH_RESULTS_BODY:
-`<%#sortable%>
+`<%#if sortable%>
   const { can, base, query, results } = props;
   const { sort = {} } = query;
-<%/sortable%>
-<%^sortable%>
+<%else%>
   const { can, base, results } = props;
-<%/sortable%>
+<%/if%>
 const { _ } = useLanguage();
 return (
   <Table
@@ -509,13 +506,13 @@ return (
     head="admin-table-head"
   >
     <%headers%>
-    <%#path%>
+    <%#if path%>
       <Table.Head stickyTop stickyRight addClassName="results-label" />
-    <%/path%>
+    <%/if%>
     {results.map((row, index) => (
       <Table.Row key={index} index={index}>
         <%columns%>
-        <%#path%>
+        <%#if path%>
           <Table.Col stickyRight addClassName="results-value center">
             {can({ method: 'GET', route: \`\${base}/<%model%>/detail/<%path%>\`}) ? (
               <Button info className="detail" href={\`detail/<%path%>\`}>
@@ -523,7 +520,7 @@ return (
               </Button>
             ) : null}
           </Table.Col>
-        <%/path%>
+        <%/if%>
       </Table.Row>
     ))}
   </Table>

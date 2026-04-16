@@ -136,11 +136,11 @@ res.data.set('admin', {
 //if form submitted
 if (req.method === 'POST') {
   const input: Partial<<%type%>> = {};
-  <%#fields%>
-    if (req.data.has('<%column%>')) {
-      input.<%column%> = req.data('<%column%>');
+  <%#each fields as |field|%>
+    if (req.data.has('<%field.column%>')) {
+      input.<%field.column%> = req.data('<%field.column%>');
     }
-  <%/fields%>
+  <%/each%>
   //emit the create event
   const response = await ctx.resolve<<%type%>>('<%event%>-create', input, res);
   //if error
@@ -163,16 +163,15 @@ if (req.method === 'POST') {
     const results = response.results!
     //redirect
     const base = admin.base ?? '/admin';
-    <%#oneid%>
+    <%#if oneid%>
       res.redirect(
         \`\${base}/<%model%>/detail/<%ids%>\`
       );
-    <%/oneid%>
-    <%^oneid%>
+    <%else%>
       res.redirect(
         \`\${base}/<%model%>/search\`
       );
-    <%/oneid%>
+    <%/if%>
   }
   return;
 }

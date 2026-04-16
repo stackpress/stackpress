@@ -82,11 +82,11 @@ SERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#if nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/if%>
 let string = String(value);
 //if value is a date
 if (value instanceof Date) {
@@ -99,31 +99,31 @@ if (value instanceof Date) {
 } else if (typeof value?.toString === 'function') {
   string = value.toString();
 }
-<%#decrypted%>
+<%#if decrypted%>
   return string;
-<%/decrypted%>
-<%#encrypted%>
+<%/if%>
+<%#if encrypted%>
   if (doEncrypt) {
     return string.length > 0 ? encrypt(string, this._seed) : string;
   }
   return string;
-<%/encrypted%>
-<%#hashed%>
+<%/if%>
+<%#if hashed%>
   if (doEncrypt) {
     return string.length > 0 ? hash(string) : string;
   }
   return string;
-<%/hashed%>`,
+<%/if%>`,
 
 UNSERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#if nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/if%>
 //if value is a date
 if (value instanceof Date) {
   return [
@@ -135,14 +135,14 @@ if (value instanceof Date) {
 } else if (typeof value?.toString === 'function') {
   value = value.toString() as T;
 }
-<%#decrypted%>
+<%#if decrypted%>
   return String(value);
-<%/decrypted%>
-<%#encrypted%>
+<%/if%>
+<%#if encrypted%>
   if (doDecrypt) {
     return String(value).length > 0 ? decrypt(String(value), this._seed) : String(value);
   }
   return String(value);
-<%/encrypted%>`
+<%/if%>`
 
 };

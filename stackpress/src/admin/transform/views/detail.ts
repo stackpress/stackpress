@@ -426,7 +426,7 @@ return (
         {_('Update')}
       </a>
     )}
-    <%#active%>
+    <%#if active%>
       {results.<%active%> && can(routes.remove) && (
         <a className="action remove" href={routes.remove.route}>
           <i className="icon fas fa-trash"></i>
@@ -439,39 +439,38 @@ return (
           {_('Restore')}
         </a>
       )}
-    <%/active%>
-    <%^active%>
+    <%else%>
       {can(routes.remove) && (
         <a className="action remove" href={routes.remove.route}>
           <i className="icon fas fa-trash"></i>
           {_('Remove')}
         </a>
       )}
-    <%/active%>
+    <%/if%>
   </div>
 );`,
 
 DETAIL_TABS:
-`<%#related.length%>
+`<%#if related.length%>
   //props
   const { base, results, can } = props;
-<%/related.length%>
+<%/if%>
 //hooks
 const { _ } = useLanguage();
 //render
 return (
   <div className="admin-tabs">
     <span>{_('Info')}</span>
-    <%#related%>
+    <%#each related%>
       {can({ method: 'GET', route: <%link%> }) && (
         <a href={<%link%>}>{_('<%label%>')}</a>
       )}
-    <%/related%>
+    <%/each%>
   </div>
 );`,
 
 DETAIL_RESULTS_VALUE_REQUIRED:
-`<%#link%>
+`<%#if link%>
   {can({ method: 'GET', route: <%link%> }) ? (
     <a className="theme-info" href={<%link%>}>
       <<%component%> data={results} value={results.<%name%>} />
@@ -481,13 +480,13 @@ DETAIL_RESULTS_VALUE_REQUIRED:
       <<%component%> data={results} value={results.<%name%>} />
     </span>
   )}
-<%/link%>
+<%/if%>
 <%^link%>
   <<%component%> data={results} value={results.<%name%>} />
 <%/link%>`,
 
 DETAIL_RESULTS_VALUE_OPTIONAL:
-`<%#link%>
+`<%#if link%>
   {can({ method: 'GET', route: <%link%> }) ? (
     <a className="theme-info" href={<%link%>}>
       {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
@@ -497,10 +496,9 @@ DETAIL_RESULTS_VALUE_OPTIONAL:
      {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
    </span>
   )}
-<%/link%>
-<%^link%>
+<%else%>
   {results.<%name%> ? (<<%component%> data={results} value={results.<%name%>} />) : ''}
-<%/link%>`,
+<%/if%>`,
 
 DETAIL_RESULTS_ROW:
 `<Table.Row index={<%index%>}>
@@ -551,16 +549,15 @@ return (
     </div>
     {response.code === 200 ? (
       <>
-        <%#related%>
+        <%#if related%>
           <<%tabs%> 
             can={can} 
             base={base} 
             results={results} 
           />
-        <%/related%>
-        <%^related%>
+        <%else%>
           <<%tabs%> />
-        <%/related%>
+        <%/if%>
         <div className="admin-tab-body">
           <div className="admin-actions">
             <<%actions%>

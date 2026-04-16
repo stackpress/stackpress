@@ -147,12 +147,12 @@ res.data.set('admin', {
   base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
-<%#active%>
+<%#if active%>
   //make sure to set the active column to -1 in order 
   // to get it returned even if it's soft-deleted
   req.data.set('filter', '<%column%>', -1);
-<%/active%>
-<%#hashes.length%>
+<%/if%>
+<%#if hashes.length%>
   const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
   <%#hashes%>
     if (typeof response.results?.<%column%> !== 'undefined') {
@@ -160,9 +160,8 @@ res.data.set('admin', {
     }
   <%/hashes%>
   res.fromStatusResponse(response);
-<%/hashes.length%>
-<%^hashes.length%>
+<%else%>
   await ctx.emit('<%event%>-detail', req, res);
-<%/hashes.length%>`,
+<%/if%>`,
 
 };

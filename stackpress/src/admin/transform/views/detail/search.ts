@@ -645,16 +645,15 @@ return (
     {can({ method: 'GET', route: <%info%> }) && (
       <a href={<%info%>}>{_('Info')}</a>
     )}
-    <%#related%>
-      <%#active%>
+    <%#each related%>
+      <%#if active%>
         <span>{_('<%label%>')}</span>
-      <%/active%>
-      <%^active%>
+      <%else%>
         {can({ method: 'GET', route: <%link%> }) && (
           <a href={<%link%>}>{_('<%label%>')}</a>
         )}
-      <%/active%>
-    <%/related%>
+      <%/if%>
+    <%/each%>
   </div>
 );`,
 
@@ -715,14 +714,14 @@ return (
       <i className="icon fas fa-fw fa-filter"></i>
     </Button>
     <div className="form">
-      <%#searchable%>
+      <%#if searchable%>
         <form>
           <Input className="input" name="q" />
           <Button className="submit" type="submit">
             <i className="icon fas fa-fw fa-search"></i>
           </Button>
         </form>
-      <%/searchable%>
+      <%/if%>
     </div>
     {can({ method: 'GET', route: <%export%> }) ?(
       <Button info className="action" href="export">
@@ -767,33 +766,30 @@ SEARCH_RESULTS_TABLE_HEAD:
 SEARCH_RESULTS_COLUMN_FILTERABLE:
 `<Table.Col noWrap addClassName="results-value <%align%> filterable">
   <span onClick={() => filter('filter[<%column%>]', row.<%column%>)}>
-    <%#required%>
+    <%#if required%>
       <<%component%> data={row} value={row.<%column%>} />
-    <%/required%>
-    <%^required%>
+    <%else%>
       {row.<%column%> ? (<<%component%> data={row} value={row.<%column%>} />) : ''}
-    <%/required%>
+    <%/if%>
   </span>
 </Table.Col>`,
 
 SEARCH_RESULTS_COLUMN:
 `<Table.Col noWrap addClassName="results-value <%align%>">
-  <%#required%>
+  <%#if required%>
     <<%component%> data={row} value={row.<%column%>} />
-  <%/required%>
-  <%^required%>
+  <%else%>
     {row.<%column%> ? (<<%component%> data={row} value={row.<%column%>} />) : ''}
-  <%/required%>
+  <%/if%>
 </Table.Col>`,
 
 SEARCH_RESULTS_BODY:
-`<%#sortable%>
+`<%#if sortable%>
   const { can, base, query, results } = props;
   const { sort = {} } = query;
-<%/sortable%>
-<%^sortable%>
+<%else%>
   const { can, base, results } = props;
-<%/sortable%>
+<%/if%>
 const { _ } = useLanguage();
 return (
   <Table
@@ -802,13 +798,13 @@ return (
     head="admin-table-head"
   >
     <%headers%>
-    <%#ids%>
+    <%#if ids%>
       <Table.Head stickyTop stickyRight addClassName="results-label" />
-    <%/ids%>
+    <%/if%>
     {results.map((row, index) => (
       <Table.Row key={index} index={index}>
         <%columns%>
-        <%#ids%>
+        <%#if ids%>
           <Table.Col stickyRight addClassName="results-value center">
             {can({ method: 'GET', route: \`\${base}/<%model%>/detail/<%ids%>\`}) ? (
               <Button info className="detail" href={\`\${base}/<%model%>/detail/<%ids%>\`}>
@@ -816,7 +812,7 @@ return (
               </Button>
             ) : null}
           </Table.Col>
-        <%/ids%>
+        <%/if%>
       </Table.Row>
     ))}
   </Table>

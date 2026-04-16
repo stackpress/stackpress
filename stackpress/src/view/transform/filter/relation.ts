@@ -77,25 +77,10 @@ export default function generate(
     moduleSpecifier: 'frui/form/Select',
     defaultImport: 'Select'
   });
-  //import { useLanguage } from 'r22n';
-  source.addImportDeclaration({
-    moduleSpecifier: 'r22n',
-    namedImports: [ 'useLanguage' ]
-  });
-  //import Select from 'frui/form/Select';
-  source.addImportDeclaration({
-    moduleSpecifier: 'frui/form/Select',
-    defaultImport: 'Select'
-  });
   //import FieldControl from 'frui/form/FieldControl';
   source.addImportDeclaration({
     moduleSpecifier: 'frui/form/FieldControl',
     defaultImport: 'FieldControl'
-  });
-  //import mustache from 'mustache';
-  source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
   });
 
   //------------------------------------------------------------------//

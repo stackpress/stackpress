@@ -112,11 +112,11 @@ res.data.set('admin', {
   menu: admin.menu || []
 });
 
-<%#active%>
+<%#if active%>
   //make sure to set the active column to -1 in order 
   // to get it returned even if it's soft-deleted
   req.data.set('filter', '<%column%>', -1);
-<%/active%>
+<%/if%>
 
 //if confirmed
 if (req.data('confirmed')) {

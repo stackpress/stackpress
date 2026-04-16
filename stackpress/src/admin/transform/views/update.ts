@@ -296,7 +296,7 @@ UPDATE_FORM_FIELDSET:
   name="<%column%>"
   value={input.<%column%>} 
   errors={errors.<%column%> as Record<string, any>} 
-  <%#required%>required<%/required%>
+  <%#if required%>required<%/if%>
 />`,
 
 UPDATE_FORM_FIELD:
@@ -305,7 +305,7 @@ UPDATE_FORM_FIELD:
   name="<%column%><%multiple%>"
   value={input.<%column%>} 
   error={errors.<%column%>?.toString()} 
-  <%#required%>required<%/required%>
+  <%#if required%>required<%/if%>
 />`,
 
 UPDATE_BODY:

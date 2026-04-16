@@ -142,7 +142,7 @@ if (req.method === 'POST' || req.method === 'PUT') {
   return;
 }
 //not submitted, fetch the data using the id
-<%#hashes.length%>
+<%#if hashes.length%>
   const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
   <%#hashes%>
     if (typeof response.results?.<%column%> !== 'undefined') {
@@ -150,9 +150,8 @@ if (req.method === 'POST' || req.method === 'PUT') {
     }
   <%/hashes%>
   res.fromStatusResponse(response);
-<%/hashes.length%>
-<%^hashes.length%>
+<%else%>
   await ctx.emit('<%event%>-detail', req, res);
-<%/hashes.length%>`,
+<%/if%>`,
 
 };

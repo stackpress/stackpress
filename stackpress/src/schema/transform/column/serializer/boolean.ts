@@ -42,11 +42,11 @@ SERIALIZE_BOOLEAN:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#if nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/if%>
 return value === 'false' ? false
   : value === 'true' ? true
   : value === '0' ? false
@@ -57,11 +57,11 @@ UNSERIALIZE_BOOLEAN:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#if nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/if%>
 return Boolean(value);`
 
 };

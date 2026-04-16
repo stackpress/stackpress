@@ -342,12 +342,12 @@ export default function generate(directory: Directory, column: Column) {
 export const TEMPLATE = {
 
 CONSTRUCTOR:
-`<%#seed%>
+`<%#if seed%>
   this._seed = seed;
-<%/seed%>
-<%#fieldset%>
-  this._fieldset = new <%fieldset%>(<%#seed%>seed<%/seed%>);
-<%/fieldset%>
+<%/if%>
+<%#if fieldset%>
+  this._fieldset = new <%fieldset%>(<%#if seed%>seed<%/if%>);
+<%/if%>
 this.shape = <%shape%>;`,
 
 };

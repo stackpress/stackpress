@@ -172,14 +172,14 @@ if (detail.code !== 200) {
   res.fromStatusResponse(detail);
   return;
 }
-<%#hashes.length%>
+<%#if hashes.length%>
   //remove hashed data
   <%#hashes%>
     if (typeof detail.results?.<%column%> !== 'undefined') {
       delete detail.results.<%column%>;
     }
   <%/hashes%>
-<%/hashes.length%>
+<%/if%>
 
 //if form submitted
 if (req.method === 'POST') {
@@ -187,9 +187,9 @@ if (req.method === 'POST') {
   const input = req.data();
   //set the foreign id
   input.<%id.local%> = detail.results?.<%id.foreign%>;
-  <%#remove%>
+  <%#each remove%>
     delete input.<%column%>;
-  <%/remove%>
+  <%/each%>
   //emit the create event
   const response = await ctx.resolve<UnknownNest>('<%create%>', input);
   //if error

@@ -244,7 +244,7 @@ export const TEMPLATE = {
 CONSTRUCTOR:
 `super(seed);
 this.relations = {
-  <%#columns%>
+  <%#each columns%>
     <%column%>: { 
       store: new <%store%>(seed), 
       local: '<%local%>', 
@@ -252,45 +252,44 @@ this.relations = {
       multiple: <%multiple%>, 
       required: <%required%> 
     },
-  <%/columns%>
+  <%/each%>
 };
 `,
 
 SCALARIZE:
 `const scalarized: Record<string, ValueScalar> = {};
 for (const [ name, value ] of Object.entries(values)) {
-  <%#columns%>
+  <%#each columns%>
     if (name === '<%column%>' && typeof value !== 'undefined') {
       const column = this.columns.<%column%>;
-      <%#encrypt%>
+      <%#if encrypt%>
         scalarized.<%snake%> = this.toSqlValue(
           '<%column%>', 
           column.serialize(value, true)
         )! as ValueScalar;
-      <%/encrypt%>
-      <%^encrypt%>
+      <%else%>
         scalarized.<%snake%> = this.toSqlValue(
           '<%column%>',
           column.serialize(value)
         )! as ValueScalar;
-      <%/encrypt%>
+      <%/if%>
       continue;
     }
-  <%/columns%>
+  <%/each%>
 }
 return scalarized;`,
 
 TO_SQL_VALUE:
-`<%#columns%>
+`<%#each columns%>
   if (column === '<%column%>') {
-    <%#nullable%>
+    <%#if nullable%>
       if (value === null) {
         return null;
       }
-    <%/nullable%>
+    <%/if%>
     return <%serializer%>;
   }
-<%/columns%>
+<%/each%>
 return typeof value === 'undefined'
   ? undefined
   : value === null
@@ -300,18 +299,17 @@ return typeof value === 'undefined'
 UNSCALARIZE:
 `const unscalarized: Record<string, ValuePrimitive> = {};
 for (const [ name, value ] of Object.entries(values)) {
-  <%#columns%>
+  <%#each columns%>
     if (name === '<%snake%>' && typeof value !== 'undefined') {
       const column = this.columns.<%column%>;
-      <%#decrypt%>
+      <%#if decrypt%>
         unscalarized.<%column%> = column.unserialize(value, true)! as ValuePrimitive;
-      <%/decrypt%>
-      <%^decrypt%>
+      <%else%>
         unscalarized.<%column%> = column.unserialize(value)! as ValuePrimitive;
-      <%/decrypt%>
+      <%/if%>
       continue;
     }
-  <%/columns%>
+  <%/each%>
 }
 return unscalarized;`
 
