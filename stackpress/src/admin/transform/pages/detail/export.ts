@@ -130,19 +130,18 @@ if (detail.code !== 200) {
   <%/hashes%>
 <%/hashes.length%>
 
-//extract filters from url query
-let { q, filter = {}, span, sort } = req.data<{
-  q?: string,
-  filter?: Record<string, string|number|boolean>,
-  span?: Record<string, (string|number|null|undefined)[]>,
-  sort?: Record<string, any>
+//get query
+const query = req.data<{ 
+  eq?: Record<string, string|number|boolean> 
 }>();
+//extract filters from url query
+const { eq } = query;
 //add relation id/s to filters
-filter.<%id.local%> = req.data<string>('<%id.foreign%>');
+eq.<%id.local%> = req.data<string>('<%id.foreign%>');
 //search using the filters
 const response = await ctx.resolve<UnknownNest[]>(
   '<%search%>',
-  { q, filter, span, sort, take: 0 }
+  { ...query, eq, take: 0 }
 );
 //if successfully searched
 if (response.code === 200 && response.results) {
@@ -209,19 +208,18 @@ if (detail.code !== 200) {
   <%/hashes%>
 <%/hashes.length%>
 
-//extract filters from url query
-let { q, filter = {}, span, sort } = req.data<{
-  q?: string,
-  filter?: Record<string, string|number|boolean>,
-  span?: Record<string, (string|number|null|undefined)[]>,
-  sort?: Record<string, any>
+//get query
+const query = req.data<{ 
+  eq?: Record<string, string|number|boolean> 
 }>();
+//extract filters from url query
+const { eq } = query;
 //add relation id/s to filters
-filter.<%id.local%> = req.data<string>('<%id.foreign%>');
+eq.<%id.local%> = req.data<string>('<%id.foreign%>');
 //search using the filters
 const response = await ctx.resolve<UnknownNest[]>(
   '<%search%>',
-  { q, filter, span, sort, take: 0 }
+  { ...query, eq, take: 0 }
 );
 //if successfully searched
 if (response.code === 200 && response.results) {

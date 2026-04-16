@@ -184,18 +184,21 @@ export function getAlias(selector: string) {
  */
 export function storePathToAlias(path: StorePath) {
   return {
-    //auth__user_profile__address_location__references__google_id
-    format: [ ...path.selector, ...path.json ].map(getAlias).join('__'),
-    //[ auth, user_profile, address_location ]
+    //feedback_note__author__data__references__google_id
+    expression: [ 
+      ...path.selector, 
+      ...path.json 
+    ].filter(Boolean).map(getAlias).join('__'),
+    //[ feedback_note, author, data ]
     selector: [ ...path.selector ].map(getAlias),
-    //[ auth, user_profile ]
+    //[ category, article ]
     parents: [ ...path.parents ].map(getAlias),
-    //[ auth ]
-    navigation: [ ...path.navigation ].map(getAlias),
-    //user_profile
-    table: path.table ? getAlias(path.table) : undefined,
-    //address_location
-    column: getAlias(path.column) 
+    //ratings
+    table: getAlias(path.table),
+    //feedback_note
+    column: getAlias(path.column),
+    //[ author, data ]
+    children: [ ...path.children ].map(getAlias)
   };
 };
 
@@ -209,7 +212,7 @@ export function storePathToAlias(path: StorePath) {
  * becomes
  * auth.address_location:references.google_id 
  */
-export function storeSelectorToSqlSelector(selector: StoreSelector) {
+export function storeSelectorToSqlSelector(selector: StoreSelector, q = '"') {
   //auth__user_profile
   const table = selector.parents.join('__');
   //address_location
@@ -223,10 +226,10 @@ export function storeSelectorToSqlSelector(selector: StoreSelector) {
     ? `${table}.${column}:${json}`
     : table.length > 0
     //auth__user_profile.address_location
-    ? `${table}.${column}`
+    ? `${q}${table}${q}.${q}${column}${q}`
     : json.length > 0
     //address_location:references.googleId
     ? `${column}:${json}`
     //address_location
-    : column;
-}
+    : `${q}${column}${q}`;
+};

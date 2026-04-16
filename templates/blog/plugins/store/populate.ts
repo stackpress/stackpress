@@ -50,6 +50,7 @@ export default action.props(async function Populate({ ctx }) {
     television series came out.</p>`,
     keywords: [ 'pokemon', 'nintendo' ],
     tags: [ 'Satoshi Tajiri', 'Arjan Mann' ],
+    references: { source: 'nature.com' },
     status: 'PUBLISHED',
     published: new Date('2024-02-27T12:00:00Z')
   });
@@ -81,6 +82,7 @@ export default action.props(async function Populate({ ctx }) {
     ended up staying for an hour. There was something in it that was holding me 
     there, despite all the other games on offer. That something was Zac.</p>`,
     keywords: [ 'xbox', 'pc' ],
+    references: { source: 'minecraft.net' },
     tags: [ 'Mojang', 'Microsoft' ],
     status: 'PUBLISHED',
     published: new Date('2024-11-15T12:00:00Z')

@@ -110,7 +110,7 @@ const selectors = req.data.has('columns')
 const columns = Array.isArray(selectors) && selectors.every(
   column => typeof column === 'string' && column.length > 0
 ) ? selectors : [ '*' ];
-const filter = { [key]: value };
+const eq = { [key]: value };
 
 //get the database seed (for encrypting)
 const seed = ctx.config.path('database.seed', '');
@@ -118,7 +118,7 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to get
-  const results = await actions.find({ columns, filter });
+  const results = await actions.find({ columns, eq });
   if (!results) {
     res.setError('Not Found').setStatus(404, 'Not Found');
   } else {

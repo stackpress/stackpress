@@ -112,24 +112,10 @@ res.data.set('admin', {
   base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
+//get query
+const query = req.data<{ skip?: number, take?: number }>();
 //extract filters from url query
-let {
-  q,
-  filter,
-  span,
-  sort,
-  skip,
-  take,
-  columns,
-} = req.data<{
-  q?: string;
-  filter?: Record<string, string | number | boolean>;
-  span?: Record<string, (string | number | null | undefined)[]>;
-  sort?: Record<string, any>;
-  skip?: number;
-  take?: number;
-  columns?: string[];
-}>();
+let { skip, take } = query;
 
 if (skip && !isNaN(Number(skip))) {
   skip = Number(skip);
@@ -141,7 +127,7 @@ if (take && !isNaN(Number(take))) {
 //search using the filters
 const response = await ctx.resolve(
   '<%event%>-search',
-  { q, filter, span, sort, skip, take, columns },
+  { ...query, skip, take },
   res
 );
 //if OK

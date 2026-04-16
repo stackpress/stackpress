@@ -106,12 +106,12 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to update
-  const filter = { 
+  const eq = { 
     <%#ids%>
       <%column%>,
     <%/ids%> 
   };
-  const results = await actions.update({ filter }, req.data());
+  const results = await actions.update({ eq }, req.data());
   res.setResults(results[0] || null);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);

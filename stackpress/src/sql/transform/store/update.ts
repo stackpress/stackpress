@@ -26,13 +26,14 @@ export default function generate(
   //------------------------------------------------------------------//
   // Store Methods
 
-  //public update(values: Partial<Place>, query: StoreSelectFilters = {}) {}
+  //public update(values: Partial<Place>, query: StoreSelectFilters = {}, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'update',
     parameters: [
       { name: 'query', type: 'StoreSelectFilters', initializer: '{}' }, 
-      { name: 'input', type: model.name.toTypeName('Partial<%s>') }
+      { name: 'input', type: model.name.toTypeName('Partial<%s>') },
+      { name: 'q', initializer: `'"'` }
     ],
     statements: renderCode(TEMPLATE.UPDATE, {
       type: model.name.toTypeName(),
@@ -58,7 +59,7 @@ const values = this.scalarize(input);
 //make the update builder
 const update = new Update<<%type%>>(this.table);
 //where
-this.where(update, query);
+this.where(update, query, q);
 
 return update.set(values);`,
 

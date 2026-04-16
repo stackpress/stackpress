@@ -26,15 +26,21 @@ export default function generate(
   //------------------------------------------------------------------//
   // Store Methods
 
-  //public delete(query: StoreSelectFilters = {}) {}
+  //public delete(query: StoreSelectFilters = {}, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'delete',
-    parameters: [{
-      name: 'query',
-      type: 'StoreSelectFilters',
-      initializer: '{}'
-    }],
+    parameters: [
+      {
+        name: 'query',
+        type: 'StoreSelectFilters',
+        initializer: '{}'
+      },
+      {
+        name: 'q',
+        initializer: `'"'`
+      }
+    ],
     statements: renderCode(TEMPLATE.DELETE, {
       type: model.name.toTypeName(),
       searchable: model.columns.filter(column => column.store.searchable).size > 0,
@@ -53,7 +59,7 @@ DELETE:
 const remove = new Delete<<%type%>>(this.table);
 
 //where
-this.where(remove, query);
+this.where(remove, query, q);
 
 return remove;`,
 

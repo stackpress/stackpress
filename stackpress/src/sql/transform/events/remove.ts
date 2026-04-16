@@ -106,12 +106,12 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to remove
-  const filter = { 
+  const eq = { 
     <%#ids%>
       <%column%>,
     <%/ids%> 
   };
-  const results = await actions.remove({ filter });
+  const results = await actions.remove({ eq });
   res.setResults(results[0] || null);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);

@@ -159,8 +159,10 @@ export default function generate(directory: Directory, model: Model) {
           store: column.type.model!.name.toClassName('%sStore'),
           local: relation.local.key.name.snakeCase,
           foreign: relation.foreign.key.name.snakeCase,
-          multiple: relation.foreign.type === 2,
-          required: relation.foreign.type === 1
+          type: JSON.stringify([ 
+            relation.local.type, 
+            relation.foreign.type 
+          ])
         };
       }).toArray()
     })
@@ -255,8 +257,7 @@ this.relations = {
       store: new <%store%>(seed), 
       local: '<%local%>', 
       foreign: '<%foreign%>', 
-      multiple: <%multiple%>, 
-      required: <%required%> 
+      type: <%type%> as [ number, number ]
     },
   <%/columns%>
 };

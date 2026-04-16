@@ -150,10 +150,13 @@ res.data.set('admin', {
 <%#active%>
   //make sure to set the active column to -1 in order 
   // to get it returned even if it's soft-deleted
-  req.data.set('filter', '<%column%>', -1);
+  req.data.set('eq', '<%column%>', -1);
 <%/active%>
 <%#hashes.length%>
-  const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
+  const response = await ctx.resolve<Partial<<%extended%>>>(
+    '<%event%>-detail', 
+    req
+  );
   <%#hashes%>
     if (typeof response.results?.<%column%> !== 'undefined') {
       delete response.results.<%column%>;

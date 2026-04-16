@@ -15,23 +15,9 @@ export type StoreRelation<
   //the extended type of the records in the store, with relations included
   E extends Record<string, unknown> = Record<string, unknown>
 > = {
-  store: StoreInterface<T, E>,
+  type: [ number, number ],
   local: string,
   foreign: string,
-  multiple: boolean,
-  required: boolean
-};
-
-export type StoreSelectRelation<
-  //the basic type of the records in the store
-  T extends Record<string, unknown>,
-  //the extended type of the records in the store, with relations included
-  E extends Record<string, unknown>
-> = {
-  local: string,
-  foreign: string,
-  multiple: boolean,
-  required: boolean,
   store: StoreInterface<T, E>
 };
 
@@ -40,37 +26,27 @@ export type StoreSelectRelationMap<
   T extends Record<string, unknown>,
   //the extended type of the records in the store, with relations included
   E extends Record<string, unknown>
-> = Record<string, StoreSelectRelation<T, E>>;
+> = Record<string, StoreRelation<T, E>>;
 
-//IF: auth.userProfile.addressLocation.references.googleId
-//   |                    expression                     |
-//   |             selector           |       json       |
-//   |     parents    |    column     |       json       |
-//   |nav |   table   |    column     |       json       |    
-//WHERE:
-// - auth (and everything before it) is the Navigation that 
-//   leads to the main table.
-// - userProfile is the main Table
-// - addressLocation is the main Column (also a json column)
-// - references.googleId is the json Path
-//THEN:
-// - expression is the entire expression
-// - selector is the parents and column ( userProfile.addressLocation )
-// - parents is everything before the column
+//IF: category.article.ratings.feedbackNote.author.data:references.googleId
+//                                  ^
+//   |                           expression                                |
+//   |                    selector                     |        json       |
+//   |    parents     | table |   column   | children  |        json       |
 
 export type AliasPath = {
-  //auth__user_profile__address_location__references__google_id
-  format: string,
-  //[ auth, user_profile, address_location ]
+  //feedback_note__author__data__references__google_id
+  expression: string,
+  //[ feedback_note, author, data ]
   selector: string[],
-  //[ auth, user_profile ]
+  //[ category, article ]
   parents: string[],
-  //[ auth ]
-  navigation: string[],
-  //user_profile
-  table?: string,
-  //address_location
-  column: string
+  //ratings
+  table: string,
+  //feedback_note
+  column: string,
+  //[ author, data ]
+  children: string[],
 };
 
 export type StorePath<
@@ -85,35 +61,33 @@ export type StorePath<
 > = {
   //column, relation, wildcard
   type: string,
-  //auth.userProfile.addressLocation:references.googleId
+  //feedbackNote.author.data:references.googleId
   expression: string,
-  //[ auth, userProfile, addressLocation ]
+  //[ feedbackNote, author, data ]
   selector: string[],
-  //[ auth, userProfile ]
+  //[ category, article ]
   parents: string[],
-  //[ auth ]
-  navigation: string[],
-  //userProfile
-  table?: string,
-  //addressLocation
+  //ratings
+  table: string,
+  //feedbackNote
   column: string,
-  //[ references, googleId ]
+  //[ author, data ]
+  children: string[],
+  //[]
   json: string[]
   store: StoreInterface<T, E, C, R>
 };
 
 export type StoreSelector = {
-  //auth__user_profile__address_location__references__google_id
+  //category__article__ratings__feedback_note__author__data__references__google_id
   alias: string,
-  //[ auth, user_profile, address_location ]
+  //[ category, article, ratings, feedback_note, author, data ]
   selector: string[],
-  //[ auth, user_profile ]
+  //[ category, article, ratings, feedback_note ]
   parents: string[],
-  //[ auth ]
-  navigation: string[],
-  //user_profile
-  table?: string,
-  //address_location
+  //author
+  table: string,
+  //data
   column: string,
   //[ references, googleId ]
   json: string[],
@@ -127,10 +101,10 @@ export type StoreJoin = {
   table: string, 
   //ex. auth__user_profile
   alias: string,
-  //ex. auth__user_profile.id
+  //ex. category__article__ratings__feedback_note.author_id
   //NOTE: there should only be 2 selectors
   from: { table: string, column: string },
-  //ex. auth.profile_id
+  //ex. category__article__ratings__feedback_note__author.id
   //NOTE: there should only be 2 selectors
   to: { table: string, column: string }
 };
@@ -152,6 +126,7 @@ export type StoreSelectFilters = {
   ge?: Record<string, ValueScalar>,
   le?: Record<string, ValueScalar>,
   has?: Record<string, ValueScalar>,
+  like?: Record<string, ValueScalar>,
   hasnt?: Record<string, ValueScalar>
 };
 

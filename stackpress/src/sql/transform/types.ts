@@ -48,8 +48,7 @@ export default function generate(directory: Directory, model: Model) {
   //    store: ProfileStore;
   //    local: string;
   //    foreign: string;
-  //    multiple: boolean;
-  //    required: boolean;
+  //    type: [ number, number ];
   //  },
   //  ...
   //};
@@ -62,8 +61,7 @@ export default function generate(directory: Directory, model: Model) {
           store: ${column.type.model!.name.toClassName('%sStore')},
           local: string,
           foreign: string,
-          multiple: boolean,
-          required: boolean
+          type: [ number, number ]
         }`
       ).toArray().join(', ')
     }}`)

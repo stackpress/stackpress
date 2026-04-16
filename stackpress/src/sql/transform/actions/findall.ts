@@ -45,7 +45,7 @@ const { columns = [ '*' ] } = query;
 // - path: StorePath
 const selectors = this.store.selectors(columns);
 //now get the select query builder
-const select = this.store.select(query);
+const select = this.store.select(query, this.engine.dialect.q);
 select.engine = this.engine;
 //remote call and get the raw results
 const results = await select;

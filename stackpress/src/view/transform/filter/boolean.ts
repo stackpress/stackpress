@@ -130,12 +130,12 @@ const attributes = <%props%>;
 return (
   <<%component%> 
     {...attributes}
-    name="filter[<%column%>]<%multiple%>"
+    name="eq[<%column%>]<%multiple%>"
     className={className}
     error={error} 
     defaultValue="1"
     defaultChecked={!!value}
-    onUpdate={value => onUpdate && onUpdate('filter[<%column%>]<%multiple%>', value)}
+    onUpdate={value => onUpdate && onUpdate('eq[<%column%>]<%multiple%>', value)}
   />
 );`,
 
@@ -147,7 +147,7 @@ const { _ } = useLanguage();
 //render
 return (
   <FieldControl label={_('<%label%>')} error={error} className={className}>
-    <input type="hidden" name="filter[<%column%>]<%multiple%>" value="0" />
+    <input type="hidden" name="eq[<%column%>]<%multiple%>" value="0" />
     <<%component%>
       error={!!error} 
       value={value} 

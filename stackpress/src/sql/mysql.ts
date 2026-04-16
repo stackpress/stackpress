@@ -41,7 +41,6 @@ export type {
   StoreRelation,
   StoreSelector,
   StoreSelectOrWhere,
-  StoreSelectRelation,
   StoreSelectRelationMap,
   StoreSelectFilters,
   StoreSelectQuery,

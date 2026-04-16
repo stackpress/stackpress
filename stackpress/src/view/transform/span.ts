@@ -124,20 +124,20 @@ return (
   <>
     <<%component%>
       {...attributes}
-      name="span[<%column%>][0]}"
+      name="ge[<%column%>]"
       className={className}
       error={error} 
       defaultValue={values[0]} 
-      onUpdate={value => onUpdate && onUpdate('span[<%column%>][0]', value)}
+      onUpdate={value => onUpdate && onUpdate('ge[<%column%>]', value)}
     />
     <br />
     <<%component%>
       {...attributes}
-      name="span[<%column%>][1]}"
+      name="le[<%column%>]"
       className={className}
       error={error} 
       defaultValue={values[1]} 
-      onUpdate={value => onUpdate && onUpdate('span[<%column%>][1]', value)}
+      onUpdate={value => onUpdate && onUpdate('le[<%column%>]', value)}
     />
   </>
 );`,

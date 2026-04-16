@@ -20,7 +20,10 @@ export const TEMPLATE = {
 
 //public async count(query: StoreSelectFilters & { columns?: string[] }) {}
 COUNT:
-`const count = this.store.select<{ total: number }>(query);
+`const { q, columns, eq, ne, ge, le, has, like, hasnt } = query;
+const count = this.store.select<{ total: number }>(
+  { q, columns, eq, ne, ge, le, has, like, hasnt, take: 0 }
+);
 count.engine = this.engine;
 const results = await count.select('COUNT(*) AS total');
 return results?.[0]?.total || 0;`

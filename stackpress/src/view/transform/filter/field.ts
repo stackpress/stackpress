@@ -128,11 +128,11 @@ const attributes = <%props%>;
 return (
   <<%component%> 
     {...attributes}
-    name="filter[<%column%>]<%multiple%>"
+    name="eq[<%column%>]<%multiple%>"
     className={className}
     error={error} 
     defaultValue={value} 
-    onUpdate={value => onUpdate && onUpdate('filter[<%column%>]<%multiple%>', value)}
+    onUpdate={value => onUpdate && onUpdate('eq[<%column%>]<%multiple%>', value)}
   />
 );`,
 

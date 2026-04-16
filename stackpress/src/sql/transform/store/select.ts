@@ -38,7 +38,7 @@ export default function generate(
   //------------------------------------------------------------------//
   // Store Methods
 
-  //public select<T = AuthExtended>(query: StoreSelectQuery = {}) {}
+  //public select<T = AuthExtended>(query: StoreSelectQuery = {}, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'select',
@@ -46,7 +46,8 @@ export default function generate(
       { name: 'T', default: model.name.toTypeName('%sExtended') }
     ],
     parameters: [
-      { name: 'query', type: 'StoreSelectQuery', initializer: '{}' }
+      { name: 'query', type: 'StoreSelectQuery', initializer: '{}' },
+      { name: 'q', initializer: `'"'` }
     ],
     statements: renderCode(TEMPLATE.SELECT, {
       relations: relations.size > 0
@@ -84,13 +85,14 @@ export default function generate(
       relations: relations.size > 0
     })
   });
-  //public where(builder: WhereBuilder, query: StoreSelectFilters = {}) {}
+  //public where(builder: WhereBuilder, query: StoreSelectFilters = {}, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'where',
     parameters: [
       { name: 'builder', type: 'WhereBuilder' },
-      { name: 'query', type: 'StoreSelectFilters', initializer: '{}' }
+      { name: 'query', type: 'StoreSelectFilters', initializer: '{}' },
+      { name: 'q', initializer: `'"'` }
     ],
     statements: renderCode(TEMPLATE.WHERE, {
       searchable: model.columns.filter(column => column.store.searchable).size > 0,
@@ -101,47 +103,63 @@ export default function generate(
       active: model.columns.findValue(column => column.store.active)?.name.toString()
     })
   });
-  //public whereEquals(builder: WhereBuilder, expression: string, value: unknown) {}
+  //public whereEquals(builder: WhereBuilder, expression: string, value: unknown, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'whereEquals',
     parameters: [
       { name: 'builder', type: 'WhereBuilder' },
       { name: 'expression', type: 'string' },
-      { name: 'value', type: 'unknown' }
+      { name: 'value', type: 'unknown' },
+      { name: 'q', initializer: `'"'` }
     ],
     statements: TEMPLATE.WHERE_EQUALS
   });
-  //public whereNotEquals(builder: WhereBuilder, expression: string, value: unknown) {}
+  //public whereLike(builder: WhereBuilder, expression: string, value: unknown, q = '"') {}
+  definition.addMethod({
+    scope: Scope.Public,
+    name: 'whereLike',
+    parameters: [
+      { name: 'builder', type: 'WhereBuilder' },
+      { name: 'expression', type: 'string' },
+      { name: 'value', type: 'unknown' },
+      { name: 'q', initializer: `'"'` }
+    ],
+    statements: TEMPLATE.WHERE_LIKE
+  });
+  //public whereNotEquals(builder: WhereBuilder, expression: string, value: unknown, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'whereNotEquals',
     parameters: [
       { name: 'builder', type: 'WhereBuilder' },
       { name: 'expression', type: 'string' },
-      { name: 'value', type: 'unknown' }
+      { name: 'value', type: 'unknown' },
+      { name: 'q', initializer: `'"'` }
     ],
     statements: TEMPLATE.WHERE_NOT_EQUALS
   });
-  //public whereGreaterEquals(builder: WhereBuilder, expression: string, value: unknown) {}
+  //public whereGreaterEquals(builder: WhereBuilder, expression: string, value: unknown, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'whereGreaterEquals',
     parameters: [
       { name: 'builder', type: 'WhereBuilder' },
       { name: 'expression', type: 'string' },
-      { name: 'value', type: 'unknown' }
+      { name: 'value', type: 'unknown' },
+      { name: 'q', initializer: `'"'` }
     ],
     statements: TEMPLATE.WHERE_GREATER_EQUALS
   });
-  //public whereLessEquals(builder: WhereBuilder, expression: string, value: unknown) {}
+  //public whereLessEquals(builder: WhereBuilder, expression: string, value: unknown, q = '"') {}
   definition.addMethod({
     scope: Scope.Public,
     name: 'whereLessEquals',
     parameters: [
       { name: 'builder', type: 'WhereBuilder' },
       { name: 'expression', type: 'string' },
-      { name: 'value', type: 'unknown' }
+      { name: 'value', type: 'unknown' },
+      { name: 'q', initializer: `'"'` }
     ],
     statements: TEMPLATE.WHERE_LESS_EQUALS
   });
@@ -196,46 +214,47 @@ let {
   columns = [ '*' ],
   sort = {},
   skip = 0,
-  take = 50,
+  take = 50
 } = query;
 //get all selectors based on the provided columns
 //example selector:
-// - alias: auth__user_profile__address_location__references__google_id
-// - selector: [ auth, user_profile, address_location ]
-// - parents: [ auth, user_profile ]
-// - navigation: [ auth ]
-// - table: user_profile
-// - column: address_location
+// - alias: category__article__ratings__feedback_note__author__data__references__google_id
+// - selector: [ category, article, ratings, feedback_note, author, data ]
+// - parents: [ category, article, ratings, feedback_note ]
+// - table: author
+// - column: data
 // - json: [ references, googleId ]
 // - path: StorePath
 const selectors = this
   .selectors(columns)
   .filter(selector => selector.column.length > 0)
   .map(selector => {
-    //auth__user_profile
-    const table = selector.parents.join('__');
-    //address_location
+    //ex. category__article__ratings__feedback_note__author
+    const table = selector.parents.filter(Boolean).join('__');
+    //ex. data
     const column = selector.column;
-    //auth__user_profile__address_location__references__google_id
+    //category__article__ratings__feedback_note__author__data__references__google_id
     const alias = selector.alias;
-    return table && alias
-      ? [ table, column, alias ] 
-      : alias && alias !== column
-      ? [ column, alias ]
-      : [ column ];
+    return table && alias !== column
+      ? { table, column, alias } 
+      : table
+      ? { table, column }
+      : alias !== column
+      ? { column, alias }
+      : { column };
   });
 
 //finally, make the select builder
-const select = new Select<T>(selectors).from(this.table);
+const select = new Select<T>(selectors).from({ name: this.table });
 <%#relations%>
   //add all the joins
   this.joins(query).forEach(join => {
     const { type, table, alias } = join;
     select.join(
       type, 
-      [ table, alias ], 
-      [ join.from.table, join.from.column ], 
-      [ join.to.table, join.to.column ]
+      table !== alias ? { name: table, alias } : { name: table },
+      { table: join.from.table, name: join.from.column },
+      { table: join.to.table, name: join.to.column }
     );
   });
 <%/relations%>
@@ -248,7 +267,7 @@ if (take) {
   select.limit(take);
 }
 //where
-this.where(select, query);
+this.where(select, query, q);
 //sort
 Object.entries(flatten(sort, true)).forEach(([key, value]) => {
   const direction = typeof value === 'string' ? value : '';
@@ -266,11 +285,14 @@ Object.entries(flatten(sort, true)).forEach(([key, value]) => {
     const column = selector.table
       ? \`\${selector.table}.\${selector.column}:\${selector.json.join('.')}\`
       : \`\${selector.column}:\${selector.json.join('.')}\`;
-    select.order(column, order);
+    select.order({ name: column, order });
   } else if (selector.table) {
-    select.order([ selector.table, selector.column ], order);
+    select.order({
+      table: selector.parents.join('__'), 
+      name: selector.column
+    }, order);
   } else {
-    select.order(selector.column, order);
+    select.order({ name: selector.column }, order);
   }
 });
 
@@ -285,21 +307,10 @@ const selectors = new Map<string, StoreSelector>();
 expression.forEach(expression => {
   //if the selector has already been parsed, then we can skip
   if (selectors.has(expression)) return;
-  //IF: auth.userProfile.addressLocation.references.googleId
-  //   |                    expression                     |
-  //   |             selector           |       json       |
-  //   |     parents    |    column     |       json       |
-  //   |nav |   table   |    column     |       json       |    
-  //WHERE:
-  // - auth (and everything before it) is the Navigation that 
-  //   leads to the main table.
-  // - userProfile is the main Table
-  // - addressLocation is the main Column (also a json column)
-  // - references.googleId is the json Path
-  //THEN:
-  // - expression is the entire expression
-  // - selector is the parents and column ( userProfile.addressLocation )
-  // - parents is everything before the column
+  //IF: category.article.ratings.feedbackNote.author.data:references.googleId
+  //   |                           expression                                |
+  //   |                    selector                     |        json       |
+  //   |    parents     | table |   column   | children  |        json       |
   //collection all the expression paths
   const paths = this.paths(expression);
   //get the first and last path
@@ -311,6 +322,10 @@ expression.forEach(expression => {
     ...first,
     //column
     type: 'column',
+    //use the last parents
+    parents: last.parents,
+    //use the last table
+    table: last.table,
     //use the last column 
     column: last.column,
     //use the last store
@@ -320,27 +335,26 @@ expression.forEach(expression => {
   if (last.type === 'wildcard') {
     //expand * to all columns in the last store
     Object.keys(last.store.columns).forEach(name => {
+      const expression = path.expression.replace('*', name);
       const newPath = {
         ...path,
-        expression: path.expression.replace('*', name),
-        //[ auth, userProfile, addressLocation ]
+        expression,
+        //[ feedbackNote, author, data ]
         selector: [ ...path.selector.slice(0, -1), name ],
-        //addressLocation
+        //feedbackNote
         column: name,
       };
       const alias = storePathToAlias(newPath);
       selectors.set(expression, {
-        //auth__user_profile__address_location__references__google_id
-        alias: alias.format,
-        //[ auth, user_profile, address_location ]
+        //category__article__ratings__feedback_note__author__data__references__google_id
+        alias: alias.expression,
+        //[ category, article, ratings, feedback_note, author, data ]
         selector: alias.selector,
-        //[ auth, user_profile ]
+        //[ category, article, ratings, feedback_note ]
         parents: alias.parents,
-        //[ auth ]
-        navigation: alias.navigation,
-        //user_profile
+        //author
         table: alias.table,
-        //address_location
+        //data
         column: alias.column,
         //[ references, googleId ]
         json: [ ...newPath.json ],
@@ -351,17 +365,15 @@ expression.forEach(expression => {
   }
   const alias = storePathToAlias(path);
   selectors.set(expression, {
-    //auth__user_profile__address_location__references__google_id
-    alias: alias.format,
-    //[ auth, user_profile, address_location ]
+    //category__article__ratings__feedback_note__author__data__references__google_id
+    alias: alias.expression,
+    //[ category, article, ratings, feedback_note, author, data ]
     selector: alias.selector,
-    //[ auth, user_profile ]
+    //[ category, article, ratings, feedback_note ]
     parents: alias.parents,
-    //[ auth ]
-    navigation: alias.navigation,
-    //user_profile
+    //author
     table: alias.table,
-    //address_location
+    //data
     column: alias.column,
     //[ references, googleId ]
     json: [ ...path.json ],
@@ -379,6 +391,7 @@ JOINS:
   ge = {},
   le = {},
   has = {},
+  like = {},
   hasnt = {},
   sort = {}
 } = query;
@@ -389,6 +402,7 @@ const expressions = new Set([
   ...Object.keys(flatten(ge, true)),
   ...Object.keys(flatten(le, true)),
   ...Object.keys(flatten(has, true)),
+  ...Object.keys(flatten(like, true)),
   ...Object.keys(flatten(hasnt, true)),
   ...Object.keys(flatten(sort, true)),
 ]);
@@ -423,11 +437,13 @@ expressions.forEach(expression => {
     // - foreign: id
     // - multiple: true
     // - required: false
-    const type = relation.required && !relation.multiple ? 'inner' : 'left';
+    const type = relation.type[0] === 0 ? 'left' : 'inner';
     const table = relation.store.table;
-    const alias = path.parents.map(getAlias).join('__');
-    const from = { table: path.store.table, column: relation.local};
-    const to = { table: relation.store.table, column: relation.foreign};
+    const fromTable = path.parents.map(getAlias).join('__');
+    const toTable = [ ...path.parents, table ].map(getAlias).join('__');
+    const alias = toTable;
+    const from = { table: fromTable, column: relation.local };
+    const to = { table: toTable, column: relation.foreign };
     joins.set(
       [ table, from.column, to.table, to.column, alias ].join('-'), 
       { type, table, alias, from, to }
@@ -438,69 +454,44 @@ return Array.from(joins.values());`,
 
 //public paths(expression: string, paths: StorePath[] = []): StorePath[] {}
 PATHS:
-`//IF: auth.userProfile.addressLocation:references.googleId
-//   |                    expression                     |
-//   |             selector           |       json       |
-//   |     parents    |    column     |       json       |
-//   |nav |   table   |    column     |       json       |    
-//WHERE:
-// - auth (and everything before it) is the Navigation that 
-//   leads to the main table.
-// - userProfile is the main Table
-// - addressLocation is the main Column (also a json column)
-// - references.googleId is the json Path
-//THEN:
-// - expression is the entire expression
-// - selector is the parents and column ( userProfile.addressLocation )
-// - parents is everything before the column
-const [ selector, json ] = expression.split(':');
-const navigation = selector.split('.');
-const column = navigation.pop();
-const parents = [ ...navigation ];
-const table = navigation.pop();
+`//IF: category.article.ratings.feedbackNote.author.data:references.googleId
+//                                  ^
+//   |                           expression                                |
+//   |                    selector                     |        json       |
+//   |    parents     | table |   column   | children  |        json       |
+const [ selector = '', json = '' ] = expression.split(':');
+const children = selector.split('.');
+const column = children.shift();
+//failsafe
+if (!column) return paths;
+const parents = [ ...paths.map(path => path.column), this.table ];
+const table = parents.pop()!;
+const path = {
+  //feedbackNote.author.data:references.googleId
+  expression,
+  //[ feedbackNote, author, data ]
+  selector: selector.split('.'),
+  //[ category, article ]
+  parents,
+  //ratings
+  table,
+  //feedbackNote
+  column,
+  //[ author, data ]
+  children,
+  //[]
+  json: json.split('.').filter(Boolean),
+  store: this
+};
 //if wildcard
 if (column && column === '*') {
-  return paths.concat([{
-    type: 'wildcard',
-    //auth.userProfile.addressLocation:references.googleId
-    expression,
-    //[ auth, userProfile, addressLocation ]
-    selector: selector.split('.'),
-    //[ auth, userProfile ]
-    parents,
-    //[ auth ]
-    navigation,
-    //userProfile
-    table,
-    //addressLocation
-    column,
-    //[ references, googleId ]
-    json: json.split('.'),
-    store: this
-  }]);
+  return paths.concat([{ type: 'wildcard', ...path }]);
 //if this is a column in the store
 } else if (column && column in this.columns) {
   //then return the path with the column selector appended
   //NOTE: doesn't make sense for the next expression
   // to be another column or relation...
-  return paths.concat({
-    type: 'column',
-    //auth.userProfile.addressLocation:references.googleId
-    expression,
-    //[ auth, userProfile, addressLocation ]
-    selector: selector.split('.'),
-    //[ auth, userProfile ]
-    parents,
-    //[ auth ]
-    navigation,
-    //userProfile
-    table,
-    //addressLocation
-    column,
-    //[ references, googleId ]
-    json: json.split('.'),
-    store: this
-  });
+  return paths.concat([{ type: 'column', ...path }]);
 } 
 <%#relations%>
   if (column && column in this.relations) {
@@ -512,24 +503,7 @@ if (column && column === '*') {
       //from: auth.userProfile.addressLocation:references.googleId
       //  to: userProfile.addressLocation:references.googleId
       selector.substring(selector.indexOf('.') + 1), 
-      paths.concat({
-        type: 'relation',
-        //auth.userProfile.addressLocation:references.googleId
-        expression,
-        //[ auth, userProfile, addressLocation ]
-        selector: selector.split('.'),
-        //[ auth, userProfile ]
-        parents,
-        //[ auth ]
-        navigation,
-        //userProfile
-        table,
-        //addressLocation
-        column,
-        //[ references, googleId ]
-        json: json.split('.'),
-        store: this
-      })
+      paths.concat([{ type: 'relation', ...path }])
     );
   }
 <%/relations%>
@@ -544,16 +518,22 @@ const {
   ge = {},
   le = {},
   has = {},
+  like = {},
   hasnt = {}
 } = query;
 <%#active%>
   //default active value
-  const name = 'active';
+  const name = '<%active%>';
   if (typeof eq[name] === 'undefined') {
-    eq[name] = true;
-  } else if (eq[name] == -1) {
-    eq[name] = -1;
-    delete eq[name];
+    builder.where(
+      \`\${q}\${this.table}\${q}.\${q}\${name}\${q} = ?\`, 
+      [ true ]
+    );
+  } else if (eq[name] !== -1) {
+    builder.where(
+      \`\${q}\${this.table}\${q}.\${q}\${name}\${q} = ?\`, 
+      [ eq[name] ]
+    );
   }
 <%/active%>
 <%#searchable%>
@@ -562,7 +542,7 @@ const {
     builder.where(
       \`(\${[
         <%#searchables%>
-          \`\${this.table}.<%column%> ILIKE ?\`,
+          \`\${q}\${this.table}\${q}.\${q}<%column%>\${q} ILIKE ?\`,
         <%/searchables%>
       ].join(' OR ')})\`,
       [
@@ -575,19 +555,23 @@ const {
 <%/searchable%>
 //eq
 Object.entries(flatten(eq, true)).forEach(
-  ([ key, value ]) => this.whereEquals(builder, key, value)
+  ([ key, value ]) => this.whereEquals(builder, key, value, q)
+);
+//like
+Object.entries(flatten(like, true)).forEach(
+  ([ key, value ]) => this.whereLike(builder, key, value, q)
 );
 //ne
 Object.entries(flatten(ne, true)).forEach(
-  ([ key, value ]) => this.whereNotEquals(builder, key, value)
+  ([ key, value ]) => this.whereNotEquals(builder, key, value, q)
 );
 //ge
 Object.entries(flatten(ge, true)).forEach(
-  ([ key, value ]) => this.whereGreaterEquals(builder, key, value)
+  ([ key, value ]) => this.whereGreaterEquals(builder, key, value, q)
 );
 //le
 Object.entries(flatten(le, true)).forEach(
-  ([ key, value ]) => this.whereLessEquals(builder, key, value)
+  ([ key, value ]) => this.whereLessEquals(builder, key, value, q)
 );
 //has
 Object.entries(flatten(has, true)).forEach(
@@ -606,13 +590,32 @@ const selector = this.selectors(expression)[0];
 //skip if no selector
 if (!selector) return;
 //get sql column
-const column = storeSelectorToSqlSelector(selector);
+const column = storeSelectorToSqlSelector(selector, q);
 //skip if no column
 if (!column) return;
 //for the sql clause
 const clause = \`\${column} = ?\`;
 //bind clause to each value
 this._whereValues(builder, clause, value, selector.path);`,
+
+//public whereLike(builder: WhereBuilder, expression: string, value: unknown) {}
+WHERE_LIKE:
+`//get selector from the expression
+const selector = this.selectors(expression)[0];
+//skip if no selector
+if (!selector) return;
+//get sql column
+const column = storeSelectorToSqlSelector(selector, q);
+//skip if no column
+if (!column) return;
+//for the sql clause
+const clause = \`\${column} ILIKE ?\`;
+const values = !Array.isArray(value) ? [value] : value;
+const likeValues = values.map(
+  value => typeof value === 'string' ? \`%\${value}%\` : value
+);
+//bind clause to each value
+this._whereValues(builder, clause, likeValues, selector.path);`,
 
 //public whereNotEquals(builder: WhereBuilder, expression: string, value: unknown) {}
 WHERE_NOT_EQUALS:
@@ -621,7 +624,7 @@ const selector = this.selectors(expression)[0];
 //skip if no selector
 if (!selector) return;
 //get sql column
-const column = storeSelectorToSqlSelector(selector);
+const column = storeSelectorToSqlSelector(selector, q);
 //skip if no column
 if (!column) return;
 //for the sql clause
@@ -636,7 +639,7 @@ const selector = this.selectors(expression)[0];
 //skip if no selector
 if (!selector) return;
 //get sql column
-const column = storeSelectorToSqlSelector(selector);
+const column = storeSelectorToSqlSelector(selector, q);
 //skip if no column
 if (!column) return;
 //for the sql clause
@@ -651,7 +654,7 @@ const selector = this.selectors(expression)[0];
 //skip if no selector
 if (!selector) return;
 //get sql column
-const column = storeSelectorToSqlSelector(selector);
+const column = storeSelectorToSqlSelector(selector, q);
 //skip if no column
 if (!column) return;
 //for the sql clause
@@ -661,28 +664,12 @@ this._whereValues(builder, clause, value, selector.path);`,
 
 //public whereArrayContains(builder: WhereBuilder, expression: string, value: unknown) {}
 WHERE_ARRAY_CONTAINS:
-`//get selector from the expression
-const selector = this.selectors(expression)[0];
-//skip if no selector
-if (!selector) return;
-//get sql column
-const column = storeSelectorToSqlSelector(selector);
-//skip if no column
-if (!column) return;
-builder.whereJsonContains(column, value as JSONScalarValue);`,
+`builder.whereJsonContains(expression, value as JSONScalarValue);`,
 
 //public whereArrayNotContains(builder: WhereBuilder, expression: string, value: unknown) {}
 WHERE_ARRAY_NOT_CONTAINS:
-`//get selector from the expression
-const selector = this.selectors(expression)[0];
-//skip if no selector
-if (!selector) return;
-//get sql column
-const column = storeSelectorToSqlSelector(selector);
-//skip if no column
-if (!column) return;
-builder.whereJsonContains(column, value as JSONScalarValue);
-//builder.whereJsonNotContains(column, value as JSONScalarValue);`,
+`builder.whereJsonContains(expression, value as JSONScalarValue);
+//builder.whereJsonNotContains(expression, value as JSONScalarValue);`,
 
 //protected _whereValues(builder: WhereBuilder, clause: string, value: unknown, path: StorePath) {}
 WHERE_VALUES:
@@ -694,7 +681,9 @@ const or: StoreSelectOrWhere = { clause: [], values: [] };
 //for each value
 for (const value of values) {
   //serialize it
-  const serialized = key in columns
+  const serialized = path.json.length > 0
+    ? value
+    : key in columns
     ? columns[key].serialize(value, true)
     : value;
   //if serialized is invalid, skip it

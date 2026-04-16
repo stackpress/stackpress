@@ -37,7 +37,6 @@ export type {
   StorePath,
   StoreRelation,
   StoreSelector,
-  StoreSelectRelation,
   StoreSelectRelationMap,
   StoreSelectFilters,
   StoreSelectQuery,
