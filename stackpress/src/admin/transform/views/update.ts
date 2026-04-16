@@ -273,8 +273,12 @@ UPDATE_FORM_PROPS:
 UPDATE_FORM_BODY:
 `const { input, errors } = props;
 const { _ } = useLanguage();
+const { config } = useServer();
+const tokenKey = config.path('csrf.name', 'csrf');
+const token = config.path('csrf.token', '');
 return (
   <form method="post">
+    <input type="hidden" name={tokenKey} value={token} />
     <%fields%>
     <Button className="submit" type="submit">
       <i className="icon fas fa-fw fa-save"></i>

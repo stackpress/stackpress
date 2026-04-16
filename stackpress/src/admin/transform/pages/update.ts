@@ -44,6 +44,12 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+  //import type { CsrfPlugin } from '../../types.js';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '../../types.js',
+    namedImports: [ 'CsrfPlugin' ]
+  });
 
   //------------------------------------------------------------------//
   // Import Client
@@ -92,6 +98,10 @@ if (res.body || (res.code && res.code !== 200)) {
   //let the response pass through
   return;
 }
+//get csrf plugin
+const csrf = ctx.plugin<CsrfPlugin>('csrf');
+//generate token
+csrf.generateToken(res, ctx);
 //get the view, brandm lang and admin config
 const view = ctx.config.path<ViewConfig>('view', {});
 const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -125,6 +135,8 @@ res.data.set('admin', {
 
 //if form submitted
 if (req.method === 'POST' || req.method === 'PUT') {
+  //validate csrf
+  if (!csrf.validateToken(req, res)) return;
   //emit update with the fixed fields
   await ctx.emit('<%event%>-update', req, res);
   //if OK

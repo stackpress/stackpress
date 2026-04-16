@@ -26,9 +26,12 @@ export type AuthSignupFormProps = {
 export function AuthSignupForm(props: AuthSignupFormProps) {
   const { input, errors } = props;
   const { _ } = useLanguage();
-  
+  const { config } = useServer();
+  const tokenKey = config.path('csrf.name', 'csrf');
+  const token = config.path('csrf.token', '');
   return (
     <form className="auth-form" method="post">
+      <input type="hidden" name={tokenKey} value={token} />
       <FieldControl 
         label={`${_('Name')}*`} 
         error={errors.name as string|undefined} 

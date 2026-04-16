@@ -23,8 +23,12 @@ export type AuthSigninFormProps = {
 export function AuthSigninForm(props: AuthSigninFormProps) {
   const { input, errors } = props;
   const { _ } = useLanguage();
+  const { config } = useServer();
+  const tokenKey = config.path('csrf.name', 'csrf');
+  const token = config.path('csrf.token', '');
   return (
     <form className="auth-form" method="post">
+      <input type="hidden" name={tokenKey} value={token} />
       {input.type === 'phone' ? (
         <FieldControl 
           label={`${_('Phone Number')}*`} 

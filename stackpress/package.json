@@ -130,6 +130,19 @@
       "import": "./esm/language/index.js"
     },
 
+    "./csrf": {
+      "require": "./cjs/index.js",
+      "import": "./esm/index.js"
+    },
+    "./csrf/plugin": {
+      "require": "./cjs/csrf/plugin.js",
+      "import": "./esm/csrf/plugin.js"
+    },
+    "./csrf/types": {
+      "require": "./cjs/csrf/types.js",
+      "import": "./esm/csrf/types.js"
+    },
+
     "./AbstractSchema": {
       "require": "./cjs/schema/interface/AbstractSchema.js",
       "import": "./esm/schema/interface/AbstractSchema.js"
