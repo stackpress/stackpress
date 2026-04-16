@@ -241,6 +241,12 @@ REMOVE_FORM_BODY:
 const { base, can, results } = props;
 //hooks
 const { _ } = useLanguage();
+const { config } = useServer();
+//variables
+const tokenKey = config.path('csrf.name', 'csrf');
+const token = config.path('csrf.token', '');
+const paramsObj = { confirmed: true, [tokenKey]: token };
+const params = new URLSearchParams(paramsObj).toString();
 //render
 return (
   <div>
@@ -262,7 +268,7 @@ return (
           <span>{_('Nevermind.')}</span>
         </a>
       )}
-      <a className="action remove" href="?confirmed=true">
+      <a className="action remove" href={'?' + params}>
         <i className="icon fas fa-fw fa-trash"></i>
         <span>{_('Confirmed')}</span>
       </a>
