@@ -21,7 +21,7 @@ export default async function SignInPage(
   //get csrf plugin
   const csrf = ctx.plugin<CsrfPlugin>('csrf');
   //generate a token
-  csrf.generateToken(res);
+  csrf.generateToken(res, ctx);
   //get the view, brand and auth config
   const view = ctx.config.path<ViewConfig>('view', {});
   const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -57,7 +57,7 @@ export default async function SignInPage(
   //form submission
   if (req.method === 'POST') {
     //validate csrf
-    csrf.validateToken(req);
+    if (!csrf.validateToken(req, res)) return;
     //prevent passwordless sign in on this page...
     req.data.set('password', true);
     //sign in

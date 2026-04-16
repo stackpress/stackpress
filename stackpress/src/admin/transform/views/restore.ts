@@ -221,7 +221,8 @@ const { config } = useServer();
 //variables
 const tokenKey = config.path('csrf.name', 'csrf');
 const token = config.path('csrf.token', '');
-const confirmUrl = "?confirmed=true&" + tokenKey + "=" + token;
+const paramsObj = { confirmed: true, [tokenKey]: token };
+const params = new URLSearchParams(paramsObj).toString();
 //render
 return (
   <div>
@@ -241,7 +242,7 @@ return (
           <span>{_('Nevermind.')}</span>
         </a>
       )}
-      <a className="action restore" href={confirmUrl}>
+      <a className="action restore" href={'?' + params}>
         <i className="icon fas fa-fw fa-check-circle"></i>
         <span>{_('Confirmed')}</span>
       </a>

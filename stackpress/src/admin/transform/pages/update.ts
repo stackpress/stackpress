@@ -101,7 +101,7 @@ if (res.body || (res.code && res.code !== 200)) {
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res);
+csrf.generateToken(res, ctx);
 //get the view, brandm lang and admin config
 const view = ctx.config.path<ViewConfig>('view', {});
 const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -136,7 +136,7 @@ res.data.set('admin', {
 //if form submitted
 if (req.method === 'POST' || req.method === 'PUT') {
   //validate csrf
-  csrf.validateToken(req);
+  if (!csrf.validateToken(req, res)) return;
   //emit update with the fixed fields
   await ctx.emit('<%event%>-update', req, res);
   //if OK

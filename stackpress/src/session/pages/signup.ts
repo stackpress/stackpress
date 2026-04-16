@@ -21,7 +21,7 @@ export default async function SignupPage(
   //get the csrf plugin
   const csrf = ctx.plugin<CsrfPlugin>('csrf');
   //generate a token
-  csrf.generateToken(res);
+  csrf.generateToken(res, ctx);
   //get the view, brand and auth config
   const view = ctx.config.path<ViewConfig>('view', {});
   const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -53,7 +53,7 @@ export default async function SignupPage(
   //form submission
   if (req.method === 'POST') {
     //validate csrf
-    csrf.validateToken(req);
+    if (!csrf.validateToken(req, res)) return;
     await ctx.emit('auth-signup', req, res);
     //if signup successful, redirect
     if (res.code === 200) {

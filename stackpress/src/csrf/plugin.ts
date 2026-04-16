@@ -2,7 +2,6 @@
 import crypto from 'node:crypto';
 //stackpress
 import Server from '@stackpress/ingest/Server';
-import { Exception } from '../lib';
 import type { Request, Response } from '@stackpress/ingest';
 //local
 import { CsrfConfig } from './types';
@@ -13,11 +12,11 @@ export default function plugin(ctx: Server) {
     if (!ctx.config.get('csrf')) return;
     //configure and register csrf
     ctx.register('csrf', {
-      generateToken(res: Response) {
+      generateToken(res: Response, ctx: Server) {
         const token = crypto.randomBytes(32).toString('hex');
         //get csrf name from config
         const csrf = ctx.config.path<CsrfConfig>('csrf', {});
-        //set token in the cookie
+        //set new token in session
         res.session.set(csrf.name || 'csrf', token);
         //set token in the response data for server side rendering
         res.data.set('csrf', {
@@ -27,24 +26,29 @@ export default function plugin(ctx: Server) {
         //return the token
         return token;
       },
-      validateToken(req: Request) {
+      validateToken(req: Request, res: Response) {
         //get csrf name from config
         const name = ctx.config.path<string>('csrf.name', 'csrf');
         //extract token from session and request
-        const sessionToken = req.session.get(name) as string;
-        const inputToken = req.data<string>(name);
-    
-        //convert tokens to buffers for timingSafeEqual
-        const sessionTokenBuffer = Buffer.from(sessionToken);
-        const inputTokenBuffer = Buffer.from(inputToken);
+        const sessionToken = String(req.session.get(name));
+        const inputToken = String(req.data(name));
 
-        const isValid = crypto.timingSafeEqual(sessionTokenBuffer, inputTokenBuffer);
-    
-        if (!isValid) {
-          throw Exception
-            .for('Page Expired')
-            .withCode(419);
+        //convert tokens to buffers for timingSafeEqual
+        const sessionBuffer = Buffer.from(sessionToken, 'utf-8');
+        const inputBuffer = Buffer.from(inputToken, 'utf-8');
+
+        const errorMessage = `This page may have been requested from an external source. 
+          We corrected the issue. Please try again.`;
+
+        if (sessionBuffer.length !== inputBuffer.length) {
+          res.setError(errorMessage);
+          return false;
         }
+        if (!crypto.timingSafeEqual(sessionBuffer, inputBuffer)) {
+          res.setError(errorMessage);
+          return false;
+        }
+        return true;
       }
     });
   });

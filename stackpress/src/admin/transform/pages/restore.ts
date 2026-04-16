@@ -90,7 +90,7 @@ if (res.body || (res.code && res.code !== 200)) {
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res);
+csrf.generateToken(res, ctx);
 //get the view, brandm lang and admin config
 const view = ctx.config.path<ViewConfig>('view', {});
 const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -131,7 +131,18 @@ res.data.set('admin', {
 //if confirmed
 if (req.data('confirmed')) {
   //validate csrf
-  csrf.validateToken(req);
+  if (!csrf.validateToken(req, res)) {
+    res.session.set('flash', JSON.stringify({
+      type: 'error',
+      message: 'This page may have been requested from an external source. ' +
+        'We corrected the issue. Please try again.',
+      close: 2000
+    }));
+    const base = admin.base ?? '/admin';
+    const id = req.data('id');
+    res.redirect(\`\${base}/<%model%>/restore/\${id}\`);
+    return;
+  };
   //emit restore event
   await ctx.emit('<%event%>-restore', req, res);
   //if OK

@@ -137,7 +137,7 @@ if (res.body || (res.code && res.code !== 200)) {
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res);
+csrf.generateToken(res, ctx);
 //get the view, brandm lang and admin config
 const view = ctx.config.path<ViewConfig>('view', {});
 const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -188,7 +188,7 @@ if (detail.code !== 200) {
 //if form submitted
 if (req.method === 'POST') {
   //validate csrf
-  csrf.validateToken(req);
+  if (!csrf.validateToken(req, res)) return;
   //get the form input
   const input = req.data();
   //set the foreign id

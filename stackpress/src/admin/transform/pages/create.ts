@@ -112,7 +112,7 @@ const language = ctx.config.path<LanguageConfig>('language', {
 //get the csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res);
+csrf.generateToken(res, ctx);
 const admin = ctx.config.path<AdminConfig>('admin', {});
 //set data for template layer
 res.data.set('view', { 
@@ -139,7 +139,7 @@ res.data.set('admin', {
 //if form submitted
 if (req.method === 'POST') {
   //validate csrf
-  csrf.validateToken(req);
+  if (!csrf.validateToken(req, res)) return;
   //emit the create event
   const response = await ctx.resolve<<%type%>>('<%event%>-create', req, res);
   //if error
