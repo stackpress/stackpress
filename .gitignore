@@ -138,7 +138,6 @@ cjs
 esm
 
 templates/*/.build
-templates/*/config/client.ts
 templates/*/client-source
 templates/*/public/assets
 templates/*/public/client

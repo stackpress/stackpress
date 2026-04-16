@@ -39,11 +39,6 @@ export default function generate(directory: Directory, model: Fieldset) {
     moduleSpecifier: 'stackpress/schema/helpers',
     namedImports: [ 'removeUndefined' ]
   });
-  //import AbstractSchema from 'stackpress/AbstractSchema';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/AbstractSchema',
-    defaultImport: 'AbstractSchema'
-  });
 
   //------------------------------------------------------------------//
   // Import Client
@@ -76,12 +71,6 @@ export default function generate(directory: Directory, model: Fieldset) {
   const definition = source.addClass({
     isDefaultExport: true,
     name: model.name.toClassName('%sSchema'),
-    //extends AbstractSchema<Address, { ColumnSchema, ... }>
-    extends: `AbstractSchema<${model.name.toTypeName()}, {${
-      columns.map(
-        column => `${column.name.toString()}: ${column.name.toClassName('%sColumn')}`
-      ).toArray().join(', ')
-    }}>`,
     //implements ProfileSchemaInterface
     implements: [ model.name.toClassName('%sSchemaInterface') ]
   });
@@ -104,6 +93,12 @@ export default function generate(directory: Directory, model: Fieldset) {
     scope: Scope.Public,
     isReadonly: true,
     name: 'shape'
+  });
+  //protected _seed: string;
+  definition.addProperty({
+    scope: Scope.Protected,
+    name: '_seed',
+    type: 'string'
   });
   //public get defaults() {}
   definition.addGetAccessor({
@@ -141,6 +136,27 @@ export default function generate(directory: Directory, model: Fieldset) {
       })).toArray()
     })
   });
+  //public filter<V extends Record<string, any>>(value: V, populate = false) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    name: 'filter',
+    typeParameters: [{ name: 'V', constraint: 'Record<string, any>' }],
+    parameters: [
+      { name: 'value', type: 'V' },
+      { name: 'populate', initializer: 'false' }
+    ],
+    statements: renderCode(TEMPLATE.FILTER, {
+      type: model.name.toTypeName()
+    })
+  });
+  //public populate<V extends Record<string, any>>(value: V) {}
+  definition.addMethod({
+    scope: Scope.Public,
+    name: 'populate',
+    typeParameters: [{ name: 'V', constraint: 'Record<string, any>' }],
+    parameters: [{ name: 'value', type: 'V' }],
+    statements: TEMPLATE.POPULATE
+  });
   //public serialize(value: Record<string, any>) {}
   definition.addMethod({
     scope: Scope.Public,
@@ -172,6 +188,7 @@ export default function generate(directory: Directory, model: Fieldset) {
 
 export const TEMPLATE = {
 
+//public get defaults() {}
 DEFAULTS:
 `return {
   <%#columns%>
@@ -179,8 +196,9 @@ DEFAULTS:
   <%/columns%>
 };`,
 
+//public constructor(seed = '') {}
 CONSTRUCTOR:
-`super(seed);
+`this._seed = seed;
 this.columns = {
   <%#columns%>
     <%column%>: new <%classname%>(<%seed%>),
@@ -192,6 +210,7 @@ this.shape = z.object({
   <%/columns%>
 });`,
 
+//public assert(value: Record<string, any>, required = false) {}
 ASSERT:
 `const errors = {
   <%#columns%>
@@ -204,6 +223,18 @@ return Object.values(errors).some(Boolean)
   ? removeUndefined(errors) 
   : null;`,
 
+//public filter<V extends Record<string, any>>(value: V, populate = false) {}
+FILTER:
+`const filtered = Object.fromEntries(
+  Object.entries(value).filter(([key]) => key in this.columns),
+) as Partial<<%type%>>;
+return populate ? this.populate(filtered) : filtered;`,
+
+//public populate<V extends Record<string, any>>(value: V) {}
+POPULATE:
+`return { ...this.defaults, ...value } as typeof this.defaults & V;`,
+
+//public serialize(value: Record<string, any>) {}
 SERIALIZE:
 `return removeUndefined({
   <%#columns%>
@@ -218,6 +249,7 @@ SERIALIZE:
   <%/columns%>
 });`,
 
+//public unserialize(value: Record<string, any>) {}
 UNSERIALIZE:
 `return removeUndefined({
   <%#columns%>

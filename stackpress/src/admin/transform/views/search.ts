@@ -368,7 +368,7 @@ return (
 SEARCH_FILTERS_FIELD:
 `<<%component%> 
   className="control"
-  value={query.filter?.<%column%>} 
+  value={query.eq?.<%column%>} 
 />`,
 
 SEARCH_FILTERS_BODY:
@@ -473,7 +473,7 @@ SEARCH_RESULTS_TABLE_HEAD:
 
 SEARCH_RESULTS_COLUMN_FILTERABLE:
 `<Table.Col noWrap addClassName="results-value <%align%> filterable">
-  <span onClick={() => filter('filter[<%column%>]', row.<%column%>)}>
+  <span onClick={() => filter('eq[<%column%>]', row.<%column%>)}>
     <%#required%>
       <<%component%> data={row} value={row.<%column%>} />
     <%/required%>

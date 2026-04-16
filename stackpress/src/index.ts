@@ -83,37 +83,48 @@ export type {
   //stackpress/sql
   // inquire types
   Field,
-  Relation,
   ForeignKey,
   AlterFields,
   AlterKeys,
   AlterUnqiues,
   AlterPrimaries,
   AlterForeignKeys,
+  SelectColumn,
+  JoinType,
+  Join,
+  Selector,
+  Sort,
+  OrderType,
+  Table,
+  Where,
+  WhereJson,
+  WhereBuilder,
   StrictValue,
   StrictOptValue,
   FlatValue,
+  JSONScalarValue,
   Value,
   Resolve,
   Reject,
-  Order,
-  Join,
+  JsonDialect,
   Dialect,
+  OrQueryObject,
   QueryObject,
   Transaction,
   Connection,
   // for store interface
   ValueScalar,
   ValuePrimitive,
+  StoreJoin,
+  StorePath,
   StoreRelation,
-  StoreSelectColumnPath,
-  StoreSelectRelation,
+  StoreSelector,
+  StoreSelectOrWhere,
   StoreSelectRelationMap,
-  StoreSelectJoin,
-  StoreSelectJoinMap,
   StoreSelectFilters,
   StoreSelectQuery,
   StoreSearchQuery,
+  StoreWhere,
   // for ingest
   DatabaseConfig,
   DatabasePlugin,
@@ -256,7 +267,10 @@ export {
   AssertionDictionary,
   ComponentDictionary,
   dictionary,
-  Schema
+  Schema,
+  ColumnInterface,
+  DefinitionInterface,
+  SchemaInterface
 } from './schema/index.js';
 
 export {
@@ -284,7 +298,16 @@ export {
   Document, 
   Server
 } from 'reactus';
-export  { jsonCompare } from '@stackpress/inquire/helpers';
+export  { 
+  joinTypes,
+  isIndex,
+  backSlashes,
+  doubleQuotes,
+  escapeBackSlashes,
+  escapeDoubleQuotes,
+  safeJsonValue,
+  jsonCompare  
+} from '@stackpress/inquire/helpers';
 export {
   camelize,
   capitalize,

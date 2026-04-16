@@ -70,17 +70,10 @@ if (res.body || (res.code && res.code !== 200)) {
   //let the response pass through
   return;
 }
-//extract filters from url query
-let { q, filter, span, sort } = req.data<{
-  q?: string,
-  filter?: Record<string, string|number|boolean>,
-  span?: Record<string, (string|number|null|undefined)[]>,
-  sort?: Record<string, any>
-}>();
 //search using the filters
 const response = await ctx.resolve<UnknownNest[]>(
   '<%event%>-search',
-  { q, filter, span, sort, take: 0 }
+  { ...req.data(), take: 0 }
 );
 //if successfully searched
 if (response.code === 200 && response.results) {
@@ -130,17 +123,10 @@ if (res.body || (res.code && res.code !== 200)) {
   //let the response pass through
   return;
 }
-//extract filters from url query
-let { q, filter, span, sort } = req.data<{
-  q?: string,
-  filter?: Record<string, string|number|boolean>,
-  span?: Record<string, (string|number|null|undefined)[]>,
-  sort?: Record<string, any>
-}>();
 //search using the filters
 const response = await ctx.resolve<UnknownNest[]>(
   '<%event%>-search',
-  { q, filter, span, sort, take: 0 }
+  { ...req.data(), take: 0 }
 );
 //if successfully searched
 if (response.code === 200 && response.results) {

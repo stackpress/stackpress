@@ -99,6 +99,19 @@
       "require": "./cjs/client/index.js",
       "import": "./esm/client/index.js"
     },
+    
+    "./csrf": {
+      "require": "./cjs/index.js",
+      "import": "./esm/index.js"
+    },
+    "./csrf/plugin": {
+      "require": "./cjs/csrf/plugin.js",
+      "import": "./esm/csrf/plugin.js"
+    },
+    "./csrf/types": {
+      "require": "./cjs/csrf/types.js",
+      "import": "./esm/csrf/types.js"
+    },
 
     "./email/plugin": {
       "require": "./cjs/email/plugin.js",
@@ -130,23 +143,6 @@
       "import": "./esm/language/index.js"
     },
 
-    "./csrf": {
-      "require": "./cjs/index.js",
-      "import": "./esm/index.js"
-    },
-    "./csrf/plugin": {
-      "require": "./cjs/csrf/plugin.js",
-      "import": "./esm/csrf/plugin.js"
-    },
-    "./csrf/types": {
-      "require": "./cjs/csrf/types.js",
-      "import": "./esm/csrf/types.js"
-    },
-
-    "./AbstractSchema": {
-      "require": "./cjs/schema/interface/AbstractSchema.js",
-      "import": "./esm/schema/interface/AbstractSchema.js"
-    },
     "./ColumnInterface": {
       "require": "./cjs/schema/interface/ColumnInterface.js",
       "import": "./esm/schema/interface/ColumnInterface.js"
@@ -339,11 +335,6 @@
       "import": "./esm/session/index.js"
     },
     
-    
-    "./sql/AbstractActions": {
-      "require": "./cjs/sql/interface/AbstractActions.js",
-      "import": "./esm/sql/interface/AbstractActions.js"
-    },
     "./sql/ActionsInterface": {
       "require": "./cjs/sql/interface/ActionsInterface.js",
       "import": "./esm/sql/interface/ActionsInterface.js"
@@ -517,7 +508,6 @@
       "language/types": [ "./cjs/language/types.d.ts" ],
       "language": [ "./cjs/language/index.d.ts" ],
 
-      "AbstractSchema": [ "./cjs/schema/interface/AbstractSchema.d.ts" ],
       "ColumnInterface": [ "./cjs/schema/interface/ColumnInterface.d.ts" ],
       "DefinitionInterface": [ "./cjs/schema/interface/DefinitionInterface.d.ts" ],
       "SchemaInterface": [ "./cjs/schema/interface/SchemaInterface.d.ts" ],
@@ -569,7 +559,6 @@
       "session/types": [ "./cjs/session/types.d.ts" ],
       "session": [ "./cjs/session/index.d.ts" ],
       
-      "sql/AbstractActions": [ "./cjs/sql/interface/AbstractActions.d.ts" ],
       "sql/ActionsInterface": [ "./cjs/sql/interface/ActionsInterface.d.ts" ],
       "sql/StoreInterface": [ "./cjs/sql/interface/StoreInterface.d.ts" ],
       "sql/plugin": [ "./cjs/sql/plugin.d.ts" ],

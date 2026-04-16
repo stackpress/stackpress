@@ -111,16 +111,16 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 if (!engine) return;
 
 //get all the current filters
-const filter = req.data.path<StoreSelectFilters["filter"]>('filter', {});
+const eq = req.data.path<StoreSelectFilters["eq"]>('eq', {});
 
 //check for id/s
 <%#ids%>
   //get id
-  filter.<%column%> = req.data<<%type%>>('<%column%>');
+  eq.<%column%> = req.data<<%type%>>('<%column%>');
   //let it naturally 404 if invalid id
-  if (typeof filter.<%column%> === 'undefined' 
-    || filter.<%column%> === null 
-    || filter.<%column%> === ''
+  if (typeof eq.<%column%> === 'undefined' 
+    || eq.<%column%> === null 
+    || eq.<%column%> === ''
   ) {
     const errors = { <%column%>: 'Missing or invalid value' };
     res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
@@ -139,7 +139,7 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to fetch
-  const results = await actions.find({ columns, filter });
+  const results = await actions.find({ columns, eq });
   if (!results) {
     res.setError('Not Found').setStatus(404, 'Not Found');
   } else {

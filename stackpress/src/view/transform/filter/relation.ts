@@ -157,7 +157,7 @@ export const TEMPLATE = {
 FIELD:
 `//props
 const { 
-  name = 'filter[<%column%>]<%multiple%>',
+  name = 'eq[<%column%>]<%multiple%>',
   value,  
   error = false,
   onUpdate,
@@ -282,6 +282,6 @@ return (
 );`,
 
 BOOLEAN_HIDDEN_FIELD:
-'<input type="hidden" name="filter[<%column%>]<%multiple%>" value="0" />'
+'<input type="hidden" name="eq[<%column%>]<%multiple%>" value="0" />'
 
 };

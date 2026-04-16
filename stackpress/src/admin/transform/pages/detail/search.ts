@@ -174,21 +174,13 @@ if (detail.code !== 200) {
 
 //extract filters from url query
 let {
-  q,
-  filter = {},
-  span,
-  sort,
+  eq = {},
   skip,
   take,
-  columns,
 } = req.data<{
-  q?: string;
-  filter?: Record<string, string | number | boolean>;
-  span?: Record<string, (string | number | null | undefined)[]>;
-  sort?: Record<string, any>;
-  skip?: number;
-  take?: number;
-  columns?: string[];
+  eq?: Record<string, string | number | boolean>,
+  skip?: number,
+  take?: number
 }>();
 
 if (skip && !isNaN(Number(skip))) {
@@ -200,12 +192,12 @@ if (take && !isNaN(Number(take))) {
 }
 
 //add relation id/s to filters
-filter.<%id.local%> = id;
+eq.<%id.local%> = id;
 
 //search using the filters
 const search = await ctx.resolve(
   '<%search%>',
-  { q, filter, span, sort, skip, take, columns }
+  { ...query, eq, skip, take }
 );
 
 //if there's an error, let it pass

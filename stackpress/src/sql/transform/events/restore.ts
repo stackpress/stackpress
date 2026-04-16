@@ -94,15 +94,15 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 //so let the response pass through
 if (!engine) return;
 
-const filter: StoreSelectFilters["filter"] = {};
+const eq: StoreSelectFilters["eq"] = {};
 //check for id/s
 <%#ids%>
   //get id
-  filter.<%column%> = req.data<string>('<%column%>');
+  eq.<%column%> = req.data<string>('<%column%>');
   //let it naturally 404 if invalid id
-  if (typeof filter.<%column%> === 'undefined' 
-    || filter.<%column%> === null 
-    || filter.<%column%> === ''
+  if (typeof eq.<%column%> === 'undefined' 
+    || eq.<%column%> === null 
+    || eq.<%column%> === ''
   ) {
     const errors = { <%column%>: 'Missing or invalid value' };
     res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
@@ -111,7 +111,7 @@ const filter: StoreSelectFilters["filter"] = {};
 <%/ids%>
 <%#active%>
   //include soft-deleted records
-  filter.<%column%> = -1; 
+  eq.<%column%> = -1; 
 <%/active%>
 //get the database seed (for encrypting)
 const seed = ctx.config.path('database.seed', '');
@@ -119,7 +119,7 @@ const seed = ctx.config.path('database.seed', '');
 const actions = new <%actions%>(engine, seed);
 
 try { //to restore
-  const results = await actions.restore({ filter });
+  const results = await actions.restore({ eq });
   res.setResults(results[0] || null);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);

@@ -4,37 +4,48 @@ export type { Results, Resource, Connector } from '@stackpress/inquire-sqlite3';
 export type {
   //inquire types
   Field,
-  Relation,
   ForeignKey,
   AlterFields,
   AlterKeys,
   AlterUnqiues,
   AlterPrimaries,
   AlterForeignKeys,
+  SelectColumn,
+  JoinType,
+  Join,
+  Selector,
+  Sort,
+  OrderType,
+  Table,
+  Where,
+  WhereJson,
+  WhereBuilder,
   StrictValue,
   StrictOptValue,
   FlatValue,
+  JSONScalarValue,
   Value,
   Resolve,
   Reject,
-  Order,
-  Join,
+  JsonDialect,
   Dialect,
+  OrQueryObject,
   QueryObject,
   Transaction,
   Connection,
   //for store interface
   ValueScalar,
   ValuePrimitive,
+  StoreJoin,
+  StorePath,
   StoreRelation,
-  StoreSelectColumnPath,
-  StoreSelectRelation,
+  StoreSelector,
+  StoreSelectOrWhere,
   StoreSelectRelationMap,
-  StoreSelectJoin,
-  StoreSelectJoinMap,
   StoreSelectFilters,
   StoreSelectQuery,
   StoreSearchQuery,
+  StoreWhere,
   //for ingest
   DatabaseConfig,
   DatabasePlugin
@@ -52,7 +63,14 @@ export {
   Sqlite,
   Engine,
   Exception,
-  joins
+  joinTypes,
+  isIndex,
+  backSlashes,
+  doubleQuotes,
+  escapeBackSlashes,
+  escapeDoubleQuotes,
+  safeJsonValue,
+  jsonCompare
 } from '@stackpress/inquire';
 
 //@ts-ignore
@@ -64,11 +82,12 @@ export {
   toSqlDate,
   toSqlInteger,
   toSqlFloat,
-  getAlias
+  getAlias,
+  storePathToAlias,
+  storeSelectorToSqlSelector
 } from './helpers.js';
 
-import AbstractActions from './interface/AbstractActions.js';
 import ActionsInterface from './interface/ActionsInterface.js';
 import StoreInterface from './interface/StoreInterface.js';
 
-export type { AbstractActions, ActionsInterface, StoreInterface };
+export type { ActionsInterface, StoreInterface };

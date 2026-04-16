@@ -81,7 +81,7 @@ export default function generate(directory: Directory, model: Model) {
       model: model.name.toURLPath(),
       extended: model.name.toClassName('%sExtended'),
       ids: model.store.ids.map(
-        column => `\${req.data.get('${column.name.toString()}')}`
+        column => `\${req.data('${column.name.toString()}')}`
       ).toArray().join('/'),
       hashes: model.value.hashed?.map(
         column => ({ column: column.name.toString() })
@@ -155,7 +155,10 @@ if (req.method === 'POST' || req.method === 'PUT') {
 }
 //not submitted, fetch the data using the id
 <%#hashes.length%>
-  const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
+  const response = await ctx.resolve<Partial<<%extended%>>>(
+    '<%event%>-detail', 
+    req
+  );
   <%#hashes%>
     if (typeof response.results?.<%column%> !== 'undefined') {
       delete response.results.<%column%>;

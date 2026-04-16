@@ -1,6 +1,9 @@
 //modules
 import type Engine from '@stackpress/inquire/Engine';
+//stackpress/schema
+import type { DefinitionInterfaceMap } from '../schema/types.js';
 //stackpress/sql
+import type { FlatValue } from '@stackpress/inquire/types';
 import type StoreInterface from './interface/StoreInterface.js';
 
 export type ValueScalar = string | number | boolean | null;
@@ -12,32 +15,9 @@ export type StoreRelation<
   //the extended type of the records in the store, with relations included
   E extends Record<string, unknown> = Record<string, unknown>
 > = {
-  store: StoreInterface<T, E>,
+  type: [ number, number ],
   local: string,
   foreign: string,
-  multiple: boolean,
-  required: boolean
-};
-
-export type StoreSelectColumnPath = {
-  type: string,
-  column: string,
-  store: StoreInterface<
-    Record<string, unknown>, 
-    Record<string, unknown>
-  >
-};
-
-export type StoreSelectRelation<
-  //the basic type of the records in the store
-  T extends Record<string, unknown>,
-  //the extended type of the records in the store, with relations included
-  E extends Record<string, unknown>
-> = {
-  local: string,
-  foreign: string,
-  multiple: boolean,
-  required: boolean,
   store: StoreInterface<T, E>
 };
 
@@ -46,26 +26,112 @@ export type StoreSelectRelationMap<
   T extends Record<string, unknown>,
   //the extended type of the records in the store, with relations included
   E extends Record<string, unknown>
-> = Record<string, StoreSelectRelation<T, E>>;
+> = Record<string, StoreRelation<T, E>>;
 
-export type StoreSelectJoin = {
+//IF: category.article.ratings.feedbackNote.author.data:references.googleId
+//                                  ^
+//   |                           expression                                |
+//   |                    selector                     |        json       |
+//   |    parents     | table |   column   | children  |        json       |
+
+export type AliasPath = {
+  //feedback_note__author__data__references__google_id
+  expression: string,
+  //[ feedback_note, author, data ]
+  selector: string[],
+  //[ category, article ]
+  parents: string[],
+  //ratings
   table: string,
-  from: string,
-  to: string,
-  alias: string
+  //feedback_note
+  column: string,
+  //[ author, data ]
+  children: string[],
 };
 
-export type StoreSelectJoinMap = Record<string, StoreSelectJoin>;
+export type StorePath<
+  //the basic type of the records in the store
+  T extends Record<string, unknown> = Record<string, unknown>,
+  //the extended type of the records in the store, with relations included
+  E extends Record<string, unknown> = Record<string, unknown>,
+  //the column map
+  C extends DefinitionInterfaceMap = DefinitionInterfaceMap,
+  //the relation map
+  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}>>
+> = {
+  //column, relation, wildcard
+  type: string,
+  //feedbackNote.author.data:references.googleId
+  expression: string,
+  //[ feedbackNote, author, data ]
+  selector: string[],
+  //[ category, article ]
+  parents: string[],
+  //ratings
+  table: string,
+  //feedbackNote
+  column: string,
+  //[ author, data ]
+  children: string[],
+  //[]
+  json: string[]
+  store: StoreInterface<T, E, C, R>
+};
+
+export type StoreSelector = {
+  //category__article__ratings__feedback_note__author__data__references__google_id
+  alias: string,
+  //[ category, article, ratings, feedback_note, author, data ]
+  selector: string[],
+  //[ category, article, ratings, feedback_note ]
+  parents: string[],
+  //author
+  table: string,
+  //data
+  column: string,
+  //[ references, googleId ]
+  json: string[],
+  path: StorePath
+};
+
+export type StoreJoin = {
+  //inner, left, right, outer, etc
+  type: string, 
+  //ex. user_profile
+  table: string, 
+  //ex. auth__user_profile
+  alias: string,
+  //ex. category__article__ratings__feedback_note.author_id
+  //NOTE: there should only be 2 selectors
+  from: { table: string, column: string },
+  //ex. category__article__ratings__feedback_note__author.id
+  //NOTE: there should only be 2 selectors
+  to: { table: string, column: string }
+};
+
+export type StoreWhere = { 
+  clause: string, 
+  values: FlatValue[] 
+};
+
+export type StoreSelectOrWhere = {
+  clause: string[],
+  values: FlatValue[]
+};
 
 export type StoreSelectFilters = {
   q?: string,
-  filter?: Record<string, ValueScalar>,
-  span?: Record<string, ValueScalar[]>
+  eq?: Record<string, ValueScalar>,
+  ne?: Record<string, ValueScalar>,
+  ge?: Record<string, ValueScalar>,
+  le?: Record<string, ValueScalar>,
+  has?: Record<string, ValueScalar>,
+  like?: Record<string, ValueScalar>,
+  hasnt?: Record<string, ValueScalar>
 };
 
 export type StoreSelectQuery = StoreSelectFilters & {
   columns?: string[],
-  include?: string[],
   sort?: Record<string, string>,
   skip?: number,
   take?: number
@@ -99,22 +165,32 @@ export type DatabasePlugin = Engine;
 
 export type {
   Field,
-  Relation,
   ForeignKey,
   AlterFields,
   AlterKeys,
   AlterUnqiues,
   AlterPrimaries,
   AlterForeignKeys,
+  Column as SelectColumn,
+  JoinType,
+  Join,
+  Selector,
+  Sort,
+  OrderType,
+  Table,
+  Where,
+  WhereJson,
+  WhereBuilder,
   StrictValue,
   StrictOptValue,
   FlatValue,
+  JSONScalarValue,
   Value,
   Resolve,
   Reject,
-  Order,
-  Join,
+  JsonDialect,
   Dialect,
+  OrQueryObject,
   QueryObject,
   Transaction,
   Connection

@@ -30,14 +30,17 @@ export default function generate(
   definition.addMethod({
     scope: Scope.Public,
     name: 'delete',
-    parameters: [{
-      name: 'query',
-      type: 'StoreSelectFilters',
-      initializer: '{}'
-     }, {
-      name: 'q',
-      initializer: `'"'`
-     }],
+    parameters: [
+      {
+        name: 'query',
+        type: 'StoreSelectFilters',
+        initializer: '{}'
+      },
+      {
+        name: 'q',
+        initializer: `'"'`
+      }
+    ],
     statements: renderCode(TEMPLATE.DELETE, {
       type: model.name.toTypeName(),
       searchable: model.columns.filter(column => column.store.searchable).size > 0,
@@ -56,10 +59,7 @@ DELETE:
 const remove = new Delete<<%type%>>(this.table);
 
 //where
-const where = this.where(query, q);
-if (where.clause) {
-  remove.where(where.clause, where.values);
-}
+this.where(remove, query, q);
 
 return remove;`,
 

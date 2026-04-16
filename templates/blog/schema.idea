@@ -88,7 +88,7 @@ model Catalog
   @labels("Catalog" "Catalogs")
   @icon("link")
   @display("{{category.name}} - {{article.title}}")
-  @query("*" "category.*" "article.*")
+  @query("*" "category.*" "article.*" "article.profile.*")
 {
   categoryId  String
               @label("Category ID") 
@@ -128,142 +128,150 @@ model Article
   @display("{{title}}")
   @query("*" "profile.*")
 {
-  id        String
-            @label("ID") 
-            @id @default("cuid()")
-            @list.clip({ length 10 hellip true })
-            @description("Unique generated identifier.")
-            @examples("dz7tg8bcf7e2lig3iuej3pjf")
+  id          String
+              @label("ID") 
+              @id @default("cuid()")
+              @list.clip({ length 10 hellip true })
+              @description("Unique generated identifier.")
+              @examples("dz7tg8bcf7e2lig3iuej3pjf")
   
-  profileId String
-            @label("Profile") 
-            @field.relation({ 
-              id "id"
-              search "/admin/profile/search?json&q={{query}}"
-              template "{{name}}" 
-            }) 
-            @is.required("Profile is required")
-            @filter.relation({
-              id "id"
-              search "/admin/profile/search?json&q={{query}}"
-              template "{{name}}" 
-            }) 
-            @list.template({ template "{{profile.name}}" }) 
-            @view.template({ template "{{profile.name}}" })
-            @description("Profile this auth belongs to.")
-            @examples("pjfdz7tg8bcf7e2lig3iuej3")
+  profileId   String
+              @label("Profile") 
+              @field.relation({ 
+                id "id"
+                search "/admin/profile/search?json&q={{query}}"
+                template "{{name}}" 
+              }) 
+              @is.required("Profile is required")
+              @filter.relation({
+                id "id"
+                search "/admin/profile/search?json&q={{query}}"
+                template "{{name}}" 
+              }) 
+              @list.template({ template "{{profile.name}}" }) 
+              @view.template({ template "{{profile.name}}" })
+              @description("Profile this auth belongs to.")
+              @examples("pjfdz7tg8bcf7e2lig3iuej3")
   
-  title     String
-            @label("Title") 
-            @searchable
-            @field.string
-            @is.required("Title is required")
-            @list.string @view.string
-            @description("Title of the article.")
-            @examples("Introduction to Stackpress")
+  title       String
+              @label("Title") 
+              @searchable
+              @field.string
+              @is.required("Title is required")
+              @list.string @view.string
+              @description("Title of the article.")
+              @examples("Introduction to Stackpress")
   
-  slug      String
-            @label("URL Slug") 
-            @unique
-            @field.slug
-            @is.required("URL Slug is required")
-            @list.string @view.string
-            @description("URL-friendly version of the title.")
-            @examples("introduction-to-stackpress")
+  slug        String
+              @label("URL Slug") 
+              @unique
+              @field.slug
+              @is.required("URL Slug is required")
+              @list.string @view.string
+              @description("URL-friendly version of the title.")
+              @examples("introduction-to-stackpress")
     
-  banner    String?
-            @label("Banner") 
-            @field.url
-            @list.image({ width 20 height 20 }) 
-            @view.image({ width 100 height 100 })
-            @description("Banner image URL.")
-            @examples("https://example.com/banner.jpg")
+  banner      String?
+              @label("Banner") 
+              @field.url
+              @list.image({ width 20 height 20 }) 
+              @view.image({ width 100 height 100 })
+              @description("Banner image URL.")
+              @examples("https://example.com/banner.jpg")
 
-  contents  Text?
-            @label("Contents") 
-            @field.editor({ 
-              history true 
-              font true 
-              size true 
-              format true 
-              paragraph true 
-              blockquote true 
-              style true 
-              color true 
-              highlight true 
-              text true 
-              textStyle true 
-              align true 
-              list true
-              code true
-            })
-            @view.html
-            @description("Main contents of the article.")
-            @examples("<p>This is an <strong>example</strong> article about Stackpress.</p>")
+  contents    Text?
+              @label("Contents") 
+              @field.editor({ 
+                history true 
+                font true 
+                size true 
+                format true 
+                paragraph true 
+                blockquote true 
+                style true 
+                color true 
+                highlight true 
+                text true 
+                textStyle true 
+                align true 
+                list true
+                code true
+              })
+              @view.html
+              @description("Main contents of the article.")
+              @examples("<p>This is an <strong>example</strong> article about Stackpress.</p>")
 
-  keywords  String[]
-            @label("Keywords") 
-            @default([])
-            @field.taglist
-            @list.taglist({ warning true pill true className "frui-mr-md" })
-            @view.taglist({ warning true pill true className "frui-mr-md" })
-            @description("Keyphrases for SEO purposes.")
-            @examples(["top buyer" "verified" "moderator"])
+  keywords    String[]
+              @label("Keywords") 
+              @default([])
+              @field.taglist
+              @list.taglist({ warning true pill true className "frui-mr-md" })
+              @view.taglist({ warning true pill true className "frui-mr-md" })
+              @description("Keyphrases for SEO purposes.")
+              @examples(["top buyer" "verified" "moderator"])
 
-  tags      String[]
-            @label("Tags") 
-            @default([])
-            @field.taglist
-            @list.taglist({ warning true pill true className "frui-mr-md" })
-            @view.taglist({ warning true pill true className "frui-mr-md" })
-            @description("Arbitrary tags for general use.")
-            @examples(["top buyer" "verified" "moderator"])
-
-  status    PublishStatus
-            @label("Status")
-            @default("DRAFT")
-            @field.select({ options [ "DRAFT" "REVIEW" "PUBLISHED" "ARCHIVED" ] })
-            @is.required("Status is required")
-            @list.string @view.string
-            @description("Status of the article.")
-            @examples("DRAFT")
-
-  published Datetime?
-            @label("Published Date") 
-            @field.datetime
-            @list.date("m d, Y h:iA") 
-            @view.date("m d, Y h:iA")
-            @description("Date when the article was published.")
-            @examples("2025-10-01T12:00:00Z")
-
-  active    Boolean
-            @label("Active") 
-            @default(true) @active
-            @filter.switch
-            @view.yesno
-            @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
-            @examples(true)
+  tags        String[]
+              @label("Tags") 
+              @default([])
+              @field.taglist
+              @list.taglist({ warning true pill true className "frui-mr-md" })
+              @view.taglist({ warning true pill true className "frui-mr-md" })
+              @description("Arbitrary tags for general use.")
+              @examples(["top buyer" "verified" "moderator"])
   
-  created   Datetime 
-            @label("Created") 
-            @default("now()") @sortable
-            @list.date("m d, Y h:iA") 
-            @view.date("m d, Y h:iA")
-            @description("Generated timestamp when row was created.")
-            @examples("2025-10-01T12:00:00Z")
-  
-  updated   Datetime 
-            @label("Updated") 
-            @default("now()") @timestamp @sortable
-            @list.date("m d, Y h:iA") 
-            @view.date("m d, Y h:iA")
-            @description("Generated timestamp that is updated whenever the row has changed.")
-            @examples("2025-10-01T12:00:00Z")
-  
-  profile   Profile @relation({ local "profileId" foreign "id" })
+  references  Hash?
+              @label("References") 
+              @default({})
+              @field.metadata({ add "Add Reference" })
+              @view.metadata({ className "frui-pt-md frui-pr-md frui-pb-md frui-pl-md"})
+              @description("Arbitrary key/value references for general use.")
+              @examples({ fbid "abc123" })
 
-  comments  Comment[] @label("Comments")
-  catalogs  Catalog[] @label("Catalogs")
+  status      PublishStatus
+              @label("Status")
+              @default("DRAFT")
+              @field.select({ options [ "DRAFT" "REVIEW" "PUBLISHED" "ARCHIVED" ] })
+              @is.required("Status is required")
+              @list.string @view.string
+              @description("Status of the article.")
+              @examples("DRAFT")
+
+  published   Datetime?
+              @label("Published Date") 
+              @field.datetime
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Date when the article was published.")
+              @examples("2025-10-01T12:00:00Z")
+
+  active      Boolean
+              @label("Active") 
+              @default(true) @active
+              @filter.switch
+              @view.yesno
+              @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+              @examples(true)
+  
+  created     Datetime 
+              @label("Created") 
+              @default("now()") @sortable
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Generated timestamp when row was created.")
+              @examples("2025-10-01T12:00:00Z")
+  
+  updated     Datetime 
+              @label("Updated") 
+              @default("now()") @timestamp @sortable
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Generated timestamp that is updated whenever the row has changed.")
+              @examples("2025-10-01T12:00:00Z")
+  
+  profile     Profile @relation({ local "profileId" foreign "id" })
+
+  comments    Comment[] @label("Comments")
+  catalogs    Catalog[] @label("Catalogs")
 }
 
 model Comment 
