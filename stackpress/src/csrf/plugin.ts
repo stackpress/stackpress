@@ -2,9 +2,10 @@
 import crypto from 'node:crypto';
 //stackpress
 import Server from '@stackpress/ingest/Server';
-import type { Request, Response } from '@stackpress/ingest';
+import { type Request, type Response } from '@stackpress/ingest';
 //local
 import { CsrfConfig } from './types';
+import Exception from '../Exception.js';
 
 export default function plugin(ctx: Server) {
   ctx.on('config', (_req, _res, ctx) => {
@@ -40,12 +41,27 @@ export default function plugin(ctx: Server) {
         const errorMessage = `This page may have been requested from an external source. 
           We corrected the issue. Please try again.`;
 
+        const exception = Exception
+          .for(errorMessage);
+
         if (sessionBuffer.length !== inputBuffer.length) {
-          res.setError(errorMessage);
+          res.setError(
+            exception.toResponse(),
+            {},
+            [],
+            419,
+            'Page Expired'
+          );
           return false;
         }
         if (!crypto.timingSafeEqual(sessionBuffer, inputBuffer)) {
-          res.setError(errorMessage);
+          res.setError(
+            exception.toResponse(),
+            {},
+            [],
+            419,
+            'Page Expired'
+          );
           return false;
         }
         return true;
