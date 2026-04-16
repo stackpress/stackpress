@@ -173,15 +173,12 @@ if (detail.code !== 200) {
 //next get the relation rows
 
 //extract filters from url query
-let {
-  eq = {},
-  skip,
-  take,
-} = req.data<{
+const query = req.data<{
   eq?: Record<string, string | number | boolean>,
   skip?: number,
   take?: number
 }>();
+let { eq = {}, skip, take } = query;
 
 if (skip && !isNaN(Number(skip))) {
   skip = Number(skip);

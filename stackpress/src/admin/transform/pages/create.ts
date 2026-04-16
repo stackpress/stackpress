@@ -51,10 +51,10 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
-  //import type { CsrfPlugin } from '../../types.js';
+  //import type { CsrfPlugin } from 'stackpress/csrf/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '../../types.js',
+    moduleSpecifier: 'stackpress/csrf/types',
     namedImports: [ 'CsrfPlugin' ]
   });
 
@@ -109,10 +109,6 @@ const language = ctx.config.path<LanguageConfig>('language', {
   locale: 'en_US',
   languages: {}
 });
-//get the csrf plugin
-const csrf = ctx.plugin<CsrfPlugin>('csrf');
-//generate token
-csrf.generateToken(res, ctx);
 const admin = ctx.config.path<AdminConfig>('admin', {});
 //set data for template layer
 res.data.set('view', { 
@@ -135,6 +131,11 @@ res.data.set('admin', {
   base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
+
+//get the csrf plugin
+const csrf = ctx.plugin<CsrfPlugin>('csrf');
+//generate token
+csrf.generateToken(res, ctx);
 
 //if form submitted
 if (req.method === 'POST') {

@@ -55,7 +55,7 @@ export const assertions: Record<string, string> = {
   'starting': `.startsWith(<%s%>, { message: '<%m%>' })`,
   'ending': `.endsWith(<%s%>, { message: '<%m%>' })`,
   'including': `.includes(<%s%>, { message: '<%m%>' })`,
-  'date': `.refine(value => !isNaN(Date.parse(value)), { message: '<%m%>' })`,
+  'date': `.refine(value => !isNaN(Date.parse(value.toString())), { message: '<%m%>' })`,
   'future': `.refine(value => new Date(value) > new Date(), { message: '<%m%>' })`,
   'past': `.refine(value => new Date(value) < new Date(), { message: '<%m%>' })`,
   'present': `.refine(value => {

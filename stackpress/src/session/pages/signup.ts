@@ -18,10 +18,6 @@ export default async function SignupPage(
     //let the response pass through
     return;
   }
-  //get the csrf plugin
-  const csrf = ctx.plugin<CsrfPlugin>('csrf');
-  //generate a token
-  csrf.generateToken(res, ctx);
   //get the view, brand and auth config
   const view = ctx.config.path<ViewConfig>('view', {});
   const brand = ctx.config.path<BrandConfig>('brand', {});
@@ -50,6 +46,12 @@ export default async function SignupPage(
   const session = ctx.plugin<SessionPlugin>('session');
   const me = session.load(req);
   const guest = await me.guest();
+
+  //get the csrf plugin
+  const csrf = ctx.plugin<CsrfPlugin>('csrf');
+  //generate a token
+  csrf.generateToken(res, ctx);
+  
   //form submission
   if (req.method === 'POST') {
     //validate csrf

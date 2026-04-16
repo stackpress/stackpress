@@ -75,6 +75,12 @@ export default function generate(
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+  //import type { CsrfPlugin } from 'stackpress/csrf/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/csrf/types',
+    namedImports: [ 'CsrfPlugin' ]
+  });
 
   //------------------------------------------------------------------//
   // Import Client
@@ -134,11 +140,7 @@ if (res.body || (res.code && res.code !== 200)) {
   //let the response pass through
   return;
 }
-//get csrf plugin
-const csrf = ctx.plugin<CsrfPlugin>('csrf');
-//generate token
-csrf.generateToken(res, ctx);
-//get the view, brandm lang and admin config
+//get the view, brand lang and admin config
 const view = ctx.config.path<ViewConfig>('view', {});
 const brand = ctx.config.path<BrandConfig>('brand', {});
 const language = ctx.config.path<LanguageConfig>('language', {
@@ -184,6 +186,11 @@ if (detail.code !== 200) {
     }
   <%/hashes%>
 <%/hashes.length%>
+
+//get csrf plugin
+const csrf = ctx.plugin<CsrfPlugin>('csrf');
+//generate token
+csrf.generateToken(res, ctx);
 
 //if form submitted
 if (req.method === 'POST') {

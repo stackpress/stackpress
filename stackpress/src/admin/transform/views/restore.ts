@@ -243,10 +243,9 @@ const { base, can, results } = props;
 const { _ } = useLanguage();
 const { config } = useServer();
 //variables
-const tokenKey = config.path('csrf.name', 'csrf');
+const csrf = config.path('csrf.name', 'csrf');
 const token = config.path('csrf.token', '');
-const paramsObj = { confirmed: true, [tokenKey]: token };
-const params = new URLSearchParams(paramsObj).toString();
+const confirm = new URLSearchParams(\`confirmed=true&\${csrf}=\${token}\`);
 //render
 return (
   <div>
@@ -266,7 +265,7 @@ return (
           <span>{_('Nevermind.')}</span>
         </a>
       )}
-      <a className="action restore" href={'?' + params}>
+      <a className="action restore" href={'?' + confirm.toString()}>
         <i className="icon fas fa-fw fa-check-circle"></i>
         <span>{_('Confirmed')}</span>
       </a>

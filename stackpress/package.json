@@ -499,6 +499,10 @@
       "client/types": [ "./cjs/client/types.d.ts" ],
       "client": [ "./cjs/client/index.d.ts" ],
 
+      "csrf": [ "./cjs/index.d.ts" ],
+      "csrf/plugin": [ "./cjs/csrf/plugin.d.ts" ],
+      "csrf/types": [ "./cjs/csrf/types.d.ts" ],
+
       "email/plugin": [ "./cjs/email/plugin.d.ts" ],
       "email/types": [ "./cjs/email/types.d.ts" ],
       "email": [ "./cjs/email/index.d.ts" ],

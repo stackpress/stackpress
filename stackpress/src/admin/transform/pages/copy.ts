@@ -51,6 +51,12 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress/admin/types',
     namedImports: [ 'AdminConfig' ]
   });
+  //import type { CsrfPlugin } from 'stackpress/csrf/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress/csrf/types',
+    namedImports: [ 'CsrfPlugin' ]
+  });
 
   //------------------------------------------------------------------//
   // Import Client
@@ -133,8 +139,15 @@ res.data.set('admin', {
   menu: admin.menu || []
 });
 
+//get the csrf plugin
+const csrf = ctx.plugin<CsrfPlugin>('csrf');
+//generate token
+csrf.generateToken(res, ctx);
+
 //if form submitted
 if (req.method === 'POST') {
+  //validate csrf
+  if (!csrf.validateToken(req, res)) return;
   const input: Partial<<%type%>> = {};
   <%#fields%>
     if (req.data.has('<%column%>')) {

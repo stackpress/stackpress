@@ -240,8 +240,8 @@ const selectors = this
       : table
       ? { table, column }
       : alias !== column
-      ? { column, alias }
-      : { column };
+      ? { table: this.table, column, alias }
+      : { table: this.table, column };
   });
 
 //finally, make the select builder
@@ -285,7 +285,7 @@ Object.entries(flatten(sort, true)).forEach(([key, value]) => {
     const column = selector.table
       ? \`\${selector.table}.\${selector.column}:\${selector.json.join('.')}\`
       : \`\${selector.column}:\${selector.json.join('.')}\`;
-    select.order({ name: column, order });
+    select.order({ name: column }, order);
   } else if (selector.table) {
     select.order({
       table: selector.parents.join('__'), 
@@ -511,7 +511,30 @@ return paths;`,
 
 //public where(builder: WhereBuilder, query: StoreSelectFilters = {}) {}
 WHERE:
-`//extract params
+`<%#active%>
+  //extract params
+  const {
+    ne = {},
+    ge = {},
+    le = {},
+    has = {},
+    like = {},
+    hasnt = {}
+  } = query
+  const eq = { ...(query.eq || {}) };
+  //default active value
+  const name = '<%active%>';
+  if (typeof eq[name] === 'undefined') {
+    builder.where(
+      \`\${q}\${this.table}\${q}.\${q}\${name}\${q} = ?\`, 
+      [ true ]
+    );
+  } else if (eq[name] === -1) {
+    delete eq[name];
+  }
+<%/active%>
+<%^active%>
+//extract params
 const {
   eq = {},
   ne = {},
@@ -521,20 +544,6 @@ const {
   like = {},
   hasnt = {}
 } = query;
-<%#active%>
-  //default active value
-  const name = '<%active%>';
-  if (typeof eq[name] === 'undefined') {
-    builder.where(
-      \`\${q}\${this.table}\${q}.\${q}\${name}\${q} = ?\`, 
-      [ true ]
-    );
-  } else if (eq[name] !== -1) {
-    builder.where(
-      \`\${q}\${this.table}\${q}.\${q}\${name}\${q} = ?\`, 
-      [ eq[name] ]
-    );
-  }
 <%/active%>
 <%#searchable%>
   //searchable

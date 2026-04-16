@@ -39,11 +39,23 @@ const sanitized = removeUndefined(defined);
 
 //collect errors, if any
 const errors = this.store.assert(sanitized) || {} as <%assert%>;
+//if there were errors
+if (Object.keys(errors).length > 0) {
+  //throw errors
+  throw Exception
+    .for('Invalid parameters')
+    .withCode(400)
+    .withErrors(errors);
+}
 
+const rows = await this.findAll(query);
+//even if there were results, we can't requery because the results 
+// might be different after the update, so we have to manually merge 
+// the input with the existing records
+const results = rows.map(row => ({ ...row, ...sanitized })) as <%type%>[];
+//if there are no rows, it doesn't make sense to update...
+if (rows.length === 0) return results;
 <%#uniques%>
-  //we need to check if the existing record 
-  // is the same as the one about to be updated
-  const queue = await this.findAll(query);
   <%#exists%>
     //if there's a <%column%> value
     if (
@@ -57,8 +69,8 @@ const errors = this.store.assert(sanitized) || {} as <%assert%>;
       });
       //if it does exist
       if (exists.length > 0) {
-        const same = queue.some(
-          update => update.<%column%> === sanitized.<%column%>
+        const same = rows.some(
+          row => row.<%column%> === sanitized.<%column%>
         );
         if (!same) {
           //add a unique error
@@ -67,29 +79,22 @@ const errors = this.store.assert(sanitized) || {} as <%assert%>;
       }
     }
   <%/exists%>
+  //if there were unique errors
+  if (Object.keys(errors).length > 0) {
+    //throw errors
+    throw Exception
+      .for('Invalid parameters')
+      .withCode(400)
+      .withErrors(errors);
+  }
 <%/uniques%>
 
-//if there were errors
-if (Object.keys(errors).length > 0) {
-  //throw errors
-  throw Exception
-    .for('Invalid parameters')
-    .withCode(400)
-    .withErrors(errors);
-}
-
-const rows = await this.findAll(query);
-//if there are no rows, it doesn't make sense to update...
-if (rows.length > 0) {
-  const update = this.store.update(query, input, this.engine.dialect.q);
-  update.engine = this.engine;
-  //dont rely on native update... 
-  // pgsql returns different things than sqlite and mysql....
-  await update;
-}
-//we can't requery because the results might be different 
-// after the update, so we have to manually merge the input 
-// with the existing records
-return rows.map(row => ({ ...row, ...sanitized })) as <%type%>[];`
+//okay to update now
+const update = this.store.update(query, input, this.engine.dialect.q);
+update.engine = this.engine;
+//dont rely on native update... 
+// pgsql returns different things than sqlite and mysql....
+await update;
+return results;`
 
 };

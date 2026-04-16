@@ -135,7 +135,7 @@ const query = req.data<{
   eq?: Record<string, string|number|boolean> 
 }>();
 //extract filters from url query
-const { eq } = query;
+const { eq = {} } = query;
 //add relation id/s to filters
 eq.<%id.local%> = req.data<string>('<%id.foreign%>');
 //search using the filters
@@ -213,7 +213,7 @@ const query = req.data<{
   eq?: Record<string, string|number|boolean> 
 }>();
 //extract filters from url query
-const { eq } = query;
+const { eq = {} } = query;
 //add relation id/s to filters
 eq.<%id.local%> = req.data<string>('<%id.foreign%>');
 //search using the filters

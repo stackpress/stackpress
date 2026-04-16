@@ -214,7 +214,7 @@ export function storePathToAlias(path: StorePath) {
  */
 export function storeSelectorToSqlSelector(selector: StoreSelector, q = '"') {
   //auth__user_profile
-  const table = selector.parents.join('__');
+  const table = selector.parents.join('__') || selector.table;
   //address_location
   const column = selector.column;
   //references.googleId
