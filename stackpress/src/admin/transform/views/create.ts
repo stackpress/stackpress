@@ -270,7 +270,7 @@ CREATE_FORM_FIELDSET:
   name="<%column%>"
   value={input.<%column%>} 
   errors={errors.<%column%> as Record<string, any>}
-  <%#required%>required<%/required%>
+  <%#?:required%>required<%/?:required%>
 />`,
 
 CREATE_FORM_FIELD:
@@ -279,7 +279,7 @@ CREATE_FORM_FIELD:
   name="<%column%><%multiple%>"
   value={input.<%column%>} 
   error={errors.<%column%>?.toString()} 
-  <%#required%>required<%/required%>
+  <%#?:required%>required<%/?:required%>
 />`,
 
 CREATE_BODY:

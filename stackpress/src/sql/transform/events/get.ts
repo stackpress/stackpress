@@ -8,8 +8,6 @@ import {
 } from '../../../schema/transform/helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
-  const ids = model.store.ids;
-  if (ids.size === 0) return;
   const filepath = model.name.toPathName('%s/events/get.ts');
   //load Profile/events/get.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
@@ -64,10 +62,7 @@ export default function generate(directory: Directory, model: Model) {
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.GET, { 
-      actions: model.name.toClassName('%sActions'),
-      ids: ids.map(column => ({
-        column: column.name.toPropertyName()
-      })).toArray()
+      actions: model.name.toClassName('%sActions')
     })
   });
 };

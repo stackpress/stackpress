@@ -185,7 +185,7 @@ server.import.post(
   () => import('<%import.import%>')
 );
 
-<%#ids%>
+<%#?:ids%>
   //copy
   server.import.get(
     \`<%copy.route%>\`, 
@@ -212,7 +212,7 @@ server.import.post(
     () => import('<%remove.import%>')
   );
 
-  <%#restore%>
+  <%#?:restore%>
     //restore
     server.import.get(
       \`<%restore.route%>\`, 
@@ -222,7 +222,7 @@ server.import.post(
       \`<%restore.route%>\`, 
       () => import('<%restore.import%>')
     );
-  <%/restore%>
+  <%/?:restore%>
 
   //update
   server.import.get(
@@ -238,7 +238,7 @@ server.import.post(
     () => import('<%update.import%>')
   );
 
-  <%#details%>
+  <%#?:details%>
     //<%name%> create
     server.import.get(
       \`<%create.route%>\`, 
@@ -266,8 +266,8 @@ server.import.post(
       \`<%search.route%>\`, 
       () => import('<%search.import%>')
     );
-  <%/details%>
-<%/ids%>
+  <%/?:details%>
+<%/?:ids%>
 
 //------------------------------------------------------------------//
 // View Routes
@@ -293,7 +293,7 @@ if (module) {
     -100
   );
 
-  <%#ids%>
+  <%#?:ids%>
     //copy
     server.view.get(
       \`<%copy.route%>\`, 
@@ -325,7 +325,7 @@ if (module) {
       -100
     );
 
-    <%#restore%>
+    <%#?:restore%>
       //restore
       server.view.get(
         \`<%restore.route%>\`, 
@@ -337,7 +337,7 @@ if (module) {
         \`<%restore.view%>\`,
         -100
       );
-    <%/restore%>
+    <%/?:restore%>
 
     //update
     server.view.get(
@@ -356,7 +356,7 @@ if (module) {
       -100
     );
 
-    <%#details%>
+    <%#?:details%>
       //<%name%> create
       server.view.get(
         \`<%create.route%>\`, 
@@ -375,8 +375,8 @@ if (module) {
         \`<%search.view%>\`,
         -100
       );
-    <%/details%>
-  <%/ids%>
+    <%/?:details%>
+  <%/?:ids%>
 }`,
 
 };

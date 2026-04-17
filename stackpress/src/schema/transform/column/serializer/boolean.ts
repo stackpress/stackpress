@@ -3,7 +3,7 @@ import type { ClassDeclaration } from 'ts-morph';
 import { Scope } from 'ts-morph';
 //stackpress/schema
 import type Column from '../../../Column.js';
-//stackpress/schema/transform
+//stackpress/schema/view
 import { renderCode } from '../../helpers.js';
 
 export default function generate(
@@ -42,11 +42,11 @@ SERIALIZE_BOOLEAN:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 return value === 'false' ? false
   : value === 'true' ? true
   : value === '0' ? false
@@ -57,11 +57,11 @@ UNSERIALIZE_BOOLEAN:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 return Boolean(value);`
 
 };

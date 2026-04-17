@@ -135,11 +135,11 @@ const {
   error = false 
 } = props;
 const attributes = <%props%>;
-<%#metadata%>
+<%#?:metadata%>
 const entries = typeof value === 'object' && value !== null
   ? Object.entries(value).map(([ key, val ]) => [ key, String(val) ])
   : value;
-<%/metadata%>
+<%/@:metadata%>
 //renderCode
 return (
   <<%component%> 

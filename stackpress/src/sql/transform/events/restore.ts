@@ -96,7 +96,7 @@ if (!engine) return;
 
 const eq: StoreSelectFilters["eq"] = {};
 //check for id/s
-<%#ids%>
+<%#@:ids%>
   //get id
   eq.<%column%> = req.data<string>('<%column%>');
   //let it naturally 404 if invalid id
@@ -108,11 +108,11 @@ const eq: StoreSelectFilters["eq"] = {};
     res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
     return;
   }
-<%/ids%>
-<%#active%>
+<%/@:ids%>
+<%#?:active%>
   //include soft-deleted records
-  eq.<%column%> = -1; 
-<%/active%>
+  eq.<%active.column%> = -1; 
+<%/?:active%>
 //get the database seed (for encrypting)
 const seed = ctx.config.path('database.seed', '');
 //load the actions

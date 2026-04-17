@@ -54,11 +54,11 @@ SERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 //if value is a string
 if (typeof value === 'string') {
   if (validJSONObjectString(value)) {
@@ -84,11 +84,11 @@ UNSERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 //if value is a string
 if (typeof value === 'string') {
   return validJSONObjectString(value) 

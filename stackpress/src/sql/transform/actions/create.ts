@@ -67,7 +67,7 @@ const sanitized = removeUndefined(defined);
 //collect errors, if any
 const errors = this.store.assert(sanitized, true) || {} as <%assert%>;
 
-<%#exists%>
+<%#@:exists%>
   //if there's a <%column%> value
   if (
     typeof sanitized.<%column%> !== 'undefined'
@@ -84,7 +84,7 @@ const errors = this.store.assert(sanitized, true) || {} as <%assert%>;
       errors.<%column%> = 'Already exists';
     }
   }
-<%/exists%>
+<%/@:exists%>
 
 //if there were errors
 if (Object.keys(errors).length > 0) {
@@ -105,20 +105,20 @@ if (rows.length > 0) {
   return this.store.unserialize(rows[0]);
 }
 //must be mysql or sqlite...
-<%#oneid%>
+<%#?:oneid%>
   if (this.engine.connection.lastId) {
     const eq = { <%oneid%>: this.engine.connection.lastId };
     return await this.find({ eq }) || input as unknown as <%type%>;
   }
   return input as unknown as <%type%>;
-<%/oneid%>
-<%#multid%>
-  const eq = { <%#ids%><%column%>: input.<%column%>!, <%/ids%> };
+<%/?:oneid%>
+<%#?:multid%>
+  const eq = { <%#@:ids%><%column%>: input.<%column%>!, <%/@:ids%> };
   return await this.find({ eq }) || input as unknown as <%type%>;
-<%/multid%>
-<%#noid%>
+<%/?:multid%>
+<%#?:noid%>
   return input as unknown as <%type%>;
-<%/noid%>
+<%/?:noid%>
 `
 
 };

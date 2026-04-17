@@ -121,14 +121,14 @@ if (detail.code !== 200) {
   res.fromStatusResponse(detail);
   return;
 }
-<%#hashes.length%>
+<%#?:hashes.length%>
   //remove hashed data
-  <%#hashes%>
+  <%#@:hashes%>
     if (typeof detail.results?.<%column%> !== 'undefined') {
       delete detail.results.<%column%>;
     }
-  <%/hashes%>
-<%/hashes.length%>
+  <%/@:hashes%>
+<%/?:hashes.length%>
 
 //get query
 const query = req.data<{ 
@@ -199,14 +199,14 @@ if (detail.code !== 200) {
   res.fromStatusResponse(detail);
   return;
 }
-<%#hashes.length%>
+<%#?:hashes.length%>
   //remove hashed data
-  <%#hashes%>
+  <%#@:hashes%>
     if (typeof detail.results?.<%column%> !== 'undefined') {
       delete detail.results.<%column%>;
     }
-  <%/hashes%>
-<%/hashes.length%>
+  <%/@:hashes%>
+<%/?:hashes.length%>
 
 //get query
 const query = req.data<{ 

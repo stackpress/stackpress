@@ -78,12 +78,12 @@ try {
             total: 1
           });
         } else if (mode === 'update') {
-          <%#ids.length%>
+          <%#?:ids.length%>
             if (<%update%>) {
               const eq = { 
-                <%#ids%>
+                <%#@:ids%>
                   <%column%>: input.<%column%>,
-                <%/ids%> 
+                <%/@:ids%> 
               };
               const exists = await this.find({ eq });
               if (exists) {
@@ -97,8 +97,8 @@ try {
                 continue;
               }
             }
-          <%/ids.length%>
-          <%#uniques%>
+          <%/?:ids.length%>
+          <%#@:uniques%>
             if (
               typeof input.<%column%> !== 'undefined'
               && input.<%column%> !== null
@@ -117,7 +117,7 @@ try {
                 continue;
               }
             }
-          <%/uniques%>
+          <%/@:uniques%>
           results.push({ error: 'ID or unique field is required for update mode' });
         }
       } catch (e) {

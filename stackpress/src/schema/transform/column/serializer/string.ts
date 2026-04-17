@@ -66,12 +66,8 @@ export default function generate(
     ],
     statements: renderCode(TEMPLATE.UNSERIALIZE, {
       nullable: column.type.nullable,
-      encrypted: column.value.encrypted 
-        ? `return this._seed && value.length > 0 ? decrypt(String(value), this._seed) : String(value);` 
-        : '',
-      decrypted: !column.value.encrypted 
-        ? 'return String(value);'
-        : '',
+      encrypted: column.value.encrypted,
+      decrypted: !column.value.encrypted
     })
   });
 };
@@ -82,11 +78,11 @@ SERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 let string = String(value);
 //if value is a date
 if (value instanceof Date) {
@@ -99,31 +95,31 @@ if (value instanceof Date) {
 } else if (typeof value?.toString === 'function') {
   string = value.toString();
 }
-<%#decrypted%>
+<%#?:decrypted%>
   return string;
-<%/decrypted%>
-<%#encrypted%>
+<%/?:decrypted%>
+<%#?:encrypted%>
   if (doEncrypt) {
     return string.length > 0 ? encrypt(string, this._seed) : string;
   }
   return string;
-<%/encrypted%>
-<%#hashed%>
+<%/?:encrypted%>
+<%#?:hashed%>
   if (doEncrypt) {
     return string.length > 0 ? hash(string) : string;
   }
   return string;
-<%/hashed%>`,
+<%/?:hashed%>`,
 
 UNSERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 //if value is a date
 if (value instanceof Date) {
   return [
@@ -135,14 +131,13 @@ if (value instanceof Date) {
 } else if (typeof value?.toString === 'function') {
   value = value.toString() as T;
 }
-<%#decrypted%>
+<%#?:decrypted%>
   return String(value);
-<%/decrypted%>
-<%#encrypted%>
+<%/?:decrypted%>
+<%#?:encrypted%>
   if (doDecrypt) {
     return String(value).length > 0 ? decrypt(String(value), this._seed) : String(value);
   }
   return String(value);
-<%/encrypted%>`
-
+<%/?:encrypted%>`
 };

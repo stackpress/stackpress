@@ -26,11 +26,10 @@ export const TEMPLATE = {
 
 //public async remove(query: StoreSelectFilters) {}
 REMOVE:
-`<%#active%>
+`<%#?:active%>
   return await this.update(query, { <%column%>: false });
-<%/active%>
-<%^active%>
+<%|%>
   return await this.delete(query);
-<%/active%>`,
+<%/?:active%>`,
 
 };

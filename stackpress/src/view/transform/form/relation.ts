@@ -58,11 +58,6 @@ export default function generate(
     moduleSpecifier: 'react',
     namedImports: [ 'useState', 'useEffect' ]
   });
-  //import mustache from 'mustache';
-  source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
-  });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
@@ -87,6 +82,11 @@ export default function generate(
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
+  });
+  //import * as te4tt from 'stackpress/view/te4tt';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/te4tt',
+    namespaceImport: 'te4tt'
   });
 
   //------------------------------------------------------------------//
@@ -169,7 +169,7 @@ const handlers = {
       .then(response => {
         updateOptions(response.results.map(
           (row: Record<string, unknown>) => ({
-            label: mustache.render('<%template%>', row),
+            label: te4tt.render('<%template%>', row),
             value: row.<%id%>
           })
         ));

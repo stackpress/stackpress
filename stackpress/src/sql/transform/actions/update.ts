@@ -18,7 +18,6 @@ export default function generate(model: Model, definition: ClassDeclaration) {
     statements: renderCode(TEMPLATE.UPDATE, {
       assert: model.name.toTypeName('%sAssertInterfaceMap'),
       type: model.name.toTypeName(),
-      uniques: model.store.uniques.size > 0,
       exists: model.store.uniques.map(
         column => ({ column: column.name.toString() })
       ).toArray()
@@ -55,8 +54,8 @@ const rows = await this.findAll(query);
 const results = rows.map(row => ({ ...row, ...sanitized })) as <%type%>[];
 //if there are no rows, it doesn't make sense to update...
 if (rows.length === 0) return results;
-<%#uniques%>
-  <%#exists%>
+<%#?:exists.length%>
+  <%#@:exists%>
     //if there's a <%column%> value
     if (
       typeof sanitized.<%column%> !== 'undefined'
@@ -78,7 +77,7 @@ if (rows.length === 0) return results;
         }
       }
     }
-  <%/exists%>
+  <%/@:exists%>
   //if there were unique errors
   if (Object.keys(errors).length > 0) {
     //throw errors
@@ -87,7 +86,7 @@ if (rows.length === 0) return results;
       .withCode(400)
       .withErrors(errors);
   }
-<%/uniques%>
+<%/?:exists.length%>
 
 //okay to update now
 const update = this.store.update(query, input, this.engine.dialect.q);

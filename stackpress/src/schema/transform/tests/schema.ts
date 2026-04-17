@@ -231,9 +231,9 @@ DESCRIBE:
   it('should have columns', async () => {
     const schema = new <%classname%>();
     expect(schema.columns).to.be.an('object');
-    <%#columns%>
+    <%#@:columns%>
       expect(schema.columns.<%column%>).to.be.instanceOf(<%schema%>);
-    <%/columns%>
+    <%/@:columns%>
   });
   it('should have a shape', async () => {
     const schema = new <%classname%>();
@@ -243,21 +243,21 @@ DESCRIBE:
   it('should have defaults', async () => {
     const schema = new <%classname%>();
     const defaults = schema.defaults;
-    <%#defaults%>
+    <%#@:defaults%>
       <%expect%>
-    <%/defaults%>
+    <%/@:defaults%>
   });
   it('should assert', async () => {
     const schema = new <%classname%>();
-    <%#asserts%>
+    <%#@:asserts%>
 
       <%input%>
       <%actual%>
       <%expect%>
-      <%#columns%>
+      <%#@:columns%>
         <%column%>
-      <%/columns%>
-    <%/asserts%>
+      <%/@:columns%>
+    <%/@:asserts%>
   });
   it('should filter', async () => {
     const schema = new <%classname%>();
@@ -268,9 +268,9 @@ DESCRIBE:
     const schema = new <%classname%>();
     const actual = schema.populate({ __FOO__: true });
     expect(actual.__FOO__).to.be.true;
-    <%#populate%>
+    <%#@:populate%>
       <%expect%>
-    <%/populate%>
+    <%/@:populate%>
   });
   it('should serialize', async () => {});
   it('should unserialize', async () => {});

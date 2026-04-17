@@ -54,11 +54,6 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Modules
 
-  //import mustache from 'mustache';
-  source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
-  });
   //import Text from 'frui/list/Text';
   if (!attribute.component.isVirtual) {
     source.addImportDeclaration({
@@ -72,6 +67,13 @@ export default function generate(
 
   //------------------------------------------------------------------//
   // Import Stackpress
+
+  //import * as te4tt from 'stackpress/view/te4tt';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress/view/te4tt',
+    namespaceImport: 'te4tt'
+  });
+
   //------------------------------------------------------------------//
   // Import Client
 
@@ -128,7 +130,7 @@ export const TEMPLATE = {
 FORMAT:
 `//props
 const { data } = props;
-const value = mustache.render(
+const value = te4tt.render(
   '<%template%>',
   data
 );

@@ -74,21 +74,21 @@ FIELD:
 
 SCHEMA:
 `const schema = new Create(this.table);
-<%#fields%>
+<%#@:fields%>
   schema.addField('<%field%>', <%options%>);
-<%/fields%>
-<%#primaries%>
+<%/@:fields%>
+<%#@:primaries%>
   schema.addPrimaryKey('<%field%>');
-<%/primaries%>
-<%#uniques%>
+<%/@:primaries%>
+<%#@:uniques%>
   schema.addUniqueKey('<%index%>', '<%field%>');
-<%/uniques%>
-<%#keys%>
+<%/@:uniques%>
+<%#@:keys%>
   schema.addKey('<%index%>', '<%field%>');
-<%/keys%>
-<%#relations%>
+<%/@:keys%>
+<%#@:relations%>
   schema.addForeignKey('<%index%>', <%options%>);
-<%/relations%>
+<%/@:relations%>
 return schema;`
 
 };

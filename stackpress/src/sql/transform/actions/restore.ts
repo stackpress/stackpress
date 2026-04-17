@@ -28,8 +28,8 @@ export const TEMPLATE = {
 
 //public async restore(query: StoreSelectFilters) {}
 RESTORE:
-`<%#active%>
+`<%#?:active%>
   return await this.update(query, { <%column%>: true });
-<%/active%>`
+<%/?:active%>`
 
 };

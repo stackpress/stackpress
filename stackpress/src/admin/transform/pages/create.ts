@@ -157,16 +157,15 @@ if (req.method === 'POST') {
     const results = response.results!
     //redirect
     const base = admin.base ?? '/admin';
-    <%#oneid%>
+    <%#?:oneid%>
       res.redirect(
         \`\${base}/<%model%>/detail/<%ids%>\`
       );
-    <%/oneid%>
-    <%^oneid%>
+    <%|%>
       res.redirect(
         \`\${base}/<%model%>/search\`
       );
-    <%/oneid%>
+    <%/?:oneid%>
   }
 }`,
 

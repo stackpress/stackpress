@@ -47,10 +47,10 @@ export default function generate(
 export const TEMPLATE = {
 
 UPDATE:
-`<%#timestamp%>
+`<%#?:timestamp%>
   //add timestamp to @timestamp column
-  input.<%column%> = new Date();
-<%/timestamp%>
+  input.<%timestamp.column%> = new Date();
+<%/?:timestamp%>
 
 //serialize values and map filtered to the 
 // relative SQL column names (snake case)

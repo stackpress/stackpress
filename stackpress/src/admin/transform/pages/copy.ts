@@ -149,11 +149,11 @@ if (req.method === 'POST') {
   //validate csrf
   if (!csrf.validateToken(req, res)) return;
   const input: Partial<<%type%>> = {};
-  <%#fields%>
+  <%#@:fields%>
     if (req.data.has('<%column%>')) {
       input.<%column%> = req.data('<%column%>');
     }
-  <%/fields%>
+  <%/@:fields%>
   //emit the create event
   const response = await ctx.resolve<<%type%>>('<%event%>-create', input, res);
   //if error
@@ -176,16 +176,15 @@ if (req.method === 'POST') {
     const results = response.results!
     //redirect
     const base = admin.base ?? '/admin';
-    <%#oneid%>
+    <%#?:oneid%>
       res.redirect(
         \`\${base}/<%model%>/detail/<%ids%>\`
       );
-    <%/oneid%>
-    <%^oneid%>
+    <%|%>
       res.redirect(
         \`\${base}/<%model%>/search\`
       );
-    <%/oneid%>
+    <%/?:oneid%>
   }
   return;
 }

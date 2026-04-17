@@ -178,14 +178,14 @@ if (detail.code !== 200) {
   res.fromStatusResponse(detail);
   return;
 }
-<%#hashes.length%>
+<%#?:hashes.length%>
   //remove hashed data
-  <%#hashes%>
+  <%#@:hashes%>
     if (typeof detail.results?.<%column%> !== 'undefined') {
       delete detail.results.<%column%>;
     }
-  <%/hashes%>
-<%/hashes.length%>
+  <%/@:hashes%>
+<%/?:hashes.length%>
 
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
@@ -200,9 +200,9 @@ if (req.method === 'POST') {
   const input = req.data();
   //set the foreign id
   input.<%id.local%> = detail.results?.<%id.foreign%>;
-  <%#remove%>
+  <%#@:remove%>
     delete input.<%column%>;
-  <%/remove%>
+  <%/@:remove%>
   //emit the create event
   const response = await ctx.resolve<UnknownNest>('<%create%>', input);
   //if error

@@ -46,11 +46,11 @@ SERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 return value instanceof Date 
   ? value.getTime()
   : this.unserialize(value);`,
@@ -59,11 +59,11 @@ UNSERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 //either way, try to convert to number
 const number = Number(value);
 return !isNaN(number) ? number : 0;`

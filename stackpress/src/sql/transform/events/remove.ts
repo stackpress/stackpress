@@ -86,7 +86,7 @@ const engine = ctx.plugin<DatabasePlugin>('database');
 if (!engine) return;
 
 //check for id/s
-<%#ids%>
+<%#@:ids%>
   //get id
   const <%column%> = req.data<string>('<%column%>');
   //let it naturally 404 if invalid id
@@ -98,7 +98,7 @@ if (!engine) return;
     res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
     return;
   }
-<%/ids%>
+<%/@:ids%>
 
 //get the database seed (for encrypting)
 const seed = ctx.config.path('database.seed', '');
@@ -107,9 +107,9 @@ const actions = new <%actions%>(engine, seed);
 
 try { //to remove
   const eq = { 
-    <%#ids%>
+    <%#@:ids%>
       <%column%>,
-    <%/ids%> 
+    <%/@:ids%> 
   };
   const results = await actions.remove({ eq });
   res.setResults(results[0] || null);

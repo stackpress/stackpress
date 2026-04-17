@@ -41,22 +41,22 @@ SERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 return String(value);`,
 
 UNSERIALIZE:
 `if (typeof value === 'undefined') {
   return undefined;
 }
-<%#nullable%>
+<%#?:nullable%>
   if (value === null) {
     return null;
   }
-<%/nullable%>
+<%/?:nullable%>
 return String(value) as <%type%>;`
 
 };

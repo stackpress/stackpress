@@ -118,11 +118,11 @@ res.data.set('admin', {
   menu: admin.menu || []
 });
 
-<%#active%>
+<%#?:active%>
   //make sure to set the active column to -1 in order 
   // to get it returned even if it's soft-deleted
   req.data.set('eq', '<%column%>', -1);
-<%/active%>
+<%/?:active%>
 
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
