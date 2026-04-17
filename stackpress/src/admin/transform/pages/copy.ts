@@ -95,7 +95,10 @@ export default function generate(directory: Directory, model: Model) {
       })).toArray(),
       ids: model.store.ids.map(
         column => `\${results.${column.name.toString()}}`
-      ).toArray().join('/')
+      ).toArray().join('/'),
+      hashes: model.value.hashed.map(
+        column => ({ column: column.name.toString() })
+      ).toArray() || []
     })
   });
 };
@@ -189,7 +192,19 @@ if (req.method === 'POST') {
   return;
 }
 //if form not submitted, get the details of the thing to copy
-const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
-res.fromStatusResponse(response);`,
+<%#?:hashes.length%>
+  const response = await ctx.resolve<Partial<<%extended%>>>(
+    '<%event%>-detail', 
+    req
+  );
+  <%#@:hashes%>
+    if (typeof response.results?.<%column%> !== 'undefined') {
+      delete response.results.<%column%>;
+    }
+  <%/@:hashes%>
+  res.fromStatusResponse(response);
+<%|%>
+  await ctx.emit('<%event%>-detail', req, res);
+<%/?:hashes.length%>`,
 
 };

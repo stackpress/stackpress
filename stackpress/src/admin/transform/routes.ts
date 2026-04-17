@@ -238,7 +238,7 @@ server.import.post(
     () => import('<%update.import%>')
   );
 
-  <%#?:details%>
+  <%#@:details%>
     //<%name%> create
     server.import.get(
       \`<%create.route%>\`, 
@@ -266,7 +266,7 @@ server.import.post(
       \`<%search.route%>\`, 
       () => import('<%search.import%>')
     );
-  <%/?:details%>
+  <%/@:details%>
 <%/?:ids%>
 
 //------------------------------------------------------------------//
@@ -356,7 +356,7 @@ if (module) {
       -100
     );
 
-    <%#?:details%>
+    <%#@:details%>
       //<%name%> create
       server.view.get(
         \`<%create.route%>\`, 
@@ -375,7 +375,7 @@ if (module) {
         \`<%search.view%>\`,
         -100
       );
-    <%/?:details%>
+    <%/@:details%>
   <%/?:ids%>
 }`,
 

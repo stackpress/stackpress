@@ -83,7 +83,7 @@ export const helpers: Record<string, Helper> = {
  */
 export function render(fieldset: Fieldset, container = '${data.%s}') {
   const template = fieldset.name.display || 'Detail';
-  const resolve: Resolver = ({ path }) => path;
+  const resolve: Resolver = ({ path }) => container.replace('%s', path);
   const engine = new TE4TT({ helpers, container, resolve });
   return engine.render(template);
 }

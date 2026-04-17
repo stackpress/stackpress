@@ -439,7 +439,9 @@ expressions.forEach(expression => {
     // - required: false
     const type = relation.type[0] === 0 ? 'left' : 'inner';
     const table = relation.store.table;
-    const fromTable = path.parents.map(getAlias).join('__');
+    const fromTable = path.parents.length > 0 
+      ? path.parents.map(getAlias).join('__')
+      : this.table;
     const toTable = [ ...path.parents, table ].map(getAlias).join('__');
     const alias = toTable;
     const from = { table: fromTable, column: relation.local };
