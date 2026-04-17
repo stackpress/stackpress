@@ -5,6 +5,8 @@ import type Server from '@stackpress/ingest/Server';
 import FileLoader from '@stackpress/lib/FileLoader';
 //stackpress
 import type { IdeaProjectProps } from '../types.js';
+//stackpress/client
+import type { ClientConfig } from '../client/types.js';
 //stackpress/terminal
 import Terminal from '../terminal/Terminal.js';
 
@@ -44,8 +46,9 @@ export default async function generate(
       const filePath = file.getFilePath();
       const content = file.getFullText();
       //so we can pretty print
-      const pretty = await prettier.default.format(content, { 
-        parser: 'typescript' 
+      const pretty = await prettier.default.format(content, {
+        parser: 'typescript',
+        ...server.config.path<ClientConfig['prettier']>('client.prettier', {})
       });
       const fs = server.loader.fs;
       await fs.writeFile(filePath, pretty);

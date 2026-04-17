@@ -132,5 +132,28 @@ export type ClientConfig = {
   revisions?: string,
   //what tsconfig file to base the typescript compiler on
   //used by `stackpress/terminal` (for generating client)
-  tsconfig: string
+  tsconfig: string,
+  //see: https://prettier.io/docs/options
+  prettier?: {
+    semi?: boolean,
+    singleQuote?: boolean,
+    jsxSingleQuote?: boolean,
+    trailingComma?: 'none' | 'es5' | 'all',
+    bracketSpacing?: boolean,
+    objectWrap?: 'preserve' | 'collapse',
+    bracketSameLine?: boolean,
+    requirePragma?: boolean,
+    insertPragma?: boolean,
+    checkIgnorePragma?: boolean,
+    proseWrap?: 'always' | 'never' | 'preserve',
+    arrowParens?: 'avoid' | 'always',
+    htmlWhitespaceSensitivity?: 'css' | 'strict' | 'ignore',
+    endOfLine?: 'auto' | 'lf' | 'crlf' | 'cr',
+    quoteProps?: 'as-needed' | 'consistent' | 'preserve',
+    embeddedLanguageFormatting?: 'auto' | 'off',
+    singleAttributePerLine?: boolean,
+    experimentalOperatorPosition?: 'start' | 'end',
+    experimentalTernaries?: boolean,
+    jsxBracketSameLine?: boolean
+  }
 };
