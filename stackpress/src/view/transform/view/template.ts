@@ -64,16 +64,14 @@ export default function generate(
       namedImports: !component.import.default ? [ component.name ] : []
     });
   }
+  //import * as template from '@stackpress/lib/Template';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/lib/Template',
+    namespaceImport: 'template'
+  });
 
   //------------------------------------------------------------------//
   // Import Stackpress
-
-  //import * as te4tt from 'stackpress/view/te4tt';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/te4tt',
-    namespaceImport: 'te4tt'
-  });
-  
   //------------------------------------------------------------------//
   // Import Client
 
@@ -130,7 +128,7 @@ export const TEMPLATE = {
 FORMAT:
 `//props
 const { data } = props;
-const value = te4tt.render(
+const value = template.render(
   '<%template%>',
   data
 );

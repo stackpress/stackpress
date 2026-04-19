@@ -413,10 +413,6 @@
       "require": "./cjs/view/plugin.js",
       "import": "./esm/view/plugin.js"
     },
-    "./view/te4tt": {
-      "require": "./cjs/view/te4tt.js",
-      "import": "./esm/view/te4tt.js"
-    },
     "./view/types": {
       "require": "./cjs/view/types.js",
       "import": "./esm/view/types.js"
@@ -745,9 +741,6 @@
       ],
       "view/plugin": [
         "./cjs/view/plugin.d.ts"
-      ],
-      "view/te4tt": [
-        "./cjs/view/te4tt.d.ts"
       ],
       "view/types": [
         "./cjs/view/types.d.ts"

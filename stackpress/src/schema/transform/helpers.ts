@@ -4,7 +4,7 @@ import path from 'node:path';
 //modules
 import type { Project, Directory } from 'ts-morph';
 //stackpress/schema/view
-import { TE4TT, helpers } from '../../view/te4tt.js';
+import { TemplateEngine, helpers } from '@stackpress/lib/Template';
 
 export const cwd = process.cwd();
 
@@ -56,6 +56,6 @@ export async function publishProject(project: Project) {
 };
 
 export function renderCode(template: string, data: Record<string, any> = {}) {
-  const engine = new TE4TT({ helpers, delimiters: [ '<%', '%>' ] });
+  const engine = new TemplateEngine({ helpers, delimiters: [ '<%', '%>' ] });
   return engine.render(template, data);
 };
