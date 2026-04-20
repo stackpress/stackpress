@@ -1,0 +1,219 @@
+use "stackpress-session/schema.idea"
+
+model Application 
+  @labels("App" "Apps") 
+  @display("{{name}}") 
+  @icon("laptop") 
+  @query("*" "profile.*")
+{
+  id          String 
+              @label("ID") 
+              @id @default("cuid()")
+              @list.string @view.string
+              @description("Unique generated identifier.")
+              @examples("tg8bcf7e2lig3iuej3dz7pjf")
+  
+  profileId   String 
+              @label("Profile") 
+              @field.relation({ 
+                id "id"
+                search "/admin/profile/search?json&q={{query}}"
+                template "{{name}}" 
+              }) 
+              @is.required("Profile is required")
+              @filter.relation({
+                id "id"
+                search "/admin/profile/search?json&q={{query}}"
+                template "{{name}}" 
+              }) 
+              @list.template({ template "{{profile.name}}" }) 
+              @view.template({ template "{{profile.name}}" })
+              @description("The profile author of this application.")
+              @examples("pjfdz7tg8bcf7e2lig3iuej3")
+
+  name        String
+              @label("Name") 
+              @searchable
+              @field.input({ type "text" })
+              @is.required("Name is required")
+              @list.string @view.string
+              @description("Arbitrary name of the application. Used in 3-legged OAuth flows.")
+              @examples("My Awesome App")
+
+  logo        String?  
+              @label("Image") 
+              @field.url
+              @list.image(20 20) @view.image(100 100)
+              @description("Logo image URL of the application. Used in 3-legged OAuth flows.")
+              @examples("https://example.com/logo.png")
+
+  website     String?
+              @label("Website") 
+              @searchable
+              @field.url
+              @list.link({ target "blank" }) 
+              @view.link({ target "blank" })
+              @description("Arbitrary website URL of the application. Used in 3-legged OAuth flows.")
+
+  secret      String
+              @label("Secret") 
+              @default("cuid()")
+              @list.string @view.string
+              @description("Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)")
+              @examples("bcf7e2lig3iuej3tg8dz7pjf")
+  
+  scopes      String[] 
+              @label("Scopes") 
+              @default([])
+              @field.taglist
+              @list.taglist({ warning true pill true className "frui-mr-md" })
+              @view.taglist({ warning true pill true className "frui-mr-md" })
+              @description("API scopes that this application can request. This is mapped with endpoints.")
+              @examples([ "commerce" "location" "account" ])
+
+  active      Boolean  
+              @label("Active") 
+              @default(true) @active
+              @filter.switch
+              @view.yesno
+              @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+              @examples(true)
+  
+  expires     Datetime 
+              @label("Expires") 
+              @sortable
+              @field.datetime
+              @is.required("Expires is required")
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Expiration date of the application. After this date, the application will not be able to perform any operations.")
+              @examples("2025-12-31T23:59:59Z")
+  
+  created     Datetime 
+              @label("Created") 
+              @default("now()") @sortable
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Generated timestamp when row was created.")
+              @examples("2025-10-01T12:00:00Z")
+  
+  updated     Datetime 
+              @label("Updated") 
+              @default("now()") @timestamp @sortable
+              @list.date("m d, Y h:iA") 
+              @view.date("m d, Y h:iA")
+              @description("Generated timestamp that is updated whenever the row has changed.")
+              @examples("2025-10-01T12:00:00Z")
+
+  session     Session[] 
+              @label("Sessions") 
+  
+  profile     Profile
+              @relation({ local "profileId" foreign "id" })
+}
+
+model Session 
+  @labels("Session" "Sessions") 
+  @display("{{profile.name}}") 
+  @icon("coffee") 
+  @query("*" "profile.*" "application.*")
+{
+  id            String   
+                @label("ID") 
+                @id @default("cuid()")
+                @list.string @view.string
+                @description("Unique generated identifier.")
+                @examples("7e2lig3iuej3bcftg8dz7pjf")
+  
+  applicationId String   
+                @label("App") 
+                @field.relation({ 
+                  id "id"
+                  search "/admin/application/search?json"
+                  template "{{name}}" 
+                }) 
+                @is.required("App is required")
+                @filter.relation({ 
+                  id "id"
+                  search "/admin/application/search?json"
+                  template "{{name}}" 
+                }) 
+                @list.template({ template "{{application.name}}" }) 
+                @view.template({ template "{{application.name}}" })
+                @description("Application this session belongs to.")
+                @examples("tg8bcf7e2lig3iuej3dz7pjf")
+  
+  profileId     String
+                @label("Profile") 
+                @field.relation({ 
+                  id "id"
+                  search "/admin/profile/search?json&q={{query}}"
+                  template "{{name}}" 
+                }) 
+                @is.required("Profile is required")
+                @filter.relation({
+                  id "id"
+                  search "/admin/profile/search?json&q={{query}}"
+                  template "{{name}}" 
+                }) 
+                @list.template({ template "{{profile.name}}" }) 
+                @view.template({ template "{{profile.name}}" })
+                @description("Profile this session belongs to.")
+                @examples("pjfdz7tg8bcf7e2lig3iuej3")
+
+  secret        String
+                @label("Secret") 
+                @default("cuid()")
+                @list.string @view.string
+                @description("Generated unique hash needed to perform write operations (POST, PUT, DELETE, etc.)")
+                @examples("lig3iuej37e2bcftg8dz7pjf")
+  
+  scopes        String[] 
+                @label("Scopes") 
+                @default([])
+                @field.taglist
+                @list.taglist({ warning true pill true className "frui-mr-md" })
+                @view.taglist({ warning true pill true className "frui-mr-md" })
+                @description("API scopes that this session can request. This is mapped with endpoints.")
+                @examples([ "commerce" "location" "account" ])
+
+  active        Boolean  
+                @label("Active") 
+                @default(true) @active
+                @filter.switch
+                @view.yesno
+                @description("Special flag to indicate active rows. Inactive rows are not shown in the list view, but can be viewed in the detail view.")
+                @examples(true)
+  
+  expires       Datetime 
+                @label("Expires") 
+                @sortable
+                @field.datetime
+                @is.required("Expires is required")
+                @list.date("m d, Y h:iA") 
+                @view.date("m d, Y h:iA")
+                @description("Expiration date of the session. After this date, the session will not be able to perform any operations.")
+                @examples("2025-12-31T23:59:59Z")
+  
+  created       Datetime 
+                @label("Created") 
+                @default("now()") @sortable
+                @list.date("m d, Y h:iA") 
+                @view.date("m d, Y h:iA")
+                @description("Generated timestamp when row was created.")
+                @examples("2025-10-01T12:00:00Z")
+  
+  updated       Datetime 
+                @label("Updated") 
+                @default("now()") @timestamp @sortable
+                @list.date("m d, Y h:iA") 
+                @view.date("m d, Y h:iA")
+                @description("Generated timestamp that is updated whenever the row has changed.")
+                @examples("2025-10-01T12:00:00Z")
+  
+  application   Application
+                @relation({ local "applicationId" foreign "id" })
+  
+  profile       Profile
+                @relation({ local "profileId" foreign "id" })
+}
