@@ -1,4 +1,4 @@
-//stackpress
+//modules
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 //stackpress-view
@@ -115,7 +115,7 @@ export type AuthConfigProps = ServerConfigProps & {
   auth: AuthConfig
 };
 
-export type AuthPageProps = ServerPageProps<AuthConfigProps>
+export type AuthPageProps = ServerPageProps<AuthConfigProps>;
 
 //--------------------------------------------------------------------//
 // Model Types

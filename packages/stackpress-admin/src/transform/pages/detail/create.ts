@@ -51,34 +51,34 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { Request, Response, Server } from 'stackpress/server';
+  //import type { Request, Response, Server } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/server',
+    moduleSpecifier: 'stackpress-server',
     namedImports: [ 'Request', 'Response', 'Server' ]
   });
-  //import type { LanguageConfig } from 'stackpress/language/types';
+  //import type { LanguageConfig } from 'stackpress-language/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/language/types',
+    moduleSpecifier: 'stackpress-language/types',
     namedImports: [ 'LanguageConfig' ]
   });
-  //import type { ViewConfig, BrandConfig } from 'stackpress/view/types';
+  //import type { ViewConfig, BrandConfig } from 'stackpress-view/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/types',
+    moduleSpecifier: 'stackpress-view/types',
     namedImports: [ 'ViewConfig', 'BrandConfig' ]
   });
-  //import type { AdminConfig } from 'stackpress/admin/types';
+  //import type { AdminConfig } from 'stackpress-admin/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/admin/types',
+    moduleSpecifier: 'stackpress-admin/types',
     namedImports: [ 'AdminConfig' ]
   });
-  //import type { CsrfPlugin } from 'stackpress/csrf/types';
+  //import type { CsrfPlugin } from 'stackpress-csrf/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/csrf/types',
+    moduleSpecifier: 'stackpress-csrf/types',
     namedImports: [ 'CsrfPlugin' ]
   });
 

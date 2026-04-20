@@ -37,28 +37,33 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
+  //import type { SessionPermission } from 'stackpress-session/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
+    moduleSpecifier: 'stackpress-session/types',
+    namedImports: [ 'SessionPermission' ]
   });
-  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  //import type { StoreSearchQuery } from 'stackpress-sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/admin/types',
-    namedImports: [ 'AdminConfigProps' ]
-  });
-  //import type { StoreSearchQuery } from 'stackpress/sql/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql/types',
+    moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'StoreSearchQuery' ]
   });
-  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
+  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'LayoutAdmin' ]
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress-admin/client',
+    namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
+  });
+  //import { useServer } from 'stackpress-view/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-view/client',
+    namedImports: [ 'useServer' ]
+  });
+  //import { LayoutAdmin } from 'stackpress-admin/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-admin/client',
+    namedImports: [ 'LayoutAdmin' ]
   });
 
   //------------------------------------------------------------------//
@@ -98,17 +103,17 @@ export default function generate(directory: Directory, model: Model) {
       type: model.name.toTypeName('%sExtended') 
     }) 
   });
-  //export type AdminProfileRemoveHeadProps = ServerPageProps<AdminConfigProps>;
+  //export type AdminProfileRemoveHeadProps = AdminPageProps;
   source.addTypeAlias({
     isExported: true,
     name: model.name.toTypeName('%sAdminRemoveHeadProps'),
-    type: 'ServerPageProps<AdminConfigProps>'
+    type: 'AdminPageProps'
   });
-  //export type AdminProfileRemovePageProps = ServerPageProps<AdminConfigProps>;
+  //export type AdminProfileRemovePageProps = AdminPageProps;
   source.addTypeAlias({
     isExported: true,
     name: model.name.toTypeName('%sAdminRemovePageProps'),
-    type: 'ServerPageProps<AdminConfigProps>'
+    type: 'AdminPageProps'
   });
   //export function AdminProfileRemoveCrumbs() {}
   source.addFunction({

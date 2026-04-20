@@ -38,22 +38,33 @@ export default function createView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { NestedObject, ServerPageProps, SessionPermission } from 'stackpress/view/client';
+  //import type { NestedObject } from 'stackpress-view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'NestedObject', 'ServerPageProps', 'SessionPermission' ]
+    moduleSpecifier: 'stackpress-view/client',
+    namedImports: [ 'NestedObject' ]
   });
-  //import type { AdminConfigProps } from 'stackpress/admin/types';
+  //import type { SessionPermission } from 'stackpress-session/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/admin/types',
-    namedImports: [ 'AdminConfigProps' ]
+    moduleSpecifier: 'stackpress-session/types',
+    namedImports: [ 'SessionPermission' ]
   });
-  //import { useServer, LayoutAdmin } from 'stackpress/view/client';
+  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'useServer', 'LayoutAdmin' ]
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress-admin/client',
+    namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
+  });
+  //import { useServer } from 'stackpress-view/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-view/client',
+    namedImports: [ 'useServer' ]
+  });
+  //import { LayoutAdmin } from 'stackpress-admin/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-admin/client',
+    namedImports: [ 'LayoutAdmin' ]
   });
 
   //------------------------------------------------------------------//
@@ -108,17 +119,17 @@ export default function createView(directory: Directory, model: Model) {
       type: model.name.toTypeName('%sInput') 
     }) 
   });
-  //export type ProfileAdminCreateHeadProps = ServerPageProps<AdminConfigProps>
+  //export type ProfileAdminCreateHeadProps = AdminPageProps
   source.addTypeAlias({
     isExported: true,
     name: model.name.toComponentName('%sAdminCreateHeadProps'),
-    type: 'ServerPageProps<AdminConfigProps>'
+    type: 'AdminPageProps'
   });
-  //export type ProfileAdminCreatePageProps = ServerPageProps<AdminConfigProps>
+  //export type ProfileAdminCreatePageProps = AdminPageProps
   source.addTypeAlias({
     isExported: true,
     name: model.name.toTypeName('%sAdminCreatePageProps'),
-    type: 'ServerPageProps<AdminConfigProps>'
+    type: 'AdminPageProps'
   });
   
   //export function ProfileAdminCreateCrumbs() {}

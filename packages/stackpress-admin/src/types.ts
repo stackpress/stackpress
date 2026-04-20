@@ -1,23 +1,14 @@
-//stackpress-language
-import type { LanguageConfig } from 'stackpress-language/types';
+//modules
+import type { ReactNode } from 'react';
+import type { StatusResponse, UnknownNest } from '@stackpress/lib/types';
 //stackpress-view
-import type { ViewConfig } from 'stackpress-view/types';
+import type { 
+  ServerConfigProps, 
+  ServerPageProps 
+} from 'stackpress-view/types';
 
-//ie. ctx.config<BrandConfig>('brand')
-export type BrandConfig = {
-  name?: string,
-  logo?: string,
-  icon?: string,
-  favicon?: string
-};
-
-//used by generated views
-export type AdminConfigProps = {
-  language: LanguageConfig,
-  view: ViewConfig,
-  brand: BrandConfig,
-  admin: AdminConfig
-};
+//--------------------------------------------------------------------//
+// Config Types
 
 //ie. ctx.config<AdminConfig>('admin');
 export type AdminConfig = {
@@ -33,3 +24,94 @@ export type AdminConfig = {
     match: string
   }[]
 };
+
+//--------------------------------------------------------------------//
+// View Types
+
+export type AdminConfigProps = ServerConfigProps & {
+  admin: AdminConfig
+};
+
+export type AdminPageProps = ServerPageProps<AdminConfigProps>;
+
+//--------------------------------------------------------------------//
+// Layout Types
+
+export type LayoutHeadProps = {
+  left?: boolean,
+  right?: boolean,
+  open?: {
+    left?: boolean,
+    right?: boolean
+  },
+  theme: string,
+  base?: string,
+  logo?: string,
+  brand?: string,
+  toggleLeft?: () => void,
+  toggleRight?: () => void,
+  toggleTheme?: () => void
+};
+
+export type LayoutLeftProps = {
+  base?: string,
+  brand?: string,
+  head?: boolean,
+  logo?: string,
+  open?: boolean,
+  toggle: () => void,
+  children: ReactNode
+};
+
+export type LayoutMainProps = {
+  head?: boolean,
+  left?: boolean,
+  right?: boolean,
+  open?: {
+    left?: boolean,
+    right?: boolean
+  },
+  children: ReactNode
+};
+
+export type LayoutMenuProps = {
+  path?: string,
+  menu: {
+    name: string,
+    icon: string,
+    path: string,
+    match: string
+  }[]
+};
+
+export type LayoutRightProps = {
+  open: boolean,
+  head?: boolean,
+  children: ReactNode
+};
+
+//--------------------------------------------------------------------//
+// Import Types
+
+//these are types from papaparse
+export type CSVParseError = {
+  code: string,
+  message: string,
+  row: number,
+  type: string,
+  errors?: Record<string, any>
+};
+
+export type CSVParseResults = { 
+  data: Record<string, any>[],
+  errors: CSVParseError[]
+};
+
+//these are types returned from the batch send endpoint
+export type BatchSendResults<
+  M extends UnknownNest = UnknownNest
+> = Partial<StatusResponse<Partial<M>>>[];
+
+export type BatchSendResponse<
+  M extends UnknownNest = UnknownNest
+> = StatusResponse<BatchSendResults<M>>;

@@ -84,41 +84,48 @@ export default function searchView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { StoreSearchQuery } from 'stackpress/sql/types';
+  //import type { SessionPermission } from 'stackpress-session/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql/types',
+    moduleSpecifier: 'stackpress-session/types',
+    namedImports: [ 'SessionPermission' ]
+  });
+  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress-admin/client',
+    namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
+  });
+  //import type { StoreSearchQuery } from 'stackpress-sql/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'StoreSearchQuery' ]
   });
-  //import type { ServerPageProps, SessionPermission } from 'stackpress/view/client';
+  //import { paginate, filter, order } from 'stackpress-admin/client';
   source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
-    namedImports: [ 'ServerPageProps', 'SessionPermission' ]
-  });
-  //import type { AdminConfigProps } from 'stackpress/admin/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress/admin/types',
-    namedImports: [ 'AdminConfigProps' ]
-  });
-  //import { paginate, filter, order, useServer, 
-  // LayoutAdmin } from 'stackpress/view/client';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/client',
+    moduleSpecifier: 'stackpress-admin/client',
     namedImports: [
       //import filter if there are any filterables
       ...filterable ? [ 'filter' ]: [],
       //import order if there are any sortables
       ...sortable ? [ 'order' ]: [],
-      'paginate',
-      'useServer',
-      'LayoutAdmin'
+      'paginate'
     ]
   });
-  //import { batchAndSend } from 'stackpress/view/import';
+  //import { useServer } from 'stackpress-view/client';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/import',
+    moduleSpecifier: 'stackpress-view/client',
+    namedImports: [ 'useServer' ]
+  });
+  //import { LayoutAdmin } from 'stackpress-admin/client';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-admin/client',
+    namedImports: [ 'LayoutAdmin' ]
+  });
+  //import { batchAndSend } from 'stackpress-admin/import';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-admin/import',
     namedImports: [ 'batchAndSend' ]
   });
 
@@ -193,17 +200,17 @@ export default function searchView(directory: Directory, model: Model) {
       can: (...permits: SessionPermission[]) => boolean 
     }`
   });
-  //export type AdminProfileSearchHeadProps = ServerPageProps<AdminConfigProps>;
+  //export type AdminProfileSearchHeadProps = AdminPageProps;
   source.addTypeAlias({
     isExported: true,
     name: model.name.toTypeName('%sAdminSearchHeadProps'),
-    type: 'ServerPageProps<AdminConfigProps>'
+    type: 'AdminPageProps'
   });
-  //export type AdminProfileSearchPageProps = ServerPageProps<AdminConfigProps>;
+  //export type AdminProfileSearchPageProps = AdminPageProps;
   source.addTypeAlias({
     isExported: true,
     name: model.name.toTypeName('%sAdminSearchPageProps'),
-    type: 'ServerPageProps<AdminConfigProps>'
+    type: 'AdminPageProps'
   });
 
   //export function AdminProfileSearchCrumbs() {}

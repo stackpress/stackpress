@@ -1413,12 +1413,26 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-10.0.10.tgz#91f62905e8d23cbd66225312f239454a23bebfa0"
   integrity sha512-xPyYSz1cMPnJQhl0CLMH68j3gprKZaTjG3s5Vi+fDgx+uhG9NOXwbVt52eFS8ECyXhyKcjDLCBEqBExKuiZb7Q==
 
+"@types/node@*":
+  version "25.6.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-25.6.0.tgz#4e09bad9b469871f2d0f68140198cbd714f4edca"
+  integrity sha512-+qIYRKdNYJwY3vRCZMdJbPLJAtGjQBudzZzdzwQYkEPQd+PJGixUL5QfvCLDaULoLv+RhT3LDkwEfKaAkgSmNQ==
+  dependencies:
+    undici-types "~7.19.0"
+
 "@types/node@25.3.5":
   version "25.3.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-25.3.5.tgz#beccb5915561f7a9970ace547ad44d6cdbf39b46"
   integrity sha512-oX8xrhvpiyRCQkG1MFchB09f+cXftgIXb3a7UUa4Y3wpmZPw5tyZGTLWhlESOLq1Rq6oDlc8npVU2/9xiCuXMA==
   dependencies:
     undici-types "~7.18.0"
+
+"@types/papaparse@5.5.2":
+  version "5.5.2"
+  resolved "https://registry.yarnpkg.com/@types/papaparse/-/papaparse-5.5.2.tgz#cb450a1cd183deb43728e593eb1ac2da60f4fa4d"
+  integrity sha512-gFnFp/JMzLHCwRf7tQHrNnfhN4eYBVYYI897CGX4MY1tzY9l2aLkVyx2IlKZ/SAqDbB3I1AOZW5gTMGGsqWliA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/react-dom@19.2.3":
   version "19.2.3"
@@ -2290,6 +2304,11 @@ frui@0.2.5:
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/frui/-/frui-0.2.5.tgz#614745048845d1dda4f790a4f0a4de2489bacd8a"
   integrity sha512-2uil30/2EOq73lGYF6Xj6DuyJd614WDPgLCVxrO1fyfHuBo/Si/E3Brux01jX18CDbdMkXBY50CDbWQ7HC3WjA==
+
+frui@0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/frui/-/frui-0.2.7.tgz#801a318160d01be8cf8377de8d4b547e0fa95f3c"
+  integrity sha512-yH8yhySjT8+sJBtpMEKNePs3XFimKgtnA5ZAKWI+11Cm6PnbyT5INCjzSMBumhbsFsxdZNNcARh4owLBe1NinA==
 
 fs.realpath@^1.0.0:
   version "1.0.0"
@@ -3537,6 +3556,11 @@ undici-types@~7.18.0:
   version "7.18.2"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.18.2.tgz#29357a89e7b7ca4aef3bf0fd3fd0cd73884229e9"
   integrity sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==
+
+undici-types@~7.19.0:
+  version "7.19.2"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.19.2.tgz#1b67fc26d0f157a0cba3a58a5b5c1e2276b8ba2a"
+  integrity sha512-qYVnV5OEm2AW8cJMCpdV20CDyaN3g0AjDlOGf1OW4iaDEx8MwdtChUp4zu4H0VP3nDRF/8RKWH+IPp9uW0YGZg==
 
 universal-cookie@8.0.1:
   version "8.0.1"

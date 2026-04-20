@@ -9,7 +9,7 @@ import type { NestedObject } from 'stackpress-view/types';
 import { useServer } from 'stackpress-view/client';
 //stackpress-session
 import type { AuthPageProps } from '../types.js';
-import Layout from '../components/Layout.js';
+import Layout from '../Layout.js';
 
 //session
 import type { 

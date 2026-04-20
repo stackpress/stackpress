@@ -47,10 +47,10 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { Request, Response, Server } from 'stackpress/server';
+  //import type { Request, Response, Server } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/server',
+    moduleSpecifier: 'stackpress-server',
     namedImports: [ 'Request', 'Response', 'Server' ]
   });
 

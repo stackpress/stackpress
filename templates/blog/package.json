@@ -6,7 +6,12 @@
   "plugins": [
     "./plugins/app/plugin",
     "./plugins/store/plugin",
+    "stackpress-admin",
+    "stackpress-csrf",
+    "stackpress-language",
     "stackpress-schema",
+    "stackpress-server",
+    "stackpress-session",
     "stackpress-sql",
     "stackpress-view"
   ],

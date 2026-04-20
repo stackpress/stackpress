@@ -19,6 +19,10 @@
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
     },
+    "./Layout": {
+      "require": "./cjs/Layout.js",
+      "import": "./esm/Layout.js"
+    },
     "./Session": {
       "require": "./cjs/Session.js",
       "import": "./esm/Session.js"
@@ -47,6 +51,7 @@
   "typesVersions": {
     "*": {
       "Exception": [ "./cjs/Exception.d.ts" ],
+      "Layout": [ "./cjs/Layout.d.ts" ],
       "Session": [ "./cjs/Session.d.ts" ],
       "actions": [ "./cjs/actions.d.ts" ],
       "helpers": [ "./cjs/helpers.d.ts" ],

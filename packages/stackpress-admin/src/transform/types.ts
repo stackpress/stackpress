@@ -5,15 +5,15 @@ import type Model from 'stackpress-schema/Model';
 
 export type Relationship = {
   foreign: {
-      model: Model,
-      column: Column,
-      key: Column,
-      type: number
+    model: Model,
+    column: Column,
+    key: Column,
+    type: number
   },
   local: {
-      model: Fieldset,
-      column: Column,
-      key: Column,
-      type: number
+    model: Fieldset,
+    column: Column,
+    key: Column,
+    type: number
   };
 };
