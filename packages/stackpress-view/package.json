@@ -54,11 +54,7 @@
       "client": [ "./cjs/client.d.ts" ],
       "helpers": [ "./cjs/helpers.d.ts" ],
       "import": [ "./cjs/import.d.ts" ],
-      "mysql": [ "./cjs/mysql.d.ts" ],
-      "pglite": [ "./cjs/pglite.d.ts" ],
-      "pgsql": [ "./cjs/pgsql.d.ts" ],
       "plugin": [ "./cjs/plugin.d.ts" ],
-      "sqlite": [ "./cjs/sqlite.d.ts" ],
       "transform": [ "./cjs/transform/index.d.ts" ],
       "types": [ "./cjs/types.d.ts" ],
       ".": [ "./cjs/index.d.ts" ]

@@ -17,16 +17,16 @@ export default function generate(directory: Directory, model: Model) {
 
   //------------------------------------------------------------------//
   // Import Modules
-  //------------------------------------------------------------------//
-  // Import Stackpress
 
-  //import type { Request, Response, Server } from 'stackpress-server';
+  //import type { Request, Response, Server } from '@stackpress/ingest';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress-server',
+    moduleSpecifier: '@stackpress/ingest',
     namedImports: [ 'Request', 'Response', 'Server' ]
   });
 
+  //------------------------------------------------------------------//
+  // Import Stackpress
   //------------------------------------------------------------------//
   // Import Client
   //------------------------------------------------------------------//

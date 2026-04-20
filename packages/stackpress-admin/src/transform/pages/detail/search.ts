@@ -42,16 +42,16 @@ export default function generate(
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
+  //import type { Request, Response, Server } from '@stackpress/ingest';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: '@stackpress/ingest',
+    namedImports: [ 'Request', 'Response', 'Server' ]
+  });
 
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { Request, Response, Server } from 'stackpress-server';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress-server',
-    namedImports: [ 'Request', 'Response', 'Server' ]
-  });
   //import type { LanguageConfig } from 'stackpress-language/types';
   source.addImportDeclaration({
     isTypeOnly: true,
