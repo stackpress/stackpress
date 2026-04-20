@@ -1,9 +1,9 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress/schema
-import type Column from '../../../../schema/Column.js';
-import type Fieldset from '../../../../schema/Fieldset.js';
-//stackpress/view
+//stackpress-schema
+import type Column from 'stackpress-schema/Column';
+import type Fieldset from 'stackpress-schema/Fieldset';
+//stackpress-view
 import generateSingle from './single.js';
 import generateMultiple from './multiple.js';
 

@@ -1,8 +1,8 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress/schema
-import type Schema from '../../../schema/Schema.js';
-//stackpress/view
+//stackpress-schema
+import type Schema from 'stackpress-schema/Schema';
+//stackpress-view
 import generateFormat from './format.js';
 import generateFieldset from './fieldset/index.js';
 import generateTemplate from './template.js';

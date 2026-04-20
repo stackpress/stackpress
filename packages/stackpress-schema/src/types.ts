@@ -1,7 +1,7 @@
 //modules
 import type { Directory, Project } from 'ts-morph';
 import type { PluginProps } from '@stackpress/idea-transformer/types';
-import type { Data } from '@stackpress/idea-parser';
+import type { SchemaConfig, Data } from '@stackpress/idea-parser';
 export type { 
   EnumConfig,
   ModelConfig,
@@ -10,9 +10,11 @@ export type {
   PluginConfig,
   SchemaConfig
 } from '@stackpress/idea-parser/types';
-import type Server from '@stackpress/ingest/Server';
+//stackpress-server
+import type { Server, Terminal } from 'stackpress-server';
 //stackpress-schema
 import type DefinitionInterface from './interface/DefinitionInterface.js';
+import type SchemaInterface from './interface/SchemaInterface.js';
 
 //used in config/attributes
 export type AttributeData<
@@ -139,22 +141,87 @@ export type ErrorReport =
   | { [key: string]: ErrorReport };
 
 //--------------------------------------------------------------------//
-// Idea Types
+// Client Types
 
-export interface TerminalInterface {
-  server: Server<any, any, any>,
-  verbose: boolean,
-  config: string|null,
-  brand: string,
-  cwd: string,
-  bootstrap(): Promise<this>,
-  run(): Promise<{ code: number, data?: unknown }>
-};
-
-export type IdeaProjectProps = {
-  terminal: TerminalInterface,
+//used in transformers as in:
+//function generate(props: ClientPluginProps) {}
+//in transform/index.ts
+export type ClientProjectProps = {
+  terminal: Terminal,
   project: Project,
   directory: Directory
 };
 
-export type IdeaProjectPluginProps = PluginProps<IdeaProjectProps>;
+export type ClientPluginProps = PluginProps<ClientProjectProps>;
+
+//used in plugin files:
+
+export type ClientFieldset<
+  //fieldset type
+  T extends Record<string, unknown> = Record<string, unknown>, 
+  //column map
+  C extends DefinitionInterfaceMap = DefinitionInterfaceMap
+> = {
+  Schema: { 
+    new(seed?: string): SchemaInterface<T, C> 
+  },
+  columns: C
+};
+
+//ie. ctx.plugin<ClientPlugin>('client');
+//contents from import('stackpress-client')
+export type ClientPlugin<
+  //exact map of fieldsets
+  F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
+> = {
+  config: SchemaConfig,
+  model: F,
+  fieldset: F
+};
+
+//ie. ctx.config<ClientConfig>('client');
+export type ClientConfig = {
+  //where to store the generated client code
+  //used by `stackpress/terminal` (for generating client)
+  build?: string,
+  //whether to compiler client in `js` or `ts`
+  //used by client generator
+  //defaults to `js`
+  lang?: string,
+  //used by `stackpress/client` to `import()` 
+  //the generated client code to memory
+  module: string,
+  //name of client package. Used in the generated package.json
+  package: string,
+  //where to store serialized idea json files for historical 
+  //purposes. Revisions are used in conjuction with push and 
+  //migrate to determine the changes between each idea change.
+  //wont save if not provided (cant create migrations without this)
+  revisions?: string,
+  //what tsconfig file to base the typescript compiler on
+  //used by `stackpress/terminal` (for generating client)
+  tsconfig: string,
+  //see: https://prettier.io/docs/options
+  prettier?: {
+    semi?: boolean,
+    singleQuote?: boolean,
+    jsxSingleQuote?: boolean,
+    trailingComma?: 'none' | 'es5' | 'all',
+    bracketSpacing?: boolean,
+    objectWrap?: 'preserve' | 'collapse',
+    bracketSameLine?: boolean,
+    requirePragma?: boolean,
+    insertPragma?: boolean,
+    checkIgnorePragma?: boolean,
+    proseWrap?: 'always' | 'never' | 'preserve',
+    arrowParens?: 'avoid' | 'always',
+    htmlWhitespaceSensitivity?: 'css' | 'strict' | 'ignore',
+    endOfLine?: 'auto' | 'lf' | 'crlf' | 'cr',
+    quoteProps?: 'as-needed' | 'consistent' | 'preserve',
+    embeddedLanguageFormatting?: 'auto' | 'off',
+    singleAttributePerLine?: boolean,
+    experimentalOperatorPosition?: 'start' | 'end',
+    experimentalTernaries?: boolean,
+    jsxBracketSameLine?: boolean
+  }
+};

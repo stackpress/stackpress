@@ -1,5 +1,8 @@
 //stackpress/view
-import type { ServerSessionProps, SessionPermission } from '../types.js';
+import type { 
+  ServerSessionProps, 
+  ServerSessionPermission 
+} from '../types.js';
 //stackpress/view/server
 import { matchAnyEvent, matchAnyRoute } from './helpers.js';
 
@@ -34,7 +37,7 @@ export default class Session {
   /**
    * Returns true if a token has the required permissions
    */
-  public can(...permits: SessionPermission[]) {
+  public can(...permits: ServerSessionPermission[]) {
     //if there are no permits, then we are good
     if (permits.length === 0) {
       return true;

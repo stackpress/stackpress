@@ -1,14 +1,14 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress
-import Exception from '../../../Exception.js';
-//stackpress/schema
-import type Column from '../../../schema/Column.js';
-import type Model from '../../../schema/Model.js';
+//stackpress-schema
+import type Column from 'stackpress-schema/Column';
+import type Model from 'stackpress-schema/Model';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../../schema/transform/helpers.js';
+} from 'stackpress-schema/transform/helpers';
+//stackpress-view
+import Exception from '../../Exception.js';
 
 export default function generate(
   directory: Directory, 
@@ -73,6 +73,11 @@ export default function generate(
     moduleSpecifier: 'frui/form/Select',
     defaultImport: 'Select'
   });
+  //import * as template from '@stackpress/lib/Template';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/lib/Template',
+    namespaceImport: 'template'
+  });
   
   //------------------------------------------------------------------//
   // Import Stackpress
@@ -82,11 +87,6 @@ export default function generate(
     isTypeOnly: true,
     moduleSpecifier: 'stackpress/view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
-  });
-  //import * as te4tt from 'stackpress/view/te4tt';
-  source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/view/te4tt',
-    namespaceImport: 'te4tt'
   });
 
   //------------------------------------------------------------------//
@@ -169,7 +169,7 @@ const handlers = {
       .then(response => {
         updateOptions(response.results.map(
           (row: Record<string, unknown>) => ({
-            label: te4tt.render('<%template%>', row),
+            label: template.render('<%template%>', row),
             value: row.<%id%>
           })
         ));

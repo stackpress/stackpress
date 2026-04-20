@@ -1,13 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress/schema
-import type Column from '../../../schema/Column.js';
-import type Fieldset from '../../../schema/Fieldset.js';
-import Model from '../../../schema/Model.js';
+//stackpress-schema
+import type Column from 'stackpress-schema/Column';
+import type Fieldset from 'stackpress-schema/Fieldset';
+import Model from 'stackpress-schema/Model';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../../schema/transform/helpers.js';
+} from 'stackpress-schema/transform/helpers';
 
 const formatType: Record<string, string> = {
   String: 'string',

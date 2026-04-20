@@ -1,8 +1,7 @@
-//stackpress
-import type { IdeaProjectPluginProps } from '../../types.js';
-//stackpress/schema
-import Schema from '../../schema/Schema.js';
-//stackpress/view/transform
+//stackpress-schema
+import type { ClientPluginProps } from 'stackpress-schema/types';
+import Schema from 'stackpress-schema/Schema';
+//stackpress-view/transform
 import generateViews from './view/index.js';
 import generateFields from './form/index.js';
 import generateFilters from './filter/index.js';
@@ -31,7 +30,7 @@ import generateSpans from './span.js';
 /**
  * This is the The params comes form the cli
  */
-export default async function generate(props: IdeaProjectPluginProps) {
+export default async function generate(props: ClientPluginProps) {
   //-----------------------------//
   // 1. Config
   

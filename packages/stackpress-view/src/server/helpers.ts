@@ -1,5 +1,5 @@
 //stackpress/view
-import type { SessionRoute } from '../types.js';
+import type { ServerSessionRoute } from '../types.js';
 
 export const isRegExp = /^\/.+\/[igmsuy]*$/;
 
@@ -28,7 +28,10 @@ export function matchAnyEvent(permit: string, permissions: string[]) {
  * Returns true if the permit matches 
  * any of the permission patterns
  */
-export function matchAnyRoute(permit: SessionRoute, permissions: SessionRoute[]) {
+export function matchAnyRoute(
+  permit: ServerSessionRoute, 
+  permissions: ServerSessionRoute[]
+) {
   //loop through permissions
   for (const permission of permissions) {
     //we just need one to match to 
@@ -80,7 +83,10 @@ export function matchEvent(permit: string, permission: string) {
  * Returns true if the permit 
  * matches the permission pattern
  */
-export function matchRoute(permit: SessionRoute, permission: SessionRoute) {
+export function matchRoute(
+  permit: ServerSessionRoute, 
+  permission: ServerSessionRoute
+) {
   //if permission is ALL, we dont care what the permit method is
   //permission is not ALL, so if the methods don't match
   if (permission.method !== 'ALL' 
@@ -122,4 +128,15 @@ export function matchRoute(permit: SessionRoute, permission: SessionRoute) {
   );
   //test the permit
   return regexp.test(permit.route);
+};
+
+/**
+ * Adds a default host to invalid URLs
+ */
+export function withUnknownHost(url: string) {
+  if (url.indexOf('/') !== 0) {
+    url = '/' + url;
+  }
+
+  return `http://unknownhost${url}`;
 };

@@ -1,12 +1,12 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress/schema
-import type Fieldset from '../../../schema/Fieldset.js';
-import type Column from '../../../schema/Column.js';
+import type Fieldset from 'stackpress-schema/Fieldset';
+import type Column from 'stackpress-schema/Column';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../../schema/transform/helpers.js';
+} from 'stackpress-schema/transform/helpers';
 
 export default function generate(
   directory: Directory, 

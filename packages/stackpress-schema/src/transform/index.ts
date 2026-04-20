@@ -1,5 +1,5 @@
 //stackpress-schema
-import type { IdeaProjectPluginProps } from '../types.js';
+import type { ClientPluginProps } from '../types.js';
 import Schema from '../Schema.js';
 import generateColumns from './columns.js';
 import generateSchema from './schema.js';
@@ -10,7 +10,7 @@ import {
 import generateEnums from './enums.js';
 import generateSchemaTests from './tests/schema.js';
 
-export default async function generate(props: IdeaProjectPluginProps) {
+export default async function generate(props: ClientPluginProps) {
   //------------------------------------------------------------------//
   // 1. Config
 

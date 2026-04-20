@@ -1,14 +1,15 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress
-import Exception from '../../../Exception.js';
-//stackpress/schema
-import type Column from '../../../schema/Column.js';
-import type Model from '../../../schema/Model.js';
+//stackpress-schema
+import type Column from 'stackpress-schema/Column';
+import type Model from 'stackpress-schema/Model';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../../schema/transform/helpers.js';
+} from 'stackpress-schema/transform/helpers';
+//stackpress-view
+import Exception from '../../Exception.js';
+
 
 export default function generate(
   directory: Directory, 
@@ -77,10 +78,10 @@ export default function generate(
     moduleSpecifier: 'frui/form/FieldControl',
     defaultImport: 'FieldControl'
   });
-  //import mustache from 'mustache';
+  //import * as template from '@stackpress/lib/Template';
   source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
+    moduleSpecifier: '@stackpress/lib/Template',
+    namespaceImport: 'template'
   });
 
   //------------------------------------------------------------------//
@@ -178,7 +179,7 @@ const handlers = {
       .then(response => {
         updateOptions(response.results.map(
           (row: Record<string, unknown>) => ({
-            label: mustache.render('<%template%>', row),
+            label: template.render('<%template%>', row),
             value: row.<%id%>
           })
         ));

@@ -1,15 +1,15 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress
-import Exception from '../../../../Exception.js';
-//stackpress/schema
-import type Fieldset from '../../../../schema/Fieldset.js';
-import type Column from '../../../../schema/Column.js';
+//stackpress-schema
+import type Fieldset from 'stackpress-schema/Fieldset';
+import type Column from 'stackpress-schema/Column';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../../../schema/transform/helpers.js';
+} from 'stackpress-schema/transform/helpers';
+//stackpress-view
+import Exception from '../../../Exception.js';
 
 export default function generate(
   directory: Directory, 

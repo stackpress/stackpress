@@ -1,7 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress-schema
-import type { IdeaProjectPluginProps } from 'stackpress-schema/types';
+import type { ClientPluginProps } from 'stackpress-schema/types';
 import type Model from 'stackpress-schema/Model';
 import Schema from 'stackpress-schema/Schema';
 //stackpress-sql
@@ -14,7 +14,7 @@ import generateActionsTests from './tests/actions.js';
 import generateEventsTests from './tests/events.js';
 import generateStoreTests from './tests/store.js';
 
-export default async function generate(props: IdeaProjectPluginProps) {
+export default async function generate(props: ClientPluginProps) {
   //------------------------------------------------------------------//
   // 1. Config
 

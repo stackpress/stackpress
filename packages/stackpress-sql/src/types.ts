@@ -1,10 +1,18 @@
 //modules
-import type Engine from '@stackpress/inquire/Engine';
+import type { SchemaConfig } from '@stackpress/idea-parser';
+import type { Request, Response, Server } from '@stackpress/ingest';
 import type { FlatValue } from '@stackpress/inquire/types';
+import type Engine from '@stackpress/inquire/Engine';
+import type Create from '@stackpress/inquire/Create';
 //stackpress-schema
-import type { DefinitionInterfaceMap } from 'stackpress-schema/types';
+import type { 
+  DefinitionInterfaceMap, 
+  ClientFieldset 
+} from 'stackpress-schema/types';
+import type SchemaInterface from 'stackpress-schema/SchemaInterface';
 //stackpress-sql
 import type StoreInterface from './interface/StoreInterface.js';
+import type ActionsInterface from './interface/ActionsInterface.js';
 
 export type ValueScalar = string | number | boolean | null;
 export type ValuePrimitive = ValueScalar | Date | Record<string, any>;
@@ -195,3 +203,94 @@ export type {
   Transaction,
   Connection
 } from '@stackpress/inquire/types';
+
+//--------------------------------------------------------------------//
+// Client Types
+
+export type GenericEventHandler<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  R = any,
+  S = any
+> = (req: Request<R>, res: Response<S>, ctx: Server<C, R, S>) => Promise<void>;
+
+export type GenericEvents<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  R = any,
+  S = any
+> = {
+  batch: GenericEventHandler<C, R, S>;
+  create: GenericEventHandler<C, R, S>;
+  detail: GenericEventHandler<C, R, S>;
+  get: GenericEventHandler<C, R, S>;
+  purge: GenericEventHandler<C, R, S>;
+  remove: GenericEventHandler<C, R, S>;
+  restore: GenericEventHandler<C, R, S>;
+  search: GenericEventHandler<C, R, S>;
+  update: GenericEventHandler<C, R, S>;
+  upsert: GenericEventHandler<C, R, S>;
+};
+
+export type GenericListener<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  R = any,
+  S = any
+> = (server: Server<C, R, S>) => void;
+
+export type GenericAdminRouter<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  R = any,
+  S = any
+> = (server: Server<C, R, S>) => void;
+
+export type ClientModel<
+  //model type
+  T extends Record<string, unknown> = Record<string, unknown>, 
+  //model type extended
+  E extends Record<string, unknown> = Record<string, unknown>, 
+  //column map
+  C extends DefinitionInterfaceMap = DefinitionInterfaceMap, 
+  //relation map
+  R extends Record<string, StoreRelation> = Record<string, StoreRelation<{}, {}>>,
+  //server context map
+  X extends Record<string, unknown> = Record<string, unknown>,
+  //server request resource
+  Q = any,
+  //server response resource
+  S = any
+> = {
+  Schema: { 
+    new(seed?: string): SchemaInterface<T, C> 
+  },
+  Store: { 
+    new(seed?: string): StoreInterface<T, E, C, R> 
+  },
+  Actions: { 
+    new(engine: Engine, seed?: string): ActionsInterface<T, E, C, R> 
+  },
+  columns: C,
+  events: GenericEvents<X, Q, S>,
+  listen: GenericListener<X, Q, S>,
+  admin: GenericAdminRouter<X, Q, S>
+};
+
+export type ClientScripts = {
+  install(engine: Engine): Promise<void>,
+  purge(engine: Engine): Promise<void>,
+  uninstall(engine: Engine): Promise<void>,
+  upgrade(engine: Engine, updates: Record<string, Create>): Promise<void>
+};
+
+//ie. ctx.plugin<ClientPlugin>('client');
+//contents from import('stackpress-client')
+export type ClientPlugin<
+  //exact map of models
+  //ex. { profile: ClientModel<Profile, ProfileExtended, { name: NameSchema, ...}, { auth: {} }> }
+  M extends Record<string, ClientModel> = Record<string, ClientModel>,
+  //exact map of fieldsets
+  F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
+> = {
+  config: SchemaConfig,
+  model: M,
+  fieldset: F,
+  scripts: ClientScripts
+};

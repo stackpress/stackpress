@@ -19,15 +19,9 @@ import type {
   Builder as ReactusBuilder, 
   ServerConfig as ReactusConfig 
 } from 'reactus';
-import type { ToastOptions } from 'frui/Notifier';
 import type ReactusPreview from 'reactus/server/Server';
-import type { CookieOptions } from '@stackpress/lib';
 import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
 import type { IM, SR, Method } from '@stackpress/ingest/types';
-//stackpress/language
-import { LanguageConfig } from '../language/types.js';
-//stackpress/session
-import type { SessionTokenData } from '../session/types.js';
 
 //--------------------------------------------------------------------//
 // Server Prop Types
@@ -43,7 +37,16 @@ export type ServerUrlProps = {
   protocol: string,
   search: string
 };
-export type ServerSessionProps = SessionTokenData;
+export type ServerSessionRoute = { method: string, route: string };
+export type ServerSessionPermission = string | ServerSessionRoute;
+export type ServerSessionProps = Record<string, any> & { 
+  id: string, 
+  name: string,
+  image?: string,
+  roles: string[],
+  token: string,
+  permits: ServerSessionPermission[]
+};
 export type ServerRequestProps<
   I extends UnknownNest = UnknownNest
 > = {
@@ -85,9 +88,21 @@ export type ServerProviderProps<
 export type ServerConfigProps<
   C extends UnknownNest = UnknownNest
 > = C & {
-  language: LanguageConfig,
-  view: ViewConfig,
-  brand: BrandConfig
+  language: {
+    //url flag (ie. ?locale) used to change the user's locale
+    //this is also the name of the cookie used to store the locale
+    //defaults to `locale`
+    key?: string,
+    //default locale
+    //defaults to `en_US`
+    locale?: string,
+    //languages and translations
+    languages?: Record<string, {
+      label: string,
+      translations: Record<string, string>
+    }>
+  },
+  view: ViewConfig
 };
 
 export type ServerPageProps<
@@ -97,134 +112,7 @@ export type ServerPageProps<
 > = ServerProps<C, I, O> & { styles?: string[] };
 
 //--------------------------------------------------------------------//
-// Layout Types
-
-export type LayoutHeadProps = {
-  left?: boolean,
-  right?: boolean,
-  open?: {
-    left?: boolean,
-    right?: boolean
-  },
-  theme: string,
-  base?: string,
-  logo?: string,
-  brand?: string,
-  toggleLeft?: () => void,
-  toggleRight?: () => void,
-  toggleTheme?: () => void
-};
-
-export type LayoutLeftProps = {
-  base?: string,
-  brand?: string,
-  head?: boolean,
-  logo?: string,
-  open?: boolean,
-  toggle: () => void,
-  children: ReactNode
-};
-
-export type LayoutMainProps = {
-  head?: boolean,
-  left?: boolean,
-  right?: boolean,
-  open?: {
-    left?: boolean,
-    right?: boolean
-  },
-  children: ReactNode
-};
-
-export type LayoutMenuProps = {
-  path?: string,
-  menu: {
-    name: string,
-    icon: string,
-    path: string,
-    match: string
-  }[]
-};
-
-export type LayoutRightProps = {
-  open: boolean,
-  head?: boolean,
-  children: ReactNode
-};
-
-export type LayoutProviderProps = Partial<ServerProps<ServerConfigProps>> & {
-  cookie?: CookieOptions, 
-  children: ReactNode
-};
-
-export type BlankAppProps = {
-  cookie?: CookieOptions, 
-  head?: boolean,
-  children: ReactNode
-};
-
-export type LayoutBlankProps = LayoutProviderProps & {
-  head?: boolean
-};
-
-export type PanelAppProps = { 
-  cookie?: CookieOptions, 
-  menu?: {
-    name: string;
-    icon: string;
-    path: string;
-    match: string;
-  }[],
-  left?: ReactNode,
-  right?: ReactNode,
-  children: ReactNode
-};
-
-export type LayoutPanelProps = LayoutProviderProps & PanelAppProps;
-
-//--------------------------------------------------------------------//
-// Theme Types
-
-export type ThemeContextProps = { 
-  theme: string,
-  toggle: () => void
-};
-
-export type ThemeProviderProps = { 
-  theme?: string,
-  children: ReactNode 
-};
-
-//--------------------------------------------------------------------//
-// View Props Types
-
-export type { AdminConfigProps } from '../admin/types';
-export type { ApiConfigProps } from '../api/types';
-
-export type { AuthConfigProps } from '../session/types';
-
-export type FieldProps = {
-  className?: string,
-  error?: boolean,
-  name?: string,
-  value: any,
-  onUpdate?: (name: string, value: any) => void
-};
-
-export type ControlProps = {
-  className?: string,
-  error?: string,
-  name?: string,
-  required?: boolean,
-  value: any,
-  onUpdate?: (name: string, value: any) => void
-}
-
-//--------------------------------------------------------------------//
 // Config Types
-
-//ie. ctx.config<NotifyConfig>('view', 'notify')
-export type NotifyConfig = ToastOptions;
 
 //ie. ctx.config<ViewConfig>('view')
 export type ViewConfig = {
@@ -236,21 +124,10 @@ export type ViewConfig = {
   //to determine the root of the project
   //defaults to `/`
   base?: string,
-  //frontend notification display settings
-  //if not provided, defaults will apply
-  notify?: NotifyConfig,
   props?: Record<string, unknown>,
   //reactus settings
   //if not provided, disables `reactus`
   engine?: Partial<ReactusConfig>
-};
-
-//ie. ctx.config<BrandConfig>('brand')
-export type BrandConfig = {
-  name?: string,
-  logo?: string,
-  icon?: string,
-  favicon?: string
 };
 
 //--------------------------------------------------------------------//
@@ -342,21 +219,6 @@ export type {
   ResponseStatus, 
   StatusResponse 
 } from '@stackpress/lib/types';
-
-export type { 
-  SessionRoute,
-  SessionData,
-  SessionTokenData,
-  SessionPermission,
-  SessionPermissionList
-} from '../session/types.js';
-
-export type {
-  CSVParseError,
-  CSVParseResults,
-  BatchSendResults,
-  BatchSendResponse
-} from './import.js';
 
 export type RollupResults = [ 
   OutputChunk, 
