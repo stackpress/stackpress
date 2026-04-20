@@ -42,12 +42,6 @@ export default function generate(directory: Directory, model: Fieldset) {
   //------------------------------------------------------------------//
   // Import Modules
 
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
   //import { describe, it } from 'mocha';
   source.addImportDeclaration({
     moduleSpecifier: 'mocha',
@@ -91,11 +85,10 @@ export default function generate(directory: Directory, model: Fieldset) {
   //------------------------------------------------------------------//
   // Exports
 
-  //export default function ProfileSchemaTests(engine: Engine) {}
+  //export default function ProfileSchemaTests() {}
   source.addFunction({
     isDefaultExport: true,
     name: model.name.toClassName('%sSchemaTests'),
-    parameters: [{ name: 'engine', type: 'Engine' }],
     statements: renderCode(TEMPLATE.DESCRIBE, {
       classname: model.name.toClassName('%sSchema'),
       schema: model.name.toClassName(),

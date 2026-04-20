@@ -10,8 +10,7 @@ export type {
   PluginConfig,
   SchemaConfig
 } from '@stackpress/idea-parser/types';
-//stackpress-server
-import type { Server, Terminal } from 'stackpress-server';
+import type Server from '@stackpress/ingest/Server';
 //stackpress-schema
 import type DefinitionInterface from './interface/DefinitionInterface.js';
 import type SchemaInterface from './interface/SchemaInterface.js';
@@ -146,8 +145,18 @@ export type ErrorReport =
 //used in transformers as in:
 //function generate(props: ClientPluginProps) {}
 //in transform/index.ts
+export interface TerminalInterface {
+  server: Server<any, any, any>,
+  verbose: boolean,
+  config: string|null,
+  brand: string,
+  cwd: string,
+  bootstrap(): Promise<this>,
+  run(): Promise<{ code: number, data?: unknown }>
+};
+
 export type ClientProjectProps = {
-  terminal: Terminal,
+  terminal: TerminalInterface,
   project: Project,
   directory: Directory
 };

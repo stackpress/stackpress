@@ -170,12 +170,6 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Modules
 
-  //import type Engine from '@stackpress/inquire/Engine';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/inquire/Engine',
-    defaultImport: 'Engine'
-  });
   //import { describe, it } from 'mocha';
   source.addImportDeclaration({
     moduleSpecifier: 'mocha',

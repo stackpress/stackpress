@@ -95,6 +95,9 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
+    "@paralleldrive/cuid2": "3.3.0",
+    "@stackpress/inquire": "0.8.3",
+    "nanoid": "5.1.6",
     "stackpress-schema": "0.9.1"
   },
   "devDependencies": {
