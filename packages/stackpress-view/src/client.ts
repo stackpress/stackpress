@@ -14,6 +14,9 @@ export type {
   ServerProviderProps,
   ServerConfigProps,
   ServerPageProps,
+  ThemeContextProps,
+  ThemeProviderProps,
+  ProviderProps,
   Trace,
   UnknownNest,
   NestedObject,
@@ -36,6 +39,9 @@ import ServerProvider from './server/ServerProvider.js';
 import ServerRequest from './server/ServerRequest.js';
 import ServerResponse from './server/ServerResponse.js';
 import ServerSession from './server/ServerSession.js';
+import ThemeContext from './theme/ThemeContext.js';
+import ThemeProvider from './theme/ThemeProvider.js';
+import Provider from './Provider.js';
 
 export {
   R22nContext, 
@@ -66,12 +72,17 @@ export {
   matchRoute
 } from './server/helpers.js';
 
+export { useTheme } from './theme/hooks.js';
+
 export {
   ServerContext,
   ServerProvider,
   ServerRequest,
   ServerResponse,
   ServerSession,
+  ThemeContext,
+  ThemeProvider,
+  Provider,
   defaultServerConfig,
   unknownHost
 };

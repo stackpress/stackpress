@@ -1,7 +1,15 @@
-//stackpress/language
-import { LanguageConfig } from '../language/types.js';
-//stackpress/view
-import { ViewConfig, BrandConfig } from '../view/types.js';
+//stackpress-language
+import type { LanguageConfig } from 'stackpress-language/types';
+//stackpress-view
+import type { ViewConfig } from 'stackpress-view/types';
+
+//ie. ctx.config<BrandConfig>('brand')
+export type BrandConfig = {
+  name?: string,
+  logo?: string,
+  icon?: string,
+  favicon?: string
+};
 
 //used by generated views
 export type AdminConfigProps = {

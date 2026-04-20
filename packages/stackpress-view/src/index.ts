@@ -10,6 +10,8 @@ export type {
   ServerProviderProps,
   ServerConfigProps,
   ServerPageProps,
+  ThemeContextProps,
+  ThemeProviderProps,
   Trace,
   UnknownNest,
   NestedObject,
@@ -66,6 +68,8 @@ export {
   ServerRequest,
   ServerResponse,
   ServerSession,
+  ThemeContext,
+  ThemeProvider,
   defaultServerConfig,
   unknownHost
 } from './client.js';

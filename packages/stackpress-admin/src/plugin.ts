@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
-//stackpress/client
-import type { ClientPlugin } from '../client/types.js';
+//stackpress-client
+import type { ClientPlugin } from 'stackpress-sql/types';
 
 /**
  * This interface is intended for the Stackpress library.

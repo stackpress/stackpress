@@ -1,11 +1,11 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress/schema
-import type Model from '../../schema/Model.js';
+//stackpress-schema
+import type Model from 'stackpress-schema/Model';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../schema/transform/helpers.js';
+} from 'stackpress-schema/transform/helpers';
 
 export default function generate(directory: Directory, model: Model) {
   const ids = model.store.ids.toArray().map(

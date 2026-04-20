@@ -1,5 +1,6 @@
 //modules
 import type { ReactNode } from 'react';
+import type { NotifierOptions } from 'frui/Notifier';
 import type { 
   OutputChunk, 
   OutputAsset, 
@@ -20,11 +21,59 @@ import type {
   ServerConfig as ReactusConfig 
 } from 'reactus';
 import type ReactusPreview from 'reactus/server/Server';
-import type { UnknownNest, StatusResponse } from '@stackpress/lib/types';
+import type { 
+  CookieOptions, 
+  StatusResponse, 
+  UnknownNest 
+} from '@stackpress/lib/types';
 import type { IM, SR, Method } from '@stackpress/ingest/types';
 
 //--------------------------------------------------------------------//
-// Server Prop Types
+// Config Types
+
+//ie. ctx.config<BrandConfig>('brand')
+export type BrandConfig = {
+  name?: string,
+  logo?: string,
+  icon?: string,
+  favicon?: string
+};
+
+export type LanguageConfig = {
+  //url flag (ie. ?locale) used to change the user's locale
+  //this is also the name of the cookie used to store the locale
+  //defaults to `locale`
+  key?: string,
+  //default locale
+  //defaults to `en_US`
+  locale?: string,
+  //languages and translations
+  languages?: Record<string, {
+    label: string,
+    translations: Record<string, string>
+  }>
+};
+
+//ie. ctx.config<ViewConfig>('view')
+export type ViewConfig = {
+  //url flag (ie. ?json) used to disable template 
+  //rendering and show the raw json data instead
+  //defaults to `json`
+  noview?: string,
+  //used by vite and in development mode
+  //to determine the root of the project
+  //defaults to `/`
+  base?: string,
+  props?: Record<string, unknown>,
+  //reactus settings
+  //if not provided, disables `reactus`
+  engine?: Partial<ReactusConfig>,
+  //notifier (frui) settings
+  notify?: NotifierOptions
+};
+
+//--------------------------------------------------------------------//
+// Server Types
 
 export type ServerUrlProps = {
   hash: string,
@@ -88,20 +137,8 @@ export type ServerProviderProps<
 export type ServerConfigProps<
   C extends UnknownNest = UnknownNest
 > = C & {
-  language: {
-    //url flag (ie. ?locale) used to change the user's locale
-    //this is also the name of the cookie used to store the locale
-    //defaults to `locale`
-    key?: string,
-    //default locale
-    //defaults to `en_US`
-    locale?: string,
-    //languages and translations
-    languages?: Record<string, {
-      label: string,
-      translations: Record<string, string>
-    }>
-  },
+  brand: BrandConfig,
+  language: LanguageConfig,
   view: ViewConfig
 };
 
@@ -112,22 +149,24 @@ export type ServerPageProps<
 > = ServerProps<C, I, O> & { styles?: string[] };
 
 //--------------------------------------------------------------------//
-// Config Types
+// Provider Types
 
-//ie. ctx.config<ViewConfig>('view')
-export type ViewConfig = {
-  //url flag (ie. ?json) used to disable template 
-  //rendering and show the raw json data instead
-  //defaults to `json`
-  noview?: string,
-  //used by vite and in development mode
-  //to determine the root of the project
-  //defaults to `/`
-  base?: string,
-  props?: Record<string, unknown>,
-  //reactus settings
-  //if not provided, disables `reactus`
-  engine?: Partial<ReactusConfig>
+export type ProviderProps = ServerProps<ServerConfigProps> & {
+  cookie?: CookieOptions, 
+  children: ReactNode
+};
+
+//--------------------------------------------------------------------//
+// Theme Types
+
+export type ThemeContextProps = { 
+  theme: string,
+  toggle: () => void
+};
+
+export type ThemeProviderProps = { 
+  theme?: string,
+  children: ReactNode 
 };
 
 //--------------------------------------------------------------------//

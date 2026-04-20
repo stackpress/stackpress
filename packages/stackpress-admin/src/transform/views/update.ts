@@ -1,13 +1,13 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress/schema
-import type Model from '../../../schema/Model.js';
+//stackpress-schema
+import type Model from 'stackpress-schema/Model';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../../schema/transform/helpers.js';
-//stackpress/admin
+} from 'stackpress-schema/transform/helpers';
+//stackpress-admin
 import { render } from '../helpers.js';
 
 export default function updateView(directory: Directory, model: Model) {

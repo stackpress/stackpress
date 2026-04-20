@@ -1,11 +1,17 @@
-//stackpress/schema
-import type Fieldset from '../../schema/Fieldset.js';
-//stackpress/view
-import type { Helper, Resolver } from '../../view/te4tt.js';
-import { TE4TT, helpers as runtime } from '../../view/te4tt.js';
+//modules
+import type { 
+  TemplateHelper, 
+  TemplateResolver 
+} from '@stackpress/lib/types';
+import { 
+  TemplateEngine, 
+  helpers as runtime 
+} from '@stackpress/lib/Template';
+//stackpress-schema
+import type Fieldset from 'stackpress-schema/Fieldset';
 
 //transform helpers
-export const helpers: Record<string, Helper> = {
+export const helpers: Record<string, TemplateHelper> = {
   ...runtime,
   //if
   '?': ({ path, body, engine }) => {
@@ -83,7 +89,7 @@ export const helpers: Record<string, Helper> = {
  */
 export function render(fieldset: Fieldset, container = '${data.%s}') {
   const template = fieldset.name.display || 'Detail';
-  const resolve: Resolver = ({ path }) => container.replace('%s', path);
-  const engine = new TE4TT({ helpers, container, resolve });
+  const resolve: TemplateResolver = ({ path }) => container.replace('%s', path);
+  const engine = new TemplateEngine({ helpers, container, resolve });
   return engine.render(template);
 }

@@ -84,6 +84,7 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
+    "frui": "0.2.7",
     "r22n": "1.0.10",
     "reactus": "0.8.3",
     "stackpress-schema": "0.9.1"

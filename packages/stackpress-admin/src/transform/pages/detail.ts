@@ -1,12 +1,12 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress/schema
-import type Model from '../../../schema/Model.js';
+//stackpress-schema
+import type Model from 'stackpress-schema/Model';
 import { 
   loadProjectFile, 
   renderCode 
-} from '../../../schema/transform/helpers.js';
-//stackpress/admin
+} from 'stackpress-schema/transform/helpers';
+//stackpress-admin
 import generateCreate from './detail/create.js';
 import generateExport from './detail/export.js';
 import generateImport from './detail/import.js';

@@ -1,7 +1,7 @@
-//stackpress/schema
-import type Column from '../../schema/Column.js';
-import type Fieldset from '../../schema/Fieldset.js';
-import type Model from '../../schema/Model.js';
+//stackpress-schema
+import type Column from 'stackpress-schema/Column';
+import type Fieldset from 'stackpress-schema/Fieldset';
+import type Model from 'stackpress-schema/Model';
 
 export type Relationship = {
   foreign: {

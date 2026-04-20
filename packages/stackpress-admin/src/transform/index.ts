@@ -1,9 +1,9 @@
 //stackpress
-import type { IdeaProjectPluginProps } from '../../types.js';
-//stackpress/schema
-import Schema from '../../schema/Schema.js';
-import { loadProjectFile } from '../../schema/transform/helpers.js';
-//stackpress/admin
+import type { ClientPluginProps } from 'stackpress-schema/types';
+//stackpress-schema
+import Schema from 'stackpress-schema/Schema';
+import { loadProjectFile } from 'stackpress-schema/transform/helpers';
+//stackpress-admin
 import generatePages from './pages/index.js';
 import generateViews from './views/index.js';
 import generateRoutes from './routes.js';
@@ -32,7 +32,7 @@ import generateRoutes from './routes.js';
  * - admin.ts
  */
 
-export default async function generate(props: IdeaProjectPluginProps) {
+export default async function generate(props: ClientPluginProps) {
   //------------------------------------------------------------------//
   // 1. Config
 

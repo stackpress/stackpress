@@ -1,8 +1,8 @@
 //modules
 import type { Directory } from 'ts-morph';
-//stackpress/schema
-import type Model from '../../../schema/Model.js';
-//stackpress/admin
+//stackpress-schema
+import type Model from 'stackpress-schema/Model';
+//stackpress-admin
 import generateCopy from './copy.js';
 import generateCreate from './create.js';
 import generateDetail from './detail.js';
