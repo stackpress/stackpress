@@ -105,6 +105,17 @@ export type PreviewPlugin = {
   render: (entry: string, props?: UnknownNest) => Promise<string>
 };
 
+export type RollupResults = [ 
+  OutputChunk, 
+  ...(OutputAsset | OutputChunk)[]
+];
+
+export type FileMeta = {
+  filepath: string,
+  basepath: string,
+  extname: string
+};
+
 export type {
   Trace,
   UnknownNest,
@@ -131,14 +142,3 @@ export type {
   ServerPageProps,
   NotifyConfig
 } from './client/types.js';
-
-export type RollupResults = [ 
-  OutputChunk, 
-  ...(OutputAsset | OutputChunk)[]
-];
-
-export type FileMeta = {
-  filepath: string,
-  basepath: string,
-  extname: string
-};
