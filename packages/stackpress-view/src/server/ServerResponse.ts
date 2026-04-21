@@ -12,6 +12,8 @@ import { nest, isObject } from '@stackpress/lib/Nest';
 //stackpress-view
 import type { ServerResponseProps } from '../types.js';
 
+export type { ServerResponseProps };
+
 /**
  * Client version of response. Readonly.
  */

@@ -7,6 +7,8 @@ import ThemeContext from './ThemeContext.js';
 
 const cookie = new UniversalCookie();
 
+export type { ThemeProviderProps };
+
 // (this is what to put in app.tsx)
 export default function ThemeProvider(props: ThemeProviderProps) {
   const { children, theme: init = 'light' } = props;

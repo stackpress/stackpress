@@ -6,6 +6,8 @@ import type {
 //stackpress/view/server
 import { matchAnyEvent, matchAnyRoute } from './helpers.js';
 
+export type { ServerSessionProps };
+
 /**
  * Client side session interface
  */

@@ -10,6 +10,8 @@ import { nest } from '@stackpress/lib/Nest';
 //stackpress-view
 import type { ServerRequestProps } from '../types.js';
 
+export type { ServerRequestProps };
+
 /**
  * Client version of request. Readonly.
  */

@@ -1,5 +1,6 @@
 //modules
-import type { UnknownNest } from '@stackpress/lib/types';
+import type { ReactNode } from 'react';
+import type { UnknownNest, CookieOptions } from '@stackpress/lib/types';
 import type { NotifierOptions } from 'frui/Notifier';
 //stackpress-view
 import type { ServerProps } from '../server/types.js';
@@ -58,6 +59,11 @@ export type ServerPageProps<
   O = UnknownNest
 > = ServerProps<C, I, O> & { styles?: string[] };
 
+export type ProviderProps = ServerProps<ServerConfigProps> & {
+  cookie?: CookieOptions, 
+  children: ReactNode
+};
+
 export type { ToastOptions as NotifyConfig } from 'frui/Notifier';
 
 export type {
@@ -87,6 +93,3 @@ export type {
   ThemeProviderProps
 } from '../theme/types.js';
 
-export type {
-  ProviderProps
-} from '../Provider.js';

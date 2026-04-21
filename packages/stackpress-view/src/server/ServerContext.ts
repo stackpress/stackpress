@@ -4,6 +4,8 @@ import { createContext } from 'react';
 import type { ServerContextProps } from '../types.js';
 import { withUnknownHost } from './helpers.js';
 
+export type { ServerContextProps };
+
 export const unknownHost = new URL(withUnknownHost('/'));
 export const config: ServerContextProps = {
   data: {},

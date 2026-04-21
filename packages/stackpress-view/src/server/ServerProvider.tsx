@@ -5,6 +5,8 @@ import type { ServerProviderProps } from '../types.js';
 import ServerContext from './ServerContext.js';
 import { withUnknownHost } from './helpers.js';
 
+export type { ServerProviderProps };
+
 // (this is what to put in app.tsx)
 export default function ServerProvider<
   C extends UnknownNest = UnknownNest,

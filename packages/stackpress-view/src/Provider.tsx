@@ -2,9 +2,11 @@
 import { R22nProvider } from 'r22n';
 import Notifier from 'frui/Notifier';
 //stackpress-view
-import type { ProviderProps } from './types.js';
+import type { ProviderProps } from './client/types.js';
 import ServerProvider from './server/ServerProvider.js';
 import ThemeProvider from './theme/ThemeProvider.js';
+
+export type { ProviderProps };
 
 export default function Provider(props: ProviderProps) {
   const { 
