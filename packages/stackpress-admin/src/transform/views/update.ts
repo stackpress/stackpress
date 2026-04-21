@@ -54,10 +54,13 @@ export default function updateView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-session/types',
     namedImports: [ 'SessionPermission' ]
   });
-  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
+  //import type { 
+  //  AdminConfigProps, 
+  //  AdminPageProps 
+  //} from 'stackpress-admin/client/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress-admin/client',
+    moduleSpecifier: 'stackpress-admin/client/types',
     namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
   });
   //import { useServer } from 'stackpress-view/client';

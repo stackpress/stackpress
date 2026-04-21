@@ -38,22 +38,25 @@ export default function createView(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { NestedObject } from 'stackpress-view/client';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress-view/client',
-    namedImports: [ 'NestedObject' ]
-  });
   //import type { SessionPermission } from 'stackpress-session/types';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-session/types',
     namedImports: [ 'SessionPermission' ]
   });
-  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
+  //import type { NestedObject } from 'stackpress-view/client/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress-admin/client',
+    moduleSpecifier: 'stackpress-view/client/types',
+    namedImports: [ 'NestedObject' ]
+  });
+  //import type { 
+  //  AdminConfigProps, 
+  //  AdminPageProps 
+  //} from 'stackpress-admin/client/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress-admin/client/types',
     namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
   });
   //import { useServer } from 'stackpress-view/client';

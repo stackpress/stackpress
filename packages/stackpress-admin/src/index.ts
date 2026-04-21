@@ -10,8 +10,10 @@ export type {
   CSVParseError,
   CSVParseResults,
   BatchSendResults,
-  BatchSendResponse
-} from './client.js';
+  BatchSendResponse,
+  SearchQuery,
+  Scalar
+} from './types.js';
 
 export {
   filter, 
@@ -28,4 +30,4 @@ export {
   csvToFormData, 
   batchImportSend,
   batchAndSend 
-} from './client.js';
+} from './client/index.js';

@@ -119,17 +119,19 @@ export default function generate(
     moduleSpecifier: 'stackpress-session/types',
     namedImports: [ 'SessionPermission' ]
   });
-  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
+  //import type { 
+  //  AdminConfigProps, 
+  //  AdminPageProps, 
+  //  SearchQuery 
+  //} from 'stackpress-admin/client/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress-admin/client',
-    namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
-  });
-  //import type { StoreSearchQuery } from 'stackpress-sql/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress-sql/types',
-    namedImports: [ 'StoreSearchQuery' ]
+    moduleSpecifier: 'stackpress-admin/client/types',
+    namedImports: [ 
+      'AdminConfigProps', 
+      'AdminPageProps',
+      'SearchQuery'
+    ]
   });
   //import { paginate, filter, order } from 'stackpress-admin/client';
   source.addImportDeclaration({
@@ -249,7 +251,7 @@ export default function generate(
       relation: relatedColumn.name.toComponentName()
     }),
     type: `{ 
-      query: StoreSearchQuery, 
+      query: SearchQuery, 
       close: MouseEventHandler<HTMLElement> 
     }`
   });
@@ -279,7 +281,7 @@ export default function generate(
     }),
     type: `{ 
       base: string,
-      query: Partial<StoreSearchQuery>, 
+      query: SearchQuery, 
       results: ${foreignModel.name.toTypeName('%sExtended')}[], 
       can: (...permits: SessionPermission[]) => boolean 
     }`
@@ -827,7 +829,7 @@ const {
   response 
 } = useServer<
   AdminConfigProps, 
-  Partial<StoreSearchQuery>, 
+  SearchQuery, 
   <%type.model%> & { <%type.column%>: <%type.foreign%>[] }
 >();
 const [ opened, open ] = useState(false);

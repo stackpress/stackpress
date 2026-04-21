@@ -28,6 +28,12 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
+  //import type { CsrfPlugin } from 'stackpress-csrf/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress-csrf/types',
+    namedImports: [ 'CsrfPlugin' ]
+  });
   //import type { LanguageConfig } from 'stackpress-language/types';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -45,12 +51,6 @@ export default function generate(directory: Directory, model: Model) {
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-admin/types',
     namedImports: [ 'AdminConfig' ]
-  });
-  //import type { CsrfPlugin } from 'stackpress-csrf/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress-csrf/types',
-    namedImports: [ 'CsrfPlugin' ]
   });
 
   //------------------------------------------------------------------//

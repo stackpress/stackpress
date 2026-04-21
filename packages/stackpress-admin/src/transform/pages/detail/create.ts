@@ -57,6 +57,12 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Stackpress
 
+  //import type { CsrfPlugin } from 'stackpress-csrf/types';
+  source.addImportDeclaration({
+    isTypeOnly: true,
+    moduleSpecifier: 'stackpress-csrf/types',
+    namedImports: [ 'CsrfPlugin' ]
+  });
   //import type { LanguageConfig } from 'stackpress-language/types';
   source.addImportDeclaration({
     isTypeOnly: true,
@@ -74,12 +80,6 @@ export default function generate(
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-admin/types',
     namedImports: [ 'AdminConfig' ]
-  });
-  //import type { CsrfPlugin } from 'stackpress-csrf/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress-csrf/types',
-    namedImports: [ 'CsrfPlugin' ]
   });
 
   //------------------------------------------------------------------//

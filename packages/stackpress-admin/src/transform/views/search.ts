@@ -90,17 +90,19 @@ export default function searchView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-session/types',
     namedImports: [ 'SessionPermission' ]
   });
-  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
+  //import type { 
+  //  AdminConfigProps, 
+  //  AdminPageProps, 
+  //  SearchQuery 
+  //} from 'stackpress-admin/client/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress-admin/client',
-    namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
-  });
-  //import type { StoreSearchQuery } from 'stackpress-sql/types';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress-sql/types',
-    namedImports: [ 'StoreSearchQuery' ]
+    moduleSpecifier: 'stackpress-admin/client/types',
+    namedImports: [ 
+      'AdminConfigProps', 
+      'AdminPageProps',
+      'SearchQuery'
+    ]
   });
   //import { paginate, filter, order } from 'stackpress-admin/client';
   source.addImportDeclaration({
@@ -174,7 +176,7 @@ export default function searchView(directory: Directory, model: Model) {
     isExported: true,
     name: model.name.toTypeName('%sAdminSearchFiltersProps'),
     type: `{ 
-      query: StoreSearchQuery, 
+      query: SearchQuery, 
       close: MouseEventHandler<HTMLElement> 
     }` 
   });
@@ -195,7 +197,7 @@ export default function searchView(directory: Directory, model: Model) {
     name: model.name.toTypeName('%sAdminSearchResultsProps'),
     type: `{ 
       base: string,
-      query: Partial<StoreSearchQuery>, 
+      query: SearchQuery, 
       results: ${model.name.toTypeName('%sExtended')}[], 
       can: (...permits: SessionPermission[]) => boolean 
     }`
@@ -541,7 +543,7 @@ const {
   session, 
   request, 
   response 
-} = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+} = useServer<AdminConfigProps, SearchQuery, <%type%>>();
 const [ opened, open ] = useState(false);
 //variables
 const base = config.path('admin.base', '/admin');

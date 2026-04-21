@@ -58,10 +58,10 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { NestedObject } from 'stackpress-view/client';
+  //import type { NestedObject } from 'stackpress-view/client/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress-view/client',
+    moduleSpecifier: 'stackpress-view/client/types',
     namedImports: [ 'NestedObject' ]
   });
   //import type { SessionPermission } from 'stackpress-session/types';
@@ -70,10 +70,13 @@ export default function generate(
     moduleSpecifier: 'stackpress-session/types',
     namedImports: [ 'SessionPermission' ]
   });
-  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
+  //import type { 
+  //  AdminConfigProps, 
+  //  AdminPageProps 
+  //} from 'stackpress-admin/client/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress-admin/client',
+    moduleSpecifier: 'stackpress-admin/client/types',
     namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
   });
   //import { useServer } from 'stackpress-view/client';

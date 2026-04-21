@@ -70,17 +70,19 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-session/types',
     namedImports: [ 'SessionPermission' ]
   });
-  //import type { StoreSearchQuery } from 'stackpress-sql/types';
+  //import type { 
+  //  AdminConfigProps, 
+  //  AdminPageProps, 
+  //  SearchQuery 
+  //} from 'stackpress-admin/client/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress-sql/types',
-    namedImports: [ 'StoreSearchQuery' ]
-  });
-  //import type { AdminConfigProps, AdminPageProps } from 'stackpress-admin/client';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: 'stackpress-admin/client',
-    namedImports: [ 'AdminConfigProps', 'AdminPageProps' ]
+    moduleSpecifier: 'stackpress-admin/client/types',
+    namedImports: [ 
+      'AdminConfigProps', 
+      'AdminPageProps',
+      'SearchQuery'
+    ]
   });
   //import { useServer } from 'stackpress-view/client';
   source.addImportDeclaration({
@@ -531,7 +533,7 @@ const {
   config, 
   session, 
   response 
-} = useServer<AdminConfigProps, Partial<StoreSearchQuery>, <%type%>>();
+} = useServer<AdminConfigProps, SearchQuery, <%type%>>();
 //variables
 const can = session.can.bind(session);
 const base = config.path('admin.base', '/admin');

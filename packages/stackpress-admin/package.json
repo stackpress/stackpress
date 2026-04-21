@@ -15,9 +15,13 @@
   "module": "./esm/index.js",
   "types": "./cjs/index.d.ts",
   "exports": {
+    "./client/types": {
+      "require": "./cjs/client/types.js",
+      "import": "./esm/client/types.js"
+    },
     "./client": {
-      "require": "./cjs/client.js",
-      "import": "./esm/client.js"
+      "require": "./cjs/client/index.js",
+      "import": "./esm/client/index.js"
     },
     "./helpers": {
       "require": "./cjs/helpers.js",
@@ -27,6 +31,12 @@
       "require": "./cjs/import.js",
       "import": "./esm/import.js"
     },
+    "./layout/*": {
+      "require": "./cjs/layout/*.js",
+      "import": "./esm/layout/*.js"
+    },
+    "./cjs/layout/*": "./cjs/layout/*.js",
+    "./esm/layout/*": "./esm/layout/*.js",
     "./plugin": {
       "require": "./cjs/plugin.js",
       "import": "./esm/plugin.js"
@@ -46,9 +56,13 @@
   },
   "typesVersions": {
     "*": {
-      "client": [ "./cjs/client.d.ts" ],
+      "client/types": [ "./cjs/client/types.d.ts" ],
+      "client": [ "./cjs/client/index.d.ts" ],
       "helpers": [ "./cjs/helpers.d.ts" ],
       "import": [ "./cjs/import.d.ts" ],
+      "layout/*": [ "./cjs/layout/*.d.ts" ],
+      "cjs/layout/*": [ "./cjs/layout/*.d.ts" ],
+      "esm/layout/*": [ "./esm/layout/*.d.ts" ],
       "plugin": [ "./cjs/plugin.d.ts" ],
       "transform": [ "./cjs/transform/index.d.ts" ],
       "types": [ "./cjs/types.d.ts" ],
