@@ -15,7 +15,7 @@ model Profile {
 model Category 
   @labels("Category" "Categories")
   @icon("sitemap")
-  @display("{{title}}")
+  @display("{{name}}")
 {
   id          String
               @label("ID") 

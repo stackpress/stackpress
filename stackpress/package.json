@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.7.2",
+  "version": "0.8.3",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -65,7 +65,6 @@
       "require": "./cjs/admin/index.js",
       "import": "./esm/admin/index.js"
     },
-
     "./api/plugin": {
       "require": "./cjs/api/plugin.js",
       "import": "./esm/api/plugin.js"
@@ -78,7 +77,6 @@
       "require": "./cjs/api/index.js",
       "import": "./esm/api/index.js"
     },
-
     "./Revisions": {
       "require": "./cjs/client/Revisions.js",
       "import": "./esm/client/Revisions.js"
@@ -99,7 +97,6 @@
       "require": "./cjs/client/index.js",
       "import": "./esm/client/index.js"
     },
-    
     "./csrf": {
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
@@ -112,7 +109,6 @@
       "require": "./cjs/csrf/types.js",
       "import": "./esm/csrf/types.js"
     },
-
     "./email/plugin": {
       "require": "./cjs/email/plugin.js",
       "import": "./esm/email/plugin.js"
@@ -125,7 +121,6 @@
       "require": "./cjs/email/index.js",
       "import": "./esm/email/index.js"
     },
-    
     "./Language": {
       "require": "./cjs/language/Language.js",
       "import": "./esm/language/Language.js"
@@ -142,7 +137,6 @@
       "require": "./cjs/language/index.js",
       "import": "./esm/language/index.js"
     },
-
     "./ColumnInterface": {
       "require": "./cjs/schema/interface/ColumnInterface.js",
       "import": "./esm/schema/interface/ColumnInterface.js"
@@ -291,7 +285,6 @@
       "require": "./cjs/schema/index.js",
       "import": "./esm/schema/index.js"
     },
-
     "./scripts/*": {
       "require": "./cjs/scripts/*.js",
       "import": "./esm/scripts/*.js"
@@ -300,7 +293,6 @@
       "require": "./cjs/scripts/index.js",
       "import": "./esm/scripts/index.js"
     },
-
     "./http": {
       "require": "./cjs/server/http.js",
       "import": "./esm/server/http.js"
@@ -317,7 +309,6 @@
       "require": "./cjs/server/index.js",
       "import": "./esm/server/index.js"
     },
-
     "./Session": {
       "require": "./cjs/session/Session.js",
       "import": "./esm/session/Session.js"
@@ -334,7 +325,6 @@
       "require": "./cjs/session/index.js",
       "import": "./esm/session/index.js"
     },
-    
     "./sql/ActionsInterface": {
       "require": "./cjs/sql/interface/ActionsInterface.js",
       "import": "./esm/sql/interface/ActionsInterface.js"
@@ -379,7 +369,6 @@
       "require": "./cjs/sql/sqlite.js",
       "import": "./esm/sql/sqlite.js"
     },
-
     "./terminal/events/*": {
       "require": "./cjs/terminal/events/*.js",
       "import": "./esm/terminal/events/*.js"
@@ -404,7 +393,6 @@
       "require": "./cjs/terminal/index.js",
       "import": "./esm/terminal/index.js"
     },
-    
     "./view/transform": {
       "require": "./cjs/view/transform/index.js",
       "import": "./esm/view/transform/index.js"
@@ -433,7 +421,6 @@
       "require": "./cjs/view/index.js",
       "import": "./esm/view/index.js"
     },
-
     "./api/views/*": {
       "require": "./cjs/api/views/*.js",
       "import": "./esm/api/views/*.js"
@@ -446,7 +433,6 @@
     "./esm/session/views/*": "./esm/session/views/*.js",
     "./cjs/api/views/*": "./cjs/api/views/*.js",
     "./cjs/session/views/*": "./cjs/session/views/*.js",
-
     "./Exception": {
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
@@ -475,7 +461,6 @@
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
     },
-
     "./tsconfig/cjs": "./tsconfig/cjs.json",
     "./tsconfig/esm": "./tsconfig/esm.json",
     "./assets.d.ts": "./tsconfig/assets.d.ts",
@@ -484,126 +469,324 @@
   },
   "typesVersions": {
     "*": {
-      "admin/plugin": [ "./cjs/admin/plugin.d.ts" ],
-      "admin/transform": [ "./cjs/admin/transform/index.d.ts" ],
-      "admin/types": [ "./cjs/admin/types.d.ts" ],
-      "admin": [ "./cjs/admin/index.d.ts" ],
-
-      "api/plugin": [ "./cjs/api/plugin.d.ts" ],
-      "api/types": [ "./cjs/api/types.d.ts" ],
-      "api": [ "./cjs/api/index.d.ts" ],
-
-      "Revisions": [ "./cjs/client/Revisions.d.ts" ],
-      "client/transform": [ "./cjs/client/transform/index.d.ts" ],
-      "client/plugin": [ "./cjs/client/plugin.d.ts" ],
-      "client/types": [ "./cjs/client/types.d.ts" ],
-      "client": [ "./cjs/client/index.d.ts" ],
-
-      "csrf": [ "./cjs/index.d.ts" ],
-      "csrf/plugin": [ "./cjs/csrf/plugin.d.ts" ],
-      "csrf/types": [ "./cjs/csrf/types.d.ts" ],
-
-      "email/plugin": [ "./cjs/email/plugin.d.ts" ],
-      "email/types": [ "./cjs/email/types.d.ts" ],
-      "email": [ "./cjs/email/index.d.ts" ],
-      
-      "Language": [ "./cjs/language/Language.d.ts" ],
-      "language/plugin": [ "./cjs/language/plugin.d.ts" ],
-      "language/types": [ "./cjs/language/types.d.ts" ],
-      "language": [ "./cjs/language/index.d.ts" ],
-
-      "ColumnInterface": [ "./cjs/schema/interface/ColumnInterface.d.ts" ],
-      "DefinitionInterface": [ "./cjs/schema/interface/DefinitionInterface.d.ts" ],
-      "SchemaInterface": [ "./cjs/schema/interface/SchemaInterface.d.ts" ],
-      "Attribute": [ "./cjs/schema/attribute/Attribute.d.ts" ],
-      "AttributeAssertion": [ "./cjs/schema/attribute/AttributeAssertion.d.ts" ],
-      "AttributeComponent": [ "./cjs/schema/attribute/AttributeComponent.d.ts" ],
-      "AttributeReference": [ "./cjs/schema/attribute/AttributeReference.d.ts" ],
-      "Attributes": [ "./cjs/schema/attribute/Attributes.d.ts" ],
-      "Column": [ "./cjs/schema/column/Column.d.ts" ],
-      "ColumnAssertion": [ "./cjs/schema/column/ColumnAssertion.d.ts" ],
-      "ColumnComponent": [ "./cjs/schema/column/ColumnComponent.d.ts" ],
-      "ColumnDocument": [ "./cjs/schema/column/ColumnDocument.d.ts" ],
-      "ColumnName": [ "./cjs/schema/column/ColumnName.d.ts" ],
-      "ColumnNumber": [ "./cjs/schema/column/ColumnNumber.d.ts" ],
-      "Columns": [ "./cjs/schema/column/Columns.d.ts" ],
-      "ColumnStore": [ "./cjs/schema/column/ColumnStore.d.ts" ],
-      "ColumnType": [ "./cjs/schema/column/ColumnType.d.ts" ],
-      "ColumnValue": [ "./cjs/schema/column/ColumnValue.d.ts" ],
-      "Fieldset": [ "./cjs/schema/fieldset/Fieldset.d.ts" ],
-      "FieldsetAssertion": [ "./cjs/schema/fieldset/FieldsetAssertion.d.ts" ],
-      "FieldsetComponent": [ "./cjs/schema/fieldset/FieldsetComponent.d.ts" ],
-      "FieldsetDocument": [ "./cjs/schema/fieldset/FieldsetDocument.d.ts" ],
-      "FieldsetName": [ "./cjs/schema/fieldset/FieldsetName.d.ts" ],
-      "FieldsetType": [ "./cjs/schema/fieldset/FieldsetType.d.ts" ],
-      "FieldsetValue": [ "./cjs/schema/fieldset/FieldsetValue.d.ts" ],
-      "Model": [ "./cjs/schema/model/Model.d.ts" ],
-      "ModelStore": [ "./cjs/schema/model/ModelStore.d.ts" ],
-      "Schema": [ "./cjs/schema/Schema.d.ts" ],
-      "schema/config/attributes": [ "./cjs/schema/config/attributes.d.ts" ],
-      "schema/config/definitions": [ "./cjs/schema/config/definitions.d.ts" ],
-      "schema/config/typemaps": [ "./cjs/schema/config/typemaps.d.ts" ],
-      "schema/transform/helpers": [ "./cjs/schema/transform/helpers.d.ts" ],
-      "schema/transform": [ "./cjs/schema/transform/index.d.ts" ],
-      "schema/dictionary": [ "./cjs/schema/dictionary.d.ts" ],
-      "schema/helpers": [ "./cjs/schema/helpers.d.ts" ],
-      "schema/types": [ "./cjs/schema/types.d.ts" ],
-      "schema": [ "./cjs/schema/index.d.ts" ],
-
-      "scripts/*": [ "./cjs/scripts/*.d.ts" ],
-      "scripts": [ "./cjs/scripts/index.d.ts" ],
-
-      "http": [ "./cjs/server/http.d.ts" ],
-      "whatwg": [ "./cjs/server/whatwg.d.ts" ],
-      "server/types": [ "./cjs/server/types.d.ts" ],
-      "server": [ "./cjs/server/index.d.ts" ],
-
-      "Session": [ "./cjs/session/Session.d.ts" ],
-      "session/plugin": [ "./cjs/session/plugin.d.ts" ],
-      "session/types": [ "./cjs/session/types.d.ts" ],
-      "session": [ "./cjs/session/index.d.ts" ],
-      
-      "sql/ActionsInterface": [ "./cjs/sql/interface/ActionsInterface.d.ts" ],
-      "sql/StoreInterface": [ "./cjs/sql/interface/StoreInterface.d.ts" ],
-      "sql/plugin": [ "./cjs/sql/plugin.d.ts" ],
-      "sql/transform": [ "./cjs/sql/transform/index.d.ts" ],
-      "sql/helpers": [ "./cjs/sql/helpers.d.ts" ],
-      "sql/types": [ "./cjs/sql/types.d.ts" ],
-      "sql": [ "./cjs/sql/index.d.ts" ],
-      "mysql": [ "./cjs/sql/mysql.d.ts" ],
-      "pglite": [ "./cjs/sql/pglite.d.ts" ],
-      "pgsql": [ "./cjs/sql/pgsql.d.ts" ],
-      "sqlite": [ "./cjs/sql/sqlite.d.ts" ],
-
-      "terminal/events/*": [ "./cjs/terminal/events/*.d.ts" ],
-      "terminal/events": [ "./cjs/terminal/events/index.d.ts" ],
-      "Terminal": [ "./cjs/terminal/Terminal.d.ts" ],
-      "terminal/plugin": [ "./cjs/terminal/plugin.d.ts" ],
-      "terminal/types": [ "./cjs/terminal/types.d.ts" ],
-      "terminal": [ "./cjs/terminal/index.d.ts" ],
-      
-      "view/transform": [ "./cjs/view/transform/index.d.ts" ],
-      "view/client": [ "./cjs/view/client.d.ts" ],
-      "view/helpers": [ "./cjs/view/helpers.d.ts" ],
-      "view/import": [ "./cjs/view/import.d.ts" ],
-      "view/plugin": [ "./cjs/view/plugin.d.ts" ],
-      "view/types": [ "./cjs/view/types.d.ts" ],
-      "view": [ "./cjs/view/index.d.ts" ],
-
-      "api/views/*": [ "./cjs/api/views/*.d.ts" ],
-      "session/views/*": [ "./cjs/session/views/*.d.ts" ],
-      "esm/api/views/*": [ "./esm/api/views/*.d.ts" ],
-      "esm/session/views/*": [ "./esm/session/views/*.d.ts" ],
-      "cjs/api/views/*": [ "./cjs/api/views/*.d.ts" ],
-      "cjs/session/views/*": [ "./cjs/session/views/*.d.ts" ],
-
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "assert": [ "./cjs/assert.d.ts" ],
-      "lib": [ "./cjs/lib.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      "unocss": [ "./cjs/unocss.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ]
+      "admin/plugin": [
+        "./cjs/admin/plugin.d.ts"
+      ],
+      "admin/transform": [
+        "./cjs/admin/transform/index.d.ts"
+      ],
+      "admin/types": [
+        "./cjs/admin/types.d.ts"
+      ],
+      "admin": [
+        "./cjs/admin/index.d.ts"
+      ],
+      "api/plugin": [
+        "./cjs/api/plugin.d.ts"
+      ],
+      "api/types": [
+        "./cjs/api/types.d.ts"
+      ],
+      "api": [
+        "./cjs/api/index.d.ts"
+      ],
+      "Revisions": [
+        "./cjs/client/Revisions.d.ts"
+      ],
+      "client/transform": [
+        "./cjs/client/transform/index.d.ts"
+      ],
+      "client/plugin": [
+        "./cjs/client/plugin.d.ts"
+      ],
+      "client/types": [
+        "./cjs/client/types.d.ts"
+      ],
+      "client": [
+        "./cjs/client/index.d.ts"
+      ],
+      "csrf": [
+        "./cjs/index.d.ts"
+      ],
+      "csrf/plugin": [
+        "./cjs/csrf/plugin.d.ts"
+      ],
+      "csrf/types": [
+        "./cjs/csrf/types.d.ts"
+      ],
+      "email/plugin": [
+        "./cjs/email/plugin.d.ts"
+      ],
+      "email/types": [
+        "./cjs/email/types.d.ts"
+      ],
+      "email": [
+        "./cjs/email/index.d.ts"
+      ],
+      "Language": [
+        "./cjs/language/Language.d.ts"
+      ],
+      "language/plugin": [
+        "./cjs/language/plugin.d.ts"
+      ],
+      "language/types": [
+        "./cjs/language/types.d.ts"
+      ],
+      "language": [
+        "./cjs/language/index.d.ts"
+      ],
+      "ColumnInterface": [
+        "./cjs/schema/interface/ColumnInterface.d.ts"
+      ],
+      "DefinitionInterface": [
+        "./cjs/schema/interface/DefinitionInterface.d.ts"
+      ],
+      "SchemaInterface": [
+        "./cjs/schema/interface/SchemaInterface.d.ts"
+      ],
+      "Attribute": [
+        "./cjs/schema/Attribute.d.ts"
+      ],
+      "AttributeAssertion": [
+        "./cjs/schema/attribute/AttributeAssertion.d.ts"
+      ],
+      "AttributeComponent": [
+        "./cjs/schema/attribute/AttributeComponent.d.ts"
+      ],
+      "AttributeReference": [
+        "./cjs/schema/attribute/AttributeReference.d.ts"
+      ],
+      "Attributes": [
+        "./cjs/schema/attribute/Attributes.d.ts"
+      ],
+      "Column": [
+        "./cjs/schema/Column.d.ts"
+      ],
+      "ColumnAssertion": [
+        "./cjs/schema/column/ColumnAssertion.d.ts"
+      ],
+      "ColumnComponent": [
+        "./cjs/schema/column/ColumnComponent.d.ts"
+      ],
+      "ColumnDocument": [
+        "./cjs/schema/column/ColumnDocument.d.ts"
+      ],
+      "ColumnName": [
+        "./cjs/schema/column/ColumnName.d.ts"
+      ],
+      "ColumnNumber": [
+        "./cjs/schema/column/ColumnNumber.d.ts"
+      ],
+      "Columns": [
+        "./cjs/schema/column/Columns.d.ts"
+      ],
+      "ColumnStore": [
+        "./cjs/schema/column/ColumnStore.d.ts"
+      ],
+      "ColumnType": [
+        "./cjs/schema/column/ColumnType.d.ts"
+      ],
+      "ColumnValue": [
+        "./cjs/schema/column/ColumnValue.d.ts"
+      ],
+      "Fieldset": [
+        "./cjs/schema/Fieldset.d.ts"
+      ],
+      "FieldsetAssertion": [
+        "./cjs/schema/fieldset/FieldsetAssertion.d.ts"
+      ],
+      "FieldsetComponent": [
+        "./cjs/schema/fieldset/FieldsetComponent.d.ts"
+      ],
+      "FieldsetDocument": [
+        "./cjs/schema/fieldset/FieldsetDocument.d.ts"
+      ],
+      "FieldsetName": [
+        "./cjs/schema/fieldset/FieldsetName.d.ts"
+      ],
+      "FieldsetType": [
+        "./cjs/schema/fieldset/FieldsetType.d.ts"
+      ],
+      "FieldsetValue": [
+        "./cjs/schema/fieldset/FieldsetValue.d.ts"
+      ],
+      "Model": [
+        "./cjs/schema/Model.d.ts"
+      ],
+      "ModelStore": [
+        "./cjs/schema/model/ModelStore.d.ts"
+      ],
+      "Schema": [
+        "./cjs/schema/Schema.d.ts"
+      ],
+      "schema/config/attributes": [
+        "./cjs/schema/config/attributes.d.ts"
+      ],
+      "schema/config/definitions": [
+        "./cjs/schema/config/definitions.d.ts"
+      ],
+      "schema/config/typemaps": [
+        "./cjs/schema/config/typemaps.d.ts"
+      ],
+      "schema/transform/helpers": [
+        "./cjs/schema/transform/helpers.d.ts"
+      ],
+      "schema/transform": [
+        "./cjs/schema/transform/index.d.ts"
+      ],
+      "schema/dictionary": [
+        "./cjs/schema/dictionary.d.ts"
+      ],
+      "schema/helpers": [
+        "./cjs/schema/helpers.d.ts"
+      ],
+      "schema/types": [
+        "./cjs/schema/types.d.ts"
+      ],
+      "schema": [
+        "./cjs/schema/index.d.ts"
+      ],
+      "scripts/*": [
+        "./cjs/scripts/*.d.ts"
+      ],
+      "scripts": [
+        "./cjs/scripts/index.d.ts"
+      ],
+      "http": [
+        "./cjs/server/http.d.ts"
+      ],
+      "whatwg": [
+        "./cjs/server/whatwg.d.ts"
+      ],
+      "server/types": [
+        "./cjs/server/types.d.ts"
+      ],
+      "server": [
+        "./cjs/server/index.d.ts"
+      ],
+      "Session": [
+        "./cjs/session/Session.d.ts"
+      ],
+      "session/plugin": [
+        "./cjs/session/plugin.d.ts"
+      ],
+      "session/types": [
+        "./cjs/session/types.d.ts"
+      ],
+      "session": [
+        "./cjs/session/index.d.ts"
+      ],
+      "sql/ActionsInterface": [
+        "./cjs/sql/interface/ActionsInterface.d.ts"
+      ],
+      "sql/StoreInterface": [
+        "./cjs/sql/interface/StoreInterface.d.ts"
+      ],
+      "sql/plugin": [
+        "./cjs/sql/plugin.d.ts"
+      ],
+      "sql/transform": [
+        "./cjs/sql/transform/index.d.ts"
+      ],
+      "sql/helpers": [
+        "./cjs/sql/helpers.d.ts"
+      ],
+      "sql/types": [
+        "./cjs/sql/types.d.ts"
+      ],
+      "sql": [
+        "./cjs/sql/index.d.ts"
+      ],
+      "mysql": [
+        "./cjs/sql/mysql.d.ts"
+      ],
+      "pglite": [
+        "./cjs/sql/pglite.d.ts"
+      ],
+      "pgsql": [
+        "./cjs/sql/pgsql.d.ts"
+      ],
+      "sqlite": [
+        "./cjs/sql/sqlite.d.ts"
+      ],
+      "terminal/events/*": [
+        "./cjs/terminal/events/*.d.ts"
+      ],
+      "terminal/events": [
+        "./cjs/terminal/events/index.d.ts"
+      ],
+      "Terminal": [
+        "./cjs/terminal/Terminal.d.ts"
+      ],
+      "terminal/plugin": [
+        "./cjs/terminal/plugin.d.ts"
+      ],
+      "terminal/types": [
+        "./cjs/terminal/types.d.ts"
+      ],
+      "terminal": [
+        "./cjs/terminal/index.d.ts"
+      ],
+      "view/transform": [
+        "./cjs/view/transform/index.d.ts"
+      ],
+      "view/client": [
+        "./cjs/view/client.d.ts"
+      ],
+      "view/helpers": [
+        "./cjs/view/helpers.d.ts"
+      ],
+      "view/import": [
+        "./cjs/view/import.d.ts"
+      ],
+      "view/plugin": [
+        "./cjs/view/plugin.d.ts"
+      ],
+      "view/types": [
+        "./cjs/view/types.d.ts"
+      ],
+      "view": [
+        "./cjs/view/index.d.ts"
+      ],
+      "api/views/*": [
+        "./cjs/api/views/*.d.ts"
+      ],
+      "session/views/*": [
+        "./cjs/session/views/*.d.ts"
+      ],
+      "esm/api/views/*": [
+        "./esm/api/views/*.d.ts"
+      ],
+      "esm/session/views/*": [
+        "./esm/session/views/*.d.ts"
+      ],
+      "cjs/api/views/*": [
+        "./cjs/api/views/*.d.ts"
+      ],
+      "cjs/session/views/*": [
+        "./cjs/session/views/*.d.ts"
+      ],
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "assert": [
+        "./cjs/assert.d.ts"
+      ],
+      "lib": [
+        "./cjs/lib.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      "unocss": [
+        "./cjs/unocss.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ]
     }
   },
   "files": [
@@ -632,20 +815,18 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "3.3.0",
-    "@stackpress/idea-transformer": "0.7.2",
-    "@stackpress/ingest": "0.7.2",
-    "@stackpress/inquire": "0.7.2",
-    "@stackpress/lib": "0.7.2",
-    "html-entities": "2.6.0",
+    "@stackpress/idea-transformer": "0.8.3",
+    "@stackpress/ingest": "0.8.3",
+    "@stackpress/inquire": "0.8.3",
+    "@stackpress/lib": "0.8.3",
     "jose": "6.2.0",
     "moment": "2.30.1",
-    "mustache": "4.2.0",
     "nanoid": "5.1.6",
     "nodemailer": "7.0.13",
     "papaparse": "5.5.3",
     "r22n": "1.0.10",
     "react-toastify": "11.0.5",
-    "reactus": "0.7.2",
+    "reactus": "0.8.3",
     "universal-cookie": "8.0.1",
     "zod": "4.3.6"
   },
@@ -653,7 +834,6 @@
     "@istanbuljs/esm-loader-hook": "0.3.0",
     "@types/chai": "4.3.20",
     "@types/mocha": "10.0.10",
-    "@types/mustache": "4.2.6",
     "@types/nodemailer": "7.0.11",
     "@types/node": "25.3.5",
     "@types/papaparse": "5.5.2",
@@ -676,7 +856,7 @@
     "unocss": "66.6.6"
   },
   "peerDevDependencies": {
-    "@stackpress/idea-transformer": "0.7.2",
+    "@stackpress/idea-transformer": "0.8.1",
     "@vitejs/plugin-react": "4.3.4",
     "fast-glob": "^3.3",
     "prettier": "^3",

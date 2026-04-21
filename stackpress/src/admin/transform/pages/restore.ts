@@ -53,6 +53,16 @@ export default function generate(directory: Directory, model: Model) {
 
   //------------------------------------------------------------------//
   // Import Client
+
+  //import type { ProfileExtended } from '../../types.js';
+  if (model.value.hashed.size > 0) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: `../../types.js`,
+      namedImports: [ model.name.toClassName('%sExtended') ]
+    });
+  }
+
   //------------------------------------------------------------------//
   // Exports
 
@@ -69,12 +79,16 @@ export default function generate(directory: Directory, model: Model) {
     statements: renderCode(TEMPLATE.RESTORE, { 
       event: model.name.toEventName(),
       model: model.name.toURLPath(),
+      extended: model.name.toClassName('%sExtended'),
       ids: model.store.ids.map(
         column => `\${req.data.get('${column.name.toString()}')}`
       ).toArray().join('/'),
       active: model.store.active 
         ? { column: model.store.active.name.toString() }
-        : null
+        : null,
+      hashes: model.value.hashed.map(
+        column => ({ column: column.name.toString() })
+      ).toArray() || []
     })
   });
 };
@@ -118,11 +132,11 @@ res.data.set('admin', {
   menu: admin.menu || []
 });
 
-<%#active%>
+<%#?:active%>
   //make sure to set the active column to -1 in order 
   // to get it returned even if it's soft-deleted
-  req.data.set('eq', '<%column%>', -1);
-<%/active%>
+  req.data.set('eq', '<%active.column%>', -1);
+<%/?:active%>
 
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
@@ -161,6 +175,19 @@ if (req.data('confirmed')) {
   return;
 }
 //not confirmed, fetch the data using the id
-await ctx.emit('<%event%>-detail', req, res);`,
+<%#?:hashes.length%>
+  const response = await ctx.resolve<Partial<<%extended%>>>(
+    '<%event%>-detail', 
+    req
+  );
+  <%#@:hashes%>
+    if (typeof response.results?.<%column%> !== 'undefined') {
+      delete response.results.<%column%>;
+    }
+  <%/@:hashes%>
+  res.fromStatusResponse(response);
+<%|%>
+  await ctx.emit('<%event%>-detail', req, res);
+<%/?:hashes.length%>`,
 
 };

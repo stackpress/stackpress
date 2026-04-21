@@ -51,18 +51,18 @@ export const TEMPLATE = {
 
 //public async upsert(input: Partial<Profile>) {}
 UPSERT:
-`<%#ids.length%>
+`<%#?:ids.length%>
   if (<%update%>) {
     const eq = { 
-      <%#ids%>
+      <%#@:ids%>
         <%column%>: input.<%column%>,
-      <%/ids%> 
+      <%/@:ids%> 
     };
     const rows = await this.update({ eq }, input);
     return rows[0] || null;
   }
-<%/ids.length%>
-<%#uniques%>
+<%/?:ids.length%>
+<%#@:uniques%>
   if (
     typeof input.<%column%> !== 'undefined'
     && input.<%column%> !== null
@@ -75,7 +75,7 @@ UPSERT:
       return rows[0] || null;
     }
   }
-<%/uniques%>
+<%/@:uniques%>
 return await this.create(input);`,
 
 };

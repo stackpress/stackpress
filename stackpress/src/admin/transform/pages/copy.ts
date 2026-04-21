@@ -95,7 +95,10 @@ export default function generate(directory: Directory, model: Model) {
       })).toArray(),
       ids: model.store.ids.map(
         column => `\${results.${column.name.toString()}}`
-      ).toArray().join('/')
+      ).toArray().join('/'),
+      hashes: model.value.hashed.map(
+        column => ({ column: column.name.toString() })
+      ).toArray() || []
     })
   });
 };
@@ -149,11 +152,11 @@ if (req.method === 'POST') {
   //validate csrf
   if (!csrf.validateToken(req, res)) return;
   const input: Partial<<%type%>> = {};
-  <%#fields%>
+  <%#@:fields%>
     if (req.data.has('<%column%>')) {
       input.<%column%> = req.data('<%column%>');
     }
-  <%/fields%>
+  <%/@:fields%>
   //emit the create event
   const response = await ctx.resolve<<%type%>>('<%event%>-create', input, res);
   //if error
@@ -176,21 +179,32 @@ if (req.method === 'POST') {
     const results = response.results!
     //redirect
     const base = admin.base ?? '/admin';
-    <%#oneid%>
+    <%#?:oneid%>
       res.redirect(
         \`\${base}/<%model%>/detail/<%ids%>\`
       );
-    <%/oneid%>
-    <%^oneid%>
+    <%|%>
       res.redirect(
         \`\${base}/<%model%>/search\`
       );
-    <%/oneid%>
+    <%/?:oneid%>
   }
   return;
 }
 //if form not submitted, get the details of the thing to copy
-const response = await ctx.resolve<<%extended%>>('<%event%>-detail', req);
-res.fromStatusResponse(response);`,
+<%#?:hashes.length%>
+  const response = await ctx.resolve<Partial<<%extended%>>>(
+    '<%event%>-detail', 
+    req
+  );
+  <%#@:hashes%>
+    if (typeof response.results?.<%column%> !== 'undefined') {
+      delete response.results.<%column%>;
+    }
+  <%/@:hashes%>
+  res.fromStatusResponse(response);
+<%|%>
+  await ctx.emit('<%event%>-detail', req, res);
+<%/?:hashes.length%>`,
 
 };

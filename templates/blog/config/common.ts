@@ -200,7 +200,14 @@ export const client = {
   //where to store the generated client code
   build: path.join(cwd, 'node_modules', 'blog-client'),
   //what tsconfig file to base the typescript compiler on
-  tsconfig: path.join(cwd, 'tsconfig.json')
+  tsconfig: path.join(cwd, 'tsconfig.json'),
+  prettier: {
+    singleQuote: true,
+    jsxSingleQuote: false,
+    trailingComma: 'none',
+    bracketSpacing: true,
+    experimentalTernaries: true
+  }
 };
 
 export const cookie = { 

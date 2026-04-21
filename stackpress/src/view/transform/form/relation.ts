@@ -58,11 +58,6 @@ export default function generate(
     moduleSpecifier: 'react',
     namedImports: [ 'useState', 'useEffect' ]
   });
-  //import mustache from 'mustache';
-  source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
-  });
   //import { useLanguage } from 'r22n';
   source.addImportDeclaration({
     moduleSpecifier: 'r22n',
@@ -77,6 +72,11 @@ export default function generate(
   source.addImportDeclaration({
     moduleSpecifier: 'frui/form/Select',
     defaultImport: 'Select'
+  });
+  //import * as template from '@stackpress/lib/Template';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/lib/Template',
+    namespaceImport: 'template'
   });
   
   //------------------------------------------------------------------//
@@ -169,7 +169,7 @@ const handlers = {
       .then(response => {
         updateOptions(response.results.map(
           (row: Record<string, unknown>) => ({
-            label: mustache.render('<%template%>', row),
+            label: template.render('<%template%>', row),
             value: row.<%id%>
           })
         ));

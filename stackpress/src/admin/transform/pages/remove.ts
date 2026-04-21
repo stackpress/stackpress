@@ -53,6 +53,16 @@ export default function generate(directory: Directory, model: Model) {
 
   //------------------------------------------------------------------//
   // Import Client
+
+  //import type { ProfileExtended } from '../../types.js';
+  if (model.value.hashed.size > 0) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: `../../types.js`,
+      namedImports: [ model.name.toClassName('%sExtended') ]
+    });
+  }
+
   //------------------------------------------------------------------//
   // Exports
 
@@ -68,7 +78,11 @@ export default function generate(directory: Directory, model: Model) {
     ],
     statements: renderCode(TEMPLATE.REMOVE, { 
       event: model.name.toEventName(),
-      model: model.name.toURLPath()
+      model: model.name.toURLPath(),
+      extended: model.name.toClassName('%sExtended'),
+      hashes: model.value.hashed.map(
+        column => ({ column: column.name.toString() })
+      ).toArray() || []
     })
   });
 };
@@ -149,6 +163,19 @@ if (req.data('confirmed')) {
   return;
 }
 //not confirmed, fetch the data using the id
-await ctx.emit('<%event%>-detail', req, res);`,
+<%#?:hashes.length%>
+  const response = await ctx.resolve<Partial<<%extended%>>>(
+    '<%event%>-detail', 
+    req
+  );
+  <%#@:hashes%>
+    if (typeof response.results?.<%column%> !== 'undefined') {
+      delete response.results.<%column%>;
+    }
+  <%/@:hashes%>
+  res.fromStatusResponse(response);
+<%|%>
+  await ctx.emit('<%event%>-detail', req, res);
+<%/?:hashes.length%>`,
 
 };

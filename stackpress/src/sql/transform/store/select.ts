@@ -246,7 +246,7 @@ const selectors = this
 
 //finally, make the select builder
 const select = new Select<T>(selectors).from({ name: this.table });
-<%#relations%>
+<%#?:relations%>
   //add all the joins
   this.joins(query).forEach(join => {
     const { type, table, alias } = join;
@@ -257,7 +257,7 @@ const select = new Select<T>(selectors).from({ name: this.table });
       { table: join.to.table, name: join.to.column }
     );
   });
-<%/relations%>
+<%/?:relations%>
 //if skip
 if (skip) {
   select.offset(skip);
@@ -439,7 +439,9 @@ expressions.forEach(expression => {
     // - required: false
     const type = relation.type[0] === 0 ? 'left' : 'inner';
     const table = relation.store.table;
-    const fromTable = path.parents.map(getAlias).join('__');
+    const fromTable = path.parents.length > 0 
+      ? path.parents.map(getAlias).join('__')
+      : this.table;
     const toTable = [ ...path.parents, table ].map(getAlias).join('__');
     const alias = toTable;
     const from = { table: fromTable, column: relation.local };
@@ -493,7 +495,7 @@ if (column && column === '*') {
   // to be another column or relation...
   return paths.concat([{ type: 'column', ...path }]);
 } 
-<%#relations%>
+<%#?:relations%>
   if (column && column in this.relations) {
     //if this is a relation in the store
     const relation = this.relations[
@@ -506,12 +508,12 @@ if (column && column === '*') {
       paths.concat([{ type: 'relation', ...path }])
     );
   }
-<%/relations%>
+<%/?:relations%>
 return paths;`,
 
 //public where(builder: WhereBuilder, query: StoreSelectFilters = {}) {}
 WHERE:
-`<%#active%>
+`<%#?:active%>
   //extract params
   const {
     ne = {},
@@ -532,8 +534,7 @@ WHERE:
   } else if (eq[name] === -1) {
     delete eq[name];
   }
-<%/active%>
-<%^active%>
+<%|%>
 //extract params
 const {
   eq = {},
@@ -544,24 +545,24 @@ const {
   like = {},
   hasnt = {}
 } = query;
-<%/active%>
-<%#searchable%>
+<%/?:active%>
+<%#?:searchable%>
   //searchable
   if (query.q) {
     builder.where(
       \`(\${[
-        <%#searchables%>
+        <%#@:searchables%>
           \`\${q}\${this.table}\${q}.\${q}<%column%>\${q} ILIKE ?\`,
-        <%/searchables%>
+        <%/@:searchables%>
       ].join(' OR ')})\`,
       [
-        <%#searchables%>
+        <%#@:searchables%>
           \`%\${query.q}%\`,
-        <%/searchables%>
+        <%/@:searchables%>
       ]
     );
   }
-<%/searchable%>
+<%/?:searchable%>
 //eq
 Object.entries(flatten(eq, true)).forEach(
   ([ key, value ]) => this.whereEquals(builder, key, value, q)

@@ -422,14 +422,14 @@ return (
       <i className="icon fas fa-fw fa-filter"></i>
     </Button>
     <div className="form">
-      <%#searchable%>
+      <%#?:searchable%>
         <form>
           <Input className="input" name="q" />
           <Button className="submit" type="submit">
             <i className="icon fas fa-fw fa-search"></i>
           </Button>
         </form>
-      <%/searchable%>
+      <%/?:searchable%>
     </div>
     {can({ method: 'GET', route: <%export%> }) ?(
       <Button info className="action" href="export">
@@ -474,33 +474,30 @@ SEARCH_RESULTS_TABLE_HEAD:
 SEARCH_RESULTS_COLUMN_FILTERABLE:
 `<Table.Col noWrap addClassName="results-value <%align%> filterable">
   <span onClick={() => filter('eq[<%column%>]', row.<%column%>)}>
-    <%#required%>
+    <%#?:required%>
       <<%component%> data={row} value={row.<%column%>} />
-    <%/required%>
-    <%^required%>
+    <%|%>
       {row.<%column%> ? (<<%component%> data={row} value={row.<%column%>} />) : ''}
-    <%/required%>
+    <%/?:required%>
   </span>
 </Table.Col>`,
 
 SEARCH_RESULTS_COLUMN:
 `<Table.Col noWrap addClassName="results-value <%align%>">
-  <%#required%>
+  <%#?:required%>
     <<%component%> data={row} value={row.<%column%>} />
-  <%/required%>
-  <%^required%>
+  <%|%>
     {row.<%column%> ? (<<%component%> data={row} value={row.<%column%>} />) : ''}
-  <%/required%>
+  <%/?:required%>
 </Table.Col>`,
 
 SEARCH_RESULTS_BODY:
-`<%#sortable%>
+`<%#?:sortable%>
   const { can, base, query, results } = props;
   const { sort = {} } = query;
-<%/sortable%>
-<%^sortable%>
+<%|%>
   const { can, base, results } = props;
-<%/sortable%>
+<%/?:sortable%>
 const { _ } = useLanguage();
 return (
   <Table
@@ -509,13 +506,13 @@ return (
     head="admin-table-head"
   >
     <%headers%>
-    <%#path%>
+    <%#?:path%>
       <Table.Head stickyTop stickyRight addClassName="results-label" />
-    <%/path%>
+    <%/?:path%>
     {results.map((row, index) => (
       <Table.Row key={index} index={index}>
         <%columns%>
-        <%#path%>
+        <%#?:path%>
           <Table.Col stickyRight addClassName="results-value center">
             {can({ method: 'GET', route: \`\${base}/<%model%>/detail/<%path%>\`}) ? (
               <Button info className="detail" href={\`detail/<%path%>\`}>
@@ -523,7 +520,7 @@ return (
               </Button>
             ) : null}
           </Table.Col>
-        <%/path%>
+        <%/?:path%>
       </Table.Row>
     ))}
   </Table>

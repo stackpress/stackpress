@@ -286,21 +286,21 @@ DESCRIBE:
   });
   it('should assert', async () => {
     const column = new <%classname%>();
-    <%#assert%>
+    <%#@:assert%>
       <%expect%>
-    <%/assert%>
+    <%/@:assert%>
   });
   it('should serialize', async () => {
     const column = new <%classname%>();
-    <%#serialize%>
+    <%#@:serialize%>
       <%expect%>
-    <%/serialize%>
+    <%/@:serialize%>
   });
   it('should unserialize', async () => {
     const column = new <%classname%>();
-    <%#unserialize%>
+    <%#@:unserialize%>
       <%expect%>
-    <%/unserialize%>
+    <%/@:unserialize%>
   });
 });`,
 

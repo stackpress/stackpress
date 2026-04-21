@@ -3,8 +3,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 //modules
 import type { Project, Directory } from 'ts-morph';
-import mustache from 'mustache';
-import { decode } from 'html-entities';
+//stackpress/schema/view
+import { TemplateEngine, helpers } from '@stackpress/lib/Template';
 
 export const cwd = process.cwd();
 
@@ -55,41 +55,7 @@ export async function publishProject(project: Project) {
   }
 };
 
-/**
- * Quick rendering using mustache
- */
-export function render(
-  template: string, 
-  data: Record<string, any> = {},
-  delimiter?: string, //{{=<% %>=}}
-  escape = false
-) {
-  if (delimiter) {
-    template = delimiter + template;
-  }
-  if (escape) {
-    //escape all data values
-    for (const key in data) {
-      if (typeof data[key] === 'string') {
-        data[key] = mustache.escape(data[key]);
-      }
-    }
-  }
-  return mustache.render(
-    template, 
-    data, undefined, 
-    escape ? { escape: (text: any) => decode(String(text)) } : undefined
-  );
-};
-
-/**
- * Used to "transform" a code template string
- * using code safe variable handlers
- */
-export function renderCode(
-  template: string, 
-  data: Record<string, any> = {},
-  delimiter = '{{=<% %>=}}'
-) {
-  return render(template, data, delimiter, true);
+export function renderCode(template: string, data: Record<string, any> = {}) {
+  const engine = new TemplateEngine({ helpers, delimiters: [ '<%', '%>' ] });
+  return engine.render(template, data);
 };

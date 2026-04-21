@@ -54,11 +54,6 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Modules
 
-  //import mustache from 'mustache';
-  source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
-  });
   //import Text from 'frui/list/Text';
   if (!attribute.component.isVirtual) {
     source.addImportDeclaration({
@@ -69,6 +64,11 @@ export default function generate(
       namedImports: !component.import.default ? [ component.name ] : []
     });
   }
+  //import * as template from '@stackpress/lib/Template';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/lib/Template',
+    namespaceImport: 'template'
+  });
 
   //------------------------------------------------------------------//
   // Import Stackpress
@@ -128,7 +128,7 @@ export const TEMPLATE = {
 FORMAT:
 `//props
 const { data } = props;
-const value = mustache.render(
+const value = template.render(
   '<%template%>',
   data
 );

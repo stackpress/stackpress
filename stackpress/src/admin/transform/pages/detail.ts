@@ -147,25 +147,24 @@ res.data.set('admin', {
   base: admin.base ?? '/admin',
   menu: admin.menu || []
 });
-<%#active%>
+<%#?:active%>
   //make sure to set the active column to -1 in order 
   // to get it returned even if it's soft-deleted
-  req.data.set('eq', '<%column%>', -1);
-<%/active%>
-<%#hashes.length%>
+  req.data.set('eq', '<%active.column%>', -1);
+<%/?:active%>
+<%#?:hashes.length%>
   const response = await ctx.resolve<Partial<<%extended%>>>(
     '<%event%>-detail', 
     req
   );
-  <%#hashes%>
+  <%#@:hashes%>
     if (typeof response.results?.<%column%> !== 'undefined') {
       delete response.results.<%column%>;
     }
-  <%/hashes%>
+  <%/@:hashes%>
   res.fromStatusResponse(response);
-<%/hashes.length%>
-<%^hashes.length%>
+<%|%>
   await ctx.emit('<%event%>-detail', req, res);
-<%/hashes.length%>`,
+<%/?:hashes.length%>`,
 
 };

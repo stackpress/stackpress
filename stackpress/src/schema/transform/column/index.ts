@@ -277,7 +277,7 @@ export default function generate(directory: Directory, column: Column) {
     initializer: JSON.stringify(column.name.toString())
   });
   //public shape = z.boolean()...
-  const shape =generateShape(definition, column);
+  const shape = generateShape(definition, column);
   //protected _fieldset: AddressSchema;
   if (column.type.fieldset) {
     definition.addProperty({
@@ -342,12 +342,12 @@ export default function generate(directory: Directory, column: Column) {
 export const TEMPLATE = {
 
 CONSTRUCTOR:
-`<%#seed%>
+`<%#?:seed%>
   this._seed = seed;
-<%/seed%>
-<%#fieldset%>
-  this._fieldset = new <%fieldset%>(<%#seed%>seed<%/seed%>);
-<%/fieldset%>
+<%/?:seed%>
+<%#?:fieldset%>
+  this._fieldset = new <%fieldset%>(<%#?:seed%>seed<%/seed%>);
+<%/?:fieldset%>
 this.shape = <%shape%>;`,
 
 };

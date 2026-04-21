@@ -55,6 +55,16 @@ export default function generate(directory: Directory, model: Model) {
 
   //------------------------------------------------------------------//
   // Import Client
+
+  //import type { ProfileExtended } from '../../types.js';
+  if (model.value.hashed.size > 0) {
+    source.addImportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: `../../types.js`,
+      namedImports: [ model.name.toClassName('%sExtended') ]
+    });
+  }
+
   //------------------------------------------------------------------//
   // Exports
 
@@ -69,7 +79,11 @@ export default function generate(directory: Directory, model: Model) {
       { name: 'ctx', type: 'Server' }
     ],
     statements: renderCode(TEMPLATE.SEARCH, { 
-      event: model.name.toEventName()
+      event: model.name.toEventName(),
+      extended: model.name.toClassName('%sExtended'),
+      hashes: model.value.hashed.map(
+        column => ({ column: column.name.toString() })
+      ).toArray() || []
     })
   });
 };
@@ -134,7 +148,18 @@ const response = await ctx.resolve(
 if (res.code === 200) {
   //remember the total
   const total = response.total;
-  const rows = response.results as UnknownNest[];
+  <%#?:hashes.length%>
+    const rows = response.results as Partial<<%extended%>>[];
+    rows.forEach(row => {
+      <%#@:hashes%>
+        if (typeof row.<%column%> !== 'undefined') {
+          delete row.<%column%>;
+        }
+      <%/@:hashes%>
+    })
+  <%|%>
+    const rows = response.results as UnknownNest[];
+  <%/?:hashes.length%>
   res.setRows(rows, total || rows.length);
   return;
 }`,

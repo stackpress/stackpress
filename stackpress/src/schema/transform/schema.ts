@@ -191,33 +191,33 @@ export const TEMPLATE = {
 //public get defaults() {}
 DEFAULTS:
 `return {
-  <%#columns%>
+  <%#@:columns%>
     <%column%>: this.columns.<%column%>.defaults,
-  <%/columns%>
+  <%/@:columns%>
 };`,
 
 //public constructor(seed = '') {}
 CONSTRUCTOR:
 `this._seed = seed;
 this.columns = {
-  <%#columns%>
+  <%#@:columns%>
     <%column%>: new <%classname%>(<%seed%>),
-  <%/columns%>
+  <%/@:columns%>
 };
 this.shape = z.object({
-  <%#columns%>
+  <%#@:columns%>
     <%column%>: this.columns.<%column%>.shape,
-  <%/columns%>
+  <%/@:columns%>
 });`,
 
 //public assert(value: Record<string, any>, required = false) {}
 ASSERT:
 `const errors = {
-  <%#columns%>
+  <%#@:columns%>
     <%column%>: required || typeof value.<%column%> !== 'undefined' 
       ? (this.columns.<%column%>.assert(value.<%column%>) || undefined)
       : undefined,
-  <%/columns%>
+  <%/@:columns%>
 };
 return Object.values(errors).some(Boolean) 
   ? removeUndefined(errors) 
@@ -237,24 +237,23 @@ POPULATE:
 //public serialize(value: Record<string, any>) {}
 SERIALIZE:
 `return removeUndefined({
-  <%#columns%>
-    <%#fieldset%>
+  <%#@:columns%>
+    <%#?:fieldset%>
       <%column%>: JSON.stringify(
         this.columns.<%column%>.serialize(value.<%column%>)
       ),
-    <%/fieldset%>
-    <%^fieldset%>
+    <%|%>
       <%column%>: this.columns.<%column%>.serialize(value.<%column%>),
-    <%/fieldset%>
-  <%/columns%>
+    <%/?:fieldset%>
+  <%/@:columns%>
 });`,
 
 //public unserialize(value: Record<string, any>) {}
 UNSERIALIZE:
 `return removeUndefined({
-  <%#columns%>
+  <%#@:columns%>
     <%column%>: this.columns.<%column%>.unserialize(value.<%column%>),
-  <%/columns%>
+  <%/@:columns%>
 });`
 
 };
