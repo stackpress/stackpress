@@ -9,8 +9,6 @@ import Exception from '../Exception.js';
 
 export default function plugin(ctx: Server) {
   ctx.on('config', (_req, _res, ctx) => {
-    //if no csrf config, disable csrf
-    if (!ctx.config.get('csrf')) return;
     //configure and register csrf
     ctx.register('csrf', {
       generateToken(res: Response, ctx: Server) {
