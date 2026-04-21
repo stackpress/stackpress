@@ -90,7 +90,7 @@ async function main() {
 
 //initializer
 main().then(() => {
-  if (process.argv[2] !== 'serve') {
+  if (process.argv[2] !== 'serve' && process.argv[2] !== 'develop') {
     process.exit(0);
   }
 }).catch(console.error);

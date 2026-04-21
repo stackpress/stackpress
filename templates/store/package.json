@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "stackpress build --b config/build -v",
-    "dev": "dotenv -e .env -- stackpress serve --b config/develop -v",
+    "dev": "dotenv -e .env -- stackpress develop --b config/develop -v",
     "emit": "dotenv -e .env -- stackpress emit",
     "generate": "stackpress generate --b config/develop -v",
     "migrate": "dotenv -e .env -- stackpress migrate --b config/develop -v",
