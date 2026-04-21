@@ -4,7 +4,6 @@ import Button from 'frui/Button';
 import Switch from 'frui/form/Switch';
 //stackpress-view
 import type { ServerPageProps } from 'stackpress-view/types';
-import LayoutBlank from 'stackpress-session/Layout';
 import { useServer } from 'stackpress-view/client';
 //stackpress-api
 import type { 
@@ -14,11 +13,14 @@ import type {
   ApiConfigProps, 
   ApplicationExtended 
 } from '../types.js';
+import Layout from '../Layout';
 
 export function ApiOauthForm(props: ApiOauthFormProps) {
+  //props
   const { appName, revert, items } = props;
+  //hooks
   const { _ } = useLanguage();
-  
+  //render
   return (
     <form className="oauth-form auth-form" method="post">
       {items.length > 0 ? (
@@ -55,11 +57,14 @@ export function ApiOauthForm(props: ApiOauthFormProps) {
 }
 
 export function OAuthBody() {
+  //hooks
+  const { _ } = useLanguage();
   const { config, request, response } = useServer<
     ApiConfigProps,
     Partial<ApiOauthInputProps>,
     ApplicationExtended
   >();
+  //variables
   //make a revert uri
   const redirect = request.data.path('redirect_uri', '/');
   const [ uri, query ] = redirect.split('?');
@@ -106,7 +111,6 @@ export function OAuthBody() {
     name: string;
     description: string;
   }[];
-  const { _ } = useLanguage();
   //render
   return (
     <main className="oauth-page auth-page">
@@ -158,9 +162,9 @@ export function ApiOauthHead(props: ServerPageProps<ApiConfigProps>) {
 
 export function ApiOauthPage(props: ServerPageProps<ApiConfigProps>) {
   return (
-    <LayoutBlank {...props}>
+    <Layout {...props}>
       <OAuthBody />
-    </LayoutBlank>
+    </Layout>
   );
 }
 
