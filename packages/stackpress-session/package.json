@@ -23,6 +23,8 @@
       "require": "./cjs/Layout.js",
       "import": "./esm/Layout.js"
     },
+    "./cjs/Layout": "./cjs/Layout.js",
+    "./esm/Layout": "./esm/Layout.js",
     "./Session": {
       "require": "./cjs/Session.js",
       "import": "./esm/Session.js"
@@ -52,6 +54,8 @@
     "*": {
       "Exception": [ "./cjs/Exception.d.ts" ],
       "Layout": [ "./cjs/Layout.d.ts" ],
+      "cjs/Layout": [ "./cjs/Layout.d.ts" ],
+      "esm/Layout": [ "./esm/Layout.d.ts" ],
       "Session": [ "./cjs/Session.d.ts" ],
       "actions": [ "./cjs/actions.d.ts" ],
       "helpers": [ "./cjs/helpers.d.ts" ],

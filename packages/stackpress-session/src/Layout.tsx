@@ -4,7 +4,7 @@ import type { ChildrenProps } from 'frui/types';
 import { useEffect } from 'react';
 import { notify, unload } from 'frui/Notifier';
 //stackpress-view
-import type { ProviderProps } from 'stackpress-view/types';
+import type { ProviderProps } from 'stackpress-view/client/types';
 import { Provider, useTheme } from 'stackpress-view/client';
 
 export function App(props: ChildrenProps) {
