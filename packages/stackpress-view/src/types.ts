@@ -1,6 +1,4 @@
 //modules
-import type { ReactNode } from 'react';
-import type { NotifierOptions } from 'frui/Notifier';
 import type { 
   OutputChunk, 
   OutputAsset, 
@@ -21,156 +19,17 @@ import type {
   ServerConfig as ReactusConfig 
 } from 'reactus';
 import type ReactusPreview from 'reactus/server/Server';
-import type { 
-  CookieOptions, 
-  StatusResponse, 
-  UnknownNest 
-} from '@stackpress/lib/types';
-import type { IM, SR, Method } from '@stackpress/ingest/types';
-
-//--------------------------------------------------------------------//
-// Config Types
-
-//ie. ctx.config<BrandConfig>('brand')
-export type BrandConfig = {
-  name?: string,
-  logo?: string,
-  icon?: string,
-  favicon?: string
-};
-
-export type LanguageConfig = {
-  //url flag (ie. ?locale) used to change the user's locale
-  //this is also the name of the cookie used to store the locale
-  //defaults to `locale`
-  key?: string,
-  //default locale
-  //defaults to `en_US`
-  locale?: string,
-  //languages and translations
-  languages?: Record<string, {
-    label: string,
-    translations: Record<string, string>
-  }>
-};
+import type { StatusResponse, UnknownNest } from '@stackpress/lib/types';
+import type { IM, SR } from '@stackpress/ingest/types';
+//stackpress-view
+import type { ViewConfig as ClientViewConfig } from './client/types.js';
 
 //ie. ctx.config<ViewConfig>('view')
-export type ViewConfig = {
-  //url flag (ie. ?json) used to disable template 
-  //rendering and show the raw json data instead
-  //defaults to `json`
-  noview?: string,
-  //used by vite and in development mode
-  //to determine the root of the project
-  //defaults to `/`
-  base?: string,
-  props?: Record<string, unknown>,
+export type ViewConfig = ClientViewConfig & {
   //reactus settings
   //if not provided, disables `reactus`
-  engine?: Partial<ReactusConfig>,
-  //notifier (frui) settings
-  notify?: NotifierOptions
+  engine?: Partial<ReactusConfig>
 };
-
-//--------------------------------------------------------------------//
-// Server Types
-
-export type ServerUrlProps = {
-  hash: string,
-  host: string,
-  hostname: string,
-  href: string,
-  origin: string,
-  pathname: string,
-  port: string,
-  protocol: string,
-  search: string
-};
-export type ServerSessionRoute = { method: string, route: string };
-export type ServerSessionPermission = string | ServerSessionRoute;
-export type ServerSessionProps = Record<string, any> & { 
-  id: string, 
-  name: string,
-  image?: string,
-  roles: string[],
-  token: string,
-  permits: ServerSessionPermission[]
-};
-export type ServerRequestProps<
-  I extends UnknownNest = UnknownNest
-> = {
-  url: ServerUrlProps,
-  headers: Record<string, string|string[]>,
-  session: Record<string, string|string[]>,
-  method: Method,
-  mime: string,
-  data: I
-};
-export type ServerResponseProps<
-  O = UnknownNest
-> = Partial<StatusResponse<O>>;
-
-export type ServerProps<
-  C extends UnknownNest = UnknownNest,
-  I extends UnknownNest = UnknownNest,
-  O = UnknownNest
-> = {
-  data: C,
-  session: ServerSessionProps,
-  request: ServerRequestProps<I>,
-  response: ServerResponseProps<O>
-}
-
-export type ServerContextProps = ServerProps<
-  UnknownNest, 
-  UnknownNest, 
-  any
->;
-export type ServerProviderProps<
-  C extends UnknownNest = UnknownNest,
-  I extends UnknownNest = UnknownNest,
-  O = UnknownNest
-> = Partial<ServerProps<C, I, O>> & { 
-  children: ReactNode 
-};
-
-export type ServerConfigProps<
-  C extends UnknownNest = UnknownNest
-> = C & {
-  brand: BrandConfig,
-  language: LanguageConfig,
-  view: ViewConfig
-};
-
-export type ServerPageProps<
-  C extends UnknownNest = UnknownNest,
-  I extends UnknownNest = UnknownNest,
-  O = UnknownNest
-> = ServerProps<C, I, O> & { styles?: string[] };
-
-//--------------------------------------------------------------------//
-// Provider Types
-
-export type ProviderProps = ServerProps<ServerConfigProps> & {
-  cookie?: CookieOptions, 
-  children: ReactNode
-};
-
-//--------------------------------------------------------------------//
-// Theme Types
-
-export type ThemeContextProps = { 
-  theme: string,
-  toggle: () => void
-};
-
-export type ThemeProviderProps = { 
-  theme?: string,
-  children: ReactNode 
-};
-
-//--------------------------------------------------------------------//
-// Plugin Types
 
 //ie. ctx.plugin<ViewPlugin>('view')
 export type ViewPlugin = {
@@ -246,9 +105,6 @@ export type PreviewPlugin = {
   render: (entry: string, props?: UnknownNest) => Promise<string>
 };
 
-//--------------------------------------------------------------------//
-// Other Types
-
 export type {
   Trace,
   UnknownNest,
@@ -256,8 +112,25 @@ export type {
   SuccessResponse, 
   ErrorResponse, 
   ResponseStatus, 
-  StatusResponse 
-} from '@stackpress/lib/types';
+  StatusResponse,
+  ServerUrlProps,
+  ServerSessionRoute,
+  ServerSessionPermission,
+  ServerSessionProps,
+  ServerRequestProps,
+  ServerResponseProps,
+  ServerProps,
+  ServerContextProps,
+  ServerProviderProps,
+  ThemeContextProps,
+  ThemeProviderProps,
+  ProviderProps,
+  BrandConfig,
+  LanguageConfig,
+  ServerConfigProps,
+  ServerPageProps,
+  NotifyConfig
+} from './client/types.js';
 
 export type RollupResults = [ 
   OutputChunk, 

@@ -1,9 +1,8 @@
 //modules
 import { useState, useEffect } from 'react';
 import UniversalCookie from 'universal-cookie';
-//stackpress/view
-import type { ThemeProviderProps } from '../types.js';
-//stackpress/view/theme
+//stackpress-view
+import type { ThemeProviderProps } from './types.js';
 import ThemeContext from './ThemeContext.js';
 
 const cookie = new UniversalCookie();

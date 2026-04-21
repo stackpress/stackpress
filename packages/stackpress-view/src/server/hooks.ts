@@ -1,12 +1,9 @@
 //modules
-import { useContext } from 'react';
 import type { UnknownNest } from '@stackpress/lib/types';
+import { useContext } from 'react';
 import { nest } from '@stackpress/lib/Nest';
 //stackpress/view
-import type { 
-  ServerRequestProps, 
-  ServerResponseProps 
-} from '../types.js';
+import type { ServerRequestProps, ServerResponseProps } from './types.js';
 //stackpress/view/server
 import Request from './ServerRequest.js';
 import Response from './ServerResponse.js';

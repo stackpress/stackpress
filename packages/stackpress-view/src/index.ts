@@ -1,4 +1,20 @@
+import Exception from './Exception.js';
+
+export { Exception };
+
 export type {
+  ViewConfig,
+  ViewPlugin,
+  PreviewPlugin,
+  RollupResults,
+  FileMeta,
+  Trace,
+  UnknownNest,
+  NestedObject,
+  SuccessResponse, 
+  ErrorResponse, 
+  ResponseStatus, 
+  StatusResponse,
   ServerUrlProps,
   ServerSessionRoute,
   ServerSessionPermission,
@@ -8,24 +24,15 @@ export type {
   ServerProps,
   ServerContextProps,
   ServerProviderProps,
-  ServerConfigProps,
-  ServerPageProps,
   ThemeContextProps,
   ThemeProviderProps,
-  Trace,
-  UnknownNest,
-  NestedObject,
-  SuccessResponse, 
-  ErrorResponse, 
-  ResponseStatus, 
-  StatusResponse,
-  RollupResults,
-  FileMeta,
-  ViewConfig,
-  ViewPlugin,
-  PreviewPlugin,
+  ProviderProps,
+  BrandConfig,
+  LanguageConfig,
+  ServerConfigProps,
+  ServerPageProps,
   NotifyConfig
-} from './client.js';
+} from './types.js';
 
 export {
   VFS_PROTOCOL,
@@ -72,4 +79,4 @@ export {
   ThemeProvider,
   defaultServerConfig,
   unknownHost
-} from './client.js';
+} from './client/index.js';
