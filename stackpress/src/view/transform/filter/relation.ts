@@ -77,10 +77,10 @@ export default function generate(
     moduleSpecifier: 'frui/form/FieldControl',
     defaultImport: 'FieldControl'
   });
-  //import mustache from 'mustache';
+  //import * as template from '@stackpress/lib/Template';
   source.addImportDeclaration({
-    moduleSpecifier: 'mustache',
-    defaultImport: 'mustache'
+    moduleSpecifier: '@stackpress/lib/Template',
+    namespaceImport: 'template'
   });
 
   //------------------------------------------------------------------//
@@ -178,7 +178,7 @@ const handlers = {
       .then(response => {
         updateOptions(response.results.map(
           (row: Record<string, unknown>) => ({
-            label: mustache.render('<%template%>', row),
+            label: template.render('<%template%>', row),
             value: row.<%id%>
           })
         ));
