@@ -12,7 +12,7 @@
     "build": "stackpress build --b config/build -v",
     "dev": "yarn dev:clean && yarn dev:start",
     "dev:clean": "rm -rf node_modules/.vite",
-    "dev:start": "dotenv -e .env -- stackpress serve --b config/develop -v",
+    "dev:start": "dotenv -e .env -- stackpress develop --b config/develop -v",
     "emit": "dotenv -e .env -- stackpress emit",
     "generate": "stackpress generate --b config/develop -v",
     "generate:client": "stackpress generate --b config/client -v",
