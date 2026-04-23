@@ -2,6 +2,7 @@
 import { server } from '@stackpress/ingest/Server';
 //stackpress/terminal/events
 import build from './build.js';
+import develop from './develop.js';
 import emit from './emit.js';
 import generate from './generate.js';
 import install from './install.js';
@@ -15,6 +16,7 @@ import upgrade from './upgrade.js';
 
 export {
   build,
+  develop,
   emit,
   generate,
   install,
@@ -30,6 +32,7 @@ export {
 export default function listen() {
   const emitter = server();
   emitter.on('build', build);
+  emitter.on('develop', develop);
   emitter.on('emit', emit);
   emitter.on('generate', generate);
   emitter.on('install', install);

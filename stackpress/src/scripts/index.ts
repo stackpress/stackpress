@@ -1,4 +1,5 @@
 import build from './build.js';
+import develop from './develop.js';
 import emit from './emit.js';
 import generate from './generate.js';
 import install from './install.js';
@@ -11,6 +12,7 @@ import upgrade from './upgrade.js';
 
 export {
   build,
+  develop,
   emit,
   generate,
   install,
