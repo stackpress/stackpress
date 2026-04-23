@@ -190,7 +190,7 @@ if (detail.code !== 200) {
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res, ctx);
+csrf.generateToken(res);
 
 //if form submitted
 if (req.method === 'POST') {

@@ -129,7 +129,7 @@ res.data.set('admin', {
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res, ctx);
+csrf.generateToken(res);
 
 //if confirmed
 if (req.data('confirmed')) {

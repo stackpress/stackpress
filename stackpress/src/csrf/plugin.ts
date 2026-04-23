@@ -4,33 +4,30 @@ import crypto from 'node:crypto';
 import Server from '@stackpress/ingest/Server';
 import { type Request, type Response } from '@stackpress/ingest';
 //local
-import { CsrfConfig } from './types';
 import Exception from '../Exception.js';
 
 export default function plugin(ctx: Server) {
   ctx.on('config', (_req, _res, ctx) => {
+    //get csrf name from config
+    const csrfName = ctx.config.path<string>('csrf.name', 'csrf');
     //configure and register csrf
     ctx.register('csrf', {
-      generateToken(res: Response, ctx: Server) {
+      generateToken(res: Response) {
         const token = crypto.randomBytes(32).toString('hex');
-        //get csrf name from config
-        const csrf = ctx.config.path<CsrfConfig>('csrf', {});
         //set new token in session
-        res.session.set(csrf.name || 'csrf', token);
+        res.session.set(csrfName, token);
         //set token in the response data for server side rendering
         res.data.set('csrf', {
-          name: csrf.name || 'csrf',
+          name: csrfName,
           token: token
         });
         //return the token
         return token;
       },
       validateToken(req: Request, res: Response) {
-        //get csrf name from config
-        const name = ctx.config.path<string>('csrf.name', 'csrf');
         //extract token from session and request
-        const sessionToken = String(req.session.get(name));
-        const inputToken = String(req.data(name));
+        const sessionToken = req.session.get(csrfName) as string;
+        const inputToken = String(req.data(csrfName));
 
         //convert tokens to buffers for timingSafeEqual
         const sessionBuffer = Buffer.from(sessionToken, 'utf-8');

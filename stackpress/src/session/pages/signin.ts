@@ -54,7 +54,7 @@ export default async function SignInPage(
   //get csrf plugin
   const csrf = ctx.plugin<CsrfPlugin>('csrf');
   //generate a token
-  csrf.generateToken(res, ctx);
+  csrf.generateToken(res);
 
   //form submission
   if (req.method === 'POST') {
