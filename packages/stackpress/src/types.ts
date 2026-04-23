@@ -16,11 +16,48 @@ export type {
 } from './api/types.js';
 
 export type {
+  //parts of the client plugin
+  TerminalInterface,
+  ClientProjectProps,
+  ClientPluginProps,
+  ClientFieldset,
+  GenericEventHandler,
+  GenericEvents,
+  GenericListener,
+  GenericAdminRouter,
+  ClientModel,
+  ClientScripts,
+  //parts of the config
+  AdminConfig,
+  ApiConfig,
+  AuthConfig,
+  BrandConfig,
+  ClientConfig,
+  CookieConfig,
+  DatabaseConfig,
+  EmailConfig,
+  LanguageConfig,
+  ServerConfig,
+  SessionConfig,
+  TerminalConfig,
+  ViewConfig,
+  //plugins
+  ClientPlugin,
+  CsrfPlugin,
+  DatabasePlugin,
+  LanguagePlugin,
+  SessionPlugin,
+  TerminalPlugin,
+  ViewPlugin,
+  //final config options
+  Config
+} from './client/types.js';
+
+export type {
   Scalar,
   LanguageData,
   LanguageMap,
-  LanguageConstructor,
-  LanguagePlugin
+  LanguageConstructor
 } from './language/types.js';
 
 export type {
@@ -121,7 +158,6 @@ export type {
 } from './schema/types.js';
 
 export type {  
-  TerminalPlugin,
   ConfigLoaderOptions,
   PluginLoaderOptions,
   ActionRouterArgs,
@@ -171,7 +207,6 @@ export type {
   SigninInput,
   SigninType,
   AuthConfigProps,
-  SessionPlugin,
   Profile,
   ProfileExtended,
   ProfileInput,
@@ -224,13 +259,10 @@ export type {
   StoreSelectFilters,
   StoreSelectQuery,
   StoreSearchQuery,
-  StoreWhere,
-  //for ingest
-  DatabasePlugin
+  StoreWhere
 } from './sql/types.js';
 
 export type {
-  ViewPlugin,
   PreviewPlugin,
   RollupResults,
   ServerUrlProps,
@@ -249,51 +281,3 @@ export type {
   ServerPageProps,
   NotifyConfig
 } from './view/types.js';
-
-//modules
-import type { UnknownNest } from '@stackpress/lib/types';
-import type { CookieOptions } from '@stackpress/ingest/types';
-//stackpress
-import type { AdminConfig } from 'stackpress-admin/types';
-import type { EmailConfig } from 'stackpress-email/types';
-//plugins
-import type { ClientConfig } from './client/types.js';
-import type { ServerConfig } from './server/types.js';
-import type { ApiConfig } from './api/types.js';
-import type { LanguageConfig } from './language/types.js';
-import type { DatabaseConfig } from './sql/types.js';
-import type { TerminalConfig } from './server/types.js';
-import type { ViewConfig, BrandConfig } from './view/types.js';
-import type { AuthConfig, SessionConfig } from './session/types.js';
-
-export {
-  BrandConfig,
-  TerminalConfig,
-  ServerConfig,
-  ClientConfig,
-  CookieOptions as CookieConfig,
-  AdminConfig,
-  ApiConfig,
-  EmailConfig,
-  LanguageConfig,
-  DatabaseConfig,
-  ViewConfig,
-  AuthConfig,
-  SessionConfig
-};
-
-export type Config = UnknownNest & {
-  brand?: BrandConfig,
-  terminal?: TerminalConfig,
-  server?: ServerConfig,
-  client?: ClientConfig,
-  cookie?: CookieOptions,
-  admin?: AdminConfig,
-  api?: ApiConfig,
-  email?: EmailConfig,
-  language?: LanguageConfig,
-  database?: DatabaseConfig,
-  view?: ViewConfig,
-  auth?: AuthConfig,
-  session?: SessionConfig
-};

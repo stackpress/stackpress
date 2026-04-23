@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { UnknownNest, CookieOptions } from '@stackpress/lib/types';
 import type { NotifierOptions } from 'frui/Notifier';
 //stackpress-language
-import type { LanguageConfig } from 'stackpress-language';
+import type { LanguageConfig } from 'stackpress-language/types';
 //stackpress-view
 import type { ServerProps } from '../server/types.js';
 
@@ -63,7 +63,7 @@ export type {
   StatusResponse 
 } from '@stackpress/lib/types';
 
-export type { LanguageConfig } from 'stackpress-language';
+export type { LanguageConfig } from 'stackpress-language/types';
 
 export type {
   ServerUrlProps,
