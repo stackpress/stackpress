@@ -2,6 +2,8 @@
 import type { ReactNode } from 'react';
 import type { UnknownNest, CookieOptions } from '@stackpress/lib/types';
 import type { NotifierOptions } from 'frui/Notifier';
+//stackpress-language
+import type { LanguageConfig } from 'stackpress-language';
 //stackpress-view
 import type { ServerProps } from '../server/types.js';
 
@@ -13,21 +15,6 @@ export type BrandConfig = {
   logo?: string,
   icon?: string,
   favicon?: string
-};
-
-export type LanguageConfig = {
-  //url flag (ie. ?locale) used to change the user's locale
-  //this is also the name of the cookie used to store the locale
-  //defaults to `locale`
-  key?: string,
-  //default locale
-  //defaults to `en_US`
-  locale?: string,
-  //languages and translations
-  languages?: Record<string, {
-    label: string,
-    translations: Record<string, string>
-  }>
 };
 
 //ie. ctx.config<ViewConfig>('view')
@@ -75,6 +62,8 @@ export type {
   ResponseStatus, 
   StatusResponse 
 } from '@stackpress/lib/types';
+
+export type { LanguageConfig } from 'stackpress-language';
 
 export type {
   ServerUrlProps,

@@ -119,6 +119,7 @@
     "frui": "0.2.7",
     "r22n": "1.0.10",
     "reactus": "0.8.3",
+    "stackpress-language": "0.9.1",
     "stackpress-schema": "0.9.1"
   },
   "devDependencies": {

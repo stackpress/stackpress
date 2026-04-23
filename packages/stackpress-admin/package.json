@@ -89,7 +89,6 @@
   },
   "dependencies": {
     "papaparse": "5.5.3",
-    "stackpress-language": "0.9.1",
     "stackpress-session": "0.9.1"
   },  
   "devDependencies": {
