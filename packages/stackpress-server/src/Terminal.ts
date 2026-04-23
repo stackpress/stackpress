@@ -37,9 +37,9 @@ export default class StackpressTerminal extends Terminal {
     this.verbose = this.expect<boolean>([ 'verbose', 'v' ], false);
     this.config = this.expect<string|null>([ 'bootstrap', 'b' ], null);
     //register terminal plugin
-    this.server.register('cli', this);
+    this.server.register('terminal', this);
     //set brand
-    this._control.brand = this.server.config.path('cli.label', '');
+    this._control.brand = this.server.config.path('terminal.label', '');
   }
 
   /**
@@ -70,16 +70,14 @@ export default class StackpressTerminal extends Terminal {
     try {
       //emit the command as an event and get the status
       const status = await this.server.emit(this.command, request, response);
-      //determine if user wants a verbose output
-      const verbose = this.expect<boolean>(['verbose', 'v'], false);
       //if 404 and verbose, show the error
-      if (status.code === 404 && this.command !== 'serve' && verbose) {
+      if (status.code === 404 && this.command !== 'serve' && this.verbose) {
         this._control.error(`Command "${this.command}" not found.`);
       }
       return status;
     } catch (e) {
-      //if the command is serve, we actually want to throw the error
-      if (this.command === 'serve') throw e;
+      //if the command is serve or develop, we actually want to throw the error
+      if (this.command === 'serve' || this.command === 'develop') throw e;
       //upgrade the error to an exception
       const exception = Exception.upgrade(e as Error).toResponse();
       //set the exception as the error

@@ -45,19 +45,16 @@
     ".": {
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
-    },
-
-    "./tsconfig/cjs": "./tsconfig/cjs.json",
-    "./tsconfig/esm": "./tsconfig/esm.json"
+    }
   },
   "typesVersions": {
     "*": {
       "Exception": [ "./cjs/Exception.d.ts" ],
-      "http": [ "./cjs/server/http.d.ts" ],
+      "http": [ "./cjs/http.d.ts" ],
       "plugin": [ "./cjs/plugin.d.ts" ],
       "Terminal": [ "./cjs/Terminal.d.ts" ],
       "types": [ "./cjs/types.d.ts" ],
-      "whatwg": [ "./cjs/server/whatwg.d.ts" ],
+      "whatwg": [ "./cjs/whatwg.d.ts" ],
       ".": [ "./cjs/index.d.ts" ]
     }
   },

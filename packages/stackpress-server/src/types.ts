@@ -28,5 +28,48 @@ export type ServerConfig = {
   mode?: string,
   //server port
   //not used by stackpress
-  port?: number
+  port?: number,
+  //name of child process container
+  //this is used on the development server
+  //default: STACKPRESS_CHILD
+  process?: string
 };
+
+export type {
+  ConfigLoaderOptions,
+  PluginLoaderOptions,
+  ActionRouterArgs,
+  ActionRouterMap,
+  ActionRouterAction,
+  ActionRouterListener,
+  EntryRouterTaskItem,
+  ImportRouterAction,
+  ImportRouterTaskItem,
+  ViewRouterTaskItem,
+  ViewRouterEngine,
+  ViewRouterRender,
+  AnyRouterAction,
+  ServerAction,
+  ServerHandler,
+  ServerGateway,
+  ServerOptions,
+  NodeServer, 
+  NodeServerOptions,
+  NodeRequest,
+  NodeResponse,
+  NodeOptResponse,
+  IM, SR,
+  HttpResponse,
+  HttpRequest,
+  HttpRouter,
+  HttpServer,
+  HttpServerOptions,
+  HttpAction,
+  WhatwgResponse,
+  WhatwgRequest,
+  WhatwgRouter,
+  WhatwgServer,
+  WhatwgServerOptions,
+  WhatwgAction,
+  Body
+} from '@stackpress/ingest/types';

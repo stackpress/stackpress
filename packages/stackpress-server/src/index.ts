@@ -4,11 +4,10 @@ import Transformer from '@stackpress/idea-transformer/Transformer';
 //stackpress-server
 import Terminal from './Terminal.js';
 
-export type { TerminalConfig, TerminalPlugin } from './types.js';
-
-export { Terminal, Transformer, control };
-
-export type {
+export type { 
+  TerminalConfig, 
+  TerminalPlugin,
+  ServerConfig,
   ConfigLoaderOptions,
   PluginLoaderOptions,
   ActionRouterArgs,
@@ -45,9 +44,9 @@ export type {
   WhatwgServerOptions,
   WhatwgAction,
   Body
-} from '@stackpress/ingest/types';
+} from './types.js';
 
-export type { ServerConfig } from './types.js';
+export { Terminal, Transformer, control };
 
 export {
   isObject,

@@ -1,4 +1,7 @@
 export type {
+  ServerConfig, 
+  TerminalConfig, 
+  TerminalPlugin,
   ConfigLoaderOptions,
   PluginLoaderOptions,
   ActionRouterArgs,
@@ -21,25 +24,12 @@ export type {
   NodeRequest,
   NodeResponse,
   NodeOptResponse,
-  IM, SR,
-  HttpResponse,
-  HttpRequest,
-  HttpRouter,
-  HttpServer,
-  HttpServerOptions,
-  HttpAction,
   WhatwgResponse,
   WhatwgRequest,
   WhatwgRouter,
   WhatwgServer,
   WhatwgServerOptions,
-  WhatwgAction
-} from '@stackpress/ingest/types';
-
-export type { 
-  ServerConfig, 
-  TerminalConfig, 
-  TerminalPlugin 
+  WhatwgAction 
 } from './types.js';
 
 import type { UnknownNest } from '@stackpress/lib/types';
