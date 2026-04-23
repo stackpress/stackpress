@@ -48,6 +48,7 @@ export type {
 } from './types.js';
 
 export {
+  //inquire
   Alter,
   Create,
   Delete,
@@ -58,7 +59,7 @@ export {
   Pgsql,
   Sqlite,
   Engine,
-  Exception as InquireException,
+  InquireException,
   joinTypes,
   isIndex,
   backSlashes,
@@ -66,10 +67,8 @@ export {
   escapeBackSlashes,
   escapeDoubleQuotes,
   safeJsonValue,
-  jsonCompare
-} from '@stackpress/inquire';
-
-export {
+  jsonCompare,
+  //stackpress-sql
   toSqlString,
   toSqlBoolean,
   toSqlDate,
@@ -77,10 +76,7 @@ export {
   toSqlFloat,
   getAlias,
   storePathToAlias,
-  storeSelectorToSqlSelector
-} from './helpers.js';
-
-import ActionsInterface from './interface/ActionsInterface.js';
-import StoreInterface from './interface/StoreInterface.js';
-
-export type { ActionsInterface, StoreInterface };
+  storeSelectorToSqlSelector,
+  ActionsInterface, 
+  StoreInterface
+} from 'stackpress-sql';

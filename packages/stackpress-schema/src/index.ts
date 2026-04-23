@@ -11,6 +11,7 @@ export type {
   AttributeDataMap,
   AttributeDataComponent,
   AttributeDataAssertion,
+  TypeAssertionMap,
   //used in config/definitions
   DefinitionBook,
   //used in dictionary
@@ -34,7 +35,14 @@ export type {
   DefinitionInterfaceMap,
   AssertInterfaceMap,
   SerializeInterfaceMap,
-  UnserializeInterfaceMap
+  UnserializeInterfaceMap,
+  //used in config
+  TerminalInterface,
+  ClientProjectProps,
+  ClientPluginProps,
+  ClientFieldset,
+  ClientPlugin,
+  ClientConfig
 } from './types.js';
 
 export {
@@ -97,6 +105,7 @@ import ModelStore from './model/ModelStore.js';
 
 import Attribute from './Attribute.js';
 import Column from './Column.js';
+import Exception from './Exception.js';
 import Fieldset from './Fieldset.js';
 import Model from './Model.js';
 import Schema from './Schema.js';
@@ -118,6 +127,7 @@ export {
   ColumnStore,
   ColumnType,
   ColumnValue,
+  Exception as StackpressSchemaException,
   Fieldset,
   FieldsetAssertion,
   FieldsetComponent,

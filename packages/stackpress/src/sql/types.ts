@@ -45,42 +45,4 @@ export type {
   //for ingest
   DatabaseConfig,
   DatabasePlugin
-} from './types.js';
-
-export {
-  Alter,
-  Create,
-  Delete,
-  Insert,
-  Select,
-  Update,
-  Mysql,
-  Pgsql,
-  Sqlite,
-  Engine,
-  Exception as InquireException,
-  joinTypes,
-  isIndex,
-  backSlashes,
-  doubleQuotes,
-  escapeBackSlashes,
-  escapeDoubleQuotes,
-  safeJsonValue,
-  jsonCompare
-} from '@stackpress/inquire';
-
-export {
-  toSqlString,
-  toSqlBoolean,
-  toSqlDate,
-  toSqlInteger,
-  toSqlFloat,
-  getAlias,
-  storePathToAlias,
-  storeSelectorToSqlSelector
-} from './helpers.js';
-
-import ActionsInterface from './interface/ActionsInterface.js';
-import StoreInterface from './interface/StoreInterface.js';
-
-export type { ActionsInterface, StoreInterface };
+} from 'stackpress-sql/types';

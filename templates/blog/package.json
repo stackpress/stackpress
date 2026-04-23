@@ -4,16 +4,8 @@
   "version": "1.0.0",
   "private": true,
   "plugins": [
-    "./plugins/app/plugin",
-    "./plugins/store/plugin",
-    "stackpress-admin",
-    "stackpress-csrf",
-    "stackpress-language",
-    "stackpress-schema",
     "stackpress-server",
-    "stackpress-session",
-    "stackpress-sql",
-    "stackpress-view"
+    "stackpress-schema"
   ],
   "scripts": {
     "build": "stackpress build --b config/build -v",

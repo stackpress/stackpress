@@ -1,7 +1,3 @@
-import Exception from './Exception.js';
-
-export { Exception as StackpressViewException };
-
 export type {
   ViewConfig,
   ViewPlugin,
@@ -35,6 +31,7 @@ export type {
 } from './types.js';
 
 export {
+  //reactus
   VFS_PROTOCOL,
   VFS_RESOLVED,
   BASE62_ALPHABET,
@@ -42,12 +39,12 @@ export {
   DOCUMENT_TEMPLATE,
   PAGE_TEMPLATE,
   CLIENT_TEMPLATE,
-  id as fileHash,
+  fileHash,
   renderJSX,
-  css as viteCSSPlugin,
-  file as viteFilePlugin,
-  hmr as viteHMRPlugin,
-  vfs as viteVFSPlugin,
+  viteCSSPlugin,
+  viteFilePlugin,
+  viteHMRPlugin,
+  viteVFSPlugin,
   DocumentBuilder,
   DocumentLoader,
   DocumentRender,
@@ -57,10 +54,8 @@ export {
   VirtualServer,
   Builder,
   Document, 
-  Server
-} from 'reactus';
-
-export {
+  Server,
+  //stackpress-view (client)
   useRequest, 
   useResponse, 
   useConfig, 
@@ -79,4 +74,4 @@ export {
   ThemeProvider,
   defaultServerConfig,
   unknownHost
-} from './client/index.js';
+} from 'stackpress-view';

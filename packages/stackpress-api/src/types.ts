@@ -9,7 +9,6 @@ import type { ViewConfig, BrandConfig } from 'stackpress-view/types';
 import type { Profile } from 'stackpress-session/types';
 
 export type ApiType = 'public' | 'app' | 'session';
-export type APIType = ApiType;
 
 export type ApiConfigProps = {
   language: LanguageConfig,

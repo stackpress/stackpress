@@ -1,4 +1,8 @@
 export type {
+  //inquire-sqlite3
+  Results, 
+  Resource, 
+  Connector,
   //inquire types
   Field,
   ForeignKey,
@@ -37,6 +41,7 @@ export type {
   StorePath,
   StoreRelation,
   StoreSelector,
+  StoreSelectOrWhere,
   StoreSelectRelationMap,
   StoreSelectFilters,
   StoreSelectQuery,
@@ -45,9 +50,10 @@ export type {
   //for ingest
   DatabaseConfig,
   DatabasePlugin
-} from './types.js';
+} from 'stackpress-sql/sqlite';
 
 export {
+  //inquire
   Alter,
   Create,
   Delete,
@@ -58,7 +64,7 @@ export {
   Pgsql,
   Sqlite,
   Engine,
-  Exception as InquireException,
+  Exception,
   joinTypes,
   isIndex,
   backSlashes,
@@ -66,10 +72,11 @@ export {
   escapeBackSlashes,
   escapeDoubleQuotes,
   safeJsonValue,
-  jsonCompare
-} from '@stackpress/inquire';
-
-export {
+  jsonCompare,
+  //inquire-sqlite3
+  BetterSqlite3Connection, 
+  connect,
+  //stackpress-sql
   toSqlString,
   toSqlBoolean,
   toSqlDate,
@@ -77,10 +84,7 @@ export {
   toSqlFloat,
   getAlias,
   storePathToAlias,
-  storeSelectorToSqlSelector
-} from './helpers.js';
-
-import ActionsInterface from './interface/ActionsInterface.js';
-import StoreInterface from './interface/StoreInterface.js';
-
-export type { ActionsInterface, StoreInterface };
+  storeSelectorToSqlSelector,
+  ActionsInterface, 
+  StoreInterface
+} from 'stackpress-sql/sqlite';

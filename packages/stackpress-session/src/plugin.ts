@@ -27,6 +27,8 @@ export default function plugin(ctx: Server) {
       ctx.import.on('auth-signin', () => import('./events/signin.js'));
       ctx.import.on('auth-signout', () => import('./events/signout.js'));
       ctx.import.on('authorize', () => import('./events/authorize.js'));
+      //Globally evaluate every route and check if user has access to it
+      //this is where the secret sauce starts...
       ctx.import.on('request', () => import('./pages/authorize.js'));
     }
   });

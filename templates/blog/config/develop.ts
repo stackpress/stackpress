@@ -124,7 +124,7 @@ export const config: Config = {
   api: common.api,
   auth: common.auth,
   brand: common.brand,
-  cli: common.cli,
+  terminal: common.terminal,
   client: common.client,
   cookie: common.cookie,
   database: common.database,

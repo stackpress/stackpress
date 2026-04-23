@@ -3,8 +3,8 @@ import path from 'node:path';
 //modules
 import unocss from 'unocss/vite';
 //stackpress
-import { server as http } from 'stackpress/http';
-import { CLIENT_TEMPLATE, DOCUMENT_TEMPLATE } from 'stackpress/view';
+import { server as http } from '@stackpress/ingest/http';
+import { CLIENT_TEMPLATE, DOCUMENT_TEMPLATE } from 'reactus';
 //config
 import type { Config } from './common.js';
 import * as common from './common.js';
