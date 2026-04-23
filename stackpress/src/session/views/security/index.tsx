@@ -6,7 +6,7 @@ import type {
   ServerConfigProps,
   ServerPageProps
 } from '../../../types';
-import LayoutAccount from '../../../view/layout/LayoutAccount';
+import LayoutAccount from '../../../view/layout/LayoutAccount.js';
 //hooks
 import { useServer } from '../../../view/server/hooks.js';
 

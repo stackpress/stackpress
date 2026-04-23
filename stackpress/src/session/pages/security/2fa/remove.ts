@@ -86,11 +86,17 @@ export default async function Security2FAPage(
     return;
   }
   //remove the auth record
-  await ctx.resolve('auth-remove', {
+  const removed = await ctx.resolve('auth-remove', {
     id: authId,
     profileId: data.id,
     type: '2fa',
   });
+  //if there is an error
+  if (removed.code !== 200) {
+    //set an error
+    res.fromStatusResponse(removed);
+    return;
+  }
   //show a success message and redirect back to the security page
   res.session.set(
     'flash',

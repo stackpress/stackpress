@@ -26,8 +26,6 @@ export type LayoutAccountProps = LayoutProviderProps & {
 
 /**
  * Account layout
- * - Uses the global admin chrome (head + right user menu)
- * - Left sidebar is dedicated to account navigation
  */
 export function AccountApp(props: { children: ReactNode }) {
   const { children } = props;
@@ -84,7 +82,7 @@ export function AccountApp(props: { children: ReactNode }) {
 }
 
 export default function LayoutAccount(props: LayoutAccountProps) {
-  const { cookie, data, session, request, response, children } = props
+  const { cookie, data, session, request, response, children } = props;
   //unload any flash messages from the server
   useEffect(() => {
     unload(cookie);
