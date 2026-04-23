@@ -157,12 +157,10 @@ export default function plugin(ctx: Server) {
     if (!schema.plugin) {
       schema.plugin = {};
     }
-    const dirname = path.dirname(
-      typeof __dirname === 'undefined' 
+    const dirname = typeof __dirname === 'undefined' 
       //@ts-ignore - The import.meta only allowed in ESM
       ? path.dirname(fileURLToPath(import.meta.url))
-      : __dirname
-    );
+      : __dirname;
     //add this plugin generator to the schema
     //so it can be part of the transformation
     schema.plugin[`${dirname}/transform`] = {};

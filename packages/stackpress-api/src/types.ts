@@ -1,10 +1,12 @@
 //modules
 import type { Method, UnknownNest } from '@stackpress/lib/types';
 import type { Data } from '@stackpress/idea-parser/types';
-//stackpress-language
-import type { LanguageConfig } from 'stackpress-language/types';
 //stackpress-view
-import type { ViewConfig, BrandConfig } from 'stackpress-view/types';
+import type { 
+  BrandConfig, 
+  LanguageConfig, 
+  ViewConfig 
+} from 'stackpress-view/types';
 //stackpress-session
 import type { Profile } from 'stackpress-session/types';
 

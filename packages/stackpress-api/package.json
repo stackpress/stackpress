@@ -74,7 +74,6 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "stackpress-language": "0.9.1",
     "stackpress-session": "0.9.1"
   },
   "devDependencies": {

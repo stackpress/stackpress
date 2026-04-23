@@ -211,21 +211,9 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@paralleldrive/cuid2": "3.3.0",
-    "@stackpress/idea-transformer": "0.8.3",
-    "@stackpress/ingest": "0.8.3",
-    "@stackpress/inquire": "0.8.3",
-    "@stackpress/lib": "0.8.3",
-    "jose": "6.2.0",
-    "moment": "2.30.1",
-    "nanoid": "5.1.6",
-    "nodemailer": "7.0.13",
-    "papaparse": "5.5.3",
-    "r22n": "1.0.10",
-    "react-toastify": "11.0.5",
-    "reactus": "0.8.3",
-    "universal-cookie": "8.0.1",
-    "zod": "4.3.6"
+    "stackpress-admin": "0.9.1",
+    "stackpress-api": "0.9.1",
+    "stackpress-email": "0.9.1"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

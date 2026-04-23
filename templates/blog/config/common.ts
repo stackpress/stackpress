@@ -16,6 +16,7 @@ export const seed = {
   database: process.env.DATABASE_SEED || 'abc123',
   session: process.env.SESSION_SEED || 'abc123'
 };
+
 export const csrf = {
   name: 'csrf'
 };

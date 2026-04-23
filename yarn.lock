@@ -3387,6 +3387,27 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
+stackpress@0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/stackpress/-/stackpress-0.8.3.tgz#749c139799257dbb2a60a91fe571ecede9849381"
+  integrity sha512-GD5+5GvNgX/4LFJW5NGlNBIgjEfWIC3+P88JEpaM+o0yDPAshSI+OCjD5oc8gtZ6Y0kVGFuC4i1d5gdUudJS1Q==
+  dependencies:
+    "@paralleldrive/cuid2" "3.3.0"
+    "@stackpress/idea-transformer" "0.8.3"
+    "@stackpress/ingest" "0.8.3"
+    "@stackpress/inquire" "0.8.3"
+    "@stackpress/lib" "0.8.3"
+    jose "6.2.0"
+    moment "2.30.1"
+    nanoid "5.1.6"
+    nodemailer "7.0.13"
+    papaparse "5.5.3"
+    r22n "1.0.10"
+    react-toastify "11.0.5"
+    reactus "0.8.3"
+    universal-cookie "8.0.1"
+    zod "4.3.6"
+
 string-width@^4.1.0, string-width@^4.2.0:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"

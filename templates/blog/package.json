@@ -5,7 +5,10 @@
   "private": true,
   "plugins": [
     "stackpress-server",
-    "stackpress-schema"
+    "stackpress-schema",
+    "stackpress-sql",
+    "stackpress-view",
+    "stackpress-admin"
   ],
   "scripts": {
     "build": "stackpress build --b config/build -v",
