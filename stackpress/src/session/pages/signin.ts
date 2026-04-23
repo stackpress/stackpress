@@ -2,10 +2,12 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
+//stackpress/schema
+import { hash } from '../../schema/helpers.js';
 //view
 import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //session
-import type { AuthConfig, SessionPlugin } from '../types.js';
+import type { Auth, AuthConfig, SessionPlugin } from '../types.js';
 import type { CsrfPlugin } from '../../types.js';
 
 export default async function SignInPage(
@@ -22,6 +24,8 @@ export default async function SignInPage(
   const view = ctx.config.path<ViewConfig>('view', {});
   const brand = ctx.config.path<BrandConfig>('brand', {});
   const auth = ctx.config.path<AuthConfig>('auth');
+  //get auth base
+  const base = auth.base || '/auth';
   //set data for template layer
   res.data.set('view', { 
     base: view.base || '/',
@@ -63,11 +67,20 @@ export default async function SignInPage(
     //prevent passwordless sign in on this page...
     req.data.set('password', true);
     //sign in
-    await ctx.emit('auth-signin', req, res);
+    const signin = await ctx.resolve<Auth>('auth-signin', req, res);
     //if there is an error, do nothing
     if (res.code !== 200) return;
-    //redirect
-    res.redirect(redirect);
+    const auth = signin.results;
+    if (!auth) {
+      res.setError('Invalid credentials');
+      return;
+    }
+    //redirect to 2fa for check, and append the redirect URI
+    res.redirect(
+      `${base}/signin/2fa/${auth.profileId}/${auth.id}/${hash(
+        auth.consumed.toString(),
+      )}?redirect_uri=${encodeURIComponent(redirect)}`,
+    );
     return;
   //if there is already a session
   } else if (!guest) {

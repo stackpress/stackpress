@@ -480,12 +480,188 @@
   text-decoration: none;
 }
 
+/* OTP Field */
+
+.otp-field {
+  --otp-digits: 6;
+  --otp-ls: 2ch;
+  --otp-gap: 1.25;
+
+  /* private consts */
+  --_otp-bgsz: calc(var(--otp-ls) + 1ch);
+  --_otp-digit: 0;
+
+  all: unset;
+  background: linear-gradient(90deg, 
+    var(--otp-bg, #EEEEEE) calc(var(--otp-gap) * var(--otp-ls)),
+    transparent 0),
+    linear-gradient(90deg, 
+    var(--otp-bg, #EEEEEE) calc(var(--otp-gap) * var(--otp-ls)),
+    transparent 0
+  );
+  background-position: calc(var(--_otp-digit) * var(--_otp-bgsz)) 0, 0 0;
+  background-repeat: no-repeat, repeat-x;
+  background-size: var(--_otp-bgsz) 100%;
+  caret-color: var(--otp-cc, #222222);
+  caret-shape: block;
+  clip-path: inset(0% calc(var(--otp-ls) / 2) 0% 0%);
+  font-family: ui-monospace, monospace;
+  font-size: var(--otp-fz, 2.25em);
+  inline-size: calc(var(--otp-digits) * var(--_otp-bgsz));
+  letter-spacing: var(--otp-ls);
+  padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
+}
+
+/* Account Security: 2FA Setup */
+
+.account-security-2fa-setup-page {
+  background-color: var(--bg-zero);
+  height: 100%;
+  overflow: auto;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.account-security-2fa-setup-header {
+  align-items: center;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.account-security-2fa-setup-back {
+  align-items: center;
+  color: var(--default);
+  display: flex;
+  font-size: 24px;
+  margin-right: 14px;
+  text-decoration: none;
+}
+
+.account-security-2fa-setup-back:hover {
+  color: var(--default);
+}
+
+.account-security-2fa-setup-title {
+  flex-grow: 1;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.account-security-2fa-setup-form {
+  border: 1px solid var(--bg-third);
+  padding: 20px;
+  text-align: center;
+}
+
+.account-security-2fa-setup-control {
+  padding-bottom: 10px;
+}
+
+.account-security-2fa-setup-qr {
+  display: inline-block;
+  height: 200px;
+  margin-top: 20px;
+  width: 200px;
+}
+
+.account-security-2fa-setup-secret {
+  background-color: var(--bg-second);
+  margin-top: 10px;
+  max-width: 200px;
+  text-align: center;
+}
+
+.account-security-2fa-setup-regenerate {
+  color: inherit;
+  display: block;
+  padding-bottom: 10px;
+  text-decoration: underline;
+}
+
+.account-security-2fa-setup-otp-control {
+  padding-bottom: 10px;
+  padding-top: 40px;
+}
+
+.account-security-2fa-setup-otp {
+  color: var(--default);
+  margin-top: 20px;
+  text-align: left;
+}
+
+.account-security-2fa-setup-verify-btn,
+.account-security-2fa-setup-remove-btn {
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.account-security-2fa-setup-remove-form {
+  padding-top: 20px;
+}
+
+/* Account Security: Index */
+
+.account-security-index-page {
+  background-color: var(--bg-zero);
+  height: 100%;
+  overflow: auto;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.account-security-index-header {
+  align-items: center;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.account-security-index-title {
+  flex-grow: 1;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.account-security-index-card {
+  border: 1px solid var(--bg-third);
+}
+
+.account-security-index-link {
+  align-items: center;
+  color: var(--default);
+  display: flex;
+  padding: 20px;
+  text-decoration: none;
+}
+
+.account-security-index-link:hover {
+  background-color: var(--bg-first);
+}
+
+.account-security-index-link-label {
+  flex-grow: 1;
+}
+
+.account-security-index-link-icon {
+  margin-left: 5px;
+}
+
 /* Auth Signin Page */
 
 .auth-signin-page {
   align-items: center;
   display: flex;
   justify-content: center;
+}
+
+/* Auth 2FA Page */
+
+.auth-2fa-page .auth-2fa-instructions {
+  padding-top: 20px;
+}
+
+.auth-2fa-page .auth-2fa-otp {
+  color: var(--default);
 }
 
 /* Auth Signup Page */

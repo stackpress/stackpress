@@ -151,7 +151,10 @@ export async function signin(
     { eq: { id: results.id } }, 
     { consumed: new Date() }
   );
-  return results;
+  return await authActions.find({
+    columns: [ '*', 'profile.*' ],
+    eq: { type, token: String(input[type]) }
+  }) as AuthExtended;
 };
 
 /**

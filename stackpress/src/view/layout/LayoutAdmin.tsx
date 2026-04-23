@@ -36,7 +36,9 @@ export function AdminUserMenu() {
         {session.data.id ? (
           <div className="info">
             <i className="icon fas fa-user-circle" />
-            <span>{session.data.name}</span>
+            <a className="no-underline" href="/auth/account">
+              {session.data.name}
+            </a>
           </div>
         ) : null}
         <nav className="lang">

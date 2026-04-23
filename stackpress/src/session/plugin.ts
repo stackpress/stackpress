@@ -37,11 +37,39 @@ export default function plugin(ctx: Server) {
     const base = ctx.config.path('auth.base', '/auth');
     ctx.import.all(`${base}/signin`, () => import('./pages/signin.js'));
     ctx.import.all(`${base}/signin/:type`, () => import('./pages/signin.js'));
+    ctx.import.all(
+      `${base}/signin/2fa/:profile/:auth/:challenge`,
+      () => import('./pages/2fa.js'),
+    );
     ctx.import.all(`${base}/signup`, () => import('./pages/signup.js'));
     ctx.import.all(`${base}/signout`, () => import('./pages/signout.js'));
-    
+
+    ctx.action.all(`${base}/account`, (_req, res) => {
+      //redirect to security page for now, as there is no default account page...
+      res.redirect(`${base}/account/security`);
+    });
+    ctx.import.all(`${base}/account/security`, () => import('./pages/security/index.js'));
+    ctx.import.all(
+      `${base}/account/security/2fa`,
+      () => import('./pages/security/2fa/setup.js'),
+    );
+    ctx.import.post(
+      `${base}/account/security/2fa/remove`,
+      () => import('./pages/security/2fa/remove.js'),
+    );
     ctx.view.all(`${base}/signin`, 'stackpress/esm/session/views/signin', -100);
     ctx.view.all(`${base}/signin/:type`, 'stackpress/esm/session/views/signin', -100);
+    ctx.view.all(
+      `${base}/signin/2fa/:profile/:auth/:challenge`,
+      'stackpress/esm/session/views/2fa',
+      -100,
+    );
     ctx.view.all(`${base}/signup`, 'stackpress/esm/session/views/signup', -100);
+    ctx.view.all(`${base}/account/security`, 'stackpress/esm/session/views/security/index', -100);
+    ctx.view.all(
+      `${base}/account/security/2fa`,
+      'stackpress/esm/session/views/security/2fa/setup',
+      -100,
+    );
   });
 };
