@@ -7,7 +7,6 @@ export type {
   ApiEndpoint,
   ApiScope,
   ApiWebhook,
-  ApiConfig,
   Application,
   ApplicationExtended,
   ApplicationInput,
@@ -19,8 +18,6 @@ export type {
   LanguageData,
   LanguageMap,
   LanguageConstructor,
-  LanguageConfig,
-  LanguagePlugin,
   //lib types
   TypeOf,
   Key,
@@ -115,9 +112,6 @@ export type {
   SerializeInterfaceMap,
   UnserializeInterfaceMap,
   //server types
-  TerminalConfig, 
-  TerminalPlugin,
-  ServerConfig,
   ConfigLoaderOptions,
   PluginLoaderOptions,
   ActionRouterArgs,
@@ -165,9 +159,6 @@ export type {
   SigninInput,
   SigninType,
   AuthConfigProps,
-  AuthConfig,
-  SessionConfig,
-  SessionPlugin,
   Profile,
   ProfileExtended,
   ProfileInput,
@@ -219,12 +210,7 @@ export type {
   StoreSelectQuery,
   StoreSearchQuery,
   StoreWhere,
-  // for ingest
-  DatabaseConfig,
-  DatabasePlugin,
   //view types
-  ViewConfig,
-  ViewPlugin,
   PreviewPlugin,
   RollupResults,
   ServerUrlProps,
@@ -239,10 +225,46 @@ export type {
   ThemeContextProps,
   ThemeProviderProps,
   ProviderProps,
-  BrandConfig,
   ServerConfigProps,
   ServerPageProps,
-  NotifyConfig
+  NotifyConfig,
+  //client, config, plugin types
+  // parts of the client plugin
+  ClientProjectProps,
+  ClientPluginProps,
+  ClientFieldset,
+  GenericEventHandler,
+  GenericEvents,
+  GenericListener,
+  GenericAdminRouter,
+  ClientModel,
+  ClientScripts,
+  // parts of the config
+  AdminConfig,
+  ApiConfig,
+  AuthConfig,
+  BrandConfig,
+  ClientConfig,
+  CookieConfig,
+  DatabaseConfig,
+  EmailConfig,
+  LanguageConfig,
+  ServerConfig,
+  SessionConfig,
+  TerminalConfig,
+  ViewConfig,
+  // plugins
+  ClientPlugin,
+  CsrfPlugin,
+  DatabasePlugin,
+  LanguagePlugin,
+  SessionPlugin,
+  TerminalPlugin,
+  ViewPlugin,
+  // type of generated client
+  Client,
+  // final config options
+  Config
 } from './types.js';
 
 export { Language } from './language/index.js';

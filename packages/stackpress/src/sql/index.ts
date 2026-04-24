@@ -44,7 +44,16 @@ export type {
   StoreWhere,
   //for ingest
   DatabaseConfig,
-  DatabasePlugin
+  DatabasePlugin,
+  //client
+  GenericEventHandler,
+  GenericEvents,
+  GenericListener,
+  GenericAdminRouter,
+  ClientModel,
+  ClientScripts,
+  ClientPlugin,
+  Client
 } from './types.js';
 
 export {

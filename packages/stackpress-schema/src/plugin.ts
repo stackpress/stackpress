@@ -126,6 +126,20 @@ export async function getTransformer(server: Server, idea: string) {
  * This interface is intended for the Stackpress library.
  */
 export default function plugin(ctx: Server) {
+  //on config, register the client as a plugin
+  ctx.on('config', action.props(async ({ ctx }) => {
+    const module = ctx.config.path('client.module', 'stackpress-client');
+    ctx.register('client', (nullable = false) => {
+      if (!nullable) {
+        return ctx.loader.import(module);
+      }
+      try {
+        return ctx.loader.import(module);
+      } catch(e) {
+        return null;
+      }
+    });
+  }), 10);
   //on listen
   ctx.on('listen', action.props(({ ctx }) => {
     //add server scripts

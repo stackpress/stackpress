@@ -33,11 +33,12 @@ import type {
   GenericEvents,
   GenericListener,
   GenericAdminRouter,
-  ClientModel,
-  ClientScripts,
-  ClientPlugin as SqlClientPlugin,
   DatabaseConfig, 
   DatabasePlugin,
+  ClientModel,
+  ClientScripts,
+  ClientPlugin,
+  Client
 } from 'stackpress-sql/types';
 import type { 
   ViewConfig, 
@@ -71,16 +72,16 @@ export type {
   TerminalConfig,
   ViewConfig,
   //plugins
+  ClientPlugin,
   CsrfPlugin,
   DatabasePlugin,
   LanguagePlugin,
   SessionPlugin,
   TerminalPlugin,
-  ViewPlugin
+  ViewPlugin,
+  //type of generated client
+  Client
 };
-
-//client plugin
-export type ClientPlugin = (nullable?: boolean) => Promise<SqlClientPlugin>;
 
 //final config options
 export type Config = UnknownNest & {

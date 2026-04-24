@@ -29,7 +29,7 @@ export default async function AuthSignup(
   const input = { roles, ...req.data() };
   let results: Partial<ProfileAuth>; 
   try { //to sign up
-    results = await signup(input, seed, engine, client);
+    results = await signup(input, seed, engine, await client());
   } catch (e) {
     const exception = Exception.upgrade(e as Error);
     //if e is an exception with errors

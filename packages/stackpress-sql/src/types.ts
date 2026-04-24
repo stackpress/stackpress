@@ -280,8 +280,7 @@ export type ClientScripts = {
   upgrade(engine: Engine, updates: Record<string, Create>): Promise<void>
 };
 
-//ie. ctx.plugin<ClientPlugin>('client');
-export type ClientPlugin<
+export type Client<
   //exact map of models
   //ex. { profile: ClientModel<Profile, ProfileExtended, { name: NameSchema, ...}, { auth: {} }> }
   M extends Record<string, ClientModel> = Record<string, ClientModel>,
@@ -293,3 +292,12 @@ export type ClientPlugin<
   fieldset: F,
   scripts: ClientScripts
 };
+
+//ie. ctx.plugin<ClientPlugin>('client');
+export type ClientPlugin<
+  //exact map of models
+  //ex. { profile: ClientModel<Profile, ProfileExtended, { name: NameSchema, ...}, { auth: {} }> }
+  M extends Record<string, ClientModel> = Record<string, ClientModel>,
+  //exact map of fieldsets
+  F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
+> = (nullable?: boolean) => Promise<Client<M, F>>;

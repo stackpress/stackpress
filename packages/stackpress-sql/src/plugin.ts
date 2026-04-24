@@ -5,11 +5,28 @@ import { fileURLToPath } from 'node:url';
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server';
+//stackpress-sql
+import type { ClientPlugin } from './types.js';
 
 /**
  * This interface is intended for the Stackpress library.
  */
 export default function plugin(ctx: Server) {
+  //on listen, add database events
+  ctx.on('listen', action.props(async ({ ctx }) => {
+    //it's possible that the client isnt generated yet...
+    //config, registry, model, fieldset
+    const client = ctx.plugin<ClientPlugin>('client');
+    const { model: models } = await client(true) || {};
+    //if no client or modules, return
+    if (!models) return;
+    //loop through all the models
+    for (const model of Object.values(models)) {
+      //register all the model events
+      model.listen(ctx);
+    }
+  }));
   //generate some code in the client folder
   ctx.on('idea', async req => {
     //get the transformer from the request

@@ -167,9 +167,7 @@ export type ClientFieldset<
   columns: C
 };
 
-//ie. ctx.plugin<ClientPlugin>('client');
-//contents from import('stackpress-client')
-export type ClientPlugin<
+export type Client<
   //exact map of fieldsets
   F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
 > = {
@@ -177,6 +175,13 @@ export type ClientPlugin<
   model: F,
   fieldset: F
 };
+
+//ie. ctx.plugin<ClientPlugin>('client');
+//contents from import('stackpress-client')
+export type ClientPlugin<
+  //exact map of fieldsets
+  F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
+> = (nullable?: boolean) => Promise<Client<F>>;
 
 //ie. ctx.config<ClientConfig>('client');
 export type ClientConfig = {

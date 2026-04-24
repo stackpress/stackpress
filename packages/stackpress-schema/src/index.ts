@@ -40,8 +40,9 @@ export type {
   ClientProjectProps,
   ClientPluginProps,
   ClientFieldset,
+  ClientConfig,
   ClientPlugin,
-  ClientConfig
+  Client
 } from './types.js';
 
 export {

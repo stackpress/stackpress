@@ -48,6 +48,8 @@ export type {
   SessionPlugin,
   TerminalPlugin,
   ViewPlugin,
+  //type of generated client
+  Client,
   //final config options
   Config
 } from './client/types.js';

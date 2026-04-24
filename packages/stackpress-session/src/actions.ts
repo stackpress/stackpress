@@ -1,7 +1,7 @@
 //modules
 import type Engine from '@stackpress/inquire/Engine';
 //stackpress-sql
-import { ClientPlugin } from 'stackpress-sql/types';
+import { Client } from 'stackpress-sql/types';
 //stackpress-session
 import type { 
   Auth, 
@@ -22,7 +22,7 @@ export async function signup(
   input: Partial<SignupInput>,
   seed: string,
   engine: Engine,
-  client: ClientPlugin
+  client: Client
 ): Promise<Partial<ProfileAuth>> {
   //validate input
   const errors = assert(input);
@@ -116,7 +116,7 @@ export async function signin(
   input: Partial<SigninInput>,
   seed: string,
   engine: Engine,
-  client: ClientPlugin,
+  client: Client,
   password = true
 ): Promise<Partial<AuthExtended>> {
   const { Actions: AuthActions } = client.model.auth;

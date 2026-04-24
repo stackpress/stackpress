@@ -39,6 +39,7 @@ export type {
   ClientProjectProps,
   ClientPluginProps,
   ClientFieldset,
+  ClientConfig,
   ClientPlugin,
-  ClientConfig
+  Client
 } from 'stackpress-schema/types';

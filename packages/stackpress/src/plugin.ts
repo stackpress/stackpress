@@ -6,18 +6,20 @@ import sql from 'stackpress-sql/plugin';
 import view from 'stackpress-view/plugin';
 import admin from 'stackpress-admin/plugin';
 import language from 'stackpress-language/plugin';
+import server from 'stackpress-server/plugin';
 import session from 'stackpress-session/plugin';
 import api from 'stackpress-api/plugin';
 import csrf from 'stackpress-csrf/plugin';
 
-export default async function plugin(server: Server) {
+export default async function plugin(ctx: Server) {
   //load the plugins
-  schema(server);
-  sql(server);
-  view(server);
-  admin(server);
-  language(server);
-  session(server);
-  api(server);
-  csrf(server);
+  server(ctx);
+  schema(ctx);
+  language(ctx);
+  csrf(ctx);
+  sql(ctx);
+  view(ctx);
+  session(ctx);
+  api(ctx);
+  admin(ctx);
 };

@@ -34,7 +34,14 @@ export type {
   DefinitionInterfaceMap,
   AssertInterfaceMap,
   SerializeInterfaceMap,
-  UnserializeInterfaceMap
+  UnserializeInterfaceMap,
+  //used in config
+  ClientProjectProps,
+  ClientPluginProps,
+  ClientFieldset,
+  ClientConfig,
+  ClientPlugin,
+  Client
 } from './types.js';
 
 export {

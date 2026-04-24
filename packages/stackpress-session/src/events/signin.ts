@@ -40,7 +40,7 @@ export default async function AuthSignin(
       req.data(), 
       seed, 
       engine, 
-      client, 
+      await client(), 
       Boolean(password)
     );
   } catch (e) {
