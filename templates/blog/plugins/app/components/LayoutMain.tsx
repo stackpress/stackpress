@@ -1,0 +1,37 @@
+import type { ReactNode } from 'react';
+
+export type LayoutMainProps = {
+  head?: boolean,
+  left?: boolean,
+  right?: boolean,
+  open?: {
+    left?: boolean,
+    right?: boolean
+  },
+  children: ReactNode
+};
+
+export default function LayoutMain(props: LayoutMainProps) {
+  const { head, left, right, open, children } = props;
+  const classNames = [ 'layout-main' ];
+  if (left) {
+    classNames.push('left');
+  }
+  if (right) {
+    classNames.push('right');
+  }
+  if (head) {
+    classNames.push('head');
+  }
+  if (open?.left) {
+    classNames.push('open-left');
+  }
+  if (open?.right) {
+    classNames.push('open-right');
+  }
+  return (
+    <main className={classNames.join(' ')}>
+      {children}
+    </main>
+  );
+};

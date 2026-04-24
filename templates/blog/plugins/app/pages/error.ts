@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 //stackpress
 import { action } from 'stackpress/server';
+import { setViewProps } from 'stackpress/view';
 
 export default action(async function ErrorPage(req, res, ctx) {
   //if this is a terminal error, not from HTTP/WHATWG, abort
@@ -62,6 +63,8 @@ export default action(async function ErrorPage(req, res, ctx) {
   }
   //most likely an HTML request, render the error page
 
+  //set view props (like brand, logo, view from config...)
+  setViewProps(req, res, ctx);
   //get props from config
   const props = ctx.config.path('view.props', {});
   //get the session

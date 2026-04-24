@@ -2,8 +2,12 @@
 // Imports
 
 //modules
-import type { ServerPageProps } from 'stackpress/view/client';
 import { useLanguage } from 'r22n';
+//stackpress
+import type { 
+  ServerPageProps,
+  ServerConfigProps
+} from 'stackpress/view/client';
 import { useResponse } from 'stackpress/view/client';
 //client
 import type { ArticleExtended } from 'blog-client/types';
@@ -62,7 +66,7 @@ export function Body() {
   );
 }
 
-export function Head(props: ServerPageProps) {
+export function Head(props: ServerPageProps<ServerConfigProps>) {
   const { styles = [], response } = props;
   const article = response.results as Record<string, any>;
   const title = article.title;
@@ -86,10 +90,11 @@ export function Head(props: ServerPageProps) {
   );
 };
 
-export function Page(props: ServerPageProps) {
-  const { session, request, response } = props;
+export function Page(props: ServerPageProps<ServerConfigProps>) {
+  const { data, session, request, response } = props;
   return (
     <Layout
+      data={data}
       session={session}
       request={request}
       response={response}

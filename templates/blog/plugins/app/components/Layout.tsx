@@ -3,19 +3,20 @@ import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import { useLanguage } from 'r22n'; 
 //views
-import type { LayoutPanelProps } from 'stackpress/view/client';
+import type { ProviderProps } from 'stackpress/view/client';
 import { 
   unload,
   useTheme,
   useConfig,
   useToggle,
   useSession, 
-  LayoutHead,
-  LayoutMain,
-  LayoutRight,
-  LayoutProvider,
+  Provider,
   NotifierContainer
 } from 'stackpress/view/client';
+
+import LayoutHead from './LayoutHead.js';
+import LayoutRight from './LayoutRight.js';
+import LayoutMain from './LayoutMain.js';
 
 export function UserMenu() {
   const session = useSession();
@@ -72,7 +73,7 @@ export function UserMenu() {
   );
 }
 
-export function LayoutApp({ children }: { children: ReactNode }) {
+export function App({ children }: { children: ReactNode }) {
   const [ right, toggleRight ] = useToggle();
   const config = useConfig();
   const { theme, toggle: toggleTheme } = useTheme();
@@ -80,7 +81,7 @@ export function LayoutApp({ children }: { children: ReactNode }) {
     <div className={`${theme} relative overflow-hidden px-w-100-0 px-h-100-0 theme-bg-1 theme-1`}>
       <LayoutHead  
         base={config.path('brand.base', '/')}
-        logo={config.path('brand.logo', '/icon.png')}
+        logo={config.path('brand.icon', '/icon.png')}
         brand={config.path('brand.name', 'Stackpress')}
         theme={theme}
         toggleRight={toggleRight} 
@@ -92,7 +93,7 @@ export function LayoutApp({ children }: { children: ReactNode }) {
   );
 }
 
-export default function Layout(props: LayoutPanelProps) {
+export default function Layout(props: ProviderProps) {
   const { 
     data,
     session,
@@ -105,14 +106,14 @@ export default function Layout(props: LayoutPanelProps) {
     unload()
   }, []);
   return (
-    <LayoutProvider 
+    <Provider 
       data={data}
       session={session}
       request={request}
       response={response}
     >
-      <LayoutApp>{children}</LayoutApp>
+      <App>{children}</App>
       <NotifierContainer />
-    </LayoutProvider>
+    </Provider>
   );
 }

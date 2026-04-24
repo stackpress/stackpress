@@ -73,5 +73,7 @@ export {
   ThemeContext,
   ThemeProvider,
   defaultServerConfig,
-  unknownHost
+  unknownHost,
+  //helpers
+  setViewProps
 } from 'stackpress-view';

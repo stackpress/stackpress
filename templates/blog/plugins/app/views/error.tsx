@@ -1,18 +1,24 @@
 //--------------------------------------------------------------------//
 // Imports
 
-import type { Trace, ServerPageProps } from 'stackpress/view/client';
+//stackpress
+import type { 
+  Trace, 
+  ServerPageProps, 
+  ServerConfigProps 
+} from 'stackpress/view/client';
 import { 
   useConfig,
   useLanguage,
   useResponse 
 } from 'stackpress/view/client';
+//plugins/app
 import Layout from '../components/Layout.js';
 
 //--------------------------------------------------------------------//
 // Components
 
-export type Config = {
+export type Config = ServerConfigProps & {
   server: { mode: string }
 }
 
@@ -110,10 +116,11 @@ export function Body() {
   );
 };
 
-export function Page(props: ServerPageProps) {
-  const { session, request, response } = props;
+export function Page(props: ServerPageProps<Config>) {
+  const { data, session, request, response } = props;
   return (
     <Layout
+      data={data}
       session={session}
       request={request}
       response={response}

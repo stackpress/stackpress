@@ -462,7 +462,9 @@ export {
   Server as ReactusServer,
   //stackpress-view (client)
   defaultServerConfig,
-  unknownHost
+  unknownHost,
+  //helpers
+  setViewProps
 } from './view/index.js';
 
 import * as events from './events.js';

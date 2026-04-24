@@ -80,3 +80,7 @@ export {
   defaultServerConfig,
   unknownHost
 } from './client/index.js';
+
+import { setViewProps } from './helpers.js';
+
+export { setViewProps };

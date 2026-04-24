@@ -237,6 +237,7 @@ export const database = {
     {
       event: 'auth-create',
       data: {
+        profileId: 'developer',
         type: 'username',
         token: 'developer',
         secret: 'developer'
@@ -245,6 +246,7 @@ export const database = {
     {
       event: 'auth-create',
       data: {
+        profileId: 'developer',
         type: 'email',
         token: 'developer@shoppable.ph',
         secret: 'developer'
@@ -253,8 +255,8 @@ export const database = {
     {
       event: 'application-create',
       data: {
-        name: 'Developer App',
         profileId: 'developer',
+        name: 'Developer App',
         scopes: [ 'profile-write', 'auth-read' ],
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
       }
