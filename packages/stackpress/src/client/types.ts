@@ -13,7 +13,6 @@ import type {
   LanguagePlugin 
 } from 'stackpress-language/types';
 import type {
-  TerminalInterface,
   ClientProjectProps,
   ClientPluginProps,
   ClientFieldset,
@@ -36,7 +35,7 @@ import type {
   GenericAdminRouter,
   ClientModel,
   ClientScripts,
-  ClientPlugin,
+  ClientPlugin as SqlClientPlugin,
   DatabaseConfig, 
   DatabasePlugin,
 } from 'stackpress-sql/types';
@@ -46,9 +45,8 @@ import type {
   ViewPlugin 
 } from 'stackpress-view/types';
 
-export {
+export type {
   //parts of the client plugin
-  TerminalInterface,
   ClientProjectProps,
   ClientPluginProps,
   ClientFieldset,
@@ -73,7 +71,6 @@ export {
   TerminalConfig,
   ViewConfig,
   //plugins
-  ClientPlugin,
   CsrfPlugin,
   DatabasePlugin,
   LanguagePlugin,
@@ -81,6 +78,9 @@ export {
   TerminalPlugin,
   ViewPlugin
 };
+
+//client plugin
+export type ClientPlugin = (nullable?: boolean) => Promise<SqlClientPlugin>;
 
 //final config options
 export type Config = UnknownNest & {

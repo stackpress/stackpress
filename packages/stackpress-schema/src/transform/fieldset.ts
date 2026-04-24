@@ -1,9 +1,9 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress/schema
-import type Fieldset from '../../schema/Fieldset.js';
-import { loadProjectFile } from '../../schema/transform/helpers.js';
+//stackpress-schema
+import type Fieldset from '../Fieldset.js';
+import { loadProjectFile } from './helpers.js';
 
 export default function generate(directory: Directory, fieldset: Fieldset) {
   const columns = fieldset.columns.filter(

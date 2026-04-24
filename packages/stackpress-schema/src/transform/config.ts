@@ -1,10 +1,9 @@
 //modules
 import type { Directory } from 'ts-morph';
 import type { FileLoader } from '@stackpress/lib';
-import { VariableDeclarationKind } from 'ts-morph';
-//stackpress
 import type { SchemaConfig } from '@stackpress/idea-parser';
-//schema
+import { VariableDeclarationKind } from 'ts-morph';
+//stackpress-schema
 import Revisions from '../Revisions.js';
 
 /**

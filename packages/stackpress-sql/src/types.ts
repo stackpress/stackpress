@@ -281,7 +281,6 @@ export type ClientScripts = {
 };
 
 //ie. ctx.plugin<ClientPlugin>('client');
-//contents from import('stackpress-client')
 export type ClientPlugin<
   //exact map of models
   //ex. { profile: ClientModel<Profile, ProfileExtended, { name: NameSchema, ...}, { auth: {} }> }

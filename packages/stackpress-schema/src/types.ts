@@ -10,7 +10,8 @@ export type {
   PluginConfig,
   SchemaConfig
 } from '@stackpress/idea-parser/types';
-import type Server from '@stackpress/ingest/Server';
+//stackpress-server
+import type Terminal from 'stackpress-server/Terminal';
 //stackpress-schema
 import type DefinitionInterface from './interface/DefinitionInterface.js';
 import type SchemaInterface from './interface/SchemaInterface.js';
@@ -142,28 +143,17 @@ export type ErrorReport =
 //--------------------------------------------------------------------//
 // Client Types
 
-//used in transformers as in:
-//function generate(props: ClientPluginProps) {}
-//in transform/index.ts
-export interface TerminalInterface {
-  server: Server<any, any, any>,
-  verbose: boolean,
-  config: string|null,
-  brand: string,
-  cwd: string,
-  bootstrap(): Promise<this>,
-  run(): Promise<{ code: number, data?: unknown }>
-};
+//used in idea generator (transform)
 
 export type ClientProjectProps = {
-  terminal: TerminalInterface,
+  terminal: Terminal,
   project: Project,
   directory: Directory
 };
 
 export type ClientPluginProps = PluginProps<ClientProjectProps>;
 
-//used in plugin files:
+//used in plugin files
 
 export type ClientFieldset<
   //fieldset type

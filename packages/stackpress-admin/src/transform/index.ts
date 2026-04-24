@@ -4,9 +4,11 @@ import type { ClientPluginProps } from 'stackpress-schema/types';
 import Schema from 'stackpress-schema/Schema';
 import { loadProjectFile } from 'stackpress-schema/transform/helpers';
 //stackpress-admin
+import generateModel from './model.js';
 import generatePages from './pages/index.js';
 import generateViews from './views/index.js';
 import generateRoutes from './routes.js';
+import generatePackage from './package.js';
 
 /**
  * Client File Structure
@@ -59,6 +61,8 @@ export default async function generate(props: ClientPluginProps) {
     // - profile/admin/views/search.tsx
     // - profile/admin/views/update.tsx
     generateViews(directory, model);
+    // - profile/index.ts
+    generateModel(directory, model);
   }
 
   //-----------------------------//
@@ -93,4 +97,9 @@ export default async function generate(props: ClientPluginProps) {
       ).join('\n')}
     `.trim()
   });
+
+  //------------------------------------------------------------------//
+  // 3. package.json
+
+  generatePackage(directory, schema);
 };

@@ -2,9 +2,10 @@
 import type { Directory } from 'ts-morph';
 //stackpress-schema
 import type Model from 'stackpress-schema/Model';
+import type Schema from 'stackpress-schema/Schema';
 import { loadProjectFile } from 'stackpress-schema/transform/helpers';
 
-export default function generate(directory: Directory, model: Model) {
+export function generateModelTypes(directory: Directory, model: Model) {
   //relations like this: (foriegn keys)
   // owner User @relation({ name "connections" local "userId" foreign "id" })
   //not like this: (local keys)
@@ -93,4 +94,38 @@ export default function generate(directory: Directory, model: Model) {
       ].join(', ')}>`
     ]
   });
+};
+
+export function generateTypes(directory: Directory, schema: Schema) {
+  //load types.ts if it exists, if not create it
+  const source = loadProjectFile(directory, 'types.ts');
+  //clear source file (stackpress-schema originally generated this file)
+  source.replaceWithText('');
+  //export type * from './module/Profile/types.js';
+  for (const model of schema.models.values()) {
+    source.addExportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: model.name.toPathName('./%s/types.js'),
+      namedExports: [ 
+        model.name.toTypeName(),
+        model.name.toTypeName('%sInput'), 
+        model.name.toTypeName('%sExtended'), 
+        model.name.toTypeName('%sSchemaInterface'), 
+        model.name.toTypeName('%sStoreInterface'), 
+        model.name.toTypeName('%sActionsInterface')
+      ]
+    });
+  }
+  //export type * from './module/Address/types.js';
+  for (const fieldset of schema.fieldsets.values()) {
+    source.addExportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: fieldset.name.toPathName('./%s/types.js'),
+      namedExports: [ 
+        fieldset.name.toTypeName(),
+        fieldset.name.toTypeName('%sInput'), 
+        fieldset.name.toTypeName('%sSchemaInterface')
+      ]
+    });
+  }
 };

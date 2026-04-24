@@ -7,6 +7,7 @@ import generateFields from './form/index.js';
 import generateFilters from './filter/index.js';
 import generateLists from './list/index.js';
 import generateSpans from './span.js';
+import generatePackage from './package.js';
 
 /**
  * Client File Structure
@@ -49,4 +50,9 @@ export default async function generate(props: ClientPluginProps) {
   generateSpans(directory, schema);
   // - profile/components/view/
   generateViews(directory, schema);
+
+  //------------------------------------------------------------------//
+  // 3. package.json
+
+  generatePackage(directory, schema);
 };

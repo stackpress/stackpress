@@ -1,9 +1,9 @@
 //modules
 import type { Directory } from 'ts-morph';
 import { VariableDeclarationKind } from 'ts-morph';
-//stackpress/schema
-import type Model from '../../schema/Model.js';
-import { loadProjectFile } from '../../schema/transform/helpers.js';
+//stackpress-schema
+import type Model from 'stackpress-schema/Model';
+import { loadProjectFile } from 'stackpress-schema/transform/helpers';
 
 const allActions = [
   'batch',
@@ -29,6 +29,8 @@ export default function generate(directory: Directory, model: Model) {
   const filepath = model.name.toPathName('%s/index.ts');
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
+  //clear source file (stackpress-schema originally generated this file)
+  source.replaceWithText('');
   //import ProfileSchema from './ProfileSchema.js';
   source.addImportDeclaration({
     moduleSpecifier: model.name.toPathName('./%sSchema.js'),
@@ -61,11 +63,6 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: './events/index.js',
     namedImports: actions
   });
-  //import admin from './admin/routes.js';
-  source.addImportDeclaration({
-    moduleSpecifier: './admin/routes.js',
-    defaultImport: 'admin'
-  });
 
   //const columns = { name: NameColumn, ... };
   source.addVariableStatement({
@@ -91,7 +88,7 @@ export default function generate(directory: Directory, model: Model) {
       initializer: `{ ${actions.join(', ')} }`
     }]
   });
-  //export { AddressActions, AddressStore, events, admin };
+  //export { AddressActions, AddressStore, events };
   source.addExportDeclaration({
     namedExports: [
       model.name.toClassName('%sSchema'),
@@ -99,8 +96,7 @@ export default function generate(directory: Directory, model: Model) {
       model.name.toClassName('%sStore'),
       'columns',
       'events',
-      'listen',
-      'admin'
+      'listen'
     ]
   });
 
@@ -112,8 +108,7 @@ export default function generate(directory: Directory, model: Model) {
       Store: ${model.name.toClassName('%sStore')},
       columns,
       events,
-      listen,
-      admin
+      listen
     };
     export default factory;
   `);

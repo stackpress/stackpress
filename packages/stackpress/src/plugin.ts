@@ -1,7 +1,6 @@
 //stackpress
 import type Server from '@stackpress/ingest/Server';
 //module plugins
-//import client from 'stackpress-client/plugin.js';
 import schema from 'stackpress-schema/plugin';
 import sql from 'stackpress-sql/plugin';
 import view from 'stackpress-view/plugin';
@@ -13,7 +12,6 @@ import csrf from 'stackpress-csrf/plugin';
 
 export default async function plugin(server: Server) {
   //load the plugins
-  //client(server);
   schema(server);
   sql(server);
   view(server);

@@ -37,7 +37,6 @@ export type {
   SerializeInterfaceMap,
   UnserializeInterfaceMap,
   //used in config
-  TerminalInterface,
   ClientProjectProps,
   ClientPluginProps,
   ClientFieldset,

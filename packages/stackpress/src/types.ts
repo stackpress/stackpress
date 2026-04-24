@@ -17,7 +17,6 @@ export type {
 
 export type {
   //parts of the client plugin
-  TerminalInterface,
   ClientProjectProps,
   ClientPluginProps,
   ClientFieldset,

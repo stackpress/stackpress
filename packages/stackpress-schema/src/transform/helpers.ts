@@ -1,9 +1,10 @@
 //node
-import fs from 'node:fs/promises';
+import fs from 'node:fs';
+import fsp from 'node:fs/promises';
 import path from 'node:path';
 //modules
 import type { Project, Directory } from 'ts-morph';
-//stackpress-schema
+import Nest from '@stackpress/lib/Nest';
 import { TemplateEngine, helpers } from '@stackpress/lib/Template';
 
 export const cwd = process.cwd();
@@ -29,6 +30,14 @@ export async function createProject(to = 'schema') {
   });
 };
 
+export function loadPackageJsonNest(pwd: string) {
+  const filepath = path.resolve(pwd, 'package.json');
+  if (fs.existsSync(filepath)) {
+    return new Nest(JSON.parse(fs.readFileSync(filepath, 'utf-8')));
+  }
+  return new Nest();
+};
+
 export function loadProjectFile(
   project: Project | Directory, 
   filepath: string
@@ -51,7 +60,7 @@ export async function publishProject(project: Project) {
     const pretty = await prettier.default.format(content, { 
       parser: 'typescript' 
     });
-    await fs.writeFile(filePath, pretty);
+    await fsp.writeFile(filePath, pretty);
   }
 };
 
@@ -59,3 +68,11 @@ export function renderCode(template: string, data: Record<string, any> = {}) {
   const engine = new TemplateEngine({ helpers, delimiters: [ '<%', '%>' ] });
   return engine.render(template, data);
 };
+
+export function savePackageJsonNest(pwd: string, nest: Nest) {
+  if (!fs.existsSync(pwd)) {
+    fs.mkdirSync(pwd, { recursive: true });
+  }
+  const filepath = path.resolve(pwd, 'package.json');
+  fs.writeFileSync(filepath, JSON.stringify(nest.get(), null, 2));
+}

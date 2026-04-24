@@ -3,6 +3,7 @@ import type { Directory } from 'ts-morph';
 //stackpress-schema
 import type Fieldset from '../Fieldset.js';
 import type Model from '../Model.js';
+import type Schema from '../Schema.js';
 import { loadProjectFile } from './helpers.js';
 
 const objects = [ 'Json', 'Object', 'Hash' ];
@@ -81,11 +82,11 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
       'UnserializeInterfaceMap'
     ]
   });
-  //import type SchemaInterface from 'stackpress/SchemaInterface';
+  //import type { SchemaInterface } from 'stackpress/schema';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/SchemaInterface',
-    defaultImport: 'SchemaInterface'
+    moduleSpecifier: 'stackpress/schema',
+    namedImports: [ 'SchemaInterface' ]
   });
 
   //------------------------------------------------------------------//
@@ -250,6 +251,37 @@ export function generateModelTypes(directory: Directory, model: Model) {
       isExported: true,
       name: model.name.toTypeName('%sExtended'),
       type: model.name.toTypeName()
+    });
+  }
+};
+
+export function generateTypes(directory: Directory, schema: Schema) {
+  //load types.ts if it exists, if not create it
+  const source = loadProjectFile(directory, 'types.ts');
+
+  //export type * from './module/Profile/types.js';
+  for (const model of schema.models.values()) {
+    source.addExportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: model.name.toPathName('./%s/types.js'),
+      namedExports: [ 
+        model.name.toTypeName(),
+        model.name.toTypeName('%sInput'), 
+        model.name.toTypeName('%sExtended'), 
+        model.name.toTypeName('%sSchemaInterface')
+      ]
+    });
+  }
+  //export type * from './module/Address/types.js';
+  for (const fieldset of schema.fieldsets.values()) {
+    source.addExportDeclaration({
+      isTypeOnly: true,
+      moduleSpecifier: fieldset.name.toPathName('./%s/types.js'),
+      namedExports: [ 
+        fieldset.name.toTypeName(),
+        fieldset.name.toTypeName('%sInput'), 
+        fieldset.name.toTypeName('%sSchemaInterface')
+      ]
     });
   }
 };
