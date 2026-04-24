@@ -1,20 +1,14 @@
 //modules
 import { action } from '@stackpress/ingest/Server';
-//stackpress-server
-import type { TerminalPlugin } from '../types.js';
+//stackpress/scripts
 import develop from '../scripts/develop.js';
+//stackpress/terminal
+import type { TerminalPlugin } from '../types.js';
 
-export default action.props(async function DevelopScript({ res, ctx }) {
-  //if error, dont continue
-  if (res.code && res.code !== 200) return;
-  //cli setup
+export default action(async function DevelopScript(_req, res, ctx) {
+  //terminal setup
   const terminal = ctx.plugin<TerminalPlugin>('terminal');
-  //get server port
-  const port = ctx.config.path('server.port', 3000);
-  //get process name
-  const CHILD_ENV = ctx.config.path('server.process', 'STACKPRESS_CHILD');
-  //run the script
-  develop(terminal, ctx, port, CHILD_ENV);
-  
+  //start the server
+  await develop(terminal);
   res.setStatus(200);
 });
