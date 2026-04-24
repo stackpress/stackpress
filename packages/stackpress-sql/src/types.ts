@@ -151,6 +151,11 @@ export type StoreSearchQuery = StoreSelectQuery & {
 
 //for ingest
 
+export type SerializedEvent = {
+  event: string,
+  data: Record<string, any>
+};
+
 export type DatabaseConfig = {
   //used to encrypt/decrypt data in the database
   seed: string,
@@ -166,7 +171,8 @@ export type DatabaseConfig = {
   schema?: {
     onDelete?: 'CASCADE'|'SET NULL'|'RESTRICT',
     onUpdate?: 'CASCADE'|'SET NULL'|'RESTRICT'
-  }
+  },
+  populate?: Array<SerializedEvent>
 };
 
 export type DatabasePlugin = Engine;

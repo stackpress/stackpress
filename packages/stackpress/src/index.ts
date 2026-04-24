@@ -210,6 +210,7 @@ export type {
   StoreSelectQuery,
   StoreSearchQuery,
   StoreWhere,
+  SerializedEvent,
   //view types
   PreviewPlugin,
   RollupResults,

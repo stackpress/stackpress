@@ -163,6 +163,23 @@
       "import": "./esm/Schema.js"
     },
 
+    "./events/*": {
+      "require": "./cjs/events/*.js",
+      "import": "./esm/events/*.js"
+    },
+    "./events": {
+      "require": "./cjs/events/index.js",
+      "import": "./esm/events/index.js"
+    },
+    "./scripts/*": {
+      "require": "./cjs/scripts/*.js",
+      "import": "./esm/scripts/*.js"
+    },
+    "./scripts": {
+      "require": "./cjs/scripts/index.js",
+      "import": "./esm/scripts/index.js"
+    },
+
     "./dictionary": {
       "require": "./cjs/dictionary.js",
       "import": "./esm/dictionary.js"
@@ -228,6 +245,11 @@
       "Exception": [ "./cjs/Exception.d.ts" ],
       "Revisions": [ "./cjs/Revisions.d.ts" ],
       "Schema": [ "./cjs/Schema.d.ts" ],
+
+      "events/*": [ "./cjs/events/*.d.ts" ],
+      "events": [ "./cjs/events/index.d.ts" ],
+      "scripts/*": [ "./cjs/scripts/*.d.ts" ],
+      "scripts": [ "./cjs/scripts/index.d.ts" ],
       
       "dictionary": [ "./cjs/dictionary.d.ts" ],
       "helpers": [ "./cjs/helpers.d.ts" ],

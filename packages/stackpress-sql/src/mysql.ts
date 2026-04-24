@@ -47,6 +47,7 @@ export type {
   StoreSearchQuery,
   StoreWhere,
   //for ingest
+  SerializedEvent,
   DatabaseConfig,
   DatabasePlugin,
   //client

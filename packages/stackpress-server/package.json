@@ -34,6 +34,22 @@
       "require": "./cjs/Terminal.js",
       "import": "./esm/Terminal.js"
     },
+    "./events/*": {
+      "require": "./cjs/events/*.js",
+      "import": "./esm/events/*.js"
+    },
+    "./events": {
+      "require": "./cjs/events/index.js",
+      "import": "./esm/events/index.js"
+    },
+    "./scripts/*": {
+      "require": "./cjs/scripts/*.js",
+      "import": "./esm/scripts/*.js"
+    },
+    "./scripts": {
+      "require": "./cjs/scripts/index.js",
+      "import": "./esm/scripts/index.js"
+    },
     "./types": {
       "require": "./cjs/types.js",
       "import": "./esm/types.js"
@@ -53,6 +69,10 @@
       "http": [ "./cjs/http.d.ts" ],
       "plugin": [ "./cjs/plugin.d.ts" ],
       "Terminal": [ "./cjs/Terminal.d.ts" ],
+      "events/*": [ "./cjs/events/*.d.ts" ],
+      "events": [ "./cjs/events/index.d.ts" ],
+      "scripts/*": [ "./cjs/scripts/*.d.ts" ],
+      "scripts": [ "./cjs/scripts/index.d.ts" ],
       "types": [ "./cjs/types.d.ts" ],
       "whatwg": [ "./cjs/whatwg.d.ts" ],
       ".": [ "./cjs/index.d.ts" ]

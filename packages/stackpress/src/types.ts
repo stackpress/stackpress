@@ -260,7 +260,9 @@ export type {
   StoreSelectFilters,
   StoreSelectQuery,
   StoreSearchQuery,
-  StoreWhere
+  StoreWhere,
+  //for ingest
+  SerializedEvent
 } from './sql/types.js';
 
 export type {

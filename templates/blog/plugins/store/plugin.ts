@@ -12,8 +12,4 @@ export default function plugin(server: Server) {
     };
     server.register('database', connection);
   });
-  //on listen, add populate event
-  server.on('listen', async _ => {
-    server.on('populate', () => import('./populate.js'));
-  });
 };

@@ -8,6 +8,16 @@ import type Server from '@stackpress/ingest/Server';
 import { action } from '@stackpress/ingest/Server';
 //stackpress-sql
 import type { ClientPlugin } from './types.js';
+import {
+  install,
+  migrate,
+  purge,
+  push,
+  query,
+  populate,
+  uninstall,
+  upgrade
+} from './events/index.js';
 
 /**
  * This interface is intended for the Stackpress library.
@@ -15,6 +25,15 @@ import type { ClientPlugin } from './types.js';
 export default function plugin(ctx: Server) {
   //on listen, add database events
   ctx.on('listen', action.props(async ({ ctx }) => {
+    //add sql scripts
+    ctx.on('install', install);
+    ctx.on('migrate', migrate);
+    ctx.on('purge', purge);
+    ctx.on('push', push);
+    ctx.on('query', query);
+    ctx.on('populate', populate);
+    ctx.on('uninstall', uninstall);
+    ctx.on('upgrade', upgrade);
     //it's possible that the client isnt generated yet...
     //config, registry, model, fieldset
     const client = ctx.plugin<ClientPlugin>('client');
