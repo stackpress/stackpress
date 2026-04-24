@@ -2,6 +2,8 @@
 import { control } from '@stackpress/lib/Terminal';
 import Transformer from '@stackpress/idea-transformer/Transformer';
 //stackpress-server
+import * as events from './events/index.js';
+import * as scripts from './scripts/index.js';
 import Exception from './Exception.js';
 import Terminal from './Terminal.js';
 
@@ -48,6 +50,8 @@ export type {
 } from './types.js';
 
 export { 
+  events,
+  scripts,
   Terminal, 
   Transformer, 
   control,

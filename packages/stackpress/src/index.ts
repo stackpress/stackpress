@@ -464,3 +464,8 @@ export {
   defaultServerConfig,
   unknownHost
 } from './view/index.js';
+
+import * as events from './events.js';
+import * as scripts from './scripts.js';
+
+export { events, scripts };

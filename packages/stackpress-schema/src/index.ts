@@ -74,6 +74,8 @@ export {
 } from './config/definitions.js';
 
 import * as attributes from './config/attributes.js';
+import * as events from './events/index.js';
+import * as scripts from './scripts/index.js';
 
 import AttributeAssertion from './attribute/AttributeAssertion.js';
 import AttributeComponent from './attribute/AttributeComponent.js';
@@ -112,6 +114,8 @@ import Schema from './Schema.js';
 
 export {
   attributes,
+  events,
+  scripts,
   Attribute,
   AttributeAssertion,
   AttributeComponent,

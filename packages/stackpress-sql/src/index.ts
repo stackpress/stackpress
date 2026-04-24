@@ -90,7 +90,10 @@ export {
   storeSelectorToSqlSelector
 } from './helpers.js';
 
+import * as events from './events/index.js';
+import * as scripts from './scripts/index.js';
 import ActionsInterface from './interface/ActionsInterface.js';
 import StoreInterface from './interface/StoreInterface.js';
 
 export type { ActionsInterface, StoreInterface };
+export { events, scripts };
