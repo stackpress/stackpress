@@ -17,10 +17,10 @@ export default function generate(
     namedImports: [ 'isObject' ],
     moduleSpecifier: '@stackpress/lib/Nest'
   });
-  //import { validJSONObjectString } from 'stackpress/schema/helpers';
+  //import { validJSONObjectString } from 'stackpress-schema/helpers';
   source.addImportDeclaration({
     namedImports: [ 'validJSONObjectString'],
-    moduleSpecifier: 'stackpress/schema/helpers'
+    moduleSpecifier: 'stackpress-schema/helpers'
   });
   
   //public serialize<T>(value: T) {}

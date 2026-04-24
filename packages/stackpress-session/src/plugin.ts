@@ -42,8 +42,8 @@ export default function plugin(ctx: Server) {
     ctx.import.all(`${base}/signup`, () => import('./pages/signup.js'));
     ctx.import.all(`${base}/signout`, () => import('./pages/signout.js'));
     
-    ctx.view.all(`${base}/signin`, 'stackpress/esm/session/views/signin', -100);
-    ctx.view.all(`${base}/signin/:type`, 'stackpress/esm/session/views/signin', -100);
-    ctx.view.all(`${base}/signup`, 'stackpress/esm/session/views/signup', -100);
+    ctx.view.all(`${base}/signin`, 'stackpress-session/esm/views/signin', -100);
+    ctx.view.all(`${base}/signin/:type`, 'stackpress-session/esm/views/signin', -100);
+    ctx.view.all(`${base}/signup`, 'stackpress-session/esm/views/signup', -100);
   });
 };

@@ -11,14 +11,14 @@ export default function generate(
   column: Column
 ) {
   const notation = column.type.multiple ? '_' : '';
-  //import { encrypt, decrypt, hash } from 'stackpress/schema/helpers';
+  //import { encrypt, decrypt, hash } from 'stackpress-schema/helpers';
   if (column.value.encrypted || column.value.hashed) {
     source.addImportDeclaration({
       namedImports: [ 
         ...column.value.encrypted ? [ 'encrypt', 'decrypt' ] : [],
         ...column.value.hashed ? [ 'hash' ] : [],
       ],
-      moduleSpecifier: 'stackpress/schema/helpers'
+      moduleSpecifier: 'stackpress-schema/helpers'
     });
   }
 

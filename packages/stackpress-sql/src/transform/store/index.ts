@@ -50,10 +50,10 @@ export default function generate(directory: Directory, model: Model) {
   //  ValuePrimitive,
   //  ValueScalar,
   //  JSONScalarValue
-  //} from 'stackpress/sql/types';
+  //} from 'stackpress-sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql/types',
+    moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 
       ...(relations.size > 0 ? [ 'StoreJoin' ] : []),
       'StorePath',
@@ -66,9 +66,9 @@ export default function generate(directory: Directory, model: Model) {
       'JSONScalarValue'
     ]
   });
-  //import { getAlias, toSqlString, ... } from 'stackpress/sql/helpers';
+  //import { getAlias, toSqlString, ... } from 'stackpress-sql/helpers';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/helpers',
+    moduleSpecifier: 'stackpress-sql/helpers',
     namedImports: [ 
       ...(relations.size > 0 ? [ 'getAlias' ] : []),
       'flatten',

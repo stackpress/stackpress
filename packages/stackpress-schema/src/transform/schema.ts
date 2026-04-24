@@ -33,9 +33,9 @@ export default function generate(directory: Directory, model: Fieldset) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import { removeUndefined } from 'stackpress/schema/helpers';
+  //import { removeUndefined } from 'stackpress-schema/helpers';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/schema/helpers',
+    moduleSpecifier: 'stackpress-schema/helpers',
     namedImports: [ 'removeUndefined' ]
   });
 

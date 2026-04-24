@@ -17,21 +17,21 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { DatabasePlugin } from 'stackpress/sql/types';
+  //import type { DatabasePlugin } from 'stackpress-sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql/types',
+    moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'DatabasePlugin' ]
   });
-  //import type { Request, Response, Server } from 'stackpress/server';
+  //import type { Request, Response, Server } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/server',
+    moduleSpecifier: 'stackpress-server',
     namedImports: [ 'Request', 'Response', 'Server' ]
   });
-  //import Exception from 'stackpress/Exception';
+  //import Exception from 'stackpress-sql/Exception';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/Exception',
+    moduleSpecifier: 'stackpress-sql/Exception',
     defaultImport: 'Exception'
   });
 

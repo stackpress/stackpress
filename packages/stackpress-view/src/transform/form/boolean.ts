@@ -37,10 +37,10 @@ export default function generate(
   //------------------------------------------------------------------//
   // Import Modules
   
-  //import type { FieldProps, ControlProps } from 'stackpress/view/client';
+  //import type { FieldProps, ControlProps } from 'stackpress-view/client';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/view/client',
+    moduleSpecifier: 'stackpress-view/client',
     namedImports: [ 'FieldProps', 'ControlProps' ]
   });
   //import { useLanguage } from 'r22n';

@@ -85,21 +85,21 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Stackpress
 
-  //import type { StoreSelectFilters, StoreSelectQuery } from 'stackpress/sql/types';
+  //import type { StoreSelectFilters, StoreSelectQuery } from 'stackpress-sql/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql/types',
+    moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'StoreSelectFilters', 'StoreSelectQuery' ]
   });
-  //import { removeUndefined, removeEmptyStrings } from 'stackpress/schema/helpers';
+  //import { removeUndefined, removeEmptyStrings } from 'stackpress-schema/helpers';
   source.addImportDeclaration({
     namedImports: [ 'removeUndefined', 'removeEmptyStrings' ],
-    moduleSpecifier: 'stackpress/schema/helpers'
+    moduleSpecifier: 'stackpress-schema/helpers'
   });
-  //import Exception from 'stackpress/Exception';
+  //import Exception from 'stackpress-sql/Exception';
   source.addImportDeclaration({
     defaultImport: 'Exception',
-    moduleSpecifier: 'stackpress/Exception'
+    moduleSpecifier: 'stackpress-sql/Exception'
   });
 
   //------------------------------------------------------------------//

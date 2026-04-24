@@ -151,9 +151,9 @@ export default function generate(directory: Directory, column: Column) {
   //------------------------------------------------------------------//
   // Import Stackpress
   
-  //import ColumnInterface from 'stackpress/ColumnInterface';
+  //import ColumnInterface from 'stackpress-schema/ColumnInterface';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/ColumnInterface',
+    moduleSpecifier: 'stackpress-schema/ColumnInterface',
     defaultImport: 'ColumnInterface'
   });
 

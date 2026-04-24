@@ -17,15 +17,15 @@ export function generateModelTypes(directory: Directory, model: Model) {
   //load Profile/ProfileSchema.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
-  //import StoreInterface from 'stackpress/sql/StoreInterface';
+  //import StoreInterface from 'stackpress-sql/StoreInterface';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress/sql/StoreInterface',
+    moduleSpecifier: 'stackpress-sql/StoreInterface',
     defaultImport: 'StoreInterface'
   });
-  //import ActionsInterface from 'stackpress/sql/ActionsInterface';
+  //import ActionsInterface from 'stackpress-sql/ActionsInterface';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/sql/ActionsInterface',
+    moduleSpecifier: 'stackpress-sql/ActionsInterface',
     defaultImport: 'ActionsInterface'
   });
   //import ProfileStore from '../Profile/ProfileStore.js';

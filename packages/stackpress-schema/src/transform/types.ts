@@ -72,20 +72,20 @@ export function generateFieldsetTypes(directory: Directory, fieldset: Fieldset) 
   //  AssertInterfaceMap, 
   //  SerializeInterfaceMap, 
   //  UnserializeInterfaceMap 
-  //} from 'stackpress/schema/types';
+  //} from 'stackpress-schema/types';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/schema/types',
+    moduleSpecifier: 'stackpress-schema/types',
     namedImports: [
       'AssertInterfaceMap',
       'SerializeInterfaceMap',
       'UnserializeInterfaceMap'
     ]
   });
-  //import type { SchemaInterface } from 'stackpress/schema';
+  //import type { SchemaInterface } from 'stackpress-schema';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: 'stackpress/schema',
+    moduleSpecifier: 'stackpress-schema',
     namedImports: [ 'SchemaInterface' ]
   });
 
