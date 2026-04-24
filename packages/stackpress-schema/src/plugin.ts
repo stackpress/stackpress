@@ -129,12 +129,12 @@ export default function plugin(ctx: Server) {
   //on config, register the client as a plugin
   ctx.on('config', action.props(async ({ ctx }) => {
     const module = ctx.config.path('client.module', 'stackpress-client');
-    ctx.register('client', (nullable = false) => {
+    ctx.register('client', async (nullable = false) => {
       if (!nullable) {
-        return ctx.loader.import(module);
+        return await ctx.loader.import(module);
       }
       try {
-        return ctx.loader.import(module);
+        return await ctx.loader.import(module);
       } catch(e) {
         return null;
       }
