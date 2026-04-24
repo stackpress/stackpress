@@ -224,6 +224,12 @@ export type {
   //stackpress/csrf
   CsrfConfig,
   CsrfPlugin,
+  //stackpress/captcha
+  CaptchaConfig,
+  CaptchaProvider,
+  CaptchaEnforceConfig,
+  MCaptchaOptions,
+  CaptchaPlugin,
   //others
   Scalar,
   ExtendsType,

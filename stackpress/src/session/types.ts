@@ -5,6 +5,8 @@ import type Response from '@stackpress/ingest/Response';
 import { LanguageConfig } from '../language/types.js';
 //view
 import { ViewConfig, BrandConfig } from '../view/types.js';
+//captcha
+import type { CaptchaConfig } from '../captcha/types.js';
 //session
 import type SessionServer from './Session.js';
 
@@ -75,7 +77,7 @@ export type AuthConfig = {
   base?: string,
   redirect?: string,
   '2fa'?: {},
-  captcha?: {},
+  captcha?: CaptchaConfig,
   roles?: string[],
   username?: boolean,
   email?: boolean,

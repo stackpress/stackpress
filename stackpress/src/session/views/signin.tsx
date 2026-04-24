@@ -14,6 +14,8 @@ import type {
   AuthConfigProps,
   AuthExtended
 } from '../types.js';
+//captcha
+import CaptchaWidget from '../../captcha/components/CaptchaWidget.js';
 
 export type AuthSigninFormProps = {
   input: Partial<SigninInput>;
@@ -84,6 +86,7 @@ export function AuthSigninForm(props: AuthSigninFormProps) {
           required
         />
       </FieldControl>
+      <CaptchaWidget form="signin" errors={errors} />
       <div className="action">
         <Button className="submit" type="submit">
           {_('Sign In')}

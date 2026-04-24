@@ -10,6 +10,7 @@ import language from './language/plugin.js';
 import session from './session/plugin.js';
 import api from './api/plugin.js';
 import csrf from './csrf/plugin.js';
+import captcha from './captcha/plugin.js';
 
 export default async function plugin(server: Server) {
   //load the plugins
@@ -22,4 +23,5 @@ export default async function plugin(server: Server) {
   session(server);
   api(server);
   csrf(server);
+  captcha(server);
 };

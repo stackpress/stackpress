@@ -11,12 +11,16 @@ import type { DatabasePlugin } from '../../sql/types.js';
 //stackpress/session
 import type { ProfileAuth } from '../types.js';
 import { signup } from '../actions.js';
+//stackpress/captcha
+import { verifyCaptcha } from '../../captcha/verify.js';
 
 export default async function AuthSignup(
   req: Request, 
   res: Response,
   ctx: Server
 ) {
+  //verify captcha
+  if (!(await verifyCaptcha(ctx, req, res, 'signup'))) return;
   //get the roles from the config
   const roles = ctx.config.path<string[]>('auth.roles', []);
   //get the database engine 

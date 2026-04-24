@@ -113,6 +113,15 @@ export type {
 } from './session/types.js';
 
 export type {
+  CaptchaConfig,
+  CaptchaProvider,
+  CaptchaEnforceConfig,
+  CaptchaPlugin,
+  MCaptchaOptions,
+  HCaptchaOptions
+} from './captcha/types.js';
+
+export type {
   //inquire types
   Field,
   ForeignKey,

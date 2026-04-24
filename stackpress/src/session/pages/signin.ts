@@ -6,7 +6,8 @@ import type Server from '@stackpress/ingest/Server';
 import type { ViewConfig, BrandConfig } from '../../view/types.js';
 //session
 import type { AuthConfig, SessionPlugin } from '../types.js';
-import type { CsrfPlugin } from '../../types.js';
+//types
+import type { CaptchaConfig, CsrfPlugin } from '../../types.js';
 
 export default async function SignInPage(
   req: Request, 
@@ -22,6 +23,7 @@ export default async function SignInPage(
   const view = ctx.config.path<ViewConfig>('view', {});
   const brand = ctx.config.path<BrandConfig>('brand', {});
   const auth = ctx.config.path<AuthConfig>('auth');
+  const captcha = ctx.config.path<CaptchaConfig>('auth.captcha', {});
   //set data for template layer
   res.data.set('view', { 
     base: view.base || '/',
@@ -40,6 +42,14 @@ export default async function SignInPage(
     email: !!auth.email, 
     phone: !!auth.phone, 
     password: auth.password || {}
+  });
+  res.data.set('captcha', {
+    provider: captcha.provider,
+    enforce: captcha.enforce || {},
+    widgetUrl: captcha.widgetUrl,
+    siteKey: captcha.siteKey,
+    tokenField: captcha.tokenField,
+    options: captcha.options || {}
   });
   // /auth/signin/:type
   const redirect = req.data.path(

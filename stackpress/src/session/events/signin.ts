@@ -12,12 +12,16 @@ import type { DatabasePlugin } from '../../sql/types.js';
 //stackpress/session
 import type { SessionPlugin, SigninType } from '../types.js';
 import { signin } from '../actions.js';
+//stackpress/captcha
+import { verifyCaptcha } from '../../captcha/verify.js';
 
 export default async function AuthSignin(
   req: Request, 
   res: Response,
   ctx: Server
 ) {
+  //verify captcha
+  if (!(await verifyCaptcha(ctx, req, res, 'signin'))) return;
   //get the type of signin username, email, phone
   const type = req.data.path('type', 'username') as SigninType;
   //get password
