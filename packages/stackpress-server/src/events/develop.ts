@@ -5,6 +5,8 @@ import type { TerminalPlugin } from '../types.js';
 import develop from '../scripts/develop.js';
 
 export default action.props(async function DevelopScript({ res, ctx }) {
+  //if error, dont continue
+  if (res.code && res.code !== 200) return;
   //cli setup
   const terminal = ctx.plugin<TerminalPlugin>('terminal');
   //get server port

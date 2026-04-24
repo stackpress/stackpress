@@ -23,8 +23,10 @@
       "require": "./cjs/Layout.js",
       "import": "./esm/Layout.js"
     },
-    "./cjs/Layout": "./cjs/Layout.js",
     "./esm/Layout": "./esm/Layout.js",
+    "./cjs/Layout": "./cjs/Layout.js",
+    "./esm/views/*": "./esm/views/*.js",
+    "./cjs/views/*": "./cjs/views/*.js",
     "./helpers": {
       "require": "./cjs/helpers.js",
       "import": "./esm/helpers.js"
@@ -46,8 +48,10 @@
     "*": {
       "Exception": [ "./cjs/Exception.d.ts" ],
       "Layout": [ "./cjs/Layout.d.ts" ],
-      "cjs/Layout": [ "./cjs/Layout.d.ts" ],
       "esm/Layout": [ "./esm/Layout.d.ts" ],
+      "cjs/Layout": [ "./cjs/Layout.d.ts" ],
+      "esm/views/*": [ "./esm/views/*.d.ts" ],
+      "cjs/views/*": [ "./cjs/views/*.d.ts" ],
       "helpers": [ "./cjs/helpers.d.ts" ],
       "plugin": [ "./cjs/plugin.d.ts" ],
       "types": [ "./cjs/types.d.ts" ],

@@ -7,6 +7,8 @@ import type { SerializedEvent } from '../types.js';
 import populate from '../scripts/populate.js';
 
 export default action.props(async function PopulateScript({ res, ctx }) {
+  //if error, dont continue
+  if (res.code && res.code !== 200) return;
   //get terminal
   const terminal = ctx.plugin<TerminalPlugin>('terminal');
   //get events

@@ -23,6 +23,10 @@
       "require": "./cjs/interface/StoreInterface.js",
       "import": "./esm/interface/StoreInterface.js"
     },
+    "./Exception": {
+      "require": "./cjs/Exception.js",
+      "import": "./esm/Exception.js"
+    },
 
     "./helpers": {
       "require": "./cjs/helpers.js",
@@ -81,6 +85,7 @@
     "*": {
       "ActionsInterface": [ "./cjs/interface/ActionsInterface.d.ts" ],
       "StoreInterface": [ "./cjs/interface/StoreInterface.d.ts" ],
+      "Exception": [ "./cjs/Exception.d.ts" ],
       "helpers": [ "./cjs/helpers.d.ts" ],
       "mysql": [ "./cjs/mysql.d.ts" ],
       "pglite": [ "./cjs/pglite.d.ts" ],

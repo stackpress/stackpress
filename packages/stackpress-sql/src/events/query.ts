@@ -5,6 +5,8 @@ import { action } from '@stackpress/ingest/Server';
 import type { TerminalPlugin } from 'stackpress-server/types';
 
 export default action.props(async function QueryScript({ res, ctx }) {
+  //if error, dont continue
+  if (res.code && res.code !== 200) return;
   //cli setup
   const terminal = ctx.plugin<TerminalPlugin>('terminal');
   //get database

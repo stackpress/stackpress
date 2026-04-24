@@ -7,6 +7,8 @@ import type { TerminalPlugin } from 'stackpress-server/types';
 import install from '../scripts/install.js';
 
 export default action.props(async function InstallScript({ res, ctx }) {
+  //if error, dont continue
+  if (res.code && res.code !== 200) return;
   //get terminal
   const terminal = ctx.plugin<TerminalPlugin>('terminal');
   //get database
