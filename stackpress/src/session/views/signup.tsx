@@ -1,5 +1,6 @@
 //modules
 import { useLanguage } from 'r22n';
+import { useState } from 'react';
 import FieldControl from 'frui/form/FieldControl';
 import Button from 'frui/Button';
 import Input from 'frui/form/Input';
@@ -15,8 +16,10 @@ import { useServer } from '../../view/server/hooks.js';
 import type { 
   SignupInput, 
   AuthConfigProps,
-  Auth
+  Auth,
+  AuthConfig
 } from '../types.js';
+import PasswordStrength from '../components/PasswordStrength.js';
 
 export type AuthSignupFormProps = {
   input: Partial<SignupInput>;
@@ -24,11 +27,17 @@ export type AuthSignupFormProps = {
 };
 
 export function AuthSignupForm(props: AuthSignupFormProps) {
+  //props
   const { input, errors } = props;
+  //hooks
   const { _ } = useLanguage();
   const { config } = useServer();
+  const [ secret, setSecret ] = useState(input.secret ?? '');
+  //variables
   const tokenKey = config.path('csrf.name', 'csrf');
   const token = config.path('csrf.token', '');
+  const password = config.path<AuthConfig['password']>('auth.password', {});
+  //render
   return (
     <form className="auth-form" method="post">
       <input type="hidden" name={tokenKey} value={token} />
@@ -91,8 +100,10 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           error={!!errors.secret}
           defaultValue={input.secret}
           required
+          onChange={(event) => setSecret(event.target.value)}
         />
       </FieldControl>
+      <PasswordStrength secret={secret} rules={password} />
       <div className="action">
         <Button className="submit" type="submit">
           {_('Sign Up')}

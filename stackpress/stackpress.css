@@ -963,3 +963,90 @@
 .admin-search-page .no-results-icon {
   margin-right: 5px;
 }
+
+/* Password Strength */
+.password-strength {
+  margin-top: 8px;
+  max-width: 384px;
+  width: 100%;
+}
+
+.password-strength__bars {
+  display: flex;
+  gap: 6px;
+}
+
+.password-strength__bar {
+  background-color: rgb(229, 231, 235);
+  border-radius: 9999px;
+  flex: 1;
+  height: 4px;
+  transition: background-color 300ms ease, opacity 300ms ease;
+}
+
+.password-strength__bar--weak { background-color: rgb(239, 68, 68); }
+.password-strength__bar--fair { background-color: rgb(251, 191, 36); }
+.password-strength__bar--good { background-color: rgb(132, 204, 22); }
+.password-strength__bar--strong { background-color: rgb(16, 185, 129); }
+.password-strength__bar--neutral { background-color: rgb(229, 231, 235); }
+
+.password-strength__label {
+  color: rgb(156, 163, 175);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 8px;
+  min-height: 18px;
+  transition: color 300ms ease;
+}
+
+.password-strength__label--weak { color: rgb(239, 68, 68); }
+.password-strength__label--fair { color: rgb(245, 158, 11); }
+.password-strength__label--good { color: rgb(101, 163, 13); }
+.password-strength__label--strong { color: rgb(16, 185, 129); }
+.password-strength__label--placeholder { color: rgb(156, 163, 175); }
+
+.password-strength__checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.password-strength__check {
+  align-items: center;
+  color: rgb(156, 163, 175);
+  display: flex;
+  font-size: 0.75rem;
+  gap: 10px;
+  transition: color 200ms ease;
+}
+
+.password-strength__check--pass {
+  color: rgb(55, 65, 81);
+}
+
+.password-strength__check-dot {
+  align-items: center;
+  border: 1px solid rgb(209, 213, 219);
+  border-radius: 9999px;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 16px;
+  justify-content: center;
+  transition: background-color 200ms ease, border-color 200ms ease;
+  width: 16px;
+}
+
+.password-strength__check-dot--pass {
+  border-color: transparent;
+}
+
+.password-strength__check-dot--success { background-color: rgb(16, 185, 129); }
+.password-strength__check-dot--accent { background-color: rgb(139, 92, 246); }
+.password-strength__check-dot--info { background-color: rgb(59, 130, 246); }
+.password-strength__check-dot--warning { background-color: rgb(245, 158, 11); }
+
+.password-strength__check-icon {
+  color: rgb(255, 255, 255);
+  font-size: 12px;
+}

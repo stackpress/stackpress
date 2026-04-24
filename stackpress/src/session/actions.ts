@@ -12,7 +12,8 @@ import type {
   ProfileAuth, 
   SignupInput, 
   SigninType, 
-  SigninInput 
+  SigninInput, 
+  AuthConfig
 } from './types.js';
 
 /**
@@ -22,10 +23,11 @@ export async function signup(
   input: Partial<SignupInput>,
   seed: string,
   engine: Engine,
-  client: ClientPlugin
+  client: ClientPlugin,
+  password: AuthConfig['password']
 ): Promise<Partial<ProfileAuth>> {
   //validate input
-  const errors = assert(input);
+  const errors = assert(input, password);
   //if there are errors
   if (errors) {
     throw Exception.for('Invalid Parameters')
@@ -157,7 +159,7 @@ export async function signin(
 /**
  * Validate signup input
  */
-export function assert(input: Partial<SignupInput>) {
+export function assert(input: Partial<SignupInput>, config: AuthConfig['password']) {
   const errors: Record<string, string> = {};
   if (!input.name) {
     errors.name = 'Name is required';
@@ -169,6 +171,27 @@ export function assert(input: Partial<SignupInput>) {
   }
   if (!input.secret) {
     errors.secret = 'Password is required';
+  }
+  if (config?.min && input.secret && input.secret.length < config.min) {
+    errors.secret = `Password must be at least ${config.min} characters`;
+  }
+  if (config?.max && input.secret && input.secret.length > config.max) {
+    errors.secret = `Password must be less than ${config.max} characters`;
+  }
+  if (config?.upper && input.secret && !/[A-Z]/.test(input.secret)) {
+    errors.secret = 'Password must contain at least one uppercase letter';
+  }
+  if (config?.lower && input.secret && !/[a-z]/.test(input.secret)) {
+    errors.secret = 'Password must contain at least one lowercase letter';
+  }
+  if (config?.number && input.secret && !/[0-9]/.test(input.secret)) {
+    errors.secret = 'Password must contain at least one number';
+  }
+  if (
+    config?.special && 
+    input.secret && !/[!@#$%^&*(),.?":{}|<>]/.test(input.secret)
+  ) {
+    errors.secret = 'Password must contain at least one special character';
   }
   return Object.keys(errors).length ? errors : null;
 };

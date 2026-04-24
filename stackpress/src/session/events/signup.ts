@@ -9,7 +9,7 @@ import type { ClientPlugin } from '../../client/types.js';
 //stackpress/sql
 import type { DatabasePlugin } from '../../sql/types.js';
 //stackpress/session
-import type { ProfileAuth } from '../types.js';
+import type { AuthConfig, ProfileAuth } from '../types.js';
 import { signup } from '../actions.js';
 
 export default async function AuthSignup(
@@ -25,11 +25,13 @@ export default async function AuthSignup(
   const client = ctx.plugin<ClientPlugin>('client');
   //get the session seed
   const seed = ctx.config.path('database.seed', 'abc123');
+  //get password config
+  const password = ctx.config.path<AuthConfig['password']>('auth.password', {});
   //get input
   const input = { roles, ...req.data() };
   let results: Partial<ProfileAuth>; 
   try { //to sign up
-    results = await signup(input, seed, engine, client);
+    results = await signup(input, seed, engine, client, password);
   } catch (e) {
     const exception = Exception.upgrade(e as Error);
     //if e is an exception with errors
