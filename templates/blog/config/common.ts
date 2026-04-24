@@ -3,7 +3,6 @@ import path from 'node:path';
 //modules
 import type { ToastPosition } from 'react-toastify';
 //types
-import type { Method, ApiType } from 'stackpress/types';
 export type { Config } from 'stackpress/types';
 export type Cascade = 'CASCADE'|'RESTRICT'|'SET NULL';
 //pathnames
@@ -75,7 +74,7 @@ export const api = {
     {
       event: 'auth-signout',
       uri: 'http://localhost:3000/api/webhook',
-      method: 'POST' as Method,
+      method: 'POST' as 'POST',
       validity: {},
       data: {}
     }
@@ -93,52 +92,52 @@ export const api = {
   endpoints: [
     //Auth Endpoints
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/auth/search',
-      type: 'public' as ApiType,
+      type: 'public' as 'public',
       event: 'auth-search',
       cors: true,
       data: {}
     },
     //Profile Endpoints
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/profile/search',
-      type: 'app' as ApiType,
+      type: 'app' as 'app',
       scopes: [ 'user' ],
       event: 'profile-search',
       data: {}
     },
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/profile/detail/:id',
-      type: 'app' as ApiType,
+      type: 'app' as 'app',
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}
     },
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/profile/get/:key/:value',
-      type: 'app' as ApiType,
+      type: 'app' as 'app',
       scopes: [ 'user' ],
       event: 'profile-get',
       data: {}
     },
     //Address Endpoints
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/my/address',
-      type: 'session' as ApiType,
+      type: 'session' as 'session',
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}
     },
     //File Endpoints
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/my/files',
-      type: 'session' as ApiType,
+      type: 'session' as 'session',
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}
@@ -200,7 +199,7 @@ export const client = {
   prettier: {
     singleQuote: true,
     jsxSingleQuote: false,
-    trailingComma: 'none',
+    trailingComma: 'none' as 'none',
     bracketSpacing: true,
     experimentalTernaries: true
   }
