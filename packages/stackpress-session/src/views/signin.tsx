@@ -4,9 +4,10 @@ import FieldControl from 'frui/form/FieldControl';
 import Button from 'frui/Button';
 import Input from 'frui/form/Input';
 import PasswordInput from 'frui/form/PasswordInput';
-//stackpress-views
+//stackpress-view
 import type { NestedObject } from 'stackpress-view/client/types';
 import { useServer } from 'stackpress-view/server/hooks';
+import LayoutBlank from 'stackpress-view/layout/LayoutBlank';
 //stackpress-session
 import type { 
   SigninInput, 
@@ -14,7 +15,6 @@ import type {
   AuthExtended,
   AuthPageProps
 } from '../types.js';
-import Layout from '../components/Layout.js';
 
 export type AuthSigninFormProps = {
   input: Partial<SigninInput>;
@@ -193,9 +193,9 @@ export function AuthSigninHead(props: AuthPageProps) {
 
 export function AuthSigninPage(props: AuthPageProps) {
   return (
-    <Layout {...props}>
+    <LayoutBlank {...props}>
       <AuthSigninBody />
-    </Layout>
+    </LayoutBlank>
   );
 };
 
