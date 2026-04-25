@@ -1,4 +1,4 @@
-import type { LayoutRightProps } from '../client/types.js';
+import type { LayoutRightProps } from '../types.js';
 
 export type { LayoutRightProps };
 

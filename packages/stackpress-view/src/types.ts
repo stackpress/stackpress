@@ -149,5 +149,6 @@ export type {
   LanguageConfig,
   ServerConfigProps,
   ServerPageProps,
+  ServerConfigPageProps,
   NotifyConfig
 } from './client/types.js';

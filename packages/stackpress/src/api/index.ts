@@ -16,8 +16,4 @@ export type {
   SessionInput
 } from './types.js';
 
-export { 
-  Layout, 
-  App,
-  StackpressApiException
-} from 'stackpress-api';
+export { StackpressApiException } from 'stackpress-api';

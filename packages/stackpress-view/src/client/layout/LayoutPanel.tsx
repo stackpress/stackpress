@@ -6,7 +6,7 @@ import type {
   LayoutPanelProps,
   LayoutPanelAppProps,
   ServerConfigProps
-} from '../client/types.js';
+} from '../types.js';
 import { 
   useConfig, 
   useRequest
@@ -75,6 +75,7 @@ export default function LayoutPanel(props: LayoutPanelProps) {
   const { 
     cookie,
     data,
+    menu,
     session,
     request,
     response,
@@ -97,7 +98,7 @@ export default function LayoutPanel(props: LayoutPanelProps) {
       request={request}
       response={response}
     >
-      <LayoutPanelApp>{children}</LayoutPanelApp>
+      <LayoutPanelApp menu={menu}>{children}</LayoutPanelApp>
     </LayoutProvider>
   );
 };

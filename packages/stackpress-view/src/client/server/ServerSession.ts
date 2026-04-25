@@ -2,7 +2,7 @@
 import type { 
   ServerSessionProps, 
   ServerSessionPermission 
-} from '../types.js';
+} from './types.js';
 //stackpress/view/server
 import { matchAnyEvent, matchAnyRoute } from './helpers.js';
 

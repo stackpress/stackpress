@@ -6,7 +6,7 @@ import type {
   LayoutBlankProps,
   LayoutBlankAppProps,
   ServerConfigProps
-} from '../client/types.js';
+} from '../types.js';
 import { useConfig } from '../server/hooks.js';
 import { useTheme } from '../theme/hooks.js';
 import LayoutHead from './LayoutHead.js';

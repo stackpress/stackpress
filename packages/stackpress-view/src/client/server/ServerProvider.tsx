@@ -1,7 +1,7 @@
 //modules
 import type { UnknownNest } from '@stackpress/lib/types';
 //stackpress-view
-import type { ServerProviderProps } from '../types.js';
+import type { ServerProviderProps } from './types.js';
 import ServerContext from './ServerContext.js';
 import { withUnknownHost } from './helpers.js';
 

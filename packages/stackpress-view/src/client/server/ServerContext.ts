@@ -1,7 +1,7 @@
 //modules
 import { createContext } from 'react';
 //stackpress/view
-import type { ServerContextProps } from '../types.js';
+import type { ServerContextProps } from './types.js';
 import { withUnknownHost } from './helpers.js';
 
 export type { ServerContextProps };

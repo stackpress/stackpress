@@ -3,8 +3,9 @@ import { useLanguage } from 'r22n';
 import Button from 'frui/Button';
 import Switch from 'frui/form/Switch';
 //stackpress-view
-import type { ServerPageProps } from 'stackpress-view/types';
-import { useServer } from 'stackpress-view/client';
+import type { ServerPageProps } from 'stackpress-view/client/types';
+import { useServer } from 'stackpress-view/client/server/hooks';
+import LayoutBlank from 'stackpress-view/client/layout/LayoutBlank'; 
 //stackpress-api
 import type { 
   Scopes,
@@ -13,7 +14,6 @@ import type {
   ApiConfigProps, 
   ApplicationExtended 
 } from '../types.js';
-import Layout from '../Layout';
 
 export function ApiOauthForm(props: ApiOauthFormProps) {
   //props
@@ -162,9 +162,9 @@ export function ApiOauthHead(props: ServerPageProps<ApiConfigProps>) {
 
 export function ApiOauthPage(props: ServerPageProps<ApiConfigProps>) {
   return (
-    <Layout {...props}>
+    <LayoutBlank {...props}>
       <OAuthBody />
-    </Layout>
+    </LayoutBlank>
   );
 }
 

@@ -15,6 +15,18 @@
   "module": "./esm/index.js",
   "types": "./cjs/index.d.ts",
   "exports": {
+    "./client/layout/*": {
+      "require": "./cjs/client/layout/*.js",
+      "import": "./esm/client/layout/*.js"
+    },
+    "./client/server/*": {
+      "require": "./cjs/client/server/*.js",
+      "import": "./esm/client/server/*.js"
+    },
+    "./client/theme/*": {
+      "require": "./cjs/client/theme/*.js",
+      "import": "./esm/client/theme/*.js"
+    },
     "./client/types": {
       "require": "./cjs/client/types.js",
       "import": "./esm/client/types.js"
@@ -23,21 +35,22 @@
       "require": "./cjs/client/index.js",
       "import": "./esm/client/index.js"
     },
+    
     "./config/*": {
       "require": "./cjs/config/*.js",
       "import": "./esm/config/*.js"
     },
     "./layout/*": {
-      "require": "./cjs/layout/*.js",
-      "import": "./esm/layout/*.js"
+      "require": "./cjs/client/layout/*.js",
+      "import": "./esm/client/layout/*.js"
     },
     "./server/*": {
-      "require": "./cjs/server/*.js",
-      "import": "./esm/server/*.js"
+      "require": "./cjs/client/server/*.js",
+      "import": "./esm/client/server/*.js"
     },
     "./theme/*": {
-      "require": "./cjs/theme/*.js",
-      "import": "./esm/theme/*.js"
+      "require": "./cjs/client/theme/*.js",
+      "import": "./esm/client/theme/*.js"
     },
     "./transform": {
       "require": "./cjs/transform/index.js",
@@ -65,23 +78,32 @@
       "import": "./esm/index.js"
     },
 
-    "./cjs/layout/*": "./cjs/layout/*.js",
-    "./esm/layout/*": "./esm/layout/*.js",
-    "./cjs/server/*": "./cjs/server/*.js",
-    "./esm/server/*": "./esm/server/*.js",
-    "./cjs/theme/*": "./cjs/theme/*.js",
-    "./esm/theme/*": "./esm/theme/*.js",
+    "./cjs/client/layout/*": "./cjs/client/layout/*.js",
+    "./esm/client/layout/*": "./esm/client/layout/*.js",
+    "./cjs/client/server/*": "./cjs/client/server/*.js",
+    "./esm/client/server/*": "./esm/client/server/*.js",
+    "./cjs/client/theme/*": "./cjs/client/theme/*.js",
+    "./esm/client/theme/*": "./esm/client/theme/*.js",
+    "./cjs/layout/*": "./cjs/client/layout/*.js",
+    "./esm/layout/*": "./esm/client/layout/*.js",
+    "./cjs/server/*": "./cjs/client/server/*.js",
+    "./esm/server/*": "./esm/client/server/*.js",
+    "./cjs/theme/*": "./cjs/client/theme/*.js",
+    "./esm/theme/*": "./esm/client/theme/*.js",
 
     "./styles.css": "./styles.css"
   },
   "typesVersions": {
     "*": {
+      "client/layout/*": [ "./cjs/client/layout/*.d.ts" ],
+      "client/server/*": [ "./cjs/client/server/*.d.ts" ],
+      "client/theme/*": [ "./cjs/client/theme/*.d.ts" ],
       "client/types": [ "./cjs/client/types.d.ts" ],
       "client": [ "./cjs/client/index.d.ts" ],
       "config/*": [ "./cjs/config/*.d.ts" ],
-      "layout/*": [ "./cjs/layout/*.d.ts" ],
-      "server/*": [ "./cjs/server/*.d.ts" ],
-      "theme/*": [ "./cjs/theme/*.d.ts" ],
+      "layout/*": [ "./cjs/client/layout/*.d.ts" ],
+      "server/*": [ "./cjs/client/server/*.d.ts" ],
+      "theme/*": [ "./cjs/client/theme/*.d.ts" ],
       "transform": [ "./cjs/transform/index.d.ts" ],
 
       "Exception": [ "./cjs/Exception.d.ts" ],
@@ -90,6 +112,12 @@
       "types": [ "./cjs/types.d.ts" ],
       ".": [ "./cjs/index.d.ts" ],
 
+      "cjs/client/layout/*": [ "./cjs/client/layout/*.d.ts" ],
+      "esm/client/layout/*": [ "./esm/client/layout/*.d.ts" ],
+      "cjs/client/server/*": [ "./cjs/client/server/*.d.ts" ],
+      "esm/client/server/*": [ "./esm/client/server/*.d.ts" ],
+      "cjs/client/theme/*": [ "./cjs/client/theme/*.d.ts" ],
+      "esm/client/theme/*": [ "./esm/client/theme/*.d.ts" ],
       "cjs/layout/*": [ "./cjs/layout/*.d.ts" ],
       "esm/layout/*": [ "./esm/layout/*.d.ts" ],
       "cjs/server/*": [ "./cjs/server/*.d.ts" ],

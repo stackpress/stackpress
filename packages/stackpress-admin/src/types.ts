@@ -1,12 +1,8 @@
 export type {
   AdminConfig,
   AdminConfigProps,
+  AdminLayoutProps,
   AdminPageProps,
-  LayoutHeadProps,
-  LayoutLeftProps,
-  LayoutMainProps,
-  LayoutMenuProps,
-  LayoutRightProps,
   CSVParseError,
   CSVParseResults,
   BatchSendResults,

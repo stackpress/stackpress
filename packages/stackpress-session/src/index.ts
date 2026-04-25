@@ -1,4 +1,5 @@
 //local
+import StackpressSessionException from './Exception.js';
 import Session from './Session.js';
 import * as actions from './actions.js';
 
@@ -34,4 +35,4 @@ export {
   isRegExp
 } from './helpers.js';
 
-export { actions, Session };
+export { actions, Session, StackpressSessionException };

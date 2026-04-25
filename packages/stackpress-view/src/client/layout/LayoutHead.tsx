@@ -1,4 +1,4 @@
-import type { LayoutHeadProps } from '../client/types.js';
+import type { LayoutHeadProps } from '../types.js';
 
 export type { LayoutHeadProps };
 

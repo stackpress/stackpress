@@ -2,7 +2,7 @@
 import { R22nProvider } from 'r22n';
 import Notifier from 'frui/Notifier';
 //stackpress-view
-import type { LayoutProviderProps } from '../client/types.js';
+import type { LayoutProviderProps } from '../types.js';
 import ServerProvider from '../server/ServerProvider.js';
 import ThemeProvider from '../theme/ThemeProvider.js';
 

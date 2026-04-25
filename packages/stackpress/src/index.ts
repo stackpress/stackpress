@@ -159,6 +159,7 @@ export type {
   SigninInput,
   SigninType,
   AuthConfigProps,
+  AuthPageProps,
   Profile,
   ProfileExtended,
   ProfileInput,
@@ -225,9 +226,19 @@ export type {
   ServerProviderProps,
   ThemeContextProps,
   ThemeProviderProps,
-  ProviderProps,
+  LayoutHeadProps,
+  LayoutLeftProps,
+  LayoutMainProps,
+  LayoutMenuProps,
+  LayoutRightProps,
+  LayoutProviderProps,
+  LayoutBlankAppProps,
+  LayoutBlankProps,
+  LayoutPanelAppProps,
+  LayoutPanelProps,
   ServerConfigProps,
   ServerPageProps,
+  ServerConfigPageProps,
   NotifyConfig,
   //client, config, plugin types
   // parts of the client plugin
@@ -267,6 +278,8 @@ export type {
   // final config options
   Config
 } from './types.js';
+
+export { StackpressApiException } from './api/index.js';
 
 export { Language } from './language/index.js';
 
@@ -461,6 +474,26 @@ export {
   Document as ReactusDocument, 
   Server as ReactusServer,
   //stackpress-view (client)
+  useRequest, 
+  useResponse, 
+  useConfig, 
+  useSession, 
+  useServer,
+  ServerContext,
+  ServerProvider,
+  ServerRequest,
+  ServerResponse,
+  ThemeContext,
+  ThemeProvider,
+  LayoutHead,
+  LayoutLeft,
+  LayoutMain,
+  LayoutMenu,
+  LayoutRight,
+  LayoutUser,
+  LayoutProvider,
+  LayoutBlank,
+  LayoutPanel,
   defaultServerConfig,
   unknownHost,
   //helpers

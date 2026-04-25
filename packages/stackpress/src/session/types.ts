@@ -9,6 +9,7 @@ export type {
   SigninInput,
   SigninType,
   AuthConfigProps,
+  AuthPageProps,
   AuthConfig,
   SessionConfig,
   SessionPlugin,

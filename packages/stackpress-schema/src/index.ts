@@ -107,10 +107,11 @@ import ModelStore from './model/ModelStore.js';
 
 import Attribute from './Attribute.js';
 import Column from './Column.js';
-import Exception from './Exception.js';
 import Fieldset from './Fieldset.js';
 import Model from './Model.js';
 import Schema from './Schema.js';
+
+import StackpressSchemaException from './Exception.js';
 
 export {
   attributes,
@@ -131,7 +132,6 @@ export {
   ColumnStore,
   ColumnType,
   ColumnValue,
-  Exception as StackpressSchemaException,
   Fieldset,
   FieldsetAssertion,
   FieldsetComponent,
@@ -144,5 +144,6 @@ export {
   SchemaInterface,
   Model,
   ModelStore,
-  Schema
+  Schema,
+  StackpressSchemaException,
 };

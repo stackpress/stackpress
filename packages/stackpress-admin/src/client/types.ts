@@ -1,11 +1,11 @@
 //modules
-import type { ReactNode } from 'react';
 import type { StatusResponse, UnknownNest } from '@stackpress/lib/types';
 //stackpress-view
 import type { 
+  ServerConfigPageProps,
   ServerConfigProps, 
-  ServerPageProps 
-} from 'stackpress-view/types';
+  LayoutProviderProps 
+} from 'stackpress-view/client/types';
 
 //NOTE: These need to be client/browser safe exports.
 
@@ -34,63 +34,11 @@ export type AdminConfigProps = ServerConfigProps & {
   admin: AdminConfig
 };
 
-export type AdminPageProps = ServerPageProps<AdminConfigProps>;
+export type AdminLayoutProps = LayoutProviderProps<AdminConfigProps>;
 
-//--------------------------------------------------------------------//
-// Layout Types
-
-export type LayoutHeadProps = {
-  left?: boolean,
-  right?: boolean,
-  open?: {
-    left?: boolean,
-    right?: boolean
-  },
-  theme: string,
-  base?: string,
-  logo?: string,
-  brand?: string,
-  toggleLeft?: () => void,
-  toggleRight?: () => void,
-  toggleTheme?: () => void
-};
-
-export type LayoutLeftProps = {
-  base?: string,
-  brand?: string,
-  head?: boolean,
-  logo?: string,
-  open?: boolean,
-  toggle: () => void,
-  children: ReactNode
-};
-
-export type LayoutMainProps = {
-  head?: boolean,
-  left?: boolean,
-  right?: boolean,
-  open?: {
-    left?: boolean,
-    right?: boolean
-  },
-  children: ReactNode
-};
-
-export type LayoutMenuProps = {
-  path?: string,
-  menu: {
-    name: string,
-    icon: string,
-    path: string,
-    match: string
-  }[]
-};
-
-export type LayoutRightProps = {
-  open: boolean,
-  head?: boolean,
-  children: ReactNode
-};
+export type AdminPageProps = ServerConfigPageProps<{
+  admin: AdminConfig
+}>;
 
 //--------------------------------------------------------------------//
 // Import Types

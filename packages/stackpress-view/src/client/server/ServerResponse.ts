@@ -10,7 +10,7 @@ import Status from '@stackpress/lib/Status';
 import Exception from '@stackpress/lib/Exception';
 import { nest, isObject } from '@stackpress/lib/Nest';
 //stackpress-view
-import type { ServerResponseProps } from '../types.js';
+import type { ServerResponseProps } from './types.js';
 
 export type { ServerResponseProps };
 

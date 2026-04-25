@@ -1,6 +1,6 @@
-import Exception from './Exception.js';
+import StackpressViewException from './Exception.js';
 
-export { Exception as StackpressViewException };
+export { StackpressViewException };
 
 export type {
   ViewConfig,
@@ -40,6 +40,7 @@ export type {
   LanguageConfig,
   ServerConfigProps,
   ServerPageProps,
+  ServerConfigPageProps,
   NotifyConfig
 } from './types.js';
 

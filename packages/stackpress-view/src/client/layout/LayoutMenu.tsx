@@ -1,4 +1,4 @@
-import type { LayoutMenuProps } from '../client/types.js';
+import type { LayoutMenuProps } from '../types.js';
 import { useSession } from '../server/hooks.js';
 
 export type { LayoutMenuProps };

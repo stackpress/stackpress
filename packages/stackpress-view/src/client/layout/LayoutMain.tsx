@@ -1,4 +1,4 @@
-import type { LayoutMainProps } from '..//client/types.js';
+import type { LayoutMainProps } from '../types.js';
 
 export type { LayoutMainProps };
 

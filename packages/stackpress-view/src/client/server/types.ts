@@ -1,6 +1,58 @@
 //modules
 import type { ReactNode } from 'react';
 import type { StatusResponse, UnknownNest } from '@stackpress/lib/types';
+import type { NotifierOptions } from 'frui/Notifier';
+//stackpress-language
+import type { LanguageConfig } from 'stackpress-language/types';
+
+//--------------------------------------------------------------------//
+// Config Types
+
+//ie. ctx.config<BrandConfig>('brand')
+export type BrandConfig = {
+  name?: string,
+  logo?: string,
+  icon?: string,
+  favicon?: string
+};
+
+//ie. ctx.config<ViewConfig>('view')
+export type ViewConfig = {
+  //url flag (ie. ?json) used to disable template 
+  //rendering and show the raw json data instead
+  //defaults to `json`
+  noview?: string,
+  //used by vite and in development mode
+  //to determine the root of the project
+  //defaults to `/`
+  base?: string,
+  props?: Record<string, unknown>,
+  //notifier (frui) settings
+  notify?: NotifierOptions
+};
+
+//--------------------------------------------------------------------//
+// Server Types
+
+export type ServerConfigProps<
+  C extends UnknownNest = UnknownNest
+> = C & {
+  brand: BrandConfig,
+  language: LanguageConfig,
+  view: ViewConfig
+};
+
+export type ServerPageProps<
+  C extends UnknownNest = UnknownNest,
+  I extends UnknownNest = UnknownNest,
+  O = UnknownNest
+> = ServerProps<C, I, O> & { styles?: string[] };
+
+export type ServerConfigPageProps<
+  C extends UnknownNest = UnknownNest,
+  I extends UnknownNest = UnknownNest,
+  O = UnknownNest
+> = ServerPageProps<ServerConfigProps<C>, I, O>;
 
 export type Method = 'GET' | 'ALL' 
   | 'CONNECT' | 'DELETE' 

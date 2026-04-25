@@ -4,8 +4,8 @@ import Transformer from '@stackpress/idea-transformer/Transformer';
 //stackpress-server
 import * as events from './events/index.js';
 import * as scripts from './scripts/index.js';
-import Exception from './Exception.js';
 import Terminal from './Terminal.js';
+import StackpressServerException from './Exception.js';
 
 export type { 
   TerminalConfig, 
@@ -55,7 +55,7 @@ export {
   Terminal, 
   Transformer, 
   control,
-  Exception as StackpressServerException, 
+  StackpressServerException
 };
 
 export {
