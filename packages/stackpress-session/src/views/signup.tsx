@@ -1,33 +1,180 @@
 //modules
+import { useState } from 'react';
 import { useLanguage } from 'r22n';
 import FieldControl from 'frui/form/FieldControl';
 import Button from 'frui/Button';
 import Input from 'frui/form/Input';
 import PasswordInput from 'frui/form/PasswordInput';
-//stackpress-views
+import Progress from 'frui/Progress';
+//stackpress-view
 import type { NestedObject } from 'stackpress-view/client/types';
 import { useServer } from 'stackpress-view/server/hooks';
+import LayoutBlank from 'stackpress-view/layout/LayoutBlank';
 //stackpress-session
-import type { AuthPageProps } from '../types.js';
-import Layout from '../Layout.js';
-//session
 import type { 
-  SignupInput, 
+  AuthConfig,
+  AuthPageProps,
   AuthConfigProps,
+  SignupInput, 
   Auth
 } from '../types.js';
+
+//--------------------------------------------------------------------//
+// Types
+
+export type PasswordStrengthProps = {
+  secret: string,
+  rules: AuthConfig['password']
+};
+
+export type PasswordCheck = {
+  id: string,
+  label: string,
+  weight: number,
+  score: (value: string) => number
+};
 
 export type AuthSignupFormProps = {
   input: Partial<SignupInput>;
   errors: NestedObject<string | string[]>;
 };
 
+//--------------------------------------------------------------------//
+// Helpers
+
+export function passwordChecklist(rules: AuthConfig['password'] = {}) {
+  const checks: PasswordCheck[] = [];
+
+  if (rules.min) {
+    const min = rules.min;
+    checks.push({
+      id: 'min',
+      label: `At least ${min} characters`,
+      weight: min,
+      score: (val: string) => val.length >= min ? min : val.length
+    });
+  }
+
+  if (rules.max) {
+    const min = rules.min || 0;
+    const max = rules.max;
+    checks.push({
+      id: 'max',
+      label: `No more than ${max} characters`,
+      weight: max - min,
+      score: (val: string) => val.length < min 
+        ? 0
+        : val.length <= max 
+        ? (max - min) - (max - val.length)
+        : 0
+    });
+  }
+
+  if (rules.upper) {
+    checks.push({
+      id: 'upper',
+      label: 'Uppercase letter (A–Z)',
+      weight: 1,
+      score: (val: string) => Number(/[A-Z]/.test(val))
+    });
+  }
+
+  if (rules.lower) {
+    checks.push({
+      id: 'lower',
+      label: 'Lowercase letter (a–z)',
+      weight: 1,
+      score: (val: string) => Number(/[a-z]/.test(val))
+    });
+  }
+
+  if (rules.number) {
+    checks.push({
+      id: 'number',
+      label: 'Number (0–9)',
+      weight: 1,
+      score: (val: string) => Number(/[0-9]/.test(val))
+    });
+  }
+
+  if (rules.special) {
+    checks.push({
+      id: 'special',
+      label: 'Special character (!@#$…)',
+      weight: 1,
+      score: (val: string) => Number(/[^A-Za-z0-9\s]/.test(val))
+    });
+  }
+
+  return checks;
+};
+
+export function evaluatePassword(secret: string, checks: PasswordCheck[]) {
+  if (!secret || checks.length === 0) {
+    return { failed: [], score: 0 };
+  }
+  const failed: { id: string, label: string }[] = [];
+  const total = checks.reduce((weight, check) => {
+    return weight + check.weight;
+  }, 0);
+  const score = checks.reduce((score, check) => {
+    const grade = check.score(secret);
+    if (grade !== check.weight) {
+      failed.push({ id: check.id, label: check.label });
+    }
+    return score + grade;
+  }, 0);
+  return { failed, score: Math.floor((score / total) * 100) };
+};
+
+//--------------------------------------------------------------------//
+// Components
+
+export function PasswordStrength(props: PasswordStrengthProps) {
+  //props
+  const { secret, rules } = props;
+  //hooks
+  const { _ } = useLanguage();
+  //variables
+  const checklist = passwordChecklist(rules);
+  const { failed, score } = evaluatePassword(secret, checklist);
+  //render
+  return secret.length > 0 ?(
+    <div className="password-strength">
+      <Progress
+        error={score < 25}
+        warning={score >= 25 && score < 50}
+        info={score >= 50 && score < 75}
+        success={score >= 75}
+        width={score}
+        height={10}
+      />
+      {failed.length > 0 && (
+        <div className="password-strength-checklist">
+          {failed.map(({ id, label }) => (
+            <div key={id} className="password-strength-checklist-item">
+              <i className="fas fa-times" />
+              {_(label)}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  ): null;
+};
+
 export function AuthSignupForm(props: AuthSignupFormProps) {
+  //props
   const { input, errors } = props;
+  //hooks
   const { _ } = useLanguage();
   const { config } = useServer();
+  const [ secret, setSecret ] = useState(input.secret ?? '');
+  //variables
   const tokenKey = config.path('csrf.name', 'csrf');
   const token = config.path('csrf.token', '');
+  const password = config.path<AuthConfig['password']>('auth.password', {});
+  //render
   return (
     <form className="auth-form" method="post">
       <input type="hidden" name={tokenKey} value={token} />
@@ -90,7 +237,9 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           error={!!errors.secret}
           defaultValue={input.secret}
           required
+          onChange={(e) => setSecret(e.target.value)}
         />
+        <PasswordStrength secret={secret} rules={password} />
       </FieldControl>
       <div className="action">
         <Button className="submit" type="submit">
@@ -168,9 +317,9 @@ export function AuthSignupHead(props: AuthPageProps) {
 
 export function AuthSignupPage(props: AuthPageProps) {
   return (
-    <Layout {...props}>
+    <LayoutBlank {...props}>
       <AuthSignupBody />
-    </Layout>
+    </LayoutBlank>
   );
 };
 

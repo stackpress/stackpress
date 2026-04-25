@@ -23,12 +23,12 @@ export type AuthConfig = {
   email?: boolean,
   phone?: boolean,
   password?: {
-    min: number,
-    max: number,
-    upper: boolean,
-    lower: boolean,
-    number: boolean,
-    special: boolean
+    min?: number,
+    max?: number,
+    upper?: boolean,
+    lower?: boolean,
+    number?: boolean,
+    special?: boolean
   }
 };
 

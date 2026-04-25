@@ -1,0 +1,141 @@
+/* Auth Page */
+
+.auth-page {
+  background-color: var(--bg-zero);
+  height: 100%;
+  overflow: auto;
+  width: 100%;
+}
+.auth-page .container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  width: 360px;
+}
+.auth-page .container .logo {
+  display: block;
+  margin: 10px auto;
+}
+.auth-page .container .brand {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.auth-page .auth-modal {
+  background-color: var(--bg-first);
+  border: 1px solid var(--bg-third);
+  width: 100%;
+}
+
+.auth-page .auth-modal > header {
+  align-items: center;
+  background-color: var(--bg-second);
+  display: flex;
+  padding: 10px;
+}
+
+.auth-page .auth-modal > header .label {
+  font-weight: normal;
+  font-size: 16px;
+  margin-left: 5px;
+  text-transform: uppercase;
+}
+
+.auth-page .auth-modal .auth-tabs {
+  background-color: var(--bg-zero);
+  display: flex;
+  overflow-x: auto;
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+.auth-page .auth-modal .auth-tabs .auth-tab {
+  align-items: center;
+  border-bottom: 0;
+  border-left: 1px solid var(--bg-first);
+  border-right: 1px solid var(--bg-first);
+  border-top: 1px solid var(--bg-first);
+  color: var(--default);
+  display: inline-flex;
+  margin-left: 2px;
+  padding: 10px;
+  position: relative;
+}
+.auth-page .auth-modal .auth-tabs .auth-tab.active {
+  background-color: var(--bg-first);
+  border: 0;
+}
+.auth-page .auth-modal .auth-tabs .auth-tab .label {
+  display: inline-block;
+  margin-left: 2px;
+}
+
+.auth-page .auth-modal .auth-form {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.auth-page .auth-modal .auth-form .control {
+  padding-top: 20px;
+}
+
+.auth-page .auth-modal .auth-form .field {
+  display: block;
+}
+
+.auth-page .auth-modal .auth-form .action {
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+
+.auth-page .auth-modal .auth-form .action .submit {
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  padding-bottom: 8px;
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 8px;
+  width: 100%;
+}
+
+.auth-page .auth-modal > footer {
+  padding: 0 0 20px;
+  text-align: center;
+}
+
+.auth-page .auth-modal > footer a {
+  color: var(--info);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+/* Auth Signin Page */
+
+.auth-signin-page {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+/* Auth Signup Page */
+
+.auth-signup-page {
+  padding-bottom: 40px;
+  padding-top: 40px;
+}
+
+.auth-signup-page .password-strength-checklist-item {
+  align-items: center;
+  display: flex;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.auth-signup-page .password-strength-checklist-item i {
+  color: var(--error);
+  display: inline-block;
+  margin-right: 5px;
+}

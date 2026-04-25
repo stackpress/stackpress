@@ -15,25 +15,26 @@
   "module": "./esm/index.js",
   "types": "./cjs/index.d.ts",
   "exports": {
-    "./Exception": {
-      "require": "./cjs/Exception.js",
-      "import": "./esm/Exception.js"
+    "./events/*": {
+      "require": "./cjs/events/*.js",
+      "import": "./esm/events/*.js"
     },
-    "./Layout": {
-      "require": "./cjs/Layout.js",
-      "import": "./esm/Layout.js"
+    "./pages/*": {
+      "require": "./cjs/pages/*.js",
+      "import": "./esm/pages/*.js"
     },
-    "./esm/Layout": "./esm/Layout.js",
-    "./cjs/Layout": "./cjs/Layout.js",
-    "./esm/views/*": "./esm/views/*.js",
-    "./cjs/views/*": "./cjs/views/*.js",
-    "./Session": {
-      "require": "./cjs/Session.js",
-      "import": "./esm/Session.js"
+    "./views/*": {
+      "require": "./cjs/views/*.js",
+      "import": "./esm/views/*.js"
     },
+    
     "./actions": {
       "require": "./cjs/actions.js",
       "import": "./esm/actions.js"
+    },
+    "./Exception": {
+      "require": "./cjs/Exception.js",
+      "import": "./esm/Exception.js"
     },
     "./helpers": {
       "require": "./cjs/helpers.js",
@@ -43,6 +44,10 @@
       "require": "./cjs/plugin.js",
       "import": "./esm/plugin.js"
     },
+    "./Session": {
+      "require": "./cjs/Session.js",
+      "import": "./esm/Session.js"
+    },
     "./types": {
       "require": "./cjs/types.js",
       "import": "./esm/types.js"
@@ -50,29 +55,36 @@
     ".": {
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
-    }
+    },
+
+    "./esm/views/*": "./esm/views/*.js",
+    "./cjs/views/*": "./cjs/views/*.js",
+    "./styles.css": "./styles.css"
   },
   "typesVersions": {
     "*": {
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "Layout": [ "./cjs/Layout.d.ts" ],
-      "esm/Layout": [ "./esm/Layout.d.ts" ],
-      "cjs/Layout": [ "./cjs/Layout.d.ts" ],
-      "esm/views/*": [ "./esm/views/*.d.ts" ],
-      "cjs/views/*": [ "./cjs/views/*.d.ts" ],
-      "Session": [ "./cjs/Session.d.ts" ],
+      "events/*": [ "./cjs/events/*.d.ts" ],
+      "pages/*": [ "./cjs/pages/*.d.ts" ],
+      "views/*": [ "./cjs/views/*.d.ts" ],
+
       "actions": [ "./cjs/actions.d.ts" ],
+      "Exception": [ "./cjs/Exception.d.ts" ],
       "helpers": [ "./cjs/helpers.d.ts" ],
       "plugin": [ "./cjs/plugin.d.ts" ],
+      "Session": [ "./cjs/Session.d.ts" ],
       "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ]
+      ".": [ "./cjs/index.d.ts" ],
+      
+      "esm/views/*": [ "./esm/views/*.d.ts" ],
+      "cjs/views/*": [ "./cjs/views/*.d.ts" ]
     }
   },
   "files": [
     "cjs",
     "esm",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "styles.css"
   ],
   "scripts": {
     "build": "yarn build:tsc && yarn build:pkg",

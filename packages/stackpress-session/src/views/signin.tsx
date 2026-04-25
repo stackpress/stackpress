@@ -14,7 +14,7 @@ import type {
   AuthExtended,
   AuthPageProps
 } from '../types.js';
-import Layout from '../Layout.js';
+import Layout from '../components/Layout.js';
 
 export type AuthSigninFormProps = {
   input: Partial<SigninInput>;
