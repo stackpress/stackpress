@@ -179,7 +179,7 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
   //variables
   const tokenKey = config.path('csrf.name', 'csrf');
   const token = config.path('csrf.token', '');
-  const password = config.path<PasswordConfig>('auth.password', {});
+  const password = config.path<PasswordConfig>('auth.password');
   //render
   return (
     <form className="auth-form" method="post">
@@ -245,7 +245,9 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
           required
           onChange={(e) => setSecret(e.target.value)}
         />
-        <PasswordStrength secret={secret} rules={password} />
+        {!!password && (
+          <PasswordStrength secret={secret} rules={password} />
+        )}
       </FieldControl>
       <div className="action">
         <Button className="submit" type="submit">
