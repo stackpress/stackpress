@@ -125,11 +125,10 @@ export function evaluatePassword(secret: string, checks: PasswordCheck[]) {
     return weight + check.weight;
   }, 0);
   const score = checks.reduce((score, check) => {
-    const grade = check.score(secret);
     if (!check.pass(secret)) {
       failed.push({ id: check.id, label: check.label });
     }
-    return score + grade;
+    return score + check.score(secret);
   }, 0);
   return { failed, score: Math.floor((score / total) * 100) };
 };
