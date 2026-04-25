@@ -11,12 +11,12 @@ import type { NestedObject } from 'stackpress-view/client/types';
 import { useServer } from 'stackpress-view/client/server/hooks';
 import LayoutBlank from 'stackpress-view/client/layout/LayoutBlank';
 //stackpress-session
-import type { 
-  AuthConfig,
+import type {
+  Auth, 
   AuthPageProps,
   AuthConfigProps,
-  SignupInput, 
-  Auth
+  PasswordConfig,
+  SignupInput
 } from '../types.js';
 
 //--------------------------------------------------------------------//
@@ -24,14 +24,15 @@ import type {
 
 export type PasswordStrengthProps = {
   secret: string,
-  rules: AuthConfig['password']
+  rules: PasswordConfig
 };
 
 export type PasswordCheck = {
   id: string,
   label: string,
   weight: number,
-  score: (value: string) => number
+  score: (value: string) => number,
+  pass: (value: string) => boolean
 };
 
 export type AuthSignupFormProps = {
@@ -42,7 +43,7 @@ export type AuthSignupFormProps = {
 //--------------------------------------------------------------------//
 // Helpers
 
-export function passwordChecklist(rules: AuthConfig['password'] = {}) {
+export function passwordChecklist(rules: PasswordConfig = {}) {
   const checks: PasswordCheck[] = [];
 
   if (rules.min) {
@@ -51,7 +52,8 @@ export function passwordChecklist(rules: AuthConfig['password'] = {}) {
       id: 'min',
       label: `At least ${min} characters`,
       weight: min,
-      score: (val: string) => val.length >= min ? min : val.length
+      score: (val: string) => val.length >= min ? min : val.length,
+      pass: (val: string) => val.length >= min
     });
   }
 
@@ -66,7 +68,8 @@ export function passwordChecklist(rules: AuthConfig['password'] = {}) {
         ? 0
         : val.length <= max 
         ? (max - min) - (max - val.length)
-        : 0
+        : 0,
+      pass: (val: string) => val.length <= max
     });
   }
 
@@ -75,7 +78,8 @@ export function passwordChecklist(rules: AuthConfig['password'] = {}) {
       id: 'upper',
       label: 'Uppercase letter (A–Z)',
       weight: 1,
-      score: (val: string) => Number(/[A-Z]/.test(val))
+      score: (val: string) => Number(/[A-Z]/.test(val)),
+      pass: (val: string) => /[A-Z]/.test(val)
     });
   }
 
@@ -84,7 +88,8 @@ export function passwordChecklist(rules: AuthConfig['password'] = {}) {
       id: 'lower',
       label: 'Lowercase letter (a–z)',
       weight: 1,
-      score: (val: string) => Number(/[a-z]/.test(val))
+      score: (val: string) => Number(/[a-z]/.test(val)),
+      pass: (val: string) => /[a-z]/.test(val)
     });
   }
 
@@ -93,7 +98,8 @@ export function passwordChecklist(rules: AuthConfig['password'] = {}) {
       id: 'number',
       label: 'Number (0–9)',
       weight: 1,
-      score: (val: string) => Number(/[0-9]/.test(val))
+      score: (val: string) => Number(/[0-9]/.test(val)),
+      pass: (val: string) => /[0-9]/.test(val)
     });
   }
 
@@ -102,7 +108,8 @@ export function passwordChecklist(rules: AuthConfig['password'] = {}) {
       id: 'special',
       label: 'Special character (!@#$…)',
       weight: 1,
-      score: (val: string) => Number(/[^A-Za-z0-9\s]/.test(val))
+      score: (val: string) => Number(/[^A-Za-z0-9\s]/.test(val)),
+      pass: (val: string) => /[^A-Za-z0-9\s]/.test(val)
     });
   }
 
@@ -119,7 +126,7 @@ export function evaluatePassword(secret: string, checks: PasswordCheck[]) {
   }, 0);
   const score = checks.reduce((score, check) => {
     const grade = check.score(secret);
-    if (grade !== check.weight) {
+    if (!check.pass(secret)) {
       failed.push({ id: check.id, label: check.label });
     }
     return score + grade;
@@ -173,7 +180,7 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
   //variables
   const tokenKey = config.path('csrf.name', 'csrf');
   const token = config.path('csrf.token', '');
-  const password = config.path<AuthConfig['password']>('auth.password', {});
+  const password = config.path<PasswordConfig>('auth.password', {});
   //render
   return (
     <form className="auth-form" method="post">

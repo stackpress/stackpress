@@ -8,7 +8,7 @@ import type {
   DatabasePlugin
 } from 'stackpress-sql/types';
 //stackpress-session
-import type { ProfileAuth } from '../types.js';
+import type { PasswordConfig, ProfileAuth } from '../types.js';
 import Exception from '../Exception.js';
 import { signup } from '../actions.js';
 
@@ -25,11 +25,13 @@ export default async function AuthSignup(
   const client = ctx.plugin<ClientPlugin>('client');
   //get the session seed
   const seed = ctx.config.path('database.seed', 'abc123');
+  //get password config
+  const password = ctx.config.path<PasswordConfig>('auth.password', {});
   //get input
   const input = { roles, ...req.data() };
   let results: Partial<ProfileAuth>; 
   try { //to sign up
-    results = await signup(input, seed, engine, await client());
+    results = await signup(input, seed, engine, await client(), password);
   } catch (e) {
     const exception = Exception.upgrade(e as Error);
     //if e is an exception with errors

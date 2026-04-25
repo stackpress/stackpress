@@ -6,6 +6,7 @@ import { Client } from 'stackpress-sql/types';
 import type { 
   Auth, 
   AuthExtended, 
+  PasswordConfig,
   Profile, 
   ProfileAuth, 
   SignupInput, 
@@ -15,6 +16,8 @@ import type {
 import Exception from './Exception.js';
 import { isEmail } from './helpers.js';
 
+export const specialChars = /[!@#$%^&*(),.?":{}|<>\s]/;
+
 /**
  * Signup action
  */
@@ -22,10 +25,11 @@ export async function signup(
   input: Partial<SignupInput>,
   seed: string,
   engine: Engine,
-  client: Client
+  client: Client,
+  password: PasswordConfig = {}
 ): Promise<Partial<ProfileAuth>> {
   //validate input
-  const errors = assert(input);
+  const errors = assert(input, password);
   //if there are errors
   if (errors) {
     throw Exception.for('Invalid Parameters')
@@ -157,7 +161,10 @@ export async function signin(
 /**
  * Validate signup input
  */
-export function assert(input: Partial<SignupInput>) {
+export function assert(
+  input: Partial<SignupInput>, 
+  password: PasswordConfig = {}
+) {
   const errors: Record<string, string> = {};
   if (!input.name) {
     errors.name = 'Name is required';
@@ -169,6 +176,18 @@ export function assert(input: Partial<SignupInput>) {
   }
   if (!input.secret) {
     errors.secret = 'Password is required';
+  } else if (password.min && input.secret.length < password.min) {
+    errors.secret = `Password must be at least ${password.min} characters`;
+  } else if (password.max && input.secret.length > password.max) {
+    errors.secret = `Password must be less than ${password.max} characters`;
+  } else if (password.upper && !/[A-Z]/.test(input.secret)) {
+    errors.secret = 'Password must contain at least one uppercase letter';
+  } else if (password.lower && !/[a-z]/.test(input.secret)) {
+    errors.secret = 'Password must contain at least one lowercase letter';
+  } else if (password.number && !/[0-9]/.test(input.secret)) {
+    errors.secret = 'Password must contain at least one number';
+  } else if (password.special && !specialChars.test(input.secret)) {
+    errors.secret = 'Password must contain at least one special character';
   }
   return Object.keys(errors).length ? errors : null;
 };

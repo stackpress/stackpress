@@ -12,6 +12,15 @@ import type SessionServer from './Session.js';
 //--------------------------------------------------------------------//
 // Config Types
 
+export type PasswordConfig = {
+  min?: number,
+  max?: number,
+  upper?: boolean,
+  lower?: boolean,
+  number?: boolean,
+  special?: boolean
+};
+
 //ie. ctx.config<AuthConfig>('auth')
 export type AuthConfig = {
   base?: string,
@@ -22,14 +31,7 @@ export type AuthConfig = {
   username?: boolean,
   email?: boolean,
   phone?: boolean,
-  password?: {
-    min?: number,
-    max?: number,
-    upper?: boolean,
-    lower?: boolean,
-    number?: boolean,
-    special?: boolean
-  }
+  password?: PasswordConfig
 };
 
 //ie. ctx.config<SessionConfig>('session')
