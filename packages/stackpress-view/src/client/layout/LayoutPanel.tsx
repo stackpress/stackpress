@@ -37,32 +37,37 @@ export function LayoutPanelApp(props: LayoutPanelAppProps) {
   const { theme, toggle: toggleTheme } = useTheme();
   //variables
   const pathname = request.url.pathname;
+  const withLeft = Boolean(menu || props.left);
   //render
   return (
     <div className={`${theme} layout-panel`}>
       <LayoutHead 
-        left
+        left={withLeft} 
         open={{ left, right }} 
         theme={theme}
         toggleLeft={toggleLeft} 
         toggleRight={toggleRight} 
         toggleTheme={toggleTheme} 
       />
-      <LayoutLeft
-        brand={config.path('brand.name', 'Stackpress')}
-        base={config.path('admin.base', '/admin')}
-        logo={config.path('brand.icon', 'icon.png')}
-        open={left}
-        toggle={toggleLeft}
-      >
-        {menu ? (
-          <LayoutMenu path={pathname} menu={menu} />
-        ) : props.left}
-      </LayoutLeft>
+      {withLeft && (
+        <LayoutLeft
+          brand={config.path('brand.name', 'Stackpress')}
+          base={config.path('admin.base', '/admin')}
+          logo={config.path('brand.icon', 'icon.png')}
+          open={left}
+          toggle={toggleLeft}
+        >
+          {menu ? (
+            <LayoutMenu path={pathname} menu={menu} />
+          ) : props.left}
+        </LayoutLeft>
+      )}
       <LayoutRight head open={right}>
         <LayoutUserMenu />
       </LayoutRight>
-      <LayoutMain head left open={{ left, right }}>{children}</LayoutMain>
+      <LayoutMain head left={withLeft} open={{ left, right }}>
+        {children}
+      </LayoutMain>
       <div id="popup-root"></div>
       <div id="dialog-root"></div>
       <div id="dropdown-root"></div>

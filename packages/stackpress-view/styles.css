@@ -1,3 +1,16 @@
+/* Root */
+
+:root { display: initial; }
+
+/* Popup Roots */
+
+#popup-root,
+#dialog-root,
+#dropdown-root {
+  position: relative;
+  z-index: 1000;
+}
+
 /* Layout Head */
 
 .layout-head {

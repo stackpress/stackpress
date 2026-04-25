@@ -474,11 +474,26 @@ export {
   Document as ReactusDocument, 
   Server as ReactusServer,
   //stackpress-view (client)
+  //r22n
+  R22nContext, 
+  R22nProvider, 
+  Translate, 
+  useLanguage,
+  //frui/Notifier
+  flash,
+  notify,
+  unload,
+  useNotifier,
+  NotifierContainer,
+  //server provider
   useRequest, 
   useResponse, 
   useConfig, 
   useSession, 
   useServer,
+  //theme provider
+  useTheme,
+  //components
   ServerContext,
   ServerProvider,
   ServerRequest,
@@ -494,6 +509,7 @@ export {
   LayoutProvider,
   LayoutBlank,
   LayoutPanel,
+  //others
   defaultServerConfig,
   unknownHost,
   //helpers

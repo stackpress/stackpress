@@ -4,15 +4,10 @@
 //modules
 import { useLanguage } from 'r22n';
 //stackpress
-import type { 
-  ServerPageProps,
-  ServerConfigProps
-} from 'stackpress/view/client';
-import { useResponse } from 'stackpress/view/client';
+import type { ServerConfigPageProps } from 'stackpress/view/client';
+import { useResponse, LayoutPanel } from 'stackpress/view/client';
 //client
 import type { ArticleExtended } from 'blog-client/types';
-//plugins/app
-import Layout from '../components/Layout.js';
 
 //--------------------------------------------------------------------//
 // Helpers
@@ -66,7 +61,7 @@ export function Body() {
   );
 }
 
-export function Head(props: ServerPageProps<ServerConfigProps>) {
+export function Head(props: ServerConfigPageProps) {
   const { styles = [], response } = props;
   const article = response.results as Record<string, any>;
   const title = article.title;
@@ -90,17 +85,17 @@ export function Head(props: ServerPageProps<ServerConfigProps>) {
   );
 };
 
-export function Page(props: ServerPageProps<ServerConfigProps>) {
+export function Page(props: ServerConfigPageProps) {
   const { data, session, request, response } = props;
   return (
-    <Layout
+    <LayoutPanel
       data={data}
       session={session}
       request={request}
       response={response}
     >
       <Body />
-    </Layout>
+    </LayoutPanel>
   );
 };
 
