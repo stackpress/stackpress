@@ -9,6 +9,95 @@ import type { ServerProps } from '../server/types.js';
 
 //NOTE: These need to be client/browser safe exports.
 
+//--------------------------------------------------------------------//
+// Layout Types
+
+export type LayoutHeadProps = {
+  left?: boolean,
+  right?: boolean,
+  open?: {
+    left?: boolean,
+    right?: boolean
+  },
+  theme: string,
+  base?: string,
+  logo?: string,
+  brand?: string,
+  toggleLeft?: () => void,
+  toggleRight?: () => void,
+  toggleTheme?: () => void
+};
+
+export type LayoutLeftProps = {
+  base?: string,
+  brand?: string,
+  head?: boolean,
+  logo?: string,
+  open?: boolean,
+  toggle: () => void,
+  children: ReactNode
+};
+
+export type LayoutMainProps = {
+  head?: boolean,
+  left?: boolean,
+  right?: boolean,
+  open?: {
+    left?: boolean,
+    right?: boolean
+  },
+  children: ReactNode
+};
+
+export type LayoutMenuProps = {
+  path?: string,
+  menu: {
+    name: string,
+    icon: string,
+    path: string,
+    match: string
+  }[]
+};
+
+export type LayoutRightProps = {
+  open: boolean,
+  head?: boolean,
+  children: ReactNode
+};
+
+export type LayoutProviderProps = ServerProps<ServerConfigProps> & {
+  cookie?: CookieOptions, 
+  children: ReactNode
+};
+
+export type LayoutBlankAppProps = {
+  cookie?: CookieOptions, 
+  head?: boolean,
+  children: ReactNode
+};
+
+export type LayoutBlankProps = LayoutProviderProps & {
+  head?: boolean
+};
+
+export type LayoutPanelAppProps = { 
+  cookie?: CookieOptions, 
+  menu?: {
+    name: string;
+    icon: string;
+    path: string;
+    match: string;
+  }[],
+  left?: ReactNode,
+  right?: ReactNode,
+  children: ReactNode
+};
+
+export type LayoutPanelProps = LayoutProviderProps & LayoutPanelAppProps;
+
+//--------------------------------------------------------------------//
+// Config Types
+
 //ie. ctx.config<BrandConfig>('brand')
 export type BrandConfig = {
   name?: string,
@@ -32,6 +121,9 @@ export type ViewConfig = {
   notify?: NotifierOptions
 };
 
+//--------------------------------------------------------------------//
+// Server Types
+
 export type ServerConfigProps<
   C extends UnknownNest = UnknownNest
 > = C & {
@@ -46,10 +138,14 @@ export type ServerPageProps<
   O = UnknownNest
 > = ServerProps<C, I, O> & { styles?: string[] };
 
-export type ProviderProps = ServerProps<ServerConfigProps> & {
-  cookie?: CookieOptions, 
-  children: ReactNode
-};
+export type ServerConfigPageProps<
+  C extends UnknownNest = UnknownNest,
+  I extends UnknownNest = UnknownNest,
+  O = UnknownNest
+> = ServerPageProps<ServerConfigProps<C>, I, O>;
+
+//--------------------------------------------------------------------//
+// Other Types
 
 export type { ToastOptions as NotifyConfig } from 'frui/Notifier';
 
