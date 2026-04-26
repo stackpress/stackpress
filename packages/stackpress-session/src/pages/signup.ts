@@ -51,12 +51,12 @@ export default async function SignupPage(
   //get the csrf plugin
   const csrf = ctx.plugin<CsrfPlugin>('csrf');
   //generate a token
-  csrf.generateToken(res, ctx);
+  csrf.generate(res, ctx);
   
   //form submission
   if (req.method === 'POST') {
     //validate csrf
-    if (!csrf.validateToken(req, res)) return;
+    if (!csrf.valid(req, res)) return;
     await ctx.emit('auth-signup', req, res);
     //if signup successful, redirect
     if (res.code === 200) {

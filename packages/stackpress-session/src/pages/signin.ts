@@ -55,12 +55,12 @@ export default async function SignInPage(
   //get csrf plugin
   const csrf = ctx.plugin<CsrfPlugin>('csrf');
   //generate a token
-  csrf.generateToken(res, ctx);
+  csrf.generate(res, ctx);
 
   //form submission
   if (req.method === 'POST') {
     //validate csrf
-    if (!csrf.validateToken(req, res)) return;
+    if (!csrf.valid(req, res)) return;
     //prevent passwordless sign in on this page...
     req.data.set('password', true);
     //sign in
