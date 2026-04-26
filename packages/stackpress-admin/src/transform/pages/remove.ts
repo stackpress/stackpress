@@ -131,12 +131,12 @@ res.data.set('admin', {
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res, ctx);
+csrf.generate(res, ctx);
 
 //if confirmed
 if (req.data('confirmed')) {
   //validate csrf
-  if (!csrf.validateToken(req, res)) {
+  if (!csrf.valid(req, res)) {
     res.session.set('flash', JSON.stringify({
       type: 'error',
       message: 'This page may have been requested from an external source. ' +

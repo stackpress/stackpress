@@ -5,6 +5,7 @@ import type Server from '@stackpress/ingest/Server';
 export type CsrfConfig = { name?: string, error?: string };
 
 export type CsrfPlugin = {
-  generateToken(res: Response, ctx: Server): string,
-  validateToken(req: Request, res: Response): boolean
+  clear(req: Request, res: Response, ctx: Server): void,
+  generate(res: Response, ctx: Server): string,
+  valid(req: Request, res: Response): boolean
 };

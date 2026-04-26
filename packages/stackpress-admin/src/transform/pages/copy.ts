@@ -148,12 +148,12 @@ res.data.set('admin', {
 //get the csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res, ctx);
+csrf.generate(res, ctx);
 
 //if form submitted
 if (req.method === 'POST') {
   //validate csrf
-  if (!csrf.validateToken(req, res)) return;
+  if (!csrf.valid(req, res)) return;
   const input: Partial<<%type%>> = {};
   <%#@:fields%>
     if (req.data.has('<%column%>')) {

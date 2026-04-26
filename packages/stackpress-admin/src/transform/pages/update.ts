@@ -134,12 +134,12 @@ res.data.set('admin', {
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res, ctx);
+csrf.generate(res, ctx);
 
 //if form submitted
 if (req.method === 'POST' || req.method === 'PUT') {
   //validate csrf
-  if (!csrf.validateToken(req, res)) return;
+  if (!csrf.valid(req, res)) return;
   //emit update with the fixed fields
   await ctx.emit('<%event%>-update', req, res);
   //if OK

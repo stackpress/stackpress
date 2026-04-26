@@ -190,12 +190,12 @@ if (detail.code !== 200) {
 //get csrf plugin
 const csrf = ctx.plugin<CsrfPlugin>('csrf');
 //generate token
-csrf.generateToken(res, ctx);
+csrf.generate(res, ctx);
 
 //if form submitted
 if (req.method === 'POST') {
   //validate csrf
-  if (!csrf.validateToken(req, res)) return;
+  if (!csrf.valid(req, res)) return;
   //get the form input
   const input = req.data();
   //set the foreign id

@@ -125,9 +125,9 @@ export default function searchView(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-admin/client',
     namedImports: [ 'LayoutAdmin' ]
   });
-  //import { batchAndSend } from 'stackpress-admin/import';
+  //import { batchAndSend } from 'stackpress-admin/client/import';
   source.addImportDeclaration({
-    moduleSpecifier: 'stackpress-admin/import',
+    moduleSpecifier: 'stackpress-admin/client/import',
     namedImports: [ 'batchAndSend' ]
   });
 

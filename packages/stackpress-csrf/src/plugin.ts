@@ -1,14 +1,23 @@
 //node
 import crypto from 'node:crypto';
 //modules
-import type { Request, Response } from '@stackpress/ingest';
-import Server from '@stackpress/ingest/Server';
+import type Request from '@stackpress/ingest/Request';
+import type Response from '@stackpress/ingest/Response';
+import type Server from '@stackpress/ingest/Server';
 
 export default function plugin(ctx: Server) {
   ctx.on('config', (_req, _res, ctx) => {
     //configure and register csrf
     ctx.register('csrf', {
-      generateToken(res: Response, ctx: Server) {
+      clear(req: Request, res: Response, ctx: Server) {
+        //get csrf name from config
+        const name = ctx.config.path<string>('csrf.name', 'csrf');
+        //delete token from req, res and session
+        req.data.delete(name);
+        res.session.delete(name);
+        res.data.delete(name);
+      },
+      generate(res: Response, ctx: Server) {
         //get csrf name from config
         const name = ctx.config.path<string>('csrf.name', 'csrf');
         //make token
@@ -16,11 +25,11 @@ export default function plugin(ctx: Server) {
         //set new token in session
         res.session.set(name, token);
         //set token in the response data for server side rendering
-        res.data.set('csrf', { name, token });
+        res.data.set(name, { name, token });
         //return the token
         return token;
       },
-      validateToken(req: Request, res: Response) {
+      valid(req: Request, res: Response) {
         //get csrf name from config
         const name = ctx.config.path<string>('csrf.name', 'csrf');
         const error = ctx.config.path<string>(
