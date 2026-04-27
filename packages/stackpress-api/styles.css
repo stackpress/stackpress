@@ -1,0 +1,27 @@
+/* OAuth Page */
+
+.oauth-page .oauth-form .instructions {
+  border-bottom: 1px solid var(--bg-zero);
+  padding: 10px 0;
+}
+
+.oauth-page .oauth-form .scope {
+  align-items: center;
+  border-bottom: 1px solid var(--bg-first);
+  display: flex;
+  padding: 10px 0;
+}
+
+.oauth-page .oauth-form .scope .container {
+  flex-grow: 1;
+}
+
+.oauth-page .oauth-form .scope p {
+  font-size: 14px;
+}
+
+.oauth-page .oauth-form .deny {
+  background-color: var(--error);
+  border: 1px solid var(--error);
+  padding: 8px 14px;
+}
