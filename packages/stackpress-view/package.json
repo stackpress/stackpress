@@ -196,10 +196,13 @@
   },
   "dependencies": {
     "frui": "0.2.7",
+    "moment": "2.30.1",
     "r22n": "1.0.10",
+    "react-toastify": "11.0.5",
     "reactus": "0.9.1",
     "stackpress-language": "0.9.1",
-    "stackpress-schema": "0.9.1"
+    "stackpress-schema": "0.9.1",
+    "universal-cookie": "8.0.1"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

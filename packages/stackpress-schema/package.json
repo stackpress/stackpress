@@ -347,7 +347,6 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/idea-parser": "0.9.1",
     "@stackpress/idea-transformer": "0.9.1",
     "stackpress-server": "0.9.1",
     "zod": "4.3.6"
