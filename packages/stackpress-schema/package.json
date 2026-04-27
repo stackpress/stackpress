@@ -27,7 +27,6 @@
       "require": "./cjs/interface/SchemaInterface.js",
       "import": "./esm/interface/SchemaInterface.js"
     },
-
     "./Attribute": {
       "require": "./cjs/Attribute.js",
       "import": "./esm/Attribute.js"
@@ -48,7 +47,6 @@
       "require": "./cjs/attribute/Attributes.js",
       "import": "./esm/attribute/Attributes.js"
     },
-
     "./Column": {
       "require": "./cjs/Column.js",
       "import": "./esm/Column.js"
@@ -89,7 +87,6 @@
       "require": "./cjs/column/ColumnValue.js",
       "import": "./esm/column/ColumnValue.js"
     },
-
     "./Fieldset": {
       "require": "./cjs/Fieldset.js",
       "import": "./esm/Fieldset.js"
@@ -118,7 +115,6 @@
       "require": "./cjs/fieldset/FieldsetValue.js",
       "import": "./esm/fieldset/FieldsetValue.js"
     },
-
     "./Model": {
       "require": "./cjs/Model.js",
       "import": "./esm/Model.js"
@@ -127,7 +123,6 @@
       "require": "./cjs/model/ModelStore.js",
       "import": "./esm/model/ModelStore.js"
     },
-
     "./config/attributes": {
       "require": "./cjs/config/attributes.js",
       "import": "./esm/config/attributes.js"
@@ -140,7 +135,6 @@
       "require": "./cjs/config/typemaps.js",
       "import": "./esm/config/typemaps.js"
     },
-
     "./transform/helpers": {
       "require": "./cjs/transform/helpers.js",
       "import": "./esm/transform/helpers.js"
@@ -149,7 +143,6 @@
       "require": "./cjs/transform/index.js",
       "import": "./esm/transform/index.js"
     },
-
     "./Exception": {
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
@@ -162,7 +155,6 @@
       "require": "./cjs/Schema.js",
       "import": "./esm/Schema.js"
     },
-
     "./events/*": {
       "require": "./cjs/events/*.js",
       "import": "./esm/events/*.js"
@@ -179,7 +171,6 @@
       "require": "./cjs/scripts/index.js",
       "import": "./esm/scripts/index.js"
     },
-
     "./dictionary": {
       "require": "./cjs/dictionary.js",
       "import": "./esm/dictionary.js"
@@ -203,59 +194,138 @@
   },
   "typesVersions": {
     "*": {
-      "ColumnInterface": [ "./cjs/interface/ColumnInterface.d.ts" ],
-      "DefinitionInterface": [ "./cjs/interface/DefinitionInterface.d.ts" ],
-      "SchemaInterface": [ "./cjs/interface/SchemaInterface.d.ts" ],
-      
-      "Attribute": [ "./cjs/Attribute.d.ts" ],
-      "AttributeAssertion": [ "./cjs/attribute/AttributeAssertion.d.ts" ],
-      "AttributeComponent": [ "./cjs/attribute/AttributeComponent.d.ts" ],
-      "AttributeReference": [ "./cjs/attribute/AttributeReference.d.ts" ],
-      "Attributes": [ "./cjs/attribute/Attributes.d.ts" ],
-      
-      "Column": [ "./cjs/Column.d.ts" ],
-      "ColumnAssertion": [ "./cjs/column/ColumnAssertion.d.ts" ],
-      "ColumnComponent": [ "./cjs/column/ColumnComponent.d.ts" ],
-      "ColumnDocument": [ "./cjs/column/ColumnDocument.d.ts" ],
-      "ColumnName": [ "./cjs/column/ColumnName.d.ts" ],
-      "ColumnNumber": [ "./cjs/column/ColumnNumber.d.ts" ],
-      "Columns": [ "./cjs/column/Columns.d.ts" ],
-      "ColumnStore": [ "./cjs/column/ColumnStore.d.ts" ],
-      "ColumnType": [ "./cjs/column/ColumnType.d.ts" ],
-      "ColumnValue": [ "./cjs/column/ColumnValue.d.ts" ],
-      
-      "Fieldset": [ "./cjs/Fieldset.d.ts" ],
-      "FieldsetAssertion": [ "./cjs/fieldset/FieldsetAssertion.d.ts" ],
-      "FieldsetComponent": [ "./cjs/fieldset/FieldsetComponent.d.ts" ],
-      "FieldsetDocument": [ "./cjs/fieldset/FieldsetDocument.d.ts" ],
-      "FieldsetName": [ "./cjs/fieldset/FieldsetName.d.ts" ],
-      "FieldsetType": [ "./cjs/fieldset/FieldsetType.d.ts" ],
-      "FieldsetValue": [ "./cjs/fieldset/FieldsetValue.d.ts" ],
-      
-      "Model": [ "./cjs/Model.d.ts" ],
-      "ModelStore": [ "./cjs/model/ModelStore.d.ts" ],
-      
-      "config/attributes": [ "./cjs/config/attributes.d.ts" ],
-      "config/definitions": [ "./cjs/config/definitions.d.ts" ],
-      "config/typemaps": [ "./cjs/config/typemaps.d.ts" ],
-
-      "transform/helpers": [ "./cjs/transform/helpers.d.ts" ],
-      "transform": [ "./cjs/transform/index.d.ts" ],
-
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "Revisions": [ "./cjs/Revisions.d.ts" ],
-      "Schema": [ "./cjs/Schema.d.ts" ],
-
-      "events/*": [ "./cjs/events/*.d.ts" ],
-      "events": [ "./cjs/events/index.d.ts" ],
-      "scripts/*": [ "./cjs/scripts/*.d.ts" ],
-      "scripts": [ "./cjs/scripts/index.d.ts" ],
-      
-      "dictionary": [ "./cjs/dictionary.d.ts" ],
-      "helpers": [ "./cjs/helpers.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ]
+      "ColumnInterface": [
+        "./cjs/interface/ColumnInterface.d.ts"
+      ],
+      "DefinitionInterface": [
+        "./cjs/interface/DefinitionInterface.d.ts"
+      ],
+      "SchemaInterface": [
+        "./cjs/interface/SchemaInterface.d.ts"
+      ],
+      "Attribute": [
+        "./cjs/Attribute.d.ts"
+      ],
+      "AttributeAssertion": [
+        "./cjs/attribute/AttributeAssertion.d.ts"
+      ],
+      "AttributeComponent": [
+        "./cjs/attribute/AttributeComponent.d.ts"
+      ],
+      "AttributeReference": [
+        "./cjs/attribute/AttributeReference.d.ts"
+      ],
+      "Attributes": [
+        "./cjs/attribute/Attributes.d.ts"
+      ],
+      "Column": [
+        "./cjs/Column.d.ts"
+      ],
+      "ColumnAssertion": [
+        "./cjs/column/ColumnAssertion.d.ts"
+      ],
+      "ColumnComponent": [
+        "./cjs/column/ColumnComponent.d.ts"
+      ],
+      "ColumnDocument": [
+        "./cjs/column/ColumnDocument.d.ts"
+      ],
+      "ColumnName": [
+        "./cjs/column/ColumnName.d.ts"
+      ],
+      "ColumnNumber": [
+        "./cjs/column/ColumnNumber.d.ts"
+      ],
+      "Columns": [
+        "./cjs/column/Columns.d.ts"
+      ],
+      "ColumnStore": [
+        "./cjs/column/ColumnStore.d.ts"
+      ],
+      "ColumnType": [
+        "./cjs/column/ColumnType.d.ts"
+      ],
+      "ColumnValue": [
+        "./cjs/column/ColumnValue.d.ts"
+      ],
+      "Fieldset": [
+        "./cjs/Fieldset.d.ts"
+      ],
+      "FieldsetAssertion": [
+        "./cjs/fieldset/FieldsetAssertion.d.ts"
+      ],
+      "FieldsetComponent": [
+        "./cjs/fieldset/FieldsetComponent.d.ts"
+      ],
+      "FieldsetDocument": [
+        "./cjs/fieldset/FieldsetDocument.d.ts"
+      ],
+      "FieldsetName": [
+        "./cjs/fieldset/FieldsetName.d.ts"
+      ],
+      "FieldsetType": [
+        "./cjs/fieldset/FieldsetType.d.ts"
+      ],
+      "FieldsetValue": [
+        "./cjs/fieldset/FieldsetValue.d.ts"
+      ],
+      "Model": [
+        "./cjs/Model.d.ts"
+      ],
+      "ModelStore": [
+        "./cjs/model/ModelStore.d.ts"
+      ],
+      "config/attributes": [
+        "./cjs/config/attributes.d.ts"
+      ],
+      "config/definitions": [
+        "./cjs/config/definitions.d.ts"
+      ],
+      "config/typemaps": [
+        "./cjs/config/typemaps.d.ts"
+      ],
+      "transform/helpers": [
+        "./cjs/transform/helpers.d.ts"
+      ],
+      "transform": [
+        "./cjs/transform/index.d.ts"
+      ],
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "Revisions": [
+        "./cjs/Revisions.d.ts"
+      ],
+      "Schema": [
+        "./cjs/Schema.d.ts"
+      ],
+      "events/*": [
+        "./cjs/events/*.d.ts"
+      ],
+      "events": [
+        "./cjs/events/index.d.ts"
+      ],
+      "scripts/*": [
+        "./cjs/scripts/*.d.ts"
+      ],
+      "scripts": [
+        "./cjs/scripts/index.d.ts"
+      ],
+      "dictionary": [
+        "./cjs/dictionary.d.ts"
+      ],
+      "helpers": [
+        "./cjs/helpers.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ]
     }
   },
   "files": [
@@ -277,8 +347,8 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/idea-parser": "0.8.3",
-    "@stackpress/idea-transformer": "0.8.3",
+    "@stackpress/idea-parser": "0.9.1",
+    "@stackpress/idea-transformer": "0.9.1",
     "stackpress-server": "0.9.1",
     "zod": "4.3.6"
   },

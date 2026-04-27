@@ -65,17 +65,39 @@
   },
   "typesVersions": {
     "*": {
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "http": [ "./cjs/http.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "Terminal": [ "./cjs/Terminal.d.ts" ],
-      "events/*": [ "./cjs/events/*.d.ts" ],
-      "events": [ "./cjs/events/index.d.ts" ],
-      "scripts/*": [ "./cjs/scripts/*.d.ts" ],
-      "scripts": [ "./cjs/scripts/index.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      "whatwg": [ "./cjs/whatwg.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ]
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "http": [
+        "./cjs/http.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "Terminal": [
+        "./cjs/Terminal.d.ts"
+      ],
+      "events/*": [
+        "./cjs/events/*.d.ts"
+      ],
+      "events": [
+        "./cjs/events/index.d.ts"
+      ],
+      "scripts/*": [
+        "./cjs/scripts/*.d.ts"
+      ],
+      "scripts": [
+        "./cjs/scripts/index.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      "whatwg": [
+        "./cjs/whatwg.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ]
     }
   },
   "files": [
@@ -98,8 +120,8 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/ingest": "0.8.3",
-    "@stackpress/lib": "0.8.3"
+    "@stackpress/ingest": "0.9.1",
+    "@stackpress/lib": "0.9.1"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

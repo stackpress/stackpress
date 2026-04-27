@@ -27,7 +27,6 @@
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
     },
-
     "./helpers": {
       "require": "./cjs/helpers.js",
       "import": "./esm/helpers.js"
@@ -83,22 +82,54 @@
   },
   "typesVersions": {
     "*": {
-      "ActionsInterface": [ "./cjs/interface/ActionsInterface.d.ts" ],
-      "StoreInterface": [ "./cjs/interface/StoreInterface.d.ts" ],
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "helpers": [ "./cjs/helpers.d.ts" ],
-      "mysql": [ "./cjs/mysql.d.ts" ],
-      "pglite": [ "./cjs/pglite.d.ts" ],
-      "pgsql": [ "./cjs/pgsql.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "sqlite": [ "./cjs/sqlite.d.ts" ],
-      "transform": [ "./cjs/transform/index.d.ts" ],
-      "events/*": [ "./cjs/events/*.d.ts" ],
-      "events": [ "./cjs/events/index.d.ts" ],
-      "scripts/*": [ "./cjs/scripts/*.d.ts" ],
-      "scripts": [ "./cjs/scripts/index.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ]
+      "ActionsInterface": [
+        "./cjs/interface/ActionsInterface.d.ts"
+      ],
+      "StoreInterface": [
+        "./cjs/interface/StoreInterface.d.ts"
+      ],
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "helpers": [
+        "./cjs/helpers.d.ts"
+      ],
+      "mysql": [
+        "./cjs/mysql.d.ts"
+      ],
+      "pglite": [
+        "./cjs/pglite.d.ts"
+      ],
+      "pgsql": [
+        "./cjs/pgsql.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "sqlite": [
+        "./cjs/sqlite.d.ts"
+      ],
+      "transform": [
+        "./cjs/transform/index.d.ts"
+      ],
+      "events/*": [
+        "./cjs/events/*.d.ts"
+      ],
+      "events": [
+        "./cjs/events/index.d.ts"
+      ],
+      "scripts/*": [
+        "./cjs/scripts/*.d.ts"
+      ],
+      "scripts": [
+        "./cjs/scripts/index.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ]
     }
   },
   "files": [
@@ -121,7 +152,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "3.3.0",
-    "@stackpress/inquire": "0.8.3",
+    "@stackpress/inquire": "0.9.1",
     "nanoid": "5.1.6",
     "stackpress-schema": "0.9.1"
   },

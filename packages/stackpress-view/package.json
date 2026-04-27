@@ -35,7 +35,6 @@
       "require": "./cjs/client/index.js",
       "import": "./esm/client/index.js"
     },
-    
     "./config/*": {
       "require": "./cjs/config/*.js",
       "import": "./esm/config/*.js"
@@ -56,7 +55,6 @@
       "require": "./cjs/transform/index.js",
       "import": "./esm/transform/index.js"
     },
-
     "./Exception": {
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
@@ -77,7 +75,6 @@
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
     },
-
     "./cjs/client/layout/*": "./cjs/client/layout/*.js",
     "./esm/client/layout/*": "./esm/client/layout/*.js",
     "./cjs/client/server/*": "./cjs/client/server/*.js",
@@ -90,40 +87,91 @@
     "./esm/server/*": "./esm/client/server/*.js",
     "./cjs/theme/*": "./cjs/client/theme/*.js",
     "./esm/theme/*": "./esm/client/theme/*.js",
-
     "./styles.css": "./styles.css"
   },
   "typesVersions": {
     "*": {
-      "client/layout/*": [ "./cjs/client/layout/*.d.ts" ],
-      "client/server/*": [ "./cjs/client/server/*.d.ts" ],
-      "client/theme/*": [ "./cjs/client/theme/*.d.ts" ],
-      "client/types": [ "./cjs/client/types.d.ts" ],
-      "client": [ "./cjs/client/index.d.ts" ],
-      "config/*": [ "./cjs/config/*.d.ts" ],
-      "layout/*": [ "./cjs/client/layout/*.d.ts" ],
-      "server/*": [ "./cjs/client/server/*.d.ts" ],
-      "theme/*": [ "./cjs/client/theme/*.d.ts" ],
-      "transform": [ "./cjs/transform/index.d.ts" ],
-
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "helpers": [ "./cjs/helpers.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ],
-
-      "cjs/client/layout/*": [ "./cjs/client/layout/*.d.ts" ],
-      "esm/client/layout/*": [ "./esm/client/layout/*.d.ts" ],
-      "cjs/client/server/*": [ "./cjs/client/server/*.d.ts" ],
-      "esm/client/server/*": [ "./esm/client/server/*.d.ts" ],
-      "cjs/client/theme/*": [ "./cjs/client/theme/*.d.ts" ],
-      "esm/client/theme/*": [ "./esm/client/theme/*.d.ts" ],
-      "cjs/layout/*": [ "./cjs/layout/*.d.ts" ],
-      "esm/layout/*": [ "./esm/layout/*.d.ts" ],
-      "cjs/server/*": [ "./cjs/server/*.d.ts" ],
-      "esm/server/*": [ "./esm/server/*.d.ts" ],
-      "cjs/theme/*": [ "./cjs/theme/*.d.ts" ],
-      "esm/theme/*": [ "./esm/theme/*.d.ts" ]
+      "client/layout/*": [
+        "./cjs/client/layout/*.d.ts"
+      ],
+      "client/server/*": [
+        "./cjs/client/server/*.d.ts"
+      ],
+      "client/theme/*": [
+        "./cjs/client/theme/*.d.ts"
+      ],
+      "client/types": [
+        "./cjs/client/types.d.ts"
+      ],
+      "client": [
+        "./cjs/client/index.d.ts"
+      ],
+      "config/*": [
+        "./cjs/config/*.d.ts"
+      ],
+      "layout/*": [
+        "./cjs/client/layout/*.d.ts"
+      ],
+      "server/*": [
+        "./cjs/client/server/*.d.ts"
+      ],
+      "theme/*": [
+        "./cjs/client/theme/*.d.ts"
+      ],
+      "transform": [
+        "./cjs/transform/index.d.ts"
+      ],
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "helpers": [
+        "./cjs/helpers.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ],
+      "cjs/client/layout/*": [
+        "./cjs/client/layout/*.d.ts"
+      ],
+      "esm/client/layout/*": [
+        "./esm/client/layout/*.d.ts"
+      ],
+      "cjs/client/server/*": [
+        "./cjs/client/server/*.d.ts"
+      ],
+      "esm/client/server/*": [
+        "./esm/client/server/*.d.ts"
+      ],
+      "cjs/client/theme/*": [
+        "./cjs/client/theme/*.d.ts"
+      ],
+      "esm/client/theme/*": [
+        "./esm/client/theme/*.d.ts"
+      ],
+      "cjs/layout/*": [
+        "./cjs/layout/*.d.ts"
+      ],
+      "esm/layout/*": [
+        "./esm/layout/*.d.ts"
+      ],
+      "cjs/server/*": [
+        "./cjs/server/*.d.ts"
+      ],
+      "esm/server/*": [
+        "./esm/server/*.d.ts"
+      ],
+      "cjs/theme/*": [
+        "./cjs/theme/*.d.ts"
+      ],
+      "esm/theme/*": [
+        "./esm/theme/*.d.ts"
+      ]
     }
   },
   "files": [
@@ -149,7 +197,7 @@
   "dependencies": {
     "frui": "0.2.7",
     "r22n": "1.0.10",
-    "reactus": "0.8.3",
+    "reactus": "0.9.1",
     "stackpress-language": "0.9.1",
     "stackpress-schema": "0.9.1"
   },

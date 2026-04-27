@@ -34,10 +34,18 @@
   },
   "typesVersions": {
     "*": {
-      "Language": [ "./cjs/Language.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ]
+      "Language": [
+        "./cjs/Language.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ]
     }
   },
   "files": [
@@ -59,7 +67,7 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/ingest": "0.8.3"
+    "@stackpress/ingest": "0.9.1"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",
