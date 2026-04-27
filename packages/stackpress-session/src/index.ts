@@ -1,5 +1,5 @@
 //local
-import StackpressSessionException from './Exception.js';
+import StackpressSessionException from './auth/Exception.js';
 import Session from './Session.js';
 import * as actions from './actions.js';
 
@@ -15,6 +15,8 @@ export type {
   SigninType,
   AuthConfigProps,
   AuthPageProps,
+  AuthMenuConfig,
+  AuthPasswordConfig,
   AuthConfig,
   SessionConfig,
   SessionPlugin,
