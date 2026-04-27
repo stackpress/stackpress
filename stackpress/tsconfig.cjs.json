@@ -1,9 +1,0 @@
-{
-  "extends": "@stackpress/lib/tsconfig/cjs",
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "outDir": "cjs/"
-  },
-  "include": [ "src/**/*.ts", "src/**/*.tsx" ],
-  "exclude": [ "esm", "cjs", "assets.d.ts", "node_modules", "tests" ]
-}
