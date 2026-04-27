@@ -112,6 +112,68 @@
   text-decoration: none;
 }
 
+/* Auth Options Page */
+
+.auth-signin-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-signin-options .auth-modal .icon {
+  margin-right: 10px;
+}
+
+.auth-signin-options .auth-modal header {
+  align-items: center;
+  display: flex;
+}
+
+.auth-signin-options .auth-modal header h1 {
+  flex-grow: 1;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.auth-signin-options .auth-modal header .theme {
+  align-items: center;
+  background-color: rgb(234, 88, 12);
+  border: 0;
+  border-radius: 9999px;
+  color: white;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+}
+
+.dark .auth-signin-options .auth-modal header .theme {
+  background-color: rgb(75, 85, 99);
+}
+
+.auth-signin-options .auth-modal main a {
+  align-items: center;
+  border-bottom: 1px solid var(--bg-third);
+  display: flex;
+  padding: 15px 10px;
+}
+
+.auth-signin-options .auth-modal main a:last-child {
+  border-bottom: 0;
+}
+
+.auth-signin-options .auth-modal main a span {
+  flex-grow: 1;
+}
+
+.auth-signin-options .auth-modal footer {
+  align-items: center;
+  border-top: 1px solid var(--bg-third);
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding: 10px;
+}
+
 /* Auth Signin Page */
 
 .auth-signin-page {

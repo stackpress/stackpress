@@ -61,38 +61,38 @@ export default function plugin(ctx: Server) {
     
     ctx.view.get(
       `${base}/signup`, 
-      'stackpress-session/esm/views/signup', 
+      'stackpress-session/esm/auth/views/signup', 
       -100
     );
     ctx.view.get(
       `${base}/signin`, 
-      'stackpress-session/esm/views/signin/index', 
+      'stackpress-session/esm/auth/views/signin/index', 
       -100
     );
     ctx.view.get(
       `${base}/signin/email`, 
-      'stackpress-session/esm/views/signin/index', 
+      'stackpress-session/esm/auth/views/signin/index', 
       -100
     );
     ctx.view.get(
       `${base}/signin/phone`, 
-      'stackpress-session/esm/views/signin/index', 
+      'stackpress-session/esm/auth/views/signin/index', 
       -100
     );
     ctx.view.get(
       `${base}/signin/username`, 
-      'stackpress-session/esm/views/signin/index', 
+      'stackpress-session/esm/auth/views/signin/index', 
       -100
     );
 
     ctx.view.post(
       `${base}/signup`, 
-      'stackpress-session/esm/views/signup', 
+      'stackpress-session/esm/auth/views/signup', 
       -100
     );
     ctx.view.post(
       `${base}/signin/:type`, 
-      'stackpress-session/esm/views/signin/index', 
+      'stackpress-session/esm/auth/views/signin/index', 
       -100
     );
   });

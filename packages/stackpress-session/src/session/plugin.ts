@@ -83,53 +83,53 @@ export default function plugin(ctx: Server) {
 
     ctx.view.get(
       `${base}/account`, 
-      'stackpress-session/esm/views/account', 
+      'stackpress-session/esm/session/views/account', 
       -100
     );
     ctx.view.get(
       `${base}/account/remove`, 
-      'stackpress-session/esm/views/remove', 
+      'stackpress-session/esm/session/views/remove', 
       -100
     );
     ctx.view.get(
       `${base}/account/update`, 
-      'stackpress-session/esm/views/update', 
+      'stackpress-session/esm/session/views/update', 
       -100
     );
     ctx.view.get(
       `${base}/account/security/password`, 
-      'stackpress-session/esm/views/password', 
+      'stackpress-session/esm/session/views/password', 
       -100
     );
     ctx.view.get(
       `${base}/account/security/2fa`, 
-      'stackpress-session/esm/views/2fa/detail', 
+      'stackpress-session/esm/session/views/2fa/detail', 
       -100
     );
     ctx.view.get(
       `${base}/account/security/2fa/remove`, 
-      'stackpress-session/esm/views/2fa/remove', 
+      'stackpress-session/esm/session/views/2fa/remove', 
       -100
     );
 
     ctx.view.post(
       `${base}/account/update`, 
-      'stackpress-session/esm/views/update', 
+      'stackpress-session/esm/session/views/update', 
       -100
     );
     ctx.view.post(
       `${base}/account/security/password`, 
-      'stackpress-session/esm/views/password', 
+      'stackpress-session/esm/session/views/password', 
       -100
     );
     ctx.view.post(
       `${base}/account/security/2fa`, 
-      'stackpress-session/esm/views/2fa/detail', 
+      'stackpress-session/esm/session/views/2fa/detail', 
       -100
     );
     ctx.view.post(
       `${base}/account/security/2fa/remove`, 
-      'stackpress-session/esm/views/2fa/remove', 
+      'stackpress-session/esm/session/views/2fa/remove', 
       -100
     );
   });
