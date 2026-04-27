@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-sql",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "SQL library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -152,9 +152,9 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "3.3.0",
-    "@stackpress/inquire": "0.9.1",
+    "@stackpress/inquire": "0.9.2",
     "nanoid": "5.1.6",
-    "stackpress-schema": "0.9.1"
+    "stackpress-schema": "0.9.2"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

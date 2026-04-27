@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-language",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "Language translation service for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -67,7 +67,7 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/ingest": "0.9.1"
+    "@stackpress/ingest": "0.9.2"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

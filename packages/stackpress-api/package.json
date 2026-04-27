@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-api",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "OAuth, webhooks and restful API for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -23,7 +23,6 @@
       "require": "./cjs/views/*.js",
       "import": "./esm/views/*.js"
     },
-
     "./Exception": {
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
@@ -44,24 +43,39 @@
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
     },
-
     "./esm/views/*": "./esm/views/*.js",
     "./cjs/views/*": "./cjs/views/*.js",
     "./styles.css": "./styles.css"
   },
   "typesVersions": {
     "*": {
-      "pages/*": [ "./cjs/pages/*.d.ts" ],
-      "views/*": [ "./cjs/views/*.d.ts" ],
-
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "helpers": [ "./cjs/helpers.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ],
-      
-      "esm/views/*": [ "./esm/views/*.d.ts" ],
-      "cjs/views/*": [ "./cjs/views/*.d.ts" ]
+      "pages/*": [
+        "./cjs/pages/*.d.ts"
+      ],
+      "views/*": [
+        "./cjs/views/*.d.ts"
+      ],
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "helpers": [
+        "./cjs/helpers.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ],
+      "esm/views/*": [
+        "./esm/views/*.d.ts"
+      ],
+      "cjs/views/*": [
+        "./cjs/views/*.d.ts"
+      ]
     }
   },
   "files": [
@@ -85,7 +99,7 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "stackpress-session": "0.9.1"
+    "stackpress-session": "0.9.2"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -157,33 +157,87 @@
   },
   "typesVersions": {
     "*": {
-      "admin/types": [ "./cjs/admin/types.d.ts" ],
-      "admin": [ "./cjs/admin/index.d.ts" ],
-      "language/types": [ "./cjs/language/types.d.ts" ],
-      "language": [ "./cjs/language/index.d.ts" ],
-      "schema/types": [ "./cjs/schema/types.d.ts" ],
-      "schema": [ "./cjs/schema/index.d.ts" ],
-      "server/types": [ "./cjs/server/types.d.ts" ],
-      "server": [ "./cjs/server/index.d.ts" ],
-      "http": [ "./cjs/server/http.d.ts" ],
-      "whatwg": [ "./cjs/server/whatwg.d.ts" ],
-      "session/types": [ "./cjs/session/types.d.ts" ],
-      "session": [ "./cjs/session/index.d.ts" ],
-      "sql/types": [ "./cjs/sql/types.d.ts" ],
-      "sql": [ "./cjs/sql/index.d.ts" ],
-      "mysql": [ "./cjs/sql/mysql.d.ts" ],
-      "pglite": [ "./cjs/sql/pglite.d.ts" ],
-      "pgsql": [ "./cjs/sql/pgsql.d.ts" ],
-      "sqlite": [ "./cjs/sql/sqlite.d.ts" ],
-      "view/client": [ "./cjs/view/client.d.ts" ],
-      "view/types": [ "./cjs/view/types.d.ts" ],
-      "view": [ "./cjs/view/index.d.ts" ],
-      "lib/types": [ "./cjs/lib/types.d.ts" ],
-      "lib": [ "./cjs/lib/index.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      "unocss": [ "./cjs/unocss.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ]
+      "admin/types": [
+        "./cjs/admin/types.d.ts"
+      ],
+      "admin": [
+        "./cjs/admin/index.d.ts"
+      ],
+      "language/types": [
+        "./cjs/language/types.d.ts"
+      ],
+      "language": [
+        "./cjs/language/index.d.ts"
+      ],
+      "schema/types": [
+        "./cjs/schema/types.d.ts"
+      ],
+      "schema": [
+        "./cjs/schema/index.d.ts"
+      ],
+      "server/types": [
+        "./cjs/server/types.d.ts"
+      ],
+      "server": [
+        "./cjs/server/index.d.ts"
+      ],
+      "http": [
+        "./cjs/server/http.d.ts"
+      ],
+      "whatwg": [
+        "./cjs/server/whatwg.d.ts"
+      ],
+      "session/types": [
+        "./cjs/session/types.d.ts"
+      ],
+      "session": [
+        "./cjs/session/index.d.ts"
+      ],
+      "sql/types": [
+        "./cjs/sql/types.d.ts"
+      ],
+      "sql": [
+        "./cjs/sql/index.d.ts"
+      ],
+      "mysql": [
+        "./cjs/sql/mysql.d.ts"
+      ],
+      "pglite": [
+        "./cjs/sql/pglite.d.ts"
+      ],
+      "pgsql": [
+        "./cjs/sql/pgsql.d.ts"
+      ],
+      "sqlite": [
+        "./cjs/sql/sqlite.d.ts"
+      ],
+      "view/client": [
+        "./cjs/view/client.d.ts"
+      ],
+      "view/types": [
+        "./cjs/view/types.d.ts"
+      ],
+      "view": [
+        "./cjs/view/index.d.ts"
+      ],
+      "lib/types": [
+        "./cjs/lib/types.d.ts"
+      ],
+      "lib": [
+        "./cjs/lib/index.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      "unocss": [
+        "./cjs/unocss.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ]
     }
   },
   "files": [
@@ -211,9 +265,9 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "stackpress-admin": "0.9.1",
-    "stackpress-api": "0.9.1",
-    "stackpress-email": "0.9.1"
+    "stackpress-admin": "0.9.2",
+    "stackpress-api": "0.9.2",
+    "stackpress-email": "0.9.2"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

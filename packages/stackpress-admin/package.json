@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-admin",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "Admin library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -27,7 +27,6 @@
       "require": "./cjs/transform/index.js",
       "import": "./esm/transform/index.js"
     },
-    
     "./helpers": {
       "require": "./cjs/helpers.js",
       "import": "./esm/helpers.js"
@@ -48,7 +47,6 @@
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
     },
-
     "./cjs/client/LayoutAdmin": "./cjs/client/LayoutAdmin.js",
     "./esm/client/LayoutAdmin": "./esm/client/LayoutAdmin.js",
     "./cjs/LayoutAdmin": "./cjs/client/LayoutAdmin.js",
@@ -57,20 +55,42 @@
   },
   "typesVersions": {
     "*": {
-      "client/*": [ "./cjs/client/*.d.ts" ],
-      "client": [ "./cjs/client/index.d.ts" ],
-      "transform": [ "./cjs/transform/index.d.ts" ],
-
-      "helpers": [ "./cjs/helpers.d.ts" ],
-      "LayoutAdmin": [ "./cjs/client/LayoutAdmin.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ],
-      
-      "cjs/client/LayoutAdmin": [ "./cjs/client/LayoutAdmin.d.ts" ],
-      "esm/client/LayoutAdmin": [ "./esm/client/LayoutAdmin.d.ts" ],
-      "cjs/LayoutAdmin": [ "./cjs/client/LayoutAdmin.d.ts" ],
-      "esm/LayoutAdmin": [ "./esm/client/LayoutAdmin.d.ts" ]
+      "client/*": [
+        "./cjs/client/*.d.ts"
+      ],
+      "client": [
+        "./cjs/client/index.d.ts"
+      ],
+      "transform": [
+        "./cjs/transform/index.d.ts"
+      ],
+      "helpers": [
+        "./cjs/helpers.d.ts"
+      ],
+      "LayoutAdmin": [
+        "./cjs/client/LayoutAdmin.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ],
+      "cjs/client/LayoutAdmin": [
+        "./cjs/client/LayoutAdmin.d.ts"
+      ],
+      "esm/client/LayoutAdmin": [
+        "./esm/client/LayoutAdmin.d.ts"
+      ],
+      "cjs/LayoutAdmin": [
+        "./cjs/client/LayoutAdmin.d.ts"
+      ],
+      "esm/LayoutAdmin": [
+        "./esm/client/LayoutAdmin.d.ts"
+      ]
     }
   },
   "files": [
@@ -94,8 +114,8 @@
   },
   "dependencies": {
     "papaparse": "5.5.3",
-    "stackpress-session": "0.9.1"
-  },  
+    "stackpress-session": "0.9.2"
+  },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",
     "@types/chai": "4.3.20",

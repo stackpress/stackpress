@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-email",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "Generic email plugin for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -68,7 +68,7 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/ingest": "0.9.1",
+    "@stackpress/ingest": "0.9.2",
     "nodemailer": "7.0.13"
   },
   "devDependencies": {

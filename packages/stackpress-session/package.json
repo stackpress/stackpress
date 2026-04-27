@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-session",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "Session handler library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -27,7 +27,6 @@
       "require": "./cjs/views/*.js",
       "import": "./esm/views/*.js"
     },
-    
     "./actions": {
       "require": "./cjs/actions.js",
       "import": "./esm/actions.js"
@@ -56,27 +55,48 @@
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
     },
-
     "./esm/views/*": "./esm/views/*.js",
     "./cjs/views/*": "./cjs/views/*.js",
     "./styles.css": "./styles.css"
   },
   "typesVersions": {
     "*": {
-      "events/*": [ "./cjs/events/*.d.ts" ],
-      "pages/*": [ "./cjs/pages/*.d.ts" ],
-      "views/*": [ "./cjs/views/*.d.ts" ],
-
-      "actions": [ "./cjs/actions.d.ts" ],
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "helpers": [ "./cjs/helpers.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "Session": [ "./cjs/Session.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ],
-      
-      "esm/views/*": [ "./esm/views/*.d.ts" ],
-      "cjs/views/*": [ "./cjs/views/*.d.ts" ]
+      "events/*": [
+        "./cjs/events/*.d.ts"
+      ],
+      "pages/*": [
+        "./cjs/pages/*.d.ts"
+      ],
+      "views/*": [
+        "./cjs/views/*.d.ts"
+      ],
+      "actions": [
+        "./cjs/actions.d.ts"
+      ],
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "helpers": [
+        "./cjs/helpers.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "Session": [
+        "./cjs/Session.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ],
+      "esm/views/*": [
+        "./esm/views/*.d.ts"
+      ],
+      "cjs/views/*": [
+        "./cjs/views/*.d.ts"
+      ]
     }
   },
   "files": [
@@ -100,9 +120,9 @@
   },
   "dependencies": {
     "jose": "6.2.0",
-    "stackpress-csrf": "0.9.1",
-    "stackpress-sql": "0.9.1",
-    "stackpress-view": "0.9.1"
+    "stackpress-csrf": "0.9.2",
+    "stackpress-sql": "0.9.2",
+    "stackpress-view": "0.9.2"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",
