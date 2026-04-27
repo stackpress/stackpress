@@ -3,12 +3,13 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import { SignJWT, jwtVerify } from 'jose';
 //stackpress-session
+import Exception from '../Exception.js';
+//stackpress-session/session
 import type { 
   SessionData, 
   SessionPermission,
   SessionPermissionList
 } from './types.js';
-import Exception from './Exception.js';
 import { matchAnyEvent, matchAnyRoute } from './helpers.js';
 
 /**

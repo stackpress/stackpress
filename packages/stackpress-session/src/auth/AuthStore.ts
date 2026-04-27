@@ -28,10 +28,11 @@ import {
   toSqlBoolean,
   toSqlDate
 } from 'stackpress-sql/helpers';
-//stackpress-session
+//stackpress-session/profile
+import ProfileStore from '../profile/ProfileStore.js';
+//stackpress-session/auth
 import type { Auth, AuthExtended, AuthStoreInterface } from './types.js';
 import AuthSchema from './AuthSchema.js';
-import ProfileStore from '../profile/ProfileStore.js';
 
 export default class AuthStore
   extends AuthSchema

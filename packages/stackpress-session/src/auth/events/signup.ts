@@ -3,9 +3,11 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //stackpress-session
+import Exception from '../../Exception.js';
+//stackpress-session/profile
 import type { ProfileAuth } from '../../profile/types.js';
+//stackpress-session/auth
 import AuthActions from '../AuthActions.js';
-import Exception from '../Exception.js';
 
 export default async function AuthSignup(
   req: Request, 

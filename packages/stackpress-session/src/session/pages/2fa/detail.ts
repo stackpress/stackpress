@@ -7,13 +7,13 @@ import qrcode from 'qrcode';
 import type { CsrfPlugin } from 'stackpress-csrf/types';
 //stackpress-view
 import { setViewProps } from 'stackpress-view/helpers';
-//stackpress-session
-import type { 
-  AuthExtended, 
-  ProfileExtended,
-  SessionPlugin 
-} from '../../../types.js';
-import { generateSecret, verifyTOTP } from '../../../helpers.js';
+//stackpress-session/auth
+import type { AuthExtended } from '../../../auth/types.js';
+//stackpress-session/profile
+import type { ProfileExtended } from '../../../profile/types.js';
+//stackpress-session/session
+import type { SessionPlugin } from '../../types.js';
+import { generateSecret, verifyTOTP } from '../../helpers.js';
 
 /**
  * Main page handler

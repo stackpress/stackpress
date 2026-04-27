@@ -1,13 +1,18 @@
+//modules
+import type { StatusResponse } from '@stackpress/lib/types';
 import type Create from '@stackpress/inquire/Create';
 import type Engine from '@stackpress/inquire/Engine';
-import type { StatusResponse } from '@stackpress/lib/types';
 import Nest from '@stackpress/lib/Nest';
+//stackpress-schema
+import { removeUndefined, removeEmptyStrings } from 'stackpress-schema/helpers';
+//stackpress-sql
 import type {
   StoreSelectFilters,
   StoreSelectQuery
 } from 'stackpress-sql/types';
-import { removeUndefined, removeEmptyStrings } from 'stackpress-schema/helpers';
-import Exception from 'stackpress-sql/Exception';
+//stackpress-session
+import Exception from '../Exception.js';
+//stackpress-session/profile
 import type {
   Profile,
   ProfileExtended,

@@ -6,9 +6,14 @@ import type Server from '@stackpress/ingest/Server';
 import { hash } from 'stackpress-schema/helpers';
 //stackpress-view
 import { setViewProps } from 'stackpress-view/helpers';
-//stackpress-session
-import type { AuthExtended, AuthPasswordConfig, SessionPlugin } from '../../types.js';
-import { isSpecialChars } from '../../helpers.js';
+//stackpress-session/auth
+import type { 
+  AuthExtended, 
+  AuthPasswordConfig 
+} from '../../auth/types.js';
+import { isSpecialChars } from '../../auth/AuthActions.js';
+//stackpress-session/session
+import type { SessionPlugin } from '../types.js';
 
 /**
  * Main page handler

@@ -3,10 +3,12 @@ import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 //stackpress-session
+import Exception from '../../Exception.js';
+//stackpress-session/session
 import type { SessionPlugin } from '../../session/types.js';
+//stackpress-session/auth
 import type { AuthExtended, SigninType } from '../types.js';
 import AuthActions from '../AuthActions.js';
-import Exception from '../Exception.js';
 
 export default async function AuthSignin(
   req: Request, 

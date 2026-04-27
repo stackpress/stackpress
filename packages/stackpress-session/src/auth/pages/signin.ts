@@ -6,8 +6,10 @@ import type Server from '@stackpress/ingest/Server';
 import type { CsrfPlugin } from 'stackpress-csrf/types';
 //stackpress-view
 import { setViewProps } from 'stackpress-view/helpers';
-//stackpress-session
-import type { AuthConfig, SessionPlugin } from '../types.js';
+//stackpress-session/session
+import type { SessionPlugin } from '../../session/types.js';
+//stackpress-session/auth
+import type { AuthConfig } from '../types.js';
 
 /**
  * Main page handler
@@ -37,24 +39,6 @@ export default async function SignInPage(
     menu: auth.menu || [],
     password: auth.password || {}
   });
-  //generate a csrf token
-  csrf.generate(res, ctx);
-  //if form submission
-  if (req.method === 'POST') {
-    //if invalid csrf
-    if (!csrf.valid(req, res)) return;
-    //prevent passwordless sign in on this page...
-    req.data.set('password', true);
-    //sign in
-    await ctx.emit('auth-signin', req, res);
-    //if not ok
-    if (res.code !== 200) return;
-    //remove csrf
-    csrf.clear(req, res, ctx);
-    //sign in successful, redirect
-    res.redirect(req.data.path('redirect_uri', '/'));
-    return;
-  }
   //get user from session
   const me = session.load(req);
   const guest = await me.guest();

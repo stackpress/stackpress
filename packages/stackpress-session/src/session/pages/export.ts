@@ -2,8 +2,10 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
-//stackpress-session
-import type { ProfileExtended, SessionPlugin } from '../../types.js';
+//stackpress-session/profile
+import type { ProfileExtended } from '../../profile/types.js';
+//stackpress-session/session
+import type { SessionPlugin } from '../types.js';
 
 /**
  * Main page handler

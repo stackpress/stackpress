@@ -7,7 +7,7 @@ import type { CsrfPlugin } from 'stackpress-csrf/types';
 //stackpress-view
 import { setViewProps } from 'stackpress-view/helpers';
 //stackpress-session
-import type { SessionPlugin } from '../../../types.js';
+import type { SessionPlugin } from '../../types.js';
 
 /**
  * Main page handler

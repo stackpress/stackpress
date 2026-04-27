@@ -8,7 +8,14 @@ import type { SchemaInterface } from 'stackpress-schema';
 //stackpress-sql
 import type StoreInterface from 'stackpress-sql/StoreInterface';
 import type ActionsInterface from 'stackpress-sql/ActionsInterface';
-//stackpress-session
+//stackpress-view
+import { 
+  ServerConfigProps, 
+  ServerPageProps 
+} from 'stackpress-view/types';
+//stackpress-session/profile
+import { Profile } from '../profile/types.js';
+//stackpress-session/auth
 import type IdColumn from './columns/IdColumn.js';
 import type ProfileIdColumn from './columns/ProfileIdColumn.js';
 import type TypeColumn from './columns/TypeColumn.js';
@@ -20,7 +27,6 @@ import type ActiveColumn from './columns/ActiveColumn.js';
 import type CreatedColumn from './columns/CreatedColumn.js';
 import type UpdatedColumn from './columns/UpdatedColumn.js';
 import type ProfileStore from '../profile/ProfileStore.js';
-import { Profile } from '../profile/types.js';
 
 export type Auth = {
   id: string;
@@ -93,6 +99,11 @@ export interface AuthActionsInterface extends ActionsInterface<
   AuthRelations
 > {};
 
+export type ActionOptions = {
+  seed?: string,
+  password?: AuthPasswordConfig
+};
+
 //--------------------------------------------------------------------//
 // Config Types
 
@@ -150,3 +161,12 @@ export type SigninInput = {
 };
 
 export type SigninType = 'username' | 'email' | 'phone';
+
+//--------------------------------------------------------------------//
+// View Types
+
+export type AuthConfigProps = ServerConfigProps & {
+  auth: AuthConfig
+};
+
+export type AuthPageProps = ServerPageProps<AuthConfigProps>;

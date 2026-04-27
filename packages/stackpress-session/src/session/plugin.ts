@@ -22,6 +22,13 @@ export default function plugin(ctx: Server) {
   ctx.on('listen', (_req, _res, ctx) => {
     ctx.import.on('me', () => import('./events/session.js'));
     ctx.import.on('authorize', () => import('./events/authorize.js'));
+    //only if there is an access list
+    if (ctx.config.path('session.access')) {
+      //Globally evaluate every route and check if user has access to it
+      //this is where the secret sauce starts...
+      ctx.import.on('request', () => import('./pages/authorize.js'));
+    }
+    //otherwise, would whitelist every route...
   });
   //on route, add user routes
   ctx.on('route', (_req, _res, ctx) => {

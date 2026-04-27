@@ -5,7 +5,7 @@ import type Server from '@stackpress/ingest/Server';
 //stackpress-view
 import { setViewProps } from 'stackpress-view/helpers';
 //stackpress-session
-import type { SessionPlugin } from '../../types.js';
+import type { SessionPlugin } from '../types.js';
 
 /**
  * Main page handler

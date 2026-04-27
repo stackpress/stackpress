@@ -11,31 +11,28 @@ import {
 } from 'stackpress-schema/helpers';
 //stackpress-sql
 import type {
-  ClientPlugin, 
   DatabasePlugin,
   StoreSelectFilters,
   StoreSelectQuery
 } from 'stackpress-sql/types';
-import Exception from 'stackpress-sql/Exception';
 //stackpress-session
+import Exception from '../Exception.js';
+//stackpress-session/profile
 import type { ProfileAuth } from '../profile/types.js';
+//stackpress-session/auth
 import type {
   Auth,
   AuthExtended,
   AuthActionsInterface,
   AuthAssertInterfaceMap,
   AuthPasswordConfig,
+  ActionOptions,
   SigninInput,
   SignupInput,
   SigninType
 } from './types.js';
 import AuthStore from './AuthStore.js';
 import ProfileActions from '../profile/ProfileActions.js';
-
-export type ActionOptions = {
-  seed?: string,
-  password?: AuthPasswordConfig
-};
 
 export const isSpecialChars = /[!@#$%^&*(),.?":{}|<>\s]/;
 export const isEmail = /^(?:(?:(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff]))(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff]|\x5c(?=[@,"\[\]\x5c\x00-\x20\x7f-\xff])|\.(?=[^\.])){1,62}(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|(?<=\x5c)[@,"\[\]\x5c\x00-\x20\x7f-\xff])|[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]{1,2})|"(?:[^"]|(?<=\x5c)"){1,62}")@(?:(?!.{64})(?:[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.?|[a-zA-Z0-9]\.?)+\.(?:xn--[a-zA-Z0-9]+|[a-zA-Z]{2,6})|\[(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[0-1]?\d?\d|2[0-4]\d|25[0-5])){3}\])$/;

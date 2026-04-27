@@ -2,7 +2,7 @@
 import * as z from 'zod';
 //stackpress-schema
 import { removeUndefined } from 'stackpress-schema/helpers';
-//stackpress-sql
+//stackpress-session
 import type { Profile, ProfileSchemaInterface } from './types.js';
 import IdColumn from './columns/IdColumn.js';
 import ImageColumn from './columns/ImageColumn.js';
