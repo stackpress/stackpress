@@ -1,0 +1,30 @@
+//modules
+import { useState, useEffect } from 'react';
+import UniversalCookie from 'universal-cookie';
+//stackpress-view
+import type { ThemeProviderProps } from './types.js';
+import ThemeContext from './ThemeContext.js';
+
+const cookie = new UniversalCookie();
+
+export type { ThemeProviderProps };
+
+// (this is what to put in app.tsx)
+export default function ThemeProvider(props: ThemeProviderProps) {
+  const { children, theme: init = 'light' } = props;
+  const [ theme, setTheme ] = useState(init);
+  const toggle = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    cookie.set('theme', newTheme, { path: '/' });
+  };
+  const value = { theme, toggle };
+  useEffect(() => {
+    setTheme(cookie.get('theme') as string || init);
+  }, []);
+  return (
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
