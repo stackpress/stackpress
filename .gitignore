@@ -144,4 +144,4 @@ templates/*/public/client
 stackpress/tests/out
 archives
 
-
+.vscode
