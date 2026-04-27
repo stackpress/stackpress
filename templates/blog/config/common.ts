@@ -3,9 +3,8 @@ import path from 'node:path';
 //modules
 import type { ToastPosition } from 'react-toastify';
 //types
-import type { Method, APIType } from 'stackpress/types';
 export type { Config } from 'stackpress/types';
-export type Cascade = 'CASCADE'|'RESTRICT'|'SET NULL';
+export type Cascade = 'CASCADE' | 'RESTRICT' | 'SET NULL';
 //pathnames
 export const cwd = process.cwd();
 export const build = path.join(cwd, '.build');
@@ -16,9 +15,7 @@ export const seed = {
   database: process.env.DATABASE_SEED || 'abc123',
   session: process.env.SESSION_SEED || 'abc123'
 };
-export const csrf = {
-  name: 'csrf'
-};
+
 //common config
 export const admin = {
   //name of the admin section. shown on the top left of the page
@@ -74,7 +71,7 @@ export const api = {
     {
       event: 'auth-signout',
       uri: 'http://localhost:3000/api/webhook',
-      method: 'POST' as Method,
+      method: 'POST' as 'POST',
       validity: {},
       data: {}
     }
@@ -92,52 +89,52 @@ export const api = {
   endpoints: [
     //Auth Endpoints
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/auth/search',
-      type: 'public' as APIType,
+      type: 'public' as 'public',
       event: 'auth-search',
       cors: true,
       data: {}
     },
     //Profile Endpoints
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/profile/search',
-      type: 'app' as APIType,
+      type: 'app' as 'app',
       scopes: [ 'user' ],
       event: 'profile-search',
       data: {}
     },
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/profile/detail/:id',
-      type: 'app' as APIType,
+      type: 'app' as 'app',
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}
     },
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/profile/get/:key/:value',
-      type: 'app' as APIType,
+      type: 'app' as 'app',
       scopes: [ 'user' ],
       event: 'profile-get',
       data: {}
     },
     //Address Endpoints
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/my/address',
-      type: 'session' as APIType,
+      type: 'session' as 'session',
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}
     },
     //File Endpoints
     {
-      method: 'GET' as Method,
+      method: 'GET' as 'GET',
       route: '/api/my/files',
-      type: 'session' as APIType,
+      type: 'session' as 'session',
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}
@@ -180,11 +177,6 @@ export const brand = {
   favicon: '/favicon.ico'
 };
 
-export const cli = {
-  label: '[BLOG]',
-  idea: path.join(cwd, 'schema.idea')
-};
-
 export const client = { 
   //whether to compiler client in `js` or `ts`
   lang: 'js',
@@ -204,7 +196,7 @@ export const client = {
   prettier: {
     singleQuote: true,
     jsxSingleQuote: false,
-    trailingComma: 'none',
+    trailingComma: 'none' as 'none',
     bracketSpacing: true,
     experimentalTernaries: true
   }
@@ -213,6 +205,10 @@ export const client = {
 export const cookie = { 
   //see: https://github.com/jshttp/cookie?tab=readme-ov-file#options-1
   path: '/' 
+};
+
+export const csrf = {
+  name: 'csrf'
 };
 
 export const database = {
@@ -227,7 +223,184 @@ export const database = {
   schema: {
     onDelete: 'CASCADE' as Cascade,
     onUpdate: 'RESTRICT' as Cascade
-  }
+  },
+  populate: [
+    {
+      event: 'profile-create',
+      data: {
+        id: 'developer',
+        name: 'Developer',
+        type: 'person',
+        roles: [ 'ADMIN' ]
+      }
+    },
+    {
+      event: 'auth-create',
+      data: {
+        profileId: 'developer',
+        type: 'username',
+        token: 'developer',
+        secret: 'developer'
+      }
+    },
+    {
+      event: 'auth-create',
+      data: {
+        profileId: 'developer',
+        type: 'email',
+        token: 'developer@shoppable.ph',
+        secret: 'developer'
+      }
+    },
+    {
+      event: 'application-create',
+      data: {
+        profileId: 'developer',
+        name: 'Developer App',
+        scopes: [ 'profile-write', 'auth-read' ],
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+      }
+    },
+    {
+      event: 'category-create',
+      data: {
+        id: 'anime',
+        banner: 'https://i.pinimg.com/736x/86/e3/34/86e3344c625be5db137c16d6d06e5ad3.jpg',
+        slug: 'anime',
+        name: 'Anime',
+        description: 'All about anime'
+      }
+    },
+    {
+      event: 'category-create',
+      data: {
+        id: 'gaming',
+        banner: 'https://wallpapers.com/images/hd/youtube-banner-gaming-63ft5u6qosotxyaj.jpg',
+        slug: 'gaming',
+        name: 'Gaming',
+        description: 'All about gaming'
+      }
+    },
+    {
+      event: 'article-create',
+      data: {
+        id: 'pokemon',
+        profileId: 'developer',
+        banner: 'https://g.foolcdn.com/editorial/images/598665/pokemon-go.jpg',
+        slug: 'pokemon-turns-30-how-the-fictional-pocket-monsters-shaped-science',
+        title: 'Pokémon turns 30 — how the fictional pocket monsters shaped science',
+        contents: `<p>On 27 February 1996, Japanese game designer Satoshi Tajiri 
+        released the first ever Pokémon games for the Nintendo Game Boy. What 
+        started as a childhood passion for collecting insects grew into a giant 
+        franchise and global phenomenon with themes of science at its heart.</p>
+        <p>The fictional world of Pokémon has found its way into science and 
+        academic research, including ecology, fossils, evolution, biodiversity, 
+        education and even calling out predatory journals.</p>
+        <p>“It influenced my idea of what animals and natural history were, 
+        almost before I knew what real animals in the real world were like,” 
+        says Arjan Mann, assistant curator of fossil fishes and early tetrapods 
+        at the Field Museum in Chicago, Illinois, who was a child when the 
+        television series came out.</p>`,
+        keywords: [ 'pokemon', 'nintendo' ],
+        tags: [ 'Satoshi Tajiri', 'Arjan Mann' ],
+        references: { source: 'nature.com' },
+        status: 'PUBLISHED',
+        published: new Date('2024-02-27T12:00:00Z')
+      }
+    },
+    {
+      event: 'article-create',
+      data: {
+        id: 'minecraft',
+        profileId: 'developer',
+        banner: 'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/MSpotlight_HEADER.jpg',
+        slug: 'minecraft-is-15-years-old-and-still-changing-lives',
+        title: 'Minecraft is 15 years old and still changing lives',
+        contents: `<p>A few days ago, I was tidying my home office – which more 
+        closely resembles a video game arcade recently hit by a tornado – when I 
+        found a long-lost piece of technology in the bottom drawer of my filing 
+        cabinet. It was an old Xbox 360, the Elite model – black, heavy, ungainly, 
+        impossibly retro. Out of curiosity, I hauled it out, found a controller 
+        and power cable and switched it on. I knew immediately what I wanted to 
+        look for, but I was also apprehensive: I didn’t know how I’d feel if 
+        Minecraft was still there – or worse, if it wasn’t. Minecraft, you see, 
+        is more than just a game for me. I thought about just putting the console 
+        back where I found it. But as this month sees the 15th anniversary of the 
+        game’s original release, I felt I had to go on.</p>
+        <p>In 2012, Microsoft held a big Xbox Games Showcase event at a cavernous 
+        venue in San Francisco. The company was showing all the biggest titles of 
+        the era – Forza, Gears of War, Halo – but in one quiet corner sat a couple 
+        of demo units showing off the as yet unreleased Xbox version of Minecraft. 
+        I already knew about the game, of course – designed by Swedish studio Mojang, 
+        it was an open-world creative adventure, allowing players to explore vast, 
+        procedurally generated worlds, collect resources and build whatever they 
+        wanted. It was already attracting millions of players on PC. But I had 
+        never really given it much time; so I sat down to have a quick go … and 
+        ended up staying for an hour. There was something in it that was holding me 
+        there, despite all the other games on offer. That something was Zac.</p>`,
+        keywords: [ 'xbox', 'pc' ],
+        references: { source: 'minecraft.net' },
+        tags: [ 'Mojang', 'Microsoft' ],
+        status: 'PUBLISHED',
+        published: new Date('2024-11-15T12:00:00Z')
+      }
+    },
+    {
+      event: 'catalog-create',
+      data: {
+        categoryId: 'anime',
+        articleId: 'pokemon'
+      }
+    },
+    {
+      event: 'catalog-create',
+      data: {
+        categoryId: 'gaming',
+        articleId: 'minecraft'
+      }
+    },
+    {
+      event: 'comment-create',
+      data: {
+        profileId: 'developer',
+        articleId: 'pokemon',
+        comment: 'Great article!'
+      }
+    },
+    {
+      event: 'comment-create',
+      data: {
+        profileId: 'developer',
+        articleId: 'pokemon',
+        comment: 'Congrats on 30 years of Pokémon!'
+      }
+    },
+    {
+      event: 'comment-create',
+      data: {
+        profileId: 'developer',
+        articleId: 'minecraft',
+        comment: 'Minecraft is still amazing after 15 years!'
+      }
+    },
+    {
+      event: 'comment-create',
+      data: {
+        profileId: 'developer',
+        articleId: 'minecraft',
+        comment: 'Looking forward to the next 15 years of Minecraft!'
+      }
+    },
+    {
+      event: 'application-create',
+      data: {
+        profileId: 'developer',
+        name: 'Example App',
+        scopes: [ 'profile-write', 'auth-read' ],
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+      }
+    }
+  ]
 };
 
 export const email = {
@@ -308,6 +481,11 @@ export const session = {
       { method: 'ALL', route: '/api/**' }
     ]
   }
+};
+
+export const terminal = {
+  label: '[BLOG]',
+  idea: path.join(cwd, 'schema.idea')
 };
 
 export const view = {

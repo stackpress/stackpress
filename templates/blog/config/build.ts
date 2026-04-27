@@ -46,14 +46,14 @@ export const config: Config = {
   api: common.api,
   auth: common.auth,
   brand: common.brand,
-  cli: common.cli,
   client: common.client,
+  csrf: common.csrf,
   database: common.database,
   email: common.email,
   cookie: common.cookie,
   language: common.language,
   session: common.session,
-  csrf: common.csrf
+  terminal: common.terminal
 };
 
 export default async function bootstrap() {

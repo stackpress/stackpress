@@ -1,22 +1,29 @@
 //--------------------------------------------------------------------//
 // Imports
 
-import type { Trace, ServerPageProps } from 'stackpress/view/client';
+//stackpress
+import type { 
+  Trace, 
+  ServerConfigPageProps
+} from 'stackpress/view/client';
 import { 
   useConfig,
   useLanguage,
-  useResponse 
+  useResponse,
+  LayoutPanel
 } from 'stackpress/view/client';
-import Layout from '../components/Layout.js';
+//plugins/app
 
 //--------------------------------------------------------------------//
 // Components
 
-export type Config = {
+export type ErrorConfig = {
   server: { mode: string }
-}
+};
 
-export function Head(props: ServerPageProps<Config>) {
+export type ErrorPageProps = ServerConfigPageProps<ErrorConfig>;
+
+export function Head(props: ErrorPageProps) {
   //props
   const { request, response, styles = [] } = props;
   //hooks
@@ -51,7 +58,7 @@ export function Head(props: ServerPageProps<Config>) {
 export function Body() {
   //hooks
   const { _ } = useLanguage();
-  const config = useConfig<Config>();
+  const config = useConfig<ErrorConfig>();
   const response = useResponse();
   //variables
   const production = config.path(
@@ -110,16 +117,17 @@ export function Body() {
   );
 };
 
-export function Page(props: ServerPageProps) {
-  const { session, request, response } = props;
+export function Page(props: ErrorPageProps) {
+  const { data, session, request, response } = props;
   return (
-    <Layout
+    <LayoutPanel
+      data={data}
       session={session}
       request={request}
       response={response}
     >
       <Body />
-    </Layout>
+    </LayoutPanel>
   );
 };
 

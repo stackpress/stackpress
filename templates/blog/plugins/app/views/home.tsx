@@ -2,13 +2,12 @@
 // Imports
 
 //modules
-import type { ServerPageProps } from 'stackpress/view/client';
 import { useLanguage } from 'r22n';
-import { useResponse } from 'stackpress/view/client';
+//stackpress
+import type { ServerConfigPageProps } from 'stackpress/view/client';
+import { useResponse, LayoutPanel } from 'stackpress/view/client';
 //client
 import type { ArticleExtended } from 'blog-client/types';
-//plugins/app
-import Layout from '../components/Layout.js';
 
 //--------------------------------------------------------------------//
 // Constants
@@ -40,7 +39,7 @@ export function Body() {
   const rows = response.results || [];
   const { _ } = useLanguage();
   return (
-    <main className="flex flex-col w-full h-full">
+    <main className="flex flex-col w-full h-full overflow-auto">
       <div className="px-p-10 px-mw-960 mx-auto">
         <h1 className="text-2xl font-bold px-pb-10">
           {_('Whats New')}
@@ -72,7 +71,7 @@ export function Body() {
   );
 }
 
-export function Head(props: ServerPageProps) {
+export function Head(props: ServerConfigPageProps) {
   const { styles = [] } = props;
   return (
     <>
@@ -95,16 +94,17 @@ export function Head(props: ServerPageProps) {
   );
 };
 
-export function Page(props: ServerPageProps) {
-  const { session, request, response } = props;
+export function Page(props: ServerConfigPageProps) {
+  const { data, session, request, response } = props;
   return (
-    <Layout
+    <LayoutPanel
+      data={data}
       session={session}
       request={request}
       response={response}
     >
       <Body />
-    </Layout>
+    </LayoutPanel>
   );
 };
 
