@@ -1,0 +1,1 @@
+export type { EmailConfig } from './types.js';
