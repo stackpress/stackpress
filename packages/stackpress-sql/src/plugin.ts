@@ -43,7 +43,7 @@ export default function plugin(ctx: Server) {
     //loop through all the models
     for (const model of Object.values(models)) {
       //register all the model events
-      model.listen(ctx);
+      typeof model.listen === 'function' && model.listen(ctx);
     }
   }));
   //generate some code in the client folder

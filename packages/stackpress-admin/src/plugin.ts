@@ -24,7 +24,7 @@ export default function plugin(ctx: Server) {
     //loop through all the models
     for (const model of Object.values(models)) {
       //register all the admin routes
-      model.admin(ctx);
+      typeof model.admin === 'function' && model.admin(ctx);
     }
   }));
   //generate some code in the client folder
