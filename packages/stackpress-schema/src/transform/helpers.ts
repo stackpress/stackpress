@@ -75,4 +75,4 @@ export function savePackageJsonNest(pwd: string, nest: Nest) {
   }
   const filepath = path.resolve(pwd, 'package.json');
   fs.writeFileSync(filepath, JSON.stringify(nest.get(), null, 2));
-}
+};

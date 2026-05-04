@@ -4,6 +4,14 @@ import type Fieldset from '../Fieldset.js';
 export default class FieldsetDocument {
   //column reference
   protected _fieldset: Fieldset;
+  
+  /**
+   * Returns the column @description
+   * example: @description("This is a description of the fieldset")
+   */
+  public get description() {
+    return this._fieldset.attributes.value<string>('description') || null;
+  }
 
   /**
    * Returns all columns with descriptions

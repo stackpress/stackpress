@@ -139,6 +139,7 @@ esm
 
 templates/*/.build
 templates/*/client-source
+templates/*/docs
 templates/*/public/assets
 templates/*/public/client
 stackpress/tests/out

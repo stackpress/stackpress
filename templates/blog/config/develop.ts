@@ -128,6 +128,7 @@ export const config: Config = {
   client: common.client,
   cookie: common.cookie,
   database: common.database,
+  docs: common.docs,
   email: common.email,
   language: common.language,
   terminal: common.terminal

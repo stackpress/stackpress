@@ -403,6 +403,10 @@ export const database = {
   ]
 };
 
+export const docs = {
+  build: path.join(cwd, 'docs')
+};
+
 export const email = {
   host: 'smtp.example.com',
   port: 587,
