@@ -13,6 +13,12 @@ import type {
   LanguagePlugin 
 } from 'stackpress-language/types';
 import type {
+  McpConfig,
+  McpPlugin,
+  Client,
+  ClientPlugin
+} from 'stackpress-mcp/types';
+import type {
   ClientProjectProps,
   ClientPluginProps,
   ClientFieldset,
@@ -36,9 +42,7 @@ import type {
   DatabaseConfig, 
   DatabasePlugin,
   ClientModel,
-  ClientScripts,
-  ClientPlugin,
-  Client
+  ClientScripts
 } from 'stackpress-sql/types';
 import type { 
   ViewConfig, 
@@ -66,6 +70,7 @@ export type {
   CookieConfig,
   DatabaseConfig,
   EmailConfig,
+  McpConfig,
   LanguageConfig,
   ServerConfig,
   SessionConfig,
@@ -76,6 +81,7 @@ export type {
   CsrfPlugin,
   DatabasePlugin,
   LanguagePlugin,
+  McpPlugin,
   SessionPlugin,
   TerminalPlugin,
   ViewPlugin,

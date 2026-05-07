@@ -1328,14 +1328,6 @@
     "@stackpress/idea-parser" "0.9.2"
     "@stackpress/lib" "0.9.2"
 
-"@stackpress/ingest@0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@stackpress/ingest/-/ingest-0.8.3.tgz#7bedb314d82188828c11f2b743f22c715ba9db49"
-  integrity sha512-hWpxTmJK+mi/GsSG0E0QuM0LUp4F1lSwar6qy99xQqt5cVxH/C0oonQRCoJR7BveTS+zH9nmqrB+3DIOIj1pEQ==
-  dependencies:
-    "@stackpress/lib" "0.8.3"
-    "@whatwg-node/server" "0.10.17"
-
 "@stackpress/ingest@0.9.2":
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/@stackpress/ingest/-/ingest-0.9.2.tgz#6ce0584dd09f7a7e20f82971e571c3c4c85435d1"
@@ -1357,13 +1349,6 @@
   integrity sha512-gJlOFK//8itioKMPCY0DPfvXwjm4L/6U9bFazoJLIE4SNTtDugaSdTkI98nwpDTjURl4bw3PFFONUoERazqp5A==
   dependencies:
     "@stackpress/lib" "0.9.2"
-
-"@stackpress/lib@0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@stackpress/lib/-/lib-0.8.3.tgz#7c2bf717e9a740cff822ec2f1baa3c7148775006"
-  integrity sha512-5V3WTyIscImMsx+HDp/ckwlgFIo2fH6nIyMDRkX7bxzcD0lBR0LrYahjWz+b7mHt0kB71q9OtviFMuBLD3HQ+w==
-  dependencies:
-    "@inquirer/prompts" "8.1.0"
 
 "@stackpress/lib@0.9.2":
   version "0.9.2"

@@ -6,8 +6,7 @@
   "plugins": [
     "./plugins/app/plugin",
     "./plugins/store/plugin",
-    "stackpress",
-    "stackpress-mcp"
+    "stackpress"
   ],
   "scripts": {
     "build": "stackpress build --b config/build -v",

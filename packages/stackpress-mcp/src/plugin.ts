@@ -33,7 +33,7 @@ export default function plugin(ctx: Server) {
     //set plugin
     ctx.register('mcp', server);
     //add mcp server events
-    ctx.on('serve', serve);
+    ctx.on('mcp', serve);
   }));
   //generate some code in the client folder
   ctx.on('idea', async req => {

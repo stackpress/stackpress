@@ -10,6 +10,7 @@ import server from 'stackpress-server/plugin';
 import session from 'stackpress-session/plugin';
 import api from 'stackpress-api/plugin';
 import csrf from 'stackpress-csrf/plugin';
+import mcp from 'stackpress-mcp/plugin';
 
 export default async function plugin(ctx: Server) {
   //load the plugins
@@ -21,5 +22,6 @@ export default async function plugin(ctx: Server) {
   view(ctx);
   session(ctx);
   api(ctx);
+  mcp(ctx);
   admin(ctx);
 };

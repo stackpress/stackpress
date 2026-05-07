@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-mcp",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "MCP server built on top of the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -85,7 +85,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
-    "@stackpress/ingest": "0.8.3"
+    "@stackpress/ingest": "0.9.2"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",
