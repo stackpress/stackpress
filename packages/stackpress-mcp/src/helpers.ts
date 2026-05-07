@@ -1,3 +1,4 @@
+//modules
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 /**
@@ -10,6 +11,25 @@ export function toMcpText<T>(results: T): CallToolResult {
       text: typeof results !== 'string' 
         ? JSON.stringify(results, null, 2)
         : results
+    }]
+  };
+};
+
+/**
+ * Formats an MCP error result.
+ */
+export function toMcpError(
+  message: string,
+  details?: Record<string, unknown>
+): CallToolResult {
+  return {
+    isError: true,
+    content: [{
+      type: 'text',
+      text: JSON.stringify({
+        error: message,
+        ...details
+      }, null, 2)
     }]
   };
 };

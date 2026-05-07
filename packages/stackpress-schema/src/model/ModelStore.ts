@@ -15,6 +15,13 @@ export default class ModelStore {
   }
 
   /**
+   * Returns all the filterable columns
+   */
+  public get filterables() {
+    return this._model.columns.filter(column => column.store.filterable);
+  }
+
+  /**
    * Returns all the columns with foreign relationships
    * ie. owner User @relation({ name "connections" local "userId" foreign "id" })
    */
@@ -82,6 +89,13 @@ export default class ModelStore {
    */
   public get sortables() {
     return this._model.columns.filter(column => column.store.sortable);
+  }
+
+  /**
+   * Returns all the spannable columns
+   */
+  public get spannables() {
+    return this._model.columns.filter(column => column.store.spannable);
   }
 
   /**

@@ -25,11 +25,11 @@ export default function generate(directory: Directory, schema: Schema) {
     packageJson.set('exports', `./${components}/spans/*`, `./${components}/spans/*.js`);
     packageJson.set('exports', `./${components}/views/*`, `./${components}/views/*.js`);
 
-    packageJson.set('typesVersions', `*`, `./${components}/fields/*`, [ `./${components}/fields/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${components}/filters/*`, [ `./${components}/filters/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${components}/lists/*`, [ `./${components}/lists/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${components}/spans/*`, [ `./${components}/spans/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${components}/views/*`, [ `./${components}/views/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${components}/fields/*`, [ `./${components}/fields/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${components}/filters/*`, [ `./${components}/filters/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${components}/lists/*`, [ `./${components}/lists/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${components}/spans/*`, [ `./${components}/spans/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${components}/views/*`, [ `./${components}/views/*.d.ts` ]);
   });
 
   savePackageJsonNest(pwd, packageJson);

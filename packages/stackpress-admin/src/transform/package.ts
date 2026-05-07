@@ -23,9 +23,9 @@ export default function generate(directory: Directory, schema: Schema) {
     packageJson.set('exports', `./${admin}/views/*`, `./${admin}/views/*.js`);
     packageJson.set('exports', `./${admin}/routes`, `./${admin}/routes.js`);
 
-    packageJson.set('typesVersions', `*`, `./${admin}/pages/*`, [ `./${admin}/pages/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${admin}/views/*`, [ `./${admin}/views/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${admin}/routes`, [ `./${admin}/routes.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${admin}/pages/*`, [ `./${admin}/pages/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${admin}/views/*`, [ `./${admin}/views/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${admin}/routes`, [ `./${admin}/routes.d.ts` ]);
   });
 
   savePackageJsonNest(pwd, packageJson);

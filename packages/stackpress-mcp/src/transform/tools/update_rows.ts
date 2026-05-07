@@ -10,18 +10,19 @@ import {
 //stackpress-sql
 import { getAlias } from 'stackpress-sql/helpers';
 //stackpress-mcp
-import { getQuerySelectors, typemap } from '../helpers.js';
+import { typemap, getInputShape, getQuerySelectors } from '../helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
-  const {
-    filters,
-    spans,
-    strings,
-    sortables,
-    columns
-  } = getQuerySelectors(model);
-  const filepath = model.name.toPathName('%s/tools/find_first.ts');
-  //load Profile/tools/find_first.ts if it exists, if not create it
+  const enums: string[] = [];
+  model.columns.forEach(column => {
+    if (column.type.enum) {
+      enums.push(column.type.name);
+    }
+  });
+  const { filters, spans, strings } = getQuerySelectors(model);
+
+  const filepath = model.name.toPathName('%s/tools/update_rows.ts');
+  //load Profile/tools/update_rows.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
   //------------------------------------------------------------------//
@@ -67,6 +68,13 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Client
 
+  //import type { Role } from '../../enum.js';
+  if (enums.length > 0) {
+    source.addImportDeclaration({
+      moduleSpecifier: '../../enums.js',
+      namedImports: enums
+    });
+  }
   //import ProfileActions from '../ProfileActions.js';
   source.addImportDeclaration({
     defaultImport: model.name.toClassName('%sActions'),
@@ -163,17 +171,12 @@ export default function generate(directory: Directory, model: Model) {
             column.document.description || ''
           ].filter(Boolean).join('; ')
         })),
-        sort: sortables.map(([ name, column ]) => ({
-          name: getAlias(name),
-          description: [
-            `Sort records by ${column.parent!.name.toString()} ${column.name.toString()} in ascending or descending order`,
-            column.document.description || ''
-          ].filter(Boolean).join('; ')
-        })),
-        columns: Array.from(columns).join(', '),
-        query: JSON.stringify(
-          model.store.query.length > 0 ? model.store.query : [ '*' ]
-        )
+        columns: model.columns.filter(
+          column => !column.type.model
+        ).map(column => ({
+          name: column.name.toString(),
+          shape: getInputShape(column, true)
+        })).toArray()
       })
     }]
   });
@@ -235,10 +238,6 @@ export default function generate(directory: Directory, model: Model) {
       hasnt: strings.map(([ name ]) => ({
         path: name,
         name: getAlias(name)
-      })),
-      sort: sortables.map(([ name ]) => ({
-        path: name,
-        name: getAlias(name)
       }))
     })
   });
@@ -265,44 +264,47 @@ export const TEMPLATE = {
 //export const schema = {};
 SCHEMA:
 `{
-  <%#?:searchable%>
-    q: z.string().optional().describe('Search query string'),
-  <%/?:searchable%>
-  <%#@:eq filter%>
-    <%filter.name%>__eq: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
-  <%/@:eq%>
-  <%#@:ne filter%>
-    <%filter.name%>__ne: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
-  <%/@:ne%>
-  <%#@:ge filter%>
-    <%filter.name%>__ge: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
-  <%/@:ge%>
-  <%#@:le filter%>
-    <%filter.name%>__le: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
-  <%/@:le%>
-  <%#@:has filter%>
-    <%filter.name%>__has: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
-  <%/@:has%>
-  <%#@:hasnt filter%>
-    <%filter.name%>__hasnt: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
-  <%/@:hasnt%>
-  <%#@:sort order%>
-    sort__<%order.name%>: z.enum(['asc', 'desc']).optional().describe('<%order.description%>'),
-  <%/@:sort%>
-  columns: z.array(z.string()).optional().describe('Columns to include in the results (default: <%query%>) valid selectors include: <%columns%>')
+  query: z.object({
+    <%#?:searchable%>
+      q: z.string().optional().describe('Search query string'),
+    <%/?:searchable%>
+    <%#@:eq filter%>
+      <%filter.name%>__eq: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
+    <%/@:eq%>
+    <%#@:ne filter%>
+      <%filter.name%>__ne: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
+    <%/@:ne%>
+    <%#@:ge filter%>
+      <%filter.name%>__ge: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
+    <%/@:ge%>
+    <%#@:le filter%>
+      <%filter.name%>__le: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
+    <%/@:le%>
+    <%#@:has filter%>
+      <%filter.name%>__has: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
+    <%/@:has%>
+    <%#@:hasnt filter%>
+      <%filter.name%>__hasnt: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
+    <%/@:hasnt%>
+  }),
+  input: z.object({
+    <%#@:columns column%>
+      <%column.name%>: <%column.shape%>,
+    <%/@:columns%>
+  }) 
 }`,
 
 //export const info = { title, description, inputSchema };
 INFO:
 `{
-  title: 'Find First - <%model%>',
-  description: 'Find the first matching <%model%> record using the generated Stackpress actions class.',
+  title: 'Update Rows - <%model%>',
+  description: 'Update matching <%model%> rows using the generated Stackpress actions class.',
   inputSchema: schema
 }`,
 
 //export async function handler(params: Args, ctx: Server) {};
 HANDLER:
-`const request = args.parse(params);
+`const { query: request, input } = args.parse(params);
 const nest = new Nest();
 <%#?:searchable%>
   if (typeof request.q !== 'undefined') {
@@ -339,22 +341,14 @@ const nest = new Nest();
     nest.withPath.set('hasnt.<%filter.path%>', request.<%filter.name%>__hasnt);
   }
 <%/@:hasnt%>
-<%#@:sort order%>
-  if (typeof request.sort__<%order.name%> !== 'undefined') {
-    nest.withPath.set('sort.<%order.path%>', request.sort__<%order.name%>);
-  }
-<%/@:sort%>
-if (typeof request.columns !== 'undefined') {
-  nest.set('columns', request.columns);
-}
 const query = nest.get<StoreSelectQuery>();
 const seed = ctx.config.path('database.seed', '');
 const engine = ctx.plugin<DatabasePlugin>('database');
 const actions = new <%actions%>(engine, seed);
-const results = await actions.find(query);
-return toMcpText(results);`,
+const results = await actions.update(query, input);
+return toMcpText({ total: results.length, results });`,
 
 //export default function register(server: McpServer, ctx: Server) {};
 REGISTER:
-`server.registerTool('<%model%>_find_first', info, params => handler(params, ctx));`
+`server.registerTool('<%model%>_update_rows', info, params => handler(params, ctx));`
 };

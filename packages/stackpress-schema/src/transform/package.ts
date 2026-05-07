@@ -41,12 +41,12 @@ export default function generate(
     packageJson.set('exports', `./${name}`, `./${name}/index.js`);
     packageJson.set('exports', `./${name}/*`, `./${name}/*.js`);
     
-    packageJson.set('typesVersions', `*`, `./${columns}`, [ `./${columns}/index.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${columns}/*`, [ `./${columns}/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${tests}`, [ `./${tests}/index.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${tests}/*`, [ `./${tests}/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${name}`, [ `./${name}/index.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${name}/*`, [ `./${name}/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${columns}`, [ `./${columns}/index.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${columns}/*`, [ `./${columns}/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${tests}`, [ `./${tests}/index.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${tests}/*`, [ `./${tests}/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${name}`, [ `./${name}/index.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${name}/*`, [ `./${name}/*.d.ts` ]);
   });
 
   schema.fieldsets.forEach(fieldset => {
@@ -61,12 +61,12 @@ export default function generate(
     packageJson.set('exports', `./${name}`, `./${name}/index.js`);
     packageJson.set('exports', `./${name}/*`, `./${name}/*.js`);
     
-    packageJson.set('typesVersions', `*`, `./${columns}`, [ `./${columns}/index.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${columns}/*`, [ `./${columns}/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${tests}`, [ `./${tests}/index.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${tests}/*`, [ `./${tests}/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${name}`, [ `./${name}/index.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${name}/*`, [ `./${name}/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${columns}`, [ `./${columns}/index.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${columns}/*`, [ `./${columns}/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${tests}`, [ `./${tests}/index.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${tests}/*`, [ `./${tests}/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${name}`, [ `./${name}/index.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${name}/*`, [ `./${name}/*.d.ts` ]);
   });
 
   savePackageJsonNest(pwd, packageJson);

@@ -13,15 +13,9 @@ import { getAlias } from 'stackpress-sql/helpers';
 import { getQuerySelectors, typemap } from '../helpers.js';
 
 export default function generate(directory: Directory, model: Model) {
-  const {
-    filters,
-    spans,
-    strings,
-    sortables,
-    columns
-  } = getQuerySelectors(model);
-  const filepath = model.name.toPathName('%s/tools/find_first.ts');
-  //load Profile/tools/find_first.ts if it exists, if not create it
+  const { filters, spans, strings } = getQuerySelectors(model);
+  const filepath = model.name.toPathName('%s/tools/remove_rows.ts');
+  //load Profile/tools/remove_rows.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
   //------------------------------------------------------------------//
@@ -162,18 +156,7 @@ export default function generate(directory: Directory, model: Model) {
             `Filter records where ${column.parent!.name.toString()} ${column.name.toString()} (array) does not contain a value`,
             column.document.description || ''
           ].filter(Boolean).join('; ')
-        })),
-        sort: sortables.map(([ name, column ]) => ({
-          name: getAlias(name),
-          description: [
-            `Sort records by ${column.parent!.name.toString()} ${column.name.toString()} in ascending or descending order`,
-            column.document.description || ''
-          ].filter(Boolean).join('; ')
-        })),
-        columns: Array.from(columns).join(', '),
-        query: JSON.stringify(
-          model.store.query.length > 0 ? model.store.query : [ '*' ]
-        )
+        }))
       })
     }]
   });
@@ -195,7 +178,8 @@ export default function generate(directory: Directory, model: Model) {
     declarations: [{
       name: 'info',
       initializer: renderCode(TEMPLATE.INFO, {
-        model: model.name.toString()
+        model: model.name.toString(),
+        mode: model.store.active ? 'soft-remove when possible' : 'remove'
       })
     }]
   });
@@ -233,10 +217,6 @@ export default function generate(directory: Directory, model: Model) {
         name: getAlias(name)
       })),
       hasnt: strings.map(([ name ]) => ({
-        path: name,
-        name: getAlias(name)
-      })),
-      sort: sortables.map(([ name ]) => ({
         path: name,
         name: getAlias(name)
       }))
@@ -286,17 +266,13 @@ SCHEMA:
   <%#@:hasnt filter%>
     <%filter.name%>__hasnt: z.array(<%filter.type%>).optional().describe('<%filter.description%>'),
   <%/@:hasnt%>
-  <%#@:sort order%>
-    sort__<%order.name%>: z.enum(['asc', 'desc']).optional().describe('<%order.description%>'),
-  <%/@:sort%>
-  columns: z.array(z.string()).optional().describe('Columns to include in the results (default: <%query%>) valid selectors include: <%columns%>')
 }`,
 
 //export const info = { title, description, inputSchema };
 INFO:
 `{
-  title: 'Find First - <%model%>',
-  description: 'Find the first matching <%model%> record using the generated Stackpress actions class.',
+  title: 'Remove Rows - <%model%>',
+  description: 'Match and <%mode%> <%model%> rows using the generated Stackpress actions class.',
   inputSchema: schema
 }`,
 
@@ -339,22 +315,14 @@ const nest = new Nest();
     nest.withPath.set('hasnt.<%filter.path%>', request.<%filter.name%>__hasnt);
   }
 <%/@:hasnt%>
-<%#@:sort order%>
-  if (typeof request.sort__<%order.name%> !== 'undefined') {
-    nest.withPath.set('sort.<%order.path%>', request.sort__<%order.name%>);
-  }
-<%/@:sort%>
-if (typeof request.columns !== 'undefined') {
-  nest.set('columns', request.columns);
-}
 const query = nest.get<StoreSelectQuery>();
 const seed = ctx.config.path('database.seed', '');
 const engine = ctx.plugin<DatabasePlugin>('database');
 const actions = new <%actions%>(engine, seed);
-const results = await actions.find(query);
-return toMcpText(results);`,
+const results = await actions.remove(query);
+return toMcpText({ total: results.length, results });`,
 
 //export default function register(server: McpServer, ctx: Server) {};
 REGISTER:
-`server.registerTool('<%model%>_find_first', info, params => handler(params, ctx));`
+`server.registerTool('<%model%>_remove_rows', info, params => handler(params, ctx));`
 };

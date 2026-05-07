@@ -15,9 +15,9 @@ export const typemap: Record<string, string> = {
   Time: 'z.date()',
   Number: 'z.number()',
   Float: 'z.number()',
-  Object: 'z.object({})',
-  Json: 'z.object({})',
-  Hash: 'z.object({})',
+  Object: 'z.record(z.string(), z.any())',
+  Json: 'z.record(z.string(), z.any())',
+  Hash: 'z.record(z.string(), z.any())',
   String: 'z.string()',
   Text: 'z.string()',
   Unknown: 'z.unknown()'

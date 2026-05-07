@@ -22,8 +22,8 @@ export default function generate(directory: Directory, schema: Schema) {
     packageJson.set('exports', `./${events}`, `./${events}/index.js`);
     packageJson.set('exports', `./${events}/*`, `./${events}/*.js`);
 
-    packageJson.set('typesVersions', `*`, `./${events}`, [ `./${events}/index.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${events}/*`, [ `./${events}/*.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${events}`, [ `./${events}/index.d.ts` ]);
+    packageJson.set('typesVersions', '*', `${events}/*`, [ `./${events}/*.d.ts` ]);
   });
 
   savePackageJsonNest(pwd, packageJson);
