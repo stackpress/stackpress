@@ -71,7 +71,7 @@ export default function plugin(ctx: Server) {
     );
     ctx.view.get(
       `${base}/signin/email`, 
-      'stackpress-session/esm/auth/views/signin/index', 
+      'stackpress-session/esm/auth/views/signin/email', 
       -100
     );
     ctx.view.get(
