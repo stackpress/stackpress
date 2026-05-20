@@ -22,7 +22,7 @@ export function AuthSigninBody() {
   const menu = config.path<AuthMenuConfig[]>('auth.menu', []);
   const options = menu.filter(option => option.type !== 'footer');
   const footer = menu.filter(option => option.type === 'footer');
-  const redirect = request.data.path('redirect_uri', '/account');
+  const redirect = request.data.path('redirect_uri', '/auth/account');
   const dark = theme === 'dark';
   //render
   return (

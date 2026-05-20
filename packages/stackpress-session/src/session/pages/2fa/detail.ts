@@ -50,19 +50,22 @@ export default async function TwoFactorPage(
     return;
   }
 
-  const auth = await ctx.resolve<AuthExtended>('auth-detail', {
+  //Use auth-search here so the lookup stays scoped to the signed-in profile
+  //and the 2FA auth type.
+  const auth = await ctx.resolve<AuthExtended[]>('auth-search', {
     eq: { type: '2fa', profileId: data.id }
   });
-  if (auth.code !== 200 && auth.code !== 404) {
+  if (auth.code !== 200) {
     res.fromStatusResponse(auth);
     //generate csrf token before returning
     csrf.generate(res, ctx);
     return;
   }
+  const twoFA = auth.results?.[0];
   //get the secret from the request, or from the DB or generate a new one
   const regenerate = req.data.has('regenerate');
-  const secret = req.data.path('secret', auth.results && !regenerate
-    ? auth.results.token
+  const secret = req.data.path('secret', twoFA && !regenerate
+    ? twoFA.token
     : generateSecret()
   );
   //get issuer from auth.2fa.issuer or brand.name or default to 'Stackpress'
@@ -104,9 +107,9 @@ export default async function TwoFactorPage(
       return;
     }
     //if there is an existing 2fa record
-    if (auth.results) {
+    if (twoFA) {
       await ctx.resolve('auth-update', {
-        id: auth.results.id,
+        id: twoFA.id,
         token: secret,
         secret
       }, res);
@@ -137,7 +140,7 @@ export default async function TwoFactorPage(
     url: qr,
     secret,
     profile: profile.results,
-    authId: auth.results?.id
+    authId: twoFA?.id
   });
   //generate csrf token before returning
   csrf.generate(res, ctx);

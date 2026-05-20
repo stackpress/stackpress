@@ -157,6 +157,7 @@ export type SigninInput = {
   username?: string,
   email?: string,
   phone?: string,
+  password?: boolean,
   secret: string
 };
 

@@ -56,8 +56,7 @@ export default async function AccountUpdatePage(
     //get auth records for the user (username, email, phone)
     const auths = await ctx.resolve<AuthExtended[]>('auth-search', { 
       eq: { 
-        profileId: data.id,
-        type: [ 'username', 'email', 'phone' ]
+        profileId: data.id
       }
     });
     //if no results

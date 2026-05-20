@@ -17,82 +17,115 @@ export default function plugin(ctx: Server) {
     if (!ctx.config.get('auth')) return;
     const base = ctx.config.path('auth.base', '/auth');
     ctx.import.get(
-      `${base}/signup`, 
+      `${base}/signup`,
       () => import('./pages/signup.js')
     );
     ctx.import.get(
-      `${base}/signin`, 
+      `${base}/signin`,
       () => import('./pages/signin.js')
     );
     ctx.import.get(
-      `${base}/signin/email`, 
+      `${base}/signin/2fa/:profile/:auth/:challenge`,
+      () => import('./pages/signin/2fa.js')
+    );
+    ctx.import.get(
+      `${base}/signin/email`,
       () => import('./pages/signin/email.js')
     );
     ctx.import.get(
-      `${base}/signin/phone`, 
+      `${base}/signin/phone`,
       () => import('./pages/signin/phone.js')
     );
     ctx.import.get(
-      `${base}/signin/username`, 
+      `${base}/signin/username`,
       () => import('./pages/signin/username.js')
     );
     ctx.import.get(
-      `${base}/signout`, 
+      `${base}/signout`,
       () => import('./pages/signout.js')
     );
 
     ctx.import.post(
-      `${base}/signup`, 
+      `${base}/signup`,
       () => import('./pages/signup.js')
     );
     ctx.import.post(
-      `${base}/signin/email`, 
+      `${base}/signin/2fa/:profile/:auth/:challenge`,
+      () => import('./pages/signin/2fa.js')
+    );
+    ctx.import.post(
+      `${base}/signin/email`,
       () => import('./pages/signin/email.js')
     );
     ctx.import.post(
-      `${base}/signin/phone`, 
+      `${base}/signin/phone`,
       () => import('./pages/signin/phone.js')
     );
     ctx.import.post(
-      `${base}/signin/username`, 
+      `${base}/signin/username`,
       () => import('./pages/signin/username.js')
     );
 
-    
+
     ctx.view.get(
-      `${base}/signup`, 
-      'stackpress-session/esm/auth/views/signup', 
+      `${base}/signup`,
+      'stackpress-session/esm/auth/views/signup',
       -100
     );
     ctx.view.get(
-      `${base}/signin`, 
-      'stackpress-session/esm/auth/views/signin/index', 
+      `${base}/signin`,
+      'stackpress-session/esm/auth/views/signin/index',
       -100
     );
     ctx.view.get(
-      `${base}/signin/email`, 
-      'stackpress-session/esm/auth/views/signin/index', 
+      `${base}/signin/2fa/:profile/:auth/:challenge`,
+      'stackpress-session/esm/auth/views/signin/2fa',
       -100
     );
     ctx.view.get(
-      `${base}/signin/phone`, 
-      'stackpress-session/esm/auth/views/signin/index', 
+      `${base}/signin/email`,
+      'stackpress-session/esm/auth/views/signin/email',
       -100
     );
     ctx.view.get(
-      `${base}/signin/username`, 
-      'stackpress-session/esm/auth/views/signin/index', 
+      `${base}/signin/phone`,
+      'stackpress-session/esm/auth/views/signin/phone',
+      -100
+    );
+    ctx.view.get(
+      `${base}/signin/username`,
+      'stackpress-session/esm/auth/views/signin/username',
       -100
     );
 
     ctx.view.post(
-      `${base}/signup`, 
-      'stackpress-session/esm/auth/views/signup', 
+      `${base}/signup`,
+      'stackpress-session/esm/auth/views/signup',
       -100
     );
     ctx.view.post(
-      `${base}/signin/:type`, 
-      'stackpress-session/esm/auth/views/signin/index', 
+      `${base}/signin/2fa/:profile/:auth/:challenge`,
+      'stackpress-session/esm/auth/views/signin/2fa',
+      -100
+    );
+    ctx.view.post(
+      `${base}/signin/email`,
+      'stackpress-session/esm/auth/views/signin/email',
+      -100
+    );
+    ctx.view.post(
+      `${base}/signin/phone`,
+      'stackpress-session/esm/auth/views/signin/phone',
+      -100
+    );
+    ctx.view.post(
+      `${base}/signin/username`,
+      'stackpress-session/esm/auth/views/signin/username',
+      -100
+    );
+    ctx.view.post(
+      `${base}/signin/:type`,
+      'stackpress-session/esm/auth/views/signin/index',
       -100
     );
   });

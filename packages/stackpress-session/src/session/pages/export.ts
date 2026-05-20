@@ -2,6 +2,8 @@
 import type Request from '@stackpress/ingest/Request';
 import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
+//stackpress-view
+import { setViewProps } from 'stackpress-view/helpers';
 //stackpress-session/profile
 import type { ProfileExtended } from '../../profile/types.js';
 //stackpress-session/session
@@ -35,6 +37,12 @@ export default async function AccountExport(
     res.setStatus(401, 'Unauthorized');
     return;
   }
+  //When the export route is opened directly, render the warning page first so
+  // the download only starts after the user clicks the download action.
+  if (!req.data('download')) {
+    setViewProps(req, res, ctx);
+    return;
+  }
   const entries = Object.entries(response.results!).map(([key, value]) => {
     if (typeof value === 'undefined' || value === null) {
       value = '';
@@ -54,7 +62,7 @@ export default async function AccountExport(
   const csv = entries.map(row => row.join(',')).join('\n');
   res.headers.set(
     'Content-Disposition',
-    `attachment; filename=application-${Date.now()}.csv`
+    `attachment; filename=account-${Date.now()}.csv`
   );
   res.setBody('text/csv', csv);
 };

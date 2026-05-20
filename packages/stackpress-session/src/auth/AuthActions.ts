@@ -417,7 +417,12 @@ export default class AuthActions implements AuthActionsInterface {
       { eq: { id: results.id } }, 
       { consumed: new Date() }
     );
-    return results;
+    //Get the auth record after updating so callers receive the persisted
+    // state from the database instead of the stale pre-update result.
+    return await this.find({
+      columns: [ '*', 'profile.*' ],
+      eq: { type, token: String(input[type]) }
+    });
   }
 
   public async signup(input: Partial<SignupInput>) {

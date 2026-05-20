@@ -45,11 +45,12 @@ export default async function UsernameSignInPage(
   if (req.method === 'POST') {
     //if invalid csrf
     if (!csrf.valid(req, res)) return;
-    //TODO:
-    // //prevent passwordless sign in on this page...
-    // req.data.set('password', true);
-    // //sign in
-    // await ctx.emit('auth-signin', req, res);
+    //prevent passwordless sign in on this page...
+    req.data.set('password', true);
+    //set auth type
+    req.data.set('type', 'username');
+    //sign in
+    await ctx.emit('auth-signin', req, res);
     //if not ok
     if (res.code !== 200) return;
     //remove csrf

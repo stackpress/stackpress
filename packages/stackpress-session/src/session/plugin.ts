@@ -36,100 +36,123 @@ export default function plugin(ctx: Server) {
     if (!ctx.config.get('auth')) return;
     const base = ctx.config.path('auth.base', '/auth');
     ctx.import.get(
-      `${base}/account`, 
+      `${base}/account`,
       () => import('./pages/account.js')
     );
     ctx.import.get(
-      `${base}/account/export`, 
+      `${base}/account/update`,
+      () => import('./pages/update.js')
+    );
+    ctx.import.get(
+      `${base}/account/security`,
+      () => import('./pages/account.js')
+    );
+    ctx.import.get(
+      `${base}/account/security/export`,
       () => import('./pages/export.js')
     );
     ctx.import.get(
-      `${base}/account/remove`, 
+      `${base}/account/security/remove`,
       () => import('./pages/remove.js')
     );
     ctx.import.get(
-      `${base}/account/update`, 
-      () => import('./pages/update.js')
-    );
-    ctx.import.get(
-      `${base}/account/security/password`, 
+      `${base}/account/security/password`,
       () => import('./pages/password.js')
     );
     ctx.import.get(
-      `${base}/account/security/2fa`, 
+      `${base}/account/security/2fa`,
       () => import('./pages/2fa/detail.js')
     );
     ctx.import.get(
-      `${base}/account/security/2fa/remove`, 
+      `${base}/account/security/2fa/remove`,
       () => import('./pages/2fa/remove.js')
     );
 
     ctx.import.post(
-      `${base}/account/update`, 
+      `${base}/account/update`,
       () => import('./pages/update.js')
     );
     ctx.import.post(
-      `${base}/account/security/password`, 
+      `${base}/account/security/remove`,
+      () => import('./pages/remove.js')
+    );
+    ctx.import.post(
+      `${base}/account/security/password`,
       () => import('./pages/password.js')
     );
     ctx.import.post(
-      `${base}/account/security/2fa`, 
+      `${base}/account/security/2fa`,
       () => import('./pages/2fa/detail.js')
     );
     ctx.import.post(
-      `${base}/account/security/2fa/remove`, 
+      `${base}/account/security/2fa/remove`,
       () => import('./pages/2fa/remove.js')
     );
 
     ctx.view.get(
-      `${base}/account`, 
-      'stackpress-session/esm/session/views/account', 
+      `${base}/account`,
+      'stackpress-session/esm/session/views/account',
       -100
     );
     ctx.view.get(
-      `${base}/account/remove`, 
-      'stackpress-session/esm/session/views/remove', 
+      `${base}/account/update`,
+      'stackpress-session/esm/session/views/update',
       -100
     );
     ctx.view.get(
-      `${base}/account/update`, 
-      'stackpress-session/esm/session/views/update', 
+      `${base}/account/security`,
+      'stackpress-session/esm/session/views/security',
       -100
     );
     ctx.view.get(
-      `${base}/account/security/password`, 
-      'stackpress-session/esm/session/views/password', 
+      `${base}/account/security/export`,
+      'stackpress-session/esm/session/views/export',
       -100
     );
     ctx.view.get(
-      `${base}/account/security/2fa`, 
-      'stackpress-session/esm/session/views/2fa/detail', 
+      `${base}/account/security/remove`,
+      'stackpress-session/esm/session/views/remove',
       -100
     );
     ctx.view.get(
-      `${base}/account/security/2fa/remove`, 
-      'stackpress-session/esm/session/views/2fa/remove', 
+      `${base}/account/security/password`,
+      'stackpress-session/esm/session/views/password',
+      -100
+    );
+    ctx.view.get(
+      `${base}/account/security/2fa`,
+      'stackpress-session/esm/session/views/2fa/detail',
+      -100
+    );
+    ctx.view.get(
+      `${base}/account/security/2fa/remove`,
+      'stackpress-session/esm/session/views/2fa/remove',
       -100
     );
 
     ctx.view.post(
-      `${base}/account/update`, 
-      'stackpress-session/esm/session/views/update', 
+      `${base}/account/update`,
+      'stackpress-session/esm/session/views/update',
       -100
     );
     ctx.view.post(
-      `${base}/account/security/password`, 
-      'stackpress-session/esm/session/views/password', 
+      `${base}/account/security/remove`,
+      'stackpress-session/esm/session/views/remove',
       -100
     );
     ctx.view.post(
-      `${base}/account/security/2fa`, 
-      'stackpress-session/esm/session/views/2fa/detail', 
+      `${base}/account/security/password`,
+      'stackpress-session/esm/session/views/password',
       -100
     );
     ctx.view.post(
-      `${base}/account/security/2fa/remove`, 
-      'stackpress-session/esm/session/views/2fa/remove', 
+      `${base}/account/security/2fa`,
+      'stackpress-session/esm/session/views/2fa/detail',
+      -100
+    );
+    ctx.view.post(
+      `${base}/account/security/2fa/remove`,
+      'stackpress-session/esm/session/views/2fa/remove',
       -100
     );
   });

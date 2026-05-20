@@ -60,9 +60,11 @@ export default async function TwoFactorRemovePage(
 
     //search for the auth record to ensure it exists and belongs to the user
     const exists = await ctx.resolve('auth-search', {
-      id: authId,
-      profileId: data.id,
-      type: '2fa',
+      eq: {
+        id: authId,
+        profileId: data.id,
+        type: '2fa'
+      }
     });
     //if there is an error
     if (exists.code !== 200) {

@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-session",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "Session handler library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -84,10 +84,11 @@
   },
   "dependencies": {
     "jose": "6.2.0",
+    "libphonenumber-js": "1.12.23",
     "qrcode": "1.5.4",
-    "stackpress-csrf": "0.9.1",
-    "stackpress-sql": "0.9.1",
-    "stackpress-view": "0.9.1"
+    "stackpress-csrf": "0.9.2",
+    "stackpress-sql": "0.9.2",
+    "stackpress-view": "0.9.2"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",
