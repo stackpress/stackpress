@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-language",
-  "version": "0.10.1",
+  "version": "0.10.3",
   "license": "MIT",
   "description": "Language translation service for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",

@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-view",
-  "version": "0.10.1",
+  "version": "0.10.3",
   "license": "MIT",
   "description": "View library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -200,8 +200,8 @@
     "r22n": "1.0.10",
     "react-toastify": "11.0.5",
     "reactus": "0.9.2",
-    "stackpress-language": "0.10.1",
-    "stackpress-schema": "0.10.1",
+    "stackpress-language": "0.10.3",
+    "stackpress-schema": "0.10.3",
     "universal-cookie": "8.0.1"
   },
   "devDependencies": {

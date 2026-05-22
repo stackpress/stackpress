@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-csrf",
-  "version": "0.10.1",
+  "version": "0.10.3",
   "license": "MIT",
   "description": "CSRF protection for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
