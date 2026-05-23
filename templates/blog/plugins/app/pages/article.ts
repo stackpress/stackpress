@@ -10,7 +10,7 @@ export default action(async function HomePage({ req, res, ctx }) {
   //get articles
   const articles = await ctx.resolve<ArticleExtended[]>(
     'article-search', 
-    { filter: { slug } }
+    { eq: { slug } }
   );
   //if error or no results, skip
   if (articles.code !== 200 
