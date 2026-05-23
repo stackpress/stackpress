@@ -33,6 +33,13 @@ export const config: Config = {
         'stackpress/stackpress.css', 
         'virtual:uno.css' 
       ],
+      optimizeDeps: { 
+        include: [ 
+          'react-dom/client',
+          'blog-client/*/admin/views/*/*',
+          'blog-client/*/admin/views/*'
+        ] 
+      },
       //template wrapper for the document markup (html)
       documentTemplate: DOCUMENT_TEMPLATE,
       //vite plugins
