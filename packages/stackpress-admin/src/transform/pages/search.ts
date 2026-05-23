@@ -24,11 +24,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
-  //import type { Request, Response, Server } from '@stackpress/ingest';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '@stackpress/ingest',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from '@stackpress/ingest/Server';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/ingest/Server',
+    namedImports: [ 'action' ]
   });
 
   //------------------------------------------------------------------//
@@ -69,15 +74,14 @@ export default function generate(directory: Directory, model: Model) {
   // Exports
 
   //export default async function ProfileAdminSearchPage(req, res, ctx) {}
+  const name = model.name.toClassName('%sAdminSearchPage');
   source.addFunction({
-    isDefaultExport: true,
     isAsync: true,
-    name: model.name.toClassName('%sAdminSearchPage'),
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.SEARCH, { 
       event: model.name.toEventName(),
       extended: model.name.toClassName('%sExtended'),
@@ -86,6 +90,7 @@ export default function generate(directory: Directory, model: Model) {
       ).toArray() || []
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
@@ -160,7 +165,7 @@ if (res.code === 200) {
   <%|%>
     const rows = response.results as UnknownNest[];
   <%/?:hashes.length%>
-  res.setRows(rows, total || rows.length);
+  res.rows(rows, total || rows.length);
   return;
 }`,
 

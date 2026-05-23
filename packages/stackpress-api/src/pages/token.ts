@@ -1,16 +1,10 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server';
 //stackpress-api
 import type { SessionExtended } from '../types.js';
 import { authorize, unauthorized } from '../helpers.js';
 
-export default async function APIToken(
-  req: Request, 
-  res: Response,
-  ctx: Server
-) {
+export default action(async function APIToken({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
@@ -40,7 +34,7 @@ export default async function APIToken(
     return unauthorized(res);
   }
   //set the global response
-  res.setResults({
+  res.results({
     token_type: 'Bearer',
     access_token: data.id,
     access_secret: data.secret,
@@ -54,4 +48,4 @@ export default async function APIToken(
       created: data.profile.created
     }
   });
-}
+});

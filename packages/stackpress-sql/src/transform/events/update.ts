@@ -25,11 +25,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'DatabasePlugin' ]
   });
-  //import type { Request, Response, Server } from 'stackpress-server';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-server',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from 'stackpress-server';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'action' ]
   });
   //import Exception from 'stackpress-sql/Exception';
   source.addImportDeclaration({
@@ -49,20 +54,15 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
   
-  //export default async function ProfileUpdateEvent(
-  //  req: Request, 
-  //  res: Response, 
-  //  ctx: Server
-  //) {}
+  //export default async function ProfileUpdateEvent({ req, res, ctx }: RouteProps) {}
+  const name = model.name.toPropertyName('%sUpdateEvent', true);
   source.addFunction({
-    name: model.name.toPropertyName('%sUpdateEvent', true),
-    isDefaultExport: true,
     isAsync: true,
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.UPDATE, { 
       actions: model.name.toClassName('%sActions'),
       ids: ids.map(column => ({
@@ -70,6 +70,7 @@ export default function generate(directory: Directory, model: Model) {
       })).toArray()
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
@@ -95,7 +96,7 @@ if (!engine) return;
     || <%column%> === ''
   ) {
     const errors = { <%column%>: 'Missing or invalid value' };
-    res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
+    res.setError('Invalid Parameters', errors).statusCode(400, 'Bad Request');
     return;
   }
 <%/@:ids%>
@@ -112,7 +113,7 @@ try { //to update
     <%/@:ids%> 
   };
   const results = await actions.update({ eq }, req.data());
-  res.setResults(results[0] || null);
+  res.results(results[0] || null);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());

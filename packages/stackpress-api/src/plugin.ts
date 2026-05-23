@@ -18,10 +18,10 @@ export default function plugin(ctx: Server) {
   //if no api config exists, disable the plugin
   if (!ctx.config.get('api')) return;
   //on listen, add webhooks
-  ctx.on('listen', (_req, _res, ctx) => {
+  ctx.on('listen', ({ ctx }) => {
     const { webhooks = [] } = ctx.config<ApiConfig>('api') || {};
     for (const webhook of webhooks) {
-      ctx.on(webhook.event, async (req, res) => {
+      ctx.on(webhook.event, async ({ req, res }) => {
         //if there was an error, return
         if (res.code !== 200) return;
         //get the data from the webhook
@@ -42,7 +42,7 @@ export default function plugin(ctx: Server) {
     }
   })
   //on route, add user routes
-  ctx.on('route', (_req, _res, ctx) => {
+  ctx.on('route', ({ ctx }) => {
     const { endpoints = [] } = ctx.config<ApiConfig>('api') || {};
     //if no endpoints, return
     if (!Array.isArray(endpoints) || endpoints.length === 0) return;
@@ -72,7 +72,9 @@ export function cors(endpoint: ApiEndpoint, ctx: Server) {
   //skip if origin is false or undefined
   if (!Array.isArray(origin)) return;
   //create a cors route action 
-  const cors = function CrossOrigin(req: Request, res: Response) {
+  const cors = function CrossOrigin(
+    { req, res }: { req: Request, res: Response }
+  ) {
     //origin check
     if (origin.includes('*')) {
       res.headers.set('Access-Control-Allow-Origin', '*');
@@ -88,8 +90,10 @@ export function cors(endpoint: ApiEndpoint, ctx: Server) {
     res.headers.set('Access-Control-Allow-Headers', '*');
   };
   //create a preflight route action
-  const preflight = function PreFlight(req: Request, res: Response) {
-    cors(req, res);
+  const preflight = function PreFlight(
+    { req, res }: { req: Request, res: Response }
+  ) {
+    cors({ req, res });
     res.code = 200;
   };
 
@@ -101,7 +105,7 @@ export function session(endpoint: ApiEndpoint, ctx: Server) {
   ctx.route(
     endpoint.method, 
     endpoint.route, 
-    async function SessionAPI(req, res, ctx) {
+    async function SessionAPI({ req, res, ctx }) {
       //authorization check
       const authorization = authorize(req, res);
       if (!authorization) {
@@ -137,7 +141,7 @@ export function app(endpoint: ApiEndpoint, ctx: Server) {
   ctx.route(
     endpoint.method, 
     endpoint.route, 
-    async function AppAPI(req, res, ctx) {
+    async function AppAPI({ req, res, ctx }) {
       //authorization check
       const authorization = authorize(req, res);
       if (!authorization) {
@@ -172,7 +176,7 @@ export function open(endpoint: ApiEndpoint, ctx: Server) {
   ctx.route(
     endpoint.method, 
     endpoint.route, 
-    async function PublicAPI(req, res, ctx) {
+    async function PublicAPI({ req, res, ctx }) {
       req.data.set(endpoint.data || {});
       await ctx.emit(endpoint.event, req, res);
     }, 

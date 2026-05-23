@@ -18,11 +18,16 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Import Modules
 
-  //import type { Request, Response, Server } from '@stackpress/ingest';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '@stackpress/ingest',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from '@stackpress/ingest/Server';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/ingest/Server',
+    namedImports: [ 'action' ]
   });
 
   //------------------------------------------------------------------//
@@ -33,19 +38,19 @@ export default function generate(directory: Directory, model: Model) {
   // Exports
 
   //export default async function ProfileAdminImportPage(req, res, ctx) {}
+  const name = model.name.toClassName('%sAdminImportPage');
   source.addFunction({
-    isDefaultExport: true,
     isAsync: true,
-    name: model.name.toClassName('%sAdminImportPage'),
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.IMPORT, { 
       event: model.name.toEventName()
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {

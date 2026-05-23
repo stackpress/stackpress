@@ -20,10 +20,10 @@ export function config(server: Server) {
   //set the render function
   server.view.render = (action, props) => engine.render(action, props);
   //set the view engine
-  server.view.engine = async (action, req, res, ctx) => {
+  server.view.engine = async (action, { req, res, ctx }) => {
     //set the final status
     const status = Status.get(res.code || 200) as ResponseStatus;
-    res.setStatus(status.code, status.status);
+    res.statusCode(status.code, status.status);
     //get the noteplate flag
     const noview = ctx.config.path('view.noview', 'json');
     //const render, if redirecting
@@ -64,7 +64,7 @@ export function config(server: Server) {
     //if there is html
     if (html) {
       //add the html to the response
-      res.setHTML(html, status.code, status.status);
+      res.html(html, status.code, status.status);
     }
   };
 };

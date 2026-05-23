@@ -4,7 +4,7 @@ import type { Config } from '../../config/common.js';
 
 export default function plugin(server: HttpServer<Config>) {
   server.on('listen', async _ => {
-    server.on('error', (req, res) => {
+    server.on('error', ({ req, res }) => {
       //if there is already a body
       if (res.body) return;
       if (req.mimetype === 'terminal/arguments') {

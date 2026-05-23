@@ -14,7 +14,7 @@ import type { ClientPlugin } from 'stackpress-sql/types';
  */
 export default function plugin(ctx: Server) {
   //on route, add admin routes
-  ctx.on('route', action.props(async ({ ctx }) => {
+  ctx.on('route', action(async ({ ctx }) => {
     //it's possible that the client isnt generated yet...
     //config, registry, model, fieldset
     const client = ctx.plugin<ClientPlugin>('client');
@@ -28,7 +28,7 @@ export default function plugin(ctx: Server) {
     }
   }));
   //generate some code in the client folder
-  ctx.on('idea', async req => {
+  ctx.on('idea', async ({ req }) => {
     //get the transformer from the request
     const transformer = req.data<Transformer<CLIProps>>('transformer');
     const schema = await transformer.schema();

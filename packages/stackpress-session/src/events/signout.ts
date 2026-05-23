@@ -1,9 +1,8 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
+import { action } from '@stackpress/ingest/Server';
 
-export default async function AuthSignout(_req: Request, res: Response) {
+export default action(async function AuthSignout({ res }) {
   //remove session
   res.session.delete('session');
-  res.setStatus(200);
-}
+  res.statusCode(200);
+});

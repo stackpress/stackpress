@@ -47,11 +47,11 @@ export type Response = IngestResponse<NodeOptResponse>;
 export type Request = IngestRequest<NodeRequest>;
 export type Server<
   C extends UnknownNest = UnknownNest
-> = IngestServer<C, NodeRequest, NodeOptResponse>;
+> = IngestServer<NodeRequest, NodeOptResponse, C>;
 export type Router = IngestRouter<NodeRequest, NodeOptResponse>;
 export type Route<
   C extends UnknownNest = UnknownNest
-> = IngestRoute<C, NodeRequest, NodeOptResponse>;
+> = IngestRoute<NodeRequest, NodeOptResponse, C>;
 
 export {
   isObject,

@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server';
 //stackpress-sql
 import type { 
   ClientPlugin,
@@ -12,11 +10,7 @@ import type { PasswordConfig, ProfileAuth } from '../types.js';
 import Exception from '../Exception.js';
 import { signup } from '../actions.js';
 
-export default async function AuthSignup(
-  req: Request, 
-  res: Response,
-  ctx: Server
-) {
+export default action(async function AuthSignup({ req, res, ctx }) {
   //get the roles from the config
   const roles = ctx.config.path<string[]>('auth.roles', []);
   //get the database engine 
@@ -28,7 +22,10 @@ export default async function AuthSignup(
   //get password config
   const password = ctx.config.path<PasswordConfig>('auth.password', {});
   //get input
-  const input = { roles, ...req.data() };
+  const input: Record<string, any> & { roles: string[] } = { 
+    roles,
+    ...(req.data() as Record<string, any>)
+  };
   let results: Partial<ProfileAuth>; 
   try { //to sign up
     results = await signup(input, seed, engine, await client(), password);
@@ -66,5 +63,5 @@ export default async function AuthSignup(
     delete results.auth.username.secret;
   }
   
-  res.setResults(results);
-}
+  res.results(results);
+});

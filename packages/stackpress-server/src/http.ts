@@ -42,11 +42,11 @@ export type Response = IngestResponse<SR>;
 export type Request = IngestRequest<IM>;
 export type Server<
   C extends UnknownNest = UnknownNest
-> = IngestServer<C, IM, SR>;
+> = IngestServer<IM, SR, C>;
 export type Router = IngestRouter<IM, SR>;
 export type Route<
   C extends UnknownNest = UnknownNest
-> = IngestRoute<C, IM, SR>;
+> = IngestRoute<IM, SR, C>;
 
 export {
   isObject,

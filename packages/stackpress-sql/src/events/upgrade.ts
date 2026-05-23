@@ -6,7 +6,7 @@ import type { TerminalPlugin } from 'stackpress-server/types';
 //stackpress-sql
 import upgrade from '../scripts/upgrade.js';
 
-export default action.props(async function UpgradeScript({ res, ctx }) {
+export default action(async function UpgradeScript({ res, ctx }) {
   //if error, dont continue
   if (res.code && res.code !== 200) return;
   //get terminal
@@ -20,5 +20,5 @@ export default action.props(async function UpgradeScript({ res, ctx }) {
   }
   await upgrade(ctx, database, terminal);
   //OK
-  res.setStatus(200);
+  res.statusCode(200);
 });

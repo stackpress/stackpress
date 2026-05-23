@@ -5,7 +5,7 @@ import path from 'node:path';
 import { action } from 'stackpress/server';
 import { setViewProps } from 'stackpress/view';
 
-export default action(async function ErrorPage(req, res, ctx) {
+export default action(async function ErrorPage({ req, res, ctx }) {
   //if this is a terminal error, not from HTTP/WHATWG, abort
   if (req.mimetype === 'terminal/arguments') return false;
   //if method is not GET or there is already a body
@@ -44,7 +44,7 @@ export default action(async function ErrorPage(req, res, ctx) {
     return;
   } else if (req.url.pathname.endsWith('.js')) {
     delete response.stack;
-    res.setBody(
+    res.set(
       'application/javascript', 
       `console.log(${JSON.stringify(response)});`, 
       res.code, 
@@ -53,7 +53,7 @@ export default action(async function ErrorPage(req, res, ctx) {
     return;
   } else if (req.url.pathname.endsWith('.css')) {
     delete response.stack;
-    res.setBody(
+    res.set(
       'text/css', 
       `/* ${JSON.stringify(response)} */`, 
       res.code, 
@@ -94,6 +94,6 @@ export default action(async function ErrorPage(req, res, ctx) {
     response: res.toStatusResponse()
   });
   if (typeof html === 'string') {
-    res.setHTML(html, res.code, res.status);
+    res.html(html, res.code, res.status);
   }
 });

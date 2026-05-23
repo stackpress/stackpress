@@ -42,11 +42,16 @@ export default function generate(
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
-  //import type { Request, Response, Server } from '@stackpress/ingest';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '@stackpress/ingest',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from '@stackpress/ingest/Server';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/ingest/Server',
+    namedImports: [ 'action' ]
   });
 
   //------------------------------------------------------------------//
@@ -86,18 +91,17 @@ export default function generate(
   // Exports
 
   //export default async function ProfileAdminAuthSearchPage(req, res, ctx) {}
+  const name = renderCode('<%model%>Admin<%relation%>SearchPage', {
+    model: model.name.toComponentName(),
+    relation: relatedColumn.name.toComponentName(),
+  });
   source.addFunction({
-    isDefaultExport: true,
     isAsync: true,
-    name: renderCode('<%model%>Admin<%relation%>SearchPage', {
-      model: model.name.toComponentName(),
-      relation: relatedColumn.name.toComponentName(),
-    }),
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.SEARCH, { 
       relation: relatedColumn.name.toString(),
       extended: model.name.toClassName('%sExtended'),
@@ -112,6 +116,7 @@ export default function generate(
       ).toArray() || []
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {

@@ -4,7 +4,7 @@ import { action } from 'stackpress/server';
 
 const secret = process.env.ADMIN_PASS || 'admin';
 
-export default action(async function Populate(_req, _res, ctx) {
+export default action(async function Populate({ ctx }) {
   const admin = await ctx.resolve<ProfileAuth>('auth-signup', {
     type: 'person',
     name: 'Admin',

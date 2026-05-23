@@ -1,5 +1,5 @@
 //modules
-import { control } from '@stackpress/lib/Terminal';
+import control from '@stackpress/lib/terminal/control';
 import Transformer from '@stackpress/idea-transformer/Transformer';
 //stackpress-server
 import * as events from './events/index.js';

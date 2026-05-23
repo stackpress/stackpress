@@ -24,11 +24,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: '@stackpress/lib/types',
     namedImports: [ 'UnknownNest' ]
   });
-  //import type { Request, Response, Server } from '@stackpress/ingest';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '@stackpress/ingest',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from '@stackpress/ingest/Server';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/ingest/Server',
+    namedImports: [ 'action' ]
   });
 
   //------------------------------------------------------------------//
@@ -42,15 +47,14 @@ export default function generate(directory: Directory, model: Model) {
     : TEMPLATE.EXPORT;
 
   //export default async function ProfileAdminExportPage(req, res, ctx) {}
+  const name = model.name.toClassName('%sAdminExportPage');
   source.addFunction({
-    isDefaultExport: true,
     isAsync: true,
-    name: model.name.toClassName('%sAdminExportPage'),
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(template, { 
       event: model.name.toEventName(),
       relations: JSON.stringify(relations.map(
@@ -58,6 +62,7 @@ export default function generate(directory: Directory, model: Model) {
       ))
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
@@ -112,7 +117,7 @@ if (response.code === 200 && response.results) {
     'Content-Disposition', 
     \`attachment; filename=<%event%>-\${Date.now()}.csv\`
   );
-  res.setBody('text/csv', csv);
+  res.set('text/csv', csv);
 }`,
 
 EXPORT_RELATIONS:
@@ -188,7 +193,7 @@ if (response.code === 200 && response.results) {
     'Content-Disposition', 
     \`attachment; filename=<%event%>-\${Date.now()}.csv\`
   );
-  res.setBody('text/csv', csv);
+  res.set('text/csv', csv);
 }`,
 
 };

@@ -4,7 +4,7 @@ import { setViewProps } from 'stackpress/view';
 //client
 import type { ArticleExtended } from 'blog-client/types';
 
-export default action.props(async function HomePage({ req, res, ctx }) {
+export default action(async function HomePage({ req, res, ctx }) {
   //get the slug from the request
   const slug = req.data<string>('slug');
   //get articles
@@ -18,7 +18,7 @@ export default action.props(async function HomePage({ req, res, ctx }) {
     || !articles.results.length
   ) return;
   //set the results
-  res.setResults(articles.results[0]);
+  res.results(articles.results[0]);
   //set view props (like brand, logo, view from config...)
   setViewProps(req, res, ctx);
 });

@@ -23,11 +23,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: '@stackpress/lib/Nest',
     namedImports: [ 'isObject' ]
   });
-  //import type { Request, Response, Server } from '@stackpress/ingest';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
-    moduleSpecifier: '@stackpress/ingest',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from '@stackpress/ingest/Server';
+  source.addImportDeclaration({
+    moduleSpecifier: '@stackpress/ingest/Server',
+    namedImports: [ 'action' ]
   });
 
   //------------------------------------------------------------------//
@@ -78,15 +83,14 @@ export default function generate(directory: Directory, model: Model) {
   // Exports
   
   //export default async function ProfileAdminCopyPage(req, res, ctx) {}
+  const name = model.name.toClassName('%sAdminCopyPage');
   source.addFunction({
-    isDefaultExport: true,
     isAsync: true,
-    name: model.name.toClassName('%sAdminCopyPage'),
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.COPY, { 
       type: model.name.toTypeName(),
       extended: model.name.toClassName('%sExtended'),
@@ -104,6 +108,7 @@ export default function generate(directory: Directory, model: Model) {
       ).toArray() || []
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
