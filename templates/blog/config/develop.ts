@@ -3,11 +3,12 @@ import unocss from 'unocss/vite';
 //stackpress
 import { server as http } from 'stackpress/http';
 import { CLIENT_TEMPLATE, DOCUMENT_TEMPLATE } from 'stackpress/view';
+import type { McpConfig } from 'stackpress-ai/types';
 //config
 import type { Config } from './common.js';
 import * as common from './common.js';
 
-export const config: Config = {
+export const config: Config & { mcp?: McpConfig } = {
   server: {
     ...common.server,
     mode: 'development',
@@ -137,6 +138,7 @@ export const config: Config = {
   database: common.database,
   email: common.email,
   language: common.language,
+  mcp: common.mcp,
   terminal: common.terminal
 };
 
