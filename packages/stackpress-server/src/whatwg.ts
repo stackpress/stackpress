@@ -2,6 +2,7 @@ export type {
   ServerConfig, 
   TerminalConfig, 
   TerminalPlugin,
+  RouteProps,
   ConfigLoaderOptions,
   PluginLoaderOptions,
   ActionRouterArgs,

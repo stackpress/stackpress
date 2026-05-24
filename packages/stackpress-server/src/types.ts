@@ -33,6 +33,10 @@ export type ServerConfig = {
   //used by `stackpress/view`
   //defaults to `production`
   mode?: string,
+  //server host
+  //not used by stackpress
+  //defaults to `127.0.0.1`
+  host?: string,
   //server port
   //not used by stackpress
   port?: number,
