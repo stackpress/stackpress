@@ -118,3 +118,19 @@ export type ToolResolverServer = Server & {
     payload: Record<string, unknown>
   ): Promise<ResolvedResponse<T> | null>
 };
+
+//this generated client tools shape is what the ai runtime looks for after the
+// client package has been produced by the idea pipeline.
+export type ClientTools = {
+  listen: (server: Server) => void
+};
+
+//this generated client contract extends the normal client plugin surface with
+// the optional top-level tools registry emitted by the ai transform.
+export type Client = {
+  tools?: ClientTools
+};
+
+//this plugin shape is what ctx.plugin('client') returns once the generated
+// client package can be imported.
+export type ClientPlugin = (nullable?: boolean) => Promise<Client | null>;

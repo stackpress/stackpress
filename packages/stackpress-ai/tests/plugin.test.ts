@@ -69,10 +69,18 @@ describe('ai/package', () => {
     const ctx = createCtxStub({
       config: { mcp: {} }
     });
+    ctx.registered.client = async () => ({
+      tools: {
+        listen(target) {
+          target.on('article-detail-tool', () => null);
+        }
+      }
+    });
     await listen!({ ctx });
 
     expect(ctx.registered.mcp).to.be.a('function');
     expect(ctx.events).to.deep.equal([
+      'article-detail-tool',
       'mcp-stdio',
       'mcp-http',
       'mcp-sse',
@@ -115,10 +123,18 @@ describe('ai/package', () => {
         ping: { results: { ok: true } }
       }
     });
+    ctx.registered.client = async () => ({
+      tools: {
+        listen(target) {
+          target.on('article-search-tool', () => null);
+        }
+      }
+    });
 
     await listen!({ ctx });
 
     expect(ctx.events).to.deep.equal([
+      'article-search-tool',
       'mcp-stdio',
       'mcp-http',
       'mcp-sse',
@@ -163,16 +179,64 @@ describe('ai/package', () => {
         ping: { results: { ok: true } }
       }
     });
+    ctx.registered.client = async () => ({
+      tools: {
+        listen(target) {
+          target.on('comment-create-tool', () => null);
+        }
+      }
+    });
 
     await listen!({ ctx });
 
     expect(ctx.events).to.deep.equal([
+      'comment-create-tool',
       'mcp-stdio',
       'mcp-http',
       'mcp-sse',
       'request',
       'request'
     ]);
+  });
+
+  it('should register the idea transform during generation', async () => {
+    const handlers = new Map<string, Function>();
+    const server: PluginServerStub = {
+      config: {
+        get() {
+          return {};
+        },
+        has(key: string) {
+          return key === 'mcp';
+        }
+      },
+      on(event: string, listener: Function) {
+        handlers.set(event, listener);
+      }
+    };
+
+    plugin(server as never);
+
+    const idea = handlers.get('idea');
+    expect(idea).to.be.a('function');
+
+    const schema: Record<string, unknown> = {};
+    await idea!({
+      req: {
+        data() {
+          return {
+            async schema() {
+              return schema;
+            }
+          };
+        }
+      }
+    });
+
+    expect(schema).to.have.property('plugin');
+    expect(Object.keys(
+      schema.plugin as Record<string, unknown>
+    )[0]).to.match(/packages\/stackpress-ai\/src\/transform$/);
   });
 
   it('should return null when no tools are configured', async () => {

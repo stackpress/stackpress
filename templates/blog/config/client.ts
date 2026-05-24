@@ -124,6 +124,7 @@ export const config: Config = {
   database: common.database,
   email: common.email,
   language: common.language,
+  mcp: common.mcp,
   terminal: common.terminal
 };
 

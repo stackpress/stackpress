@@ -1,4 +1,9 @@
+//node
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 //modules
+import type { CLIProps } from '@stackpress/idea-transformer/types';
+import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
 import { action } from '@stackpress/ingest/Server';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -6,7 +11,7 @@ import type { AnySchema } from '@modelcontextprotocol/sdk/server/zod-compat.js';
 import { fromJSONSchema } from 'zod';
 //client
 import type {
-  McpPlugin,
+  ClientPlugin,
   NormalizedToolConfig,
   ToolConfig,
   ToolResolverServer
@@ -100,11 +105,16 @@ export default function plugin(ctx: Server) {
   if (!ctx.config.has('mcp')) return;
 
   ctx.on('listen', action(async ({ ctx }) => {
+    //load the generated client tools if the client package already exists 
+    // and let that registry attach its plugin-mode resolver events first.
+    const client = ctx.plugin<ClientPlugin>('client');
+    if (typeof client === 'function') {
+      const generated = await client(true) || {};
+      generated.tools?.listen(ctx);
+    }
+
     //expose the MCP factory so transport scripts can request a fresh server
-    ctx.register(
-      'mcp',
-      (async () => createMcpServer(ctx as ToolResolverServer)) as McpPlugin
-    );
+    ctx.register('mcp', async () => createMcpServer(ctx as ToolResolverServer));
 
     //then register the transport entry events that the CLI can emit later
     ctx.on('mcp-stdio', stdio);
@@ -119,4 +129,19 @@ export default function plugin(ctx: Server) {
       attachSseToServer(ctx);
     }
   }));
+
+  //generate MCP tool code into the client package through the standard idea
+  // plugin pipeline instead of reparsing schema files at runtime.
+  ctx.on('idea', async ({ req }) => {
+    const transformer = req.data<Transformer<CLIProps>>('transformer');
+    const schema = await transformer.schema();
+    if (!schema.plugin) {
+      schema.plugin = {};
+    }
+    const dirname = typeof __dirname === 'undefined'
+      //@ts-ignore - import.meta only exists in esm builds
+      ? path.dirname(fileURLToPath(import.meta.url))
+      : __dirname;
+    schema.plugin[`${dirname}/transform`] = {};
+  });
 }
