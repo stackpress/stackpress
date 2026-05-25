@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stackpress Plugin Scaffold"
+  short_description: "Scaffold Stackpress plugin structure."
+  default_prompt: "Use $stackpress-plugin-scaffold to scaffold or extend this Stackpress plugin."
+
+policy:
+  allow_implicit_invocation: true

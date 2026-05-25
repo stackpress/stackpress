@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stackpress App Coordinator"
+  short_description: "Coordinate phased Stackpress app builds."
+  default_prompt: "Use $stackpress-app-coordinator to coordinate building a Stackpress app from a product request."
+
+policy:
+  allow_implicit_invocation: true
