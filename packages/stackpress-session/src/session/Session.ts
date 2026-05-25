@@ -85,7 +85,7 @@ export default class SessionServer {
       return false;
     }
 
-    res.setResults(await session.authorization());
+    res.results(await session.authorization());
     return true;
   }
 

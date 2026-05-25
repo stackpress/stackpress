@@ -19,6 +19,7 @@ export type {
   ServerHandler,
   ServerGateway,
   ServerOptions,
+  RouteProps,
   NodeServer, 
   NodeServerOptions,
   NodeRequest,

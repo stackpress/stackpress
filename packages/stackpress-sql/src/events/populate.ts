@@ -6,7 +6,7 @@ import type { TerminalPlugin } from 'stackpress-server/types';
 import type { SerializedEvent } from '../types.js';
 import populate from '../scripts/populate.js';
 
-export default action.props(async function PopulateScript({ res, ctx }) {
+export default action(async function PopulateScript({ res, ctx }) {
   //if error, dont continue
   if (res.code && res.code !== 200) return;
   //get terminal
@@ -15,5 +15,5 @@ export default action.props(async function PopulateScript({ res, ctx }) {
   const events = ctx.config.path<SerializedEvent[]>('database.populate', []);
   await populate(ctx, events, terminal);
   //OK
-  res.setStatus(200);
+  res.statusCode(200);
 });

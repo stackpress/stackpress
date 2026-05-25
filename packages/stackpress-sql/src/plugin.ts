@@ -24,7 +24,7 @@ import {
  */
 export default function plugin(ctx: Server) {
   //on listen, add database events
-  ctx.on('listen', action.props(async ({ ctx }) => {
+  ctx.on('listen', action(async ({ ctx }) => {
     //add sql scripts
     ctx.on('install', install);
     ctx.on('migrate', migrate);
@@ -47,7 +47,7 @@ export default function plugin(ctx: Server) {
     }
   }));
   //generate some code in the client folder
-  ctx.on('idea', async req => {
+  ctx.on('idea', async ({ req }) => {
     //get the transformer from the request
     const transformer = req.data<Transformer<CLIProps>>('transformer');
     const schema = await transformer.schema();

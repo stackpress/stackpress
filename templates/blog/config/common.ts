@@ -465,7 +465,78 @@ export const language = {
   }
 };
 
+//Example MCP config for `stackpress-ai`.
+//This is not enabled by default in the template because the package/plugin
+//must be added to `package.json` first, and the active config objects below do
+//not include an `mcp` property yet.
+export const mcp = {
+  name: 'Stackpress Blog MCP',
+  version: '1.0.0',
+  route: '/mcp',
+  mode: 'stateful' as 'stateful',
+  tools: [
+    {
+      name: 'article_search',
+      title: 'Search Articles',
+      description: 'Returns published articles that match the search query.',
+      type: 'public' as 'public',
+      method: 'GET' as 'GET',
+      event: 'article-search',
+      input: {
+        type: 'object',
+        properties: {
+          q: { type: 'string' },
+          limit: { type: 'number' }
+        }
+      },
+      data: {}
+    },
+    {
+      name: 'article_create',
+      title: 'Create Article',
+      description: 'Creates a new article draft for the authenticated app.',
+      type: 'app' as 'app',
+      method: 'POST' as 'POST',
+      event: 'article-create',
+      scopes: [ 'articles.write' ],
+      input: {
+        type: 'object',
+        required: [ 'title', 'content', 'profileId' ],
+        properties: {
+          title: { type: 'string' },
+          content: { type: 'string' },
+          profileId: { type: 'string' },
+          banner: { type: 'string' },
+          status: { type: 'string' }
+        }
+      },
+      data: {}
+    },
+    {
+      mode: 'plugin' as 'plugin',
+      event: 'article-detail-tool'
+    },
+    {
+      mode: 'plugin' as 'plugin',
+      type: 'app' as 'app',
+      event: 'article-update-tool',
+      scopes: [ 'articles.write' ]
+    },
+    {
+      mode: 'plugin' as 'plugin',
+      event: 'comment-search-tool'
+    },
+    {
+      mode: 'plugin' as 'plugin',
+      type: 'user' as 'user',
+      event: 'comment-create-tool',
+      scopes: [ 'comments.write' ]
+    }
+  ]
+};
+
 export const server = {
+  host: '127.0.0.1',
   port: 3000,
   cwd: cwd
 };
@@ -504,7 +575,8 @@ export const session = {
       { method: 'ALL', route: '/' },
       { method: 'ALL', route: '/articles/**' },
       { method: 'ALL', route: '/auth/**' },
-      { method: 'ALL', route: '/api/**' }
+      { method: 'ALL', route: '/api/**' },
+      { method: 'ALL', route: '/mcp' }
     ]
   }
 };

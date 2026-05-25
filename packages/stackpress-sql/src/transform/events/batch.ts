@@ -23,11 +23,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'DatabasePlugin' ]
   });
-  //import type { Request, Response, Server } from 'stackpress-server';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-server',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from 'stackpress-server';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'action' ]
   });
   //import Exception from 'stackpress-sql/Exception';
   source.addImportDeclaration({
@@ -47,24 +52,20 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
-  //export default async function ProfileBatchEvent(
-  //  req: Request, 
-  //  res: Response, 
-  //  ctx: Server
-  //) {}
+  //export default async function ProfileBatchEvent({ req, res, ctx }: RouteProps) {}
+  const name = model.name.toPropertyName('%sBatchEvent', true);
   source.addFunction({
-    name: model.name.toPropertyName('%sBatchEvent', true),
-    isDefaultExport: true,
     isAsync: true,
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.BATCH, { 
       actions: model.name.toClassName('%sActions') 
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
@@ -84,7 +85,7 @@ const mode = req.data.path('mode', 'upsert') as 'create' | 'update' | 'upsert';
 const rows = req.data('rows');
 if (!Array.isArray(rows)) {
   const errors = { rows: 'Missing or invalid value' };
-  res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
+  res.setError('Invalid Parameters', errors).statusCode(400, 'Bad Request');
   return;
 }
 
@@ -95,10 +96,10 @@ const actions = new <%actions%>(engine, seed);
 
 try { //to batch
   const results = await actions.batch(rows, mode);
-  res.setRows(results, results.length);
+  res.rows(results, results.length);
   results.every(result => result.code === 200)
-    ? res.setStatus(200, 'OK')
-    : res.setStatus(400, 'Bad Request');
+    ? res.statusCode(200, 'OK')
+    : res.statusCode(400, 'Bad Request');
 } catch(e) {
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());

@@ -23,11 +23,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'DatabasePlugin' ]
   });
-  //import type { Request, Response, Server } from 'stackpress-server';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-server',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from 'stackpress-server';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'action' ]
   });
   //import Exception from 'stackpress-sql/Exception';
   source.addImportDeclaration({
@@ -47,24 +52,20 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
-  //export default async function ProfileUpsertEvent(
-  //  req: Request, 
-  //  res: Response, 
-  //  ctx: Server
-  //) {}
+  //export default async function ProfileUpsertEvent({ req, res, ctx }: RouteProps) {}
+  const name = model.name.toPropertyName('%sUpsertEvent', true);
   source.addFunction({
-    name: model.name.toPropertyName('%sUpsertEvent', true),
-    isDefaultExport: true,
     isAsync: true,
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.UPSERT, { 
       actions: model.name.toClassName('%sActions') 
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
@@ -87,7 +88,7 @@ const actions = new <%actions%>(engine, seed);
 
 try { //to upsert
   const results = await actions.upsert(req.data());
-  res.setResults(results);
+  res.results(results);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());

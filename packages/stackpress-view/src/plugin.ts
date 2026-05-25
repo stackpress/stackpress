@@ -13,7 +13,7 @@ export default function plugin(ctx: Server) {
   //if no view is configured, disable plugin
   if (!ctx.config.has('view')) return;
   //on config, configure and register the language plugin
-  ctx.on('config', async (_req, _res, ctx) => {
+  ctx.on('config', async ({ ctx }) => {
     //get server mode
     const mode = ctx.config.path('server.mode', 'production');
     if (mode === 'production') {
@@ -25,7 +25,7 @@ export default function plugin(ctx: Server) {
     }
   });
   //on route, 
-  ctx.on('route', async (_req, _res, ctx) => {
+  ctx.on('route', async ({ ctx }) => {
     //get server mode
     const mode = ctx.config.path('server.mode', 'production');
     if (mode !== 'production') {
@@ -34,7 +34,7 @@ export default function plugin(ctx: Server) {
     }
   });
   //generate some code in the client folder
-  ctx.on('idea', async req => {
+  ctx.on('idea', async ({ req }) => {
     //get the transformer from the request
     const transformer = req.data<Transformer<CLIProps>>('transformer');
     const schema = await transformer.schema();

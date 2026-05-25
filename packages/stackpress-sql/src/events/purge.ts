@@ -6,7 +6,7 @@ import type { TerminalPlugin } from 'stackpress-server/types';
 //stackpress-sql
 import purge from '../scripts/purge.js';
 
-export default action.props(async function PurgeScript({ res, ctx }) {
+export default action(async function PurgeScript({ res, ctx }) {
   //if error, dont continue
   if (res.code && res.code !== 200) return;
   //get terminal
@@ -20,5 +20,5 @@ export default action.props(async function PurgeScript({ res, ctx }) {
   }
   await purge(ctx, database, terminal);
   //OK
-  res.setStatus(200);
+  res.statusCode(200);
 });

@@ -23,11 +23,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'DatabasePlugin' ]
   });
-  //import type { Request, Response, Server } from 'stackpress-server';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-server',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from 'stackpress-server';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'action' ]
   });
   //import Exception from 'stackpress-sql/Exception';
   source.addImportDeclaration({
@@ -47,20 +52,15 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
-  //export default async function ProfileSearchEvent(
-  //  req: Request, 
-  //  res: Response, 
-  //  ctx: Server
-  //) {}
+  //export default async function ProfileSearchEvent({ req, res, ctx }: RouteProps) {}
+  const name = model.name.toPropertyName('%sSearchEvent', true);
   source.addFunction({
-    name: model.name.toPropertyName('%sSearchEvent', true),
-    isDefaultExport: true,
     isAsync: true,
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.SEARCH, { 
       actions: model.name.toClassName('%sActions'),
       columns: model.store.query.length > 0 
@@ -68,6 +68,7 @@ export default function generate(directory: Directory, model: Model) {
         : [ '*' ].join("', '") 
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
@@ -100,7 +101,7 @@ const actions = new <%actions%>(engine, seed);
 try { //to search
   const results = await actions.findAll(req.data());
   const total = await actions.count(req.data());
-  res.setRows(results, total);
+  res.rows(results, total);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());

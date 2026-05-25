@@ -14,7 +14,7 @@ import { generate } from './events/index.js';
  */
 export default function plugin(ctx: Server) {
   //on config, register the client as a plugin
-  ctx.on('config', action.props(async ({ ctx }) => {
+  ctx.on('config', action(async ({ ctx }) => {
     const module = ctx.config.path('client.module', 'stackpress-client');
     ctx.register('client', async (nullable = false) => {
       if (!nullable) {
@@ -28,12 +28,12 @@ export default function plugin(ctx: Server) {
     });
   }), 10);
   //on listen
-  ctx.on('listen', action.props(({ ctx }) => {
+  ctx.on('listen', action(({ ctx }) => {
     //add schema scripts
     ctx.on('generate', generate);
   }));
   //generate some code in the client folder
-  ctx.on('idea', async req => {
+  ctx.on('idea', async ({ req }) => {
     //get the transformer from the request
     const transformer = req.data<Transformer<CLIProps>>('transformer');
     const schema = await transformer.schema();

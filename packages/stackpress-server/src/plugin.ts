@@ -9,7 +9,7 @@ import { develop, emit, serve } from './events/index.js';
  */
 export default function plugin(ctx: Server<any, any, any>) {
   //on listen
-  ctx.on('listen', action.props(({ ctx }) => {
+  ctx.on('listen', action(({ ctx }) => {
     //add server scripts
     ctx.on('develop', develop);
     ctx.on('emit', emit);

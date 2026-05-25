@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server'
 //stackpress-csrf
 import type { CsrfPlugin } from 'stackpress-csrf/types';
 //stackpress-view
@@ -14,11 +12,7 @@ import type { AuthConfig } from '../types.js';
 /**
  * Main page handler
  */
-export default async function SignInPage(
-  req: Request, 
-  res: Response, 
-  ctx: Server
-) {
+export default action(async function SignInPage({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
@@ -49,4 +43,4 @@ export default async function SignInPage(
     //redirect to home
     res.redirect(req.data.path('redirect_uri', '/'));
   }
-};
+});

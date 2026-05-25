@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server';
 //stackpress-session
 import Exception from '../../Exception.js';
 //stackpress-session/profile
@@ -9,17 +7,16 @@ import type { ProfileAuth } from '../../profile/types.js';
 //stackpress-session/auth
 import AuthActions from '../AuthActions.js';
 
-export default async function AuthSignup(
-  req: Request, 
-  res: Response,
-  ctx: Server
-) {
+export default action(async function AuthSignup({ req, res, ctx }) {
   //get the roles from the config
   const roles = ctx.config.path<string[]>('auth.roles', []);
   //get actions
   const actions = AuthActions.make(ctx);
   //get input
-  const input = { roles, ...req.data() };
+  const input: Record<string, any> & { roles: string[] } = { 
+    roles,
+    ...(req.data() as Record<string, any>)  
+  };
   let results: Partial<ProfileAuth>; 
   try { //to sign up
     results = await actions.signup(input);
@@ -35,7 +32,7 @@ export default async function AuthSignup(
   }
   //if email was provided
   if (input.email) {
-    ctx.resolve('email-email-send', { email: input.email, ...results });
+    ctx.resolve('email-send', { email: input.email, ...results });
   }
   //if phone was provided
   if (input.phone) {
@@ -57,5 +54,5 @@ export default async function AuthSignup(
     delete results.auth.username.secret;
   }
   
-  res.setResults(results);
-}
+  res.results(results);
+});

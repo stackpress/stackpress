@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server'
 //stackpress-schema
 import { hash } from 'stackpress-schema/helpers';
 //stackpress-session
@@ -12,14 +10,10 @@ import type { SessionPlugin } from '../../session/types.js';
 import type { AuthExtended, AuthConfig, SigninType } from '../types.js';
 import AuthActions from '../AuthActions.js';
 
-export default async function AuthSignin(
-  req: Request, 
-  res: Response,
-  ctx: Server
-) {
+export default action(async function AuthSignin({ req, res, ctx }) {
   //get the type of signin username, email, phone
   const type = req.data.path('type', 'username') as SigninType;
-  //determine if password validation should be used
+  //get password
   const password = req.data.path('password', true);
   //get actions
   const actions = AuthActions.make(ctx);
@@ -76,7 +70,7 @@ export default async function AuthSignin(
   //remove sensitive data
   delete results.secret;
   //sync the response object with the response
-  res.setResults(results);
+  res.results(results);
   //get the session
   const session = ctx.plugin<SessionPlugin>('session');
   const profile = results.profile!;
@@ -89,4 +83,4 @@ export default async function AuthSignin(
       ? profile.roles 
       : [ 'GUEST' ]
   }));
-}
+});

@@ -6,7 +6,8 @@
   "plugins": [
     "./plugins/app/plugin",
     "./plugins/store/plugin",
-    "stackpress"
+    "stackpress",
+    "stackpress-ai"
   ],
   "scripts": {
     "build": "stackpress build --b config/build -v",
@@ -25,11 +26,10 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.15",
-    "@stackpress/inquire-pglite": "0.9.2",
-    "frui": "0.2.5",
+    "@stackpress/inquire-pglite": "0.10.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "stackpress": "0.9.2"
+    "stackpress": "0.10.3"
   },
   "devDependencies": {
     "@types/node": "25.3.5",

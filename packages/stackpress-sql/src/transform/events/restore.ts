@@ -25,11 +25,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'DatabasePlugin' ]
   });
-  //import type { Request, Response, Server } from 'stackpress-server';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-server',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from 'stackpress-server';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'action' ]
   });
   //import type { StoreSelectFilters } from 'stackpress-sql/types';
   source.addImportDeclaration({
@@ -55,20 +60,15 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
-  //export default async function ProfileRestoreEvent(
-  //  req: Request, 
-  //  res: Response, 
-  //  ctx: Server
-  //) {}
+  //export default async function ProfileRestoreEvent({ req, res, ctx }: RouteProps) {}
+  const name = model.name.toPropertyName('%sRestoreEvent', true);
   source.addFunction({
-    name: model.name.toPropertyName('%sRestoreEvent', true),
-    isDefaultExport: true,
     isAsync: true,
-    parameters: [
-      { name: 'req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ req, res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.RESTORE, { 
       actions: model.name.toClassName('%sActions'),
       ids: ids.map(column => ({
@@ -79,6 +79,7 @@ export default function generate(directory: Directory, model: Model) {
         : null
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
@@ -105,7 +106,7 @@ const eq: StoreSelectFilters["eq"] = {};
     || eq.<%column%> === ''
   ) {
     const errors = { <%column%>: 'Missing or invalid value' };
-    res.setError('Invalid Parameters', errors).setStatus(400, 'Bad Request');
+    res.setError('Invalid Parameters', errors).statusCode(400, 'Bad Request');
     return;
   }
 <%/@:ids%>
@@ -120,7 +121,7 @@ const actions = new <%actions%>(engine, seed);
 
 try { //to restore
   const results = await actions.restore({ eq });
-  res.setResults(results[0] || null);
+  res.results(results[0] || null);
 } catch(e) {
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());

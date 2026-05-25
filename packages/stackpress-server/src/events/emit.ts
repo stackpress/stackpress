@@ -4,7 +4,7 @@ import { action } from '@stackpress/ingest/Server';
 import type { TerminalPlugin } from '../types.js';
 import emit from '../scripts/emit.js';
 
-export default action(async function EmitScript(_req, res, ctx) {
+export default action(async function EmitScript({ res, ctx }) {
   //if error, dont continue
   if (res.code && res.code !== 200) return;
   //get terminal
@@ -17,5 +17,5 @@ export default action(async function EmitScript(_req, res, ctx) {
   //emit event
   terminal?.verbose && terminal.control.system(`Emitting "${process.argv[3]}"...`);
   await emit(ctx, 3);
-  res.setStatus(200);
+  res.statusCode(200);
 });

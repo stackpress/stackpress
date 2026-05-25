@@ -2,7 +2,7 @@
 import { action } from 'stackpress/server';
 import { setViewProps } from 'stackpress/view';
 
-export default action.props(async function HomePage({ req, res, ctx }) {
+export default action(async function HomePage({ req, res, ctx }) {
   //only published
   req.data.set('status', 'PUBLISHED');
   //if no sort

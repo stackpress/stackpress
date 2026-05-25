@@ -1,9 +1,9 @@
 //node
 import path from 'node:path';
 //modules
-import type Server from '@stackpress/ingest/Server';
 import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
+import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server';
 //stackpress-server
 import type { TerminalPlugin } from 'stackpress-server/types';
 //stackpress-schema
@@ -12,7 +12,7 @@ import generate from '../scripts/generate.js';
 /**
  * This interface is intended for the Stackpress library.
  */
-export default async (req: Request, res: Response, ctx: Server) => {
+export default action(async function Generate({ req, res, ctx }) {
   //if error, dont continue
   if (res.code && res.code !== 200) return;
   //if client config is not set, dont generate client
@@ -30,8 +30,8 @@ export default async (req: Request, res: Response, ctx: Server) => {
   const idea = getIdeaPath(ctx, req);
   await generate(ctx, idea, tsconfig, terminal);
   //OK
-  res.setStatus(200);
-};
+  res.statusCode(200);
+});
 
 export function getIdeaPath(server: Server, req: Request) {
   //determine the input schema.idea

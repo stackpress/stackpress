@@ -7,7 +7,7 @@ import type { EmailConfig } from './types.js';
 
 const emitter = server();
 
-emitter.on('email-send', async function EmailSend(req, res, ctx) {
+emitter.on('email-send', async function EmailSend({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
@@ -26,7 +26,7 @@ emitter.on('email-send', async function EmailSend(req, res, ctx) {
       }
     });
   });
-  res.setResults(info);
+  res.results(info);
 });
 
 export default emitter;

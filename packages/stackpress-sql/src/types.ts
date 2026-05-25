@@ -214,39 +214,46 @@ export type {
 // Client Types
 
 export type GenericEventHandler<
-  C extends Record<string, unknown> = Record<string, unknown>,
-  R = any,
-  S = any
-> = (req: Request<R>, res: Response<S>, ctx: Server<C, R, S>) => Promise<void>;
+  R = unknown,
+  S = unknown,
+  C extends Record<string, unknown> = Record<string, unknown>
+> = (props: {
+  req: Request<R>,
+  res: Response<S>,
+  ctx: Server<R, S, C>,
+  request: Request<R>,
+  response: Response<S>,
+  context: Server<R, S, C>
+}) => Promise<void>;
 
 export type GenericEvents<
-  C extends Record<string, unknown> = Record<string, unknown>,
-  R = any,
-  S = any
+  R = unknown,
+  S = unknown,
+  C extends Record<string, unknown> = Record<string, unknown>
 > = {
-  batch: GenericEventHandler<C, R, S>;
-  create: GenericEventHandler<C, R, S>;
-  detail: GenericEventHandler<C, R, S>;
-  get: GenericEventHandler<C, R, S>;
-  purge: GenericEventHandler<C, R, S>;
-  remove: GenericEventHandler<C, R, S>;
-  restore: GenericEventHandler<C, R, S>;
-  search: GenericEventHandler<C, R, S>;
-  update: GenericEventHandler<C, R, S>;
-  upsert: GenericEventHandler<C, R, S>;
+  batch: GenericEventHandler<R, S, C>;
+  create: GenericEventHandler<R, S, C>;
+  detail: GenericEventHandler<R, S, C>;
+  get: GenericEventHandler<R, S, C>;
+  purge: GenericEventHandler<R, S, C>;
+  remove: GenericEventHandler<R, S, C>;
+  restore: GenericEventHandler<R, S, C>;
+  search: GenericEventHandler<R, S, C>;
+  update: GenericEventHandler<R, S, C>;
+  upsert: GenericEventHandler<R, S, C>;
 };
 
 export type GenericListener<
-  C extends Record<string, unknown> = Record<string, unknown>,
-  R = any,
-  S = any
-> = (server: Server<C, R, S>) => void;
+  R = unknown,
+  S = unknown,
+  C extends Record<string, unknown> = Record<string, unknown>
+> = (server: Server<R, S, C>) => void;
 
 export type GenericAdminRouter<
-  C extends Record<string, unknown> = Record<string, unknown>,
-  R = any,
-  S = any
-> = (server: Server<C, R, S>) => void;
+  R = unknown,
+  S = unknown,
+  C extends Record<string, unknown> = Record<string, unknown>
+> = (server: Server<R, S, C>) => void;
 
 export type ClientModel<
   //model type
@@ -274,9 +281,9 @@ export type ClientModel<
     new(engine: Engine, seed?: string): ActionsInterface<T, E, C, R> 
   },
   columns: C,
-  events: GenericEvents<X, Q, S>,
-  listen: GenericListener<X, Q, S>,
-  admin: GenericAdminRouter<X, Q, S>
+  events: GenericEvents<Q, S, X>,
+  listen: GenericListener<Q, S, X>,
+  admin: GenericAdminRouter<Q, S, X>
 };
 
 export type ClientScripts = {

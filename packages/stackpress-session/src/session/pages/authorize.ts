@@ -1,16 +1,7 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server';
 
-/**
- * Main page handler
- */
-export default async function Authorize(
-  req: Request,
-  res: Response,
-  ctx: Server
-) {
+export default action(async function Authorize({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
@@ -23,4 +14,4 @@ export default async function Authorize(
     res.fromStatusResponse(authorized);
     await ctx.emit('error', req, res);
   }
-};
+});

@@ -23,11 +23,16 @@ export default function generate(directory: Directory, model: Model) {
     moduleSpecifier: 'stackpress-sql/types',
     namedImports: [ 'DatabasePlugin' ]
   });
-  //import type { Request, Response, Server } from 'stackpress-server';
+  //import type { RouteProps } from 'stackpress-server';
   source.addImportDeclaration({
     isTypeOnly: true,
     moduleSpecifier: 'stackpress-server',
-    namedImports: [ 'Request', 'Response', 'Server' ]
+    namedImports: [ 'RouteProps' ]
+  });
+  //import { action } from 'stackpress-server';
+  source.addImportDeclaration({
+    moduleSpecifier: 'stackpress-server',
+    namedImports: [ 'action' ]
   });
   //import Exception from 'stackpress-sql/Exception';
   source.addImportDeclaration({
@@ -40,24 +45,20 @@ export default function generate(directory: Directory, model: Model) {
   //------------------------------------------------------------------//
   // Exports
 
-  //export default async function ProfilePurgeEvent(
-  //  _req: Request, 
-  //  res: Response, 
-  //  ctx: Server
-  //) {}
+  //export default async function ProfilePurgeEvent({ res, ctx }: RouteProps) {}
+  const name = model.name.toPropertyName('%sPurgeEvent', true);
   source.addFunction({
-    name: model.name.toPropertyName('%sPurgeEvent', true),
-    isDefaultExport: true,
     isAsync: true,
-    parameters: [
-      { name: '_req', type: 'Request' },
-      { name: 'res', type: 'Response' },
-      { name: 'ctx', type: 'Server' }
-    ],
+    name,
+    parameters: [{
+      name: '{ res, ctx }',
+      type: 'RouteProps'
+    }],
     statements: renderCode(TEMPLATE.PURGE, { 
       table: model.name.toString() 
     })
   });
+  source.addStatements(`export default action(${name});`);
 };
 
 export const TEMPLATE = {
@@ -79,6 +80,6 @@ try { //to purge
   const exception = Exception.upgrade(e as Error);
   res.setError(exception.toResponse());
 }
-res.setBody('text/plain', '<%table%>');`,
+res.set('text/plain', '<%table%>');`,
 
 };

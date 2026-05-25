@@ -4,7 +4,7 @@ import { action } from '@stackpress/ingest/Server';
 //stackpress-server
 import type { TerminalPlugin } from 'stackpress-server/types';
 
-export default action.props(async function QueryScript({ res, ctx }) {
+export default action(async function QueryScript({ res, ctx }) {
   //if error, dont continue
   if (res.code && res.code !== 200) return;
   //cli setup
@@ -21,5 +21,5 @@ export default action.props(async function QueryScript({ res, ctx }) {
     console.log(await database.query(query.replace(/\\/g, "'")));
   }
   //OK
-  res.setStatus(200);
+  res.statusCode(200);
 });

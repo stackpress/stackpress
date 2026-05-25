@@ -1,3 +1,10 @@
+//modules
+import type { 
+  ActionRouteProps, 
+  ConfigMap, 
+  PluginMap 
+} from '@stackpress/ingest/types';
+import type Server from '@stackpress/ingest/Server';
 //stackpress-server
 import type Terminal from './Terminal';
 
@@ -26,6 +33,10 @@ export type ServerConfig = {
   //used by `stackpress/view`
   //defaults to `production`
   mode?: string,
+  //server host
+  //not used by stackpress
+  //defaults to `127.0.0.1`
+  host?: string,
   //server port
   //not used by stackpress
   port?: number,
@@ -34,6 +45,14 @@ export type ServerConfig = {
   //default: STACKPRESS_CHILD
   process?: string
 };
+
+//can be used in all event and route handlers
+export type RouteProps<
+  R = unknown, 
+  S = unknown, 
+  C extends ConfigMap = ConfigMap,
+  P extends PluginMap = PluginMap
+> = ActionRouteProps<R, S, Server<R, S, C, P>>;
 
 export type {
   ConfigLoaderOptions,

@@ -6,7 +6,7 @@ import type Response from '@stackpress/ingest/Response';
 import type Server from '@stackpress/ingest/Server';
 
 export default function plugin(ctx: Server) {
-  ctx.on('config', (_req, _res, ctx) => {
+  ctx.on('config', ({ ctx }) => {
     //configure and register csrf
     ctx.register('csrf', {
       clear(req: Request, res: Response, ctx: Server) {
@@ -46,7 +46,7 @@ export default function plugin(ctx: Server) {
           || input.length === 0
         ) {
           res.setError(error);
-          res.setStatus(419, 'Page Expired');
+          res.statusCode(419, 'Page Expired');
           return false;
         }
         //convert tokens to buffers for timingSafeEqual
@@ -59,7 +59,7 @@ export default function plugin(ctx: Server) {
           || !crypto.timingSafeEqual(buffer.session, buffer.input)
         ) {
           res.setError(error);
-          res.setStatus(419, 'Page Expired');
+          res.statusCode(419, 'Page Expired');
           return false;
         }
         return true;

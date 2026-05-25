@@ -6,7 +6,7 @@ import type { TerminalPlugin } from 'stackpress-server/types';
 //stackpress-sql
 import push from '../scripts/push.js';
 
-export default action.props(async function PushScript({ res, ctx }) {
+export default action(async function PushScript({ res, ctx }) {
   //if error, dont continue
   if (res.code && res.code !== 200) return;
   //get terminal
@@ -20,5 +20,5 @@ export default action.props(async function PushScript({ res, ctx }) {
   }
   await push(ctx, database, terminal);
   //OK
-  res.setStatus(200);
+  res.statusCode(200);
 });
