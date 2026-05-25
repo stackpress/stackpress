@@ -22,8 +22,6 @@ export function OTPSigninBody() {
   const tokenKey = config.path('csrf.name', 'csrf');
   const token = config.path('csrf.token', '');
   const email = response.results?.token || request.data.path('email', '');
-  const errors = response.errors();
-  console.log(errors)
   return (
     <main className="auth-signin-options auth-page auth-2fa-page">
       <div className="container">
@@ -59,9 +57,6 @@ export function OTPSigninBody() {
                 autoComplete="off"
                 required
               />
-              {/* {errors.code && (
-                <span className="auth-form-error">{errors?.name}</span>
-              )} */}
             </section>
             <button className="auth-submit-btn" type="submit">
               {_('Submit')}
