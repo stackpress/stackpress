@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-api",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "license": "MIT",
   "description": "OAuth, webhooks and restful API for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -99,7 +99,7 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "stackpress-session": "0.10.3"
+    "stackpress-session": "0.10.4"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

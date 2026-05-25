@@ -103,9 +103,9 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
-    "@stackpress/ingest": "0.10.3",
-    "stackpress-api": "0.10.3",
-    "stackpress-schema": "0.10.3",
+    "@stackpress/ingest": "0.10.4",
+    "stackpress-api": "0.10.4",
+    "stackpress-schema": "0.10.4",
     "zod": "4.3.6"
   },
   "devDependencies": {
