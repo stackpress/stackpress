@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server'
 //stackpress-schema
 import { hash } from 'stackpress-schema/helpers';
 //stackpress-csrf
@@ -17,11 +15,7 @@ import type { AuthConfig, AuthExtended } from '../../types.js';
 /**
  * Main page handler
  */
-export default async function TwoFactorSignInPage(
-  req: Request, 
-  res: Response, 
-  ctx: Server
-) {
+export default action(async function TwoFactorSignInPage({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
@@ -58,7 +52,7 @@ export default async function TwoFactorSignInPage(
     res.redirect(redirect);
     return;
   }
-  //get the auth and profile id
+  //get the auth, profile id and challenge
   const profileId = String(req.data.path('profile', ''));
   const authId = String(req.data.path('auth', ''));
   const challenge = String(req.data.path('challenge', ''));
@@ -81,9 +75,11 @@ export default async function TwoFactorSignInPage(
   //find the current auth method
   const currentAuth = search.results.find((auth) => auth.id === authId);
   if (!currentAuth) {
+    //set error if there's no authentication method
     res.setError('Invalid authentication method');
     return;
   } else if (hash(currentAuth.consumed.toString()) !== challenge) {
+    //flash an error to view if challenge mismatched
     res.session.set(
       'flash',
       JSON.stringify({
@@ -91,6 +87,7 @@ export default async function TwoFactorSignInPage(
         message: 'Two-factor authentication failed.',
       }),
     );
+    //then redirect to signin page...
     res.redirect(
       `${base}/signin/${currentAuth.type}?redirect_uri=${encodeURIComponent(
         redirect,
@@ -102,7 +99,7 @@ export default async function TwoFactorSignInPage(
   const twoFA = search.results.find((auth) => auth.type === '2fa');
   //if no 2fa
   if (!twoFA) {
-    //prevent password signin on this page...
+    //allow passwordless signin on this page...
     req.data.set('password', false);
     //set auth type
     req.data.set('type', currentAuth.type);
@@ -114,6 +111,7 @@ export default async function TwoFactorSignInPage(
     await ctx.emit('auth-signin', req, res);
     //if not ok
     if (res.code !== 200) return;
+    //ok!
     //remove csrf
     csrf.clear(req, res, ctx);
     //then redirect
@@ -137,7 +135,7 @@ export default async function TwoFactorSignInPage(
       res.setError('Invalid code');
       return;
     }
-    //prevent password signin on this page...
+    //allow passwordless signin...
     req.data.set('password', false);
     //set auth type
     req.data.set('type', currentAuth.type);
@@ -149,10 +147,11 @@ export default async function TwoFactorSignInPage(
     await ctx.emit('auth-signin', req, res);
     //if not ok
     if (res.code !== 200) return;
+    //ok!
     //remove csrf
     csrf.clear(req, res, ctx);
     //sign in successful, redirect
     res.redirect(redirect);
     return;
   }
-}
+});

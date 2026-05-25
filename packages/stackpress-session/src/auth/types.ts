@@ -107,6 +107,11 @@ export type ActionOptions = {
 //--------------------------------------------------------------------//
 // Config Types
 
+export type AuthEmailConfig = {
+  name: string;
+  address: string;
+}
+
 export type AuthPasswordConfig = {
   min?: number,
   max?: number,
@@ -132,6 +137,7 @@ export type AuthConfig = {
   redirect?: string,
   '2fa'?: {},
   captcha?: {},
+  email?: AuthEmailConfig
   roles?: string[],
   //static signin options
   menu?: AuthMenuConfig[],
@@ -157,7 +163,6 @@ export type SigninInput = {
   username?: string,
   email?: string,
   phone?: string,
-  password?: boolean,
   secret: string
 };
 

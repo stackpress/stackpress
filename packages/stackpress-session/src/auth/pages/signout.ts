@@ -1,6 +1,9 @@
 //modules
 import { action } from '@stackpress/ingest/Server';
 
+/**
+ * Main page handler
+ */
 export default action(async function SignOutPage({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {

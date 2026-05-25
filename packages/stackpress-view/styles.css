@@ -257,6 +257,12 @@
   margin-right: 10px;
 }
 
+.layout-right .user-menu header .info .account-link {
+  border-bottom: 1px solid var(--bg-third);
+  color: inherit;
+  text-decoration: none;
+}
+
 .layout-right .user-menu header .lang {
   background-color: var(--bg-second);
   padding-bottom: 12px;

@@ -6,13 +6,13 @@ import type Server from '@stackpress/ingest/Server';
  */
 export default function plugin(ctx: Server) {
   //on listen, add user events
-  ctx.on('listen', (_req, _res, ctx) => {
+  ctx.on('listen', ({ ctx }) => {
     ctx.import.on('auth-signup', () => import('./events/signup.js'));
     ctx.import.on('auth-signin', () => import('./events/signin.js'));
     ctx.import.on('auth-signout', () => import('./events/signout.js'));
   });
   //on route, add user routes
-  ctx.on('route', (_req, _res, ctx) => {
+  ctx.on('route', ({ ctx }) => {
     //if no auth config, disable auth routes
     if (!ctx.config.get('auth')) return;
     const base = ctx.config.path('auth.base', '/auth');
@@ -29,8 +29,16 @@ export default function plugin(ctx: Server) {
       () => import('./pages/signin/2fa.js')
     );
     ctx.import.get(
+      `${base}/signin/link/:auth/:challenge`,
+      () => import('./pages/signin/link.js')
+    );
+    ctx.import.get(
       `${base}/signin/email`,
       () => import('./pages/signin/email.js')
+    );
+    ctx.import.get(
+      `${base}/signin/otp/:auth/:challenge`,
+      () => import('./pages/signin/otp.js')
     );
     ctx.import.get(
       `${base}/signin/phone`,
@@ -54,8 +62,16 @@ export default function plugin(ctx: Server) {
       () => import('./pages/signin/2fa.js')
     );
     ctx.import.post(
+      `${base}/signin/link/:auth/:challenge`,
+      () => import('./pages/signin/link.js')
+    );
+    ctx.import.post(
       `${base}/signin/email`,
       () => import('./pages/signin/email.js')
+    );
+    ctx.import.post(
+      `${base}/signin/otp/:auth/:challenge`,
+      () => import('./pages/signin/otp.js')
     );
     ctx.import.post(
       `${base}/signin/phone`,
@@ -83,8 +99,18 @@ export default function plugin(ctx: Server) {
       -100
     );
     ctx.view.get(
+      `${base}/signin/link/:auth/:challenge`,
+      'stackpress-session/esm/auth/views/signin/link',
+      -100
+    );
+    ctx.view.get(
       `${base}/signin/email`,
       'stackpress-session/esm/auth/views/signin/email',
+      -100
+    );
+    ctx.view.get(
+      `${base}/signin/otp/:auth/:challenge`,
+      'stackpress-session/esm/auth/views/signin/otp',
       -100
     );
     ctx.view.get(
@@ -109,8 +135,18 @@ export default function plugin(ctx: Server) {
       -100
     );
     ctx.view.post(
+      `${base}/signin/link/:auth/:challenge`,
+      'stackpress-session/esm/auth/views/signin/link',
+      -100
+    );
+    ctx.view.post(
       `${base}/signin/email`,
       'stackpress-session/esm/auth/views/signin/email',
+      -100
+    );
+    ctx.view.post(
+      `${base}/signin/otp/:auth/:challenge`,
+      'stackpress-session/esm/auth/views/signin/otp',
       -100
     );
     ctx.view.post(

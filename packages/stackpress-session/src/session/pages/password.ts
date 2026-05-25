@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server'
 //stackpress-schema
 import { hash } from 'stackpress-schema/helpers';
 //stackpress-view
@@ -18,11 +16,7 @@ import type { SessionPlugin } from '../types.js';
 /**
  * Main page handler
  */
-export default async function AccountUpdatePage(
-  req: Request,
-  res: Response,
-  ctx: Server
-) {
+export default action(async function AccountUpdatePage({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     return;
@@ -31,28 +25,31 @@ export default async function AccountUpdatePage(
   const session = ctx.plugin<SessionPlugin>('session');
   const me = session.load(req);
   const data = await me.data();
+  //pass the view props down to view
+  setViewProps(req, res, ctx);
   if (!data || await me.guest()) {
-    res.setStatus(401, 'Unauthorized');
+    res.statusCode(401, 'Unauthorized');
     return;
   }
   await ctx.resolve('profile-detail', { id: data.id }, res);
   if (res.code === 404) {
-    res.setStatus(401, 'Unauthorized');
+    res.statusCode(401, 'Unauthorized');
     return;
   } else if (req.method === 'POST') {
-    const secret = req.data('secret');
-    const current = req.data('current');
+    const secret = req.data<string>('secret');
+    const current = req.data<string>('current');
     //get password config
     const password = ctx.config.path<AuthPasswordConfig>('auth.password', {});
     //do initial check
     const errors = assert(secret, current, password);
     //if there are any errors
     if (errors) {
+      //build a single error message from all fields
+      const message = Object.values(errors).join(", ");
       //set the error and return
-      res.setError('Invalid Parameters', errors);
+      res.setError(`Invalid Parameters: ${message}`, errors);
       return;
     }
-
     //get auth records for the user (username, email, phone)
     const auths = await ctx.resolve<AuthExtended[]>('auth-search', { 
       eq: { 
@@ -84,9 +81,7 @@ export default async function AccountUpdatePage(
     res.redirect(`${base}/account`);
     return;
   }
-  //pass the view props down to view
-  setViewProps(req, res, ctx);
-};
+});
 
 export function assert(
   secret: string, 

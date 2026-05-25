@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server'
 //stackpress-csrf
 import type { CsrfPlugin } from 'stackpress-csrf/types';
 //stackpress-view
@@ -12,11 +10,7 @@ import type { SessionPlugin } from '../../types.js';
 /**
  * Main page handler
  */
-export default async function TwoFactorRemovePage(
-  req: Request,
-  res: Response,
-  ctx: Server
-) {
+export default action(async function TwoFactorRemovePage({ req, res, ctx}) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     return;
@@ -30,13 +24,13 @@ export default async function TwoFactorRemovePage(
   const me = session.load(req);
   const data = await me.data();
   if (!data || await me.guest()) {
-    res.setStatus(401, 'Unauthorized');
+    res.statusCode(401, 'Unauthorized');
     //NOTE: no need for csrf here...
     return;
   }
   await ctx.resolve('profile-detail', { id: data.id }, res);
   if (res.code === 404) {
-    res.setStatus(401, 'Unauthorized');
+    res.statusCode(401, 'Unauthorized');
     //NOTE: no need for csrf here...
     return;
   } 
@@ -105,4 +99,4 @@ export default async function TwoFactorRemovePage(
   }
   //generate csrf token before returning
   csrf.generate(res, ctx);
-};
+});

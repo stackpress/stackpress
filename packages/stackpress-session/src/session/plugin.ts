@@ -11,7 +11,7 @@ export default function plugin(ctx: Server) {
   //if no session config, disable session
   if (!ctx.config.get('session')) return;
   //on config, register session plugin
-  ctx.on('config', (_req, _res, ctx) => {
+  ctx.on('config', ({ ctx }) => {
     const key = ctx.config.path('session.key', 'session');
     const seed = ctx.config.path('session.seed', 'abc123');
     const access = ctx.config.path<SessionPermissionList>('session.access', {});
@@ -19,7 +19,7 @@ export default function plugin(ctx: Server) {
     ctx.register('session', Session.configure(key, seed, access));
   });
   //on listen, add user events
-  ctx.on('listen', (_req, _res, ctx) => {
+  ctx.on('listen', ({ ctx }) => {
     ctx.import.on('me', () => import('./events/session.js'));
     ctx.import.on('authorize', () => import('./events/authorize.js'));
     //only if there is an access list
@@ -31,7 +31,7 @@ export default function plugin(ctx: Server) {
     //otherwise, would whitelist every route...
   });
   //on route, add user routes
-  ctx.on('route', (_req, _res, ctx) => {
+  ctx.on('route', ({ ctx }) => {
     //if no auth config, disable auth routes
     if (!ctx.config.get('auth')) return;
     const base = ctx.config.path('auth.base', '/auth');

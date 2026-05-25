@@ -3,7 +3,6 @@ import { useState } from 'react';
 //stackpress-view
 import {
   LayoutBlank,
-  useConfig,
   useLanguage,
   useServer,
   useTheme
@@ -11,11 +10,34 @@ import {
 //stackpress-session
 import type { AuthPageProps } from '../../types.js';
 
+type AuthModeControlProps = {
+  icon: string;
+  active: boolean;
+  label: string;
+  onClick: () => void;
+};
+
+function AuthModeControl(props: AuthModeControlProps) {
+  const { icon, active, label, onClick } = props;
+  return (
+    <button
+      type="button"
+      className={`auth-email-mode-icon${active ? ' active' : ''}`}
+      aria-label={label}
+      aria-pressed={active}
+      onClick={onClick}
+    >
+      <i className={`fas fa-fw ${icon}`} />
+    </button>
+  );
+}
+
 export function EmailSigninForm() {
   //hooks
   const { _ } = useLanguage();
   const { config } = useServer();
   const [ shown, setShown ] = useState(false);
+  const [ method, setMethod ] = useState('pass');
   //variables
   const tokenKey = config.path('csrf.name', 'csrf');
   const token = config.path('csrf.token', '');
@@ -23,6 +45,7 @@ export function EmailSigninForm() {
   return (
     <form className="auth-email-form" method="POST">
       <input type="hidden" name={tokenKey} value={token} />
+      <input type="hidden" name="auth" value={method} />
       <section className="auth-form-section">
         <label>{_('Email Address *')}</label>
         <input
@@ -32,32 +55,72 @@ export function EmailSigninForm() {
           placeholder={_('Email')}
         />
       </section>
-      <section className="auth-form-section">
-        <label>{_('Password *')}</label>
-        <div className="auth-form-password">
-          <input
-            name="secret"
-            className="auth-form-input auth-form-password-input"
-            autoComplete="off"
-            type={shown ? 'text' : 'password'}
-            placeholder={_('Password')}
-          />
-          <button
-            type="button"
-            className="auth-form-password-toggle"
-            aria-label={shown ? _('Hide password') : _('Show password')}
-            aria-pressed={shown}
-            onClick={() => setShown(!shown)}
-          >
-            {shown ? '*' : 'A'}
-          </button>
+      <section className="auth-form-section auth-email-mode-section">
+        <div
+          className="auth-email-mode-row"
+          role="tablist"
+          aria-label={_('Sign in method')}
+        >
+          {method === 'pass' ? (
+            <label className="auth-email-mode-label">{_('Password *')}</label>
+          ) : (
+            <p className="auth-email-mode-label auth-email-mode-note">
+              {method === 'otp'
+                ? _('(send one-time pin code)')
+                : _('(send magic link)')}
+            </p>
+          )}
+          <div className="auth-email-mode-actions">
+            <AuthModeControl
+              icon="fa-asterisk"
+              active={method === 'pass'}
+              label={_('Sign in with password')}
+              onClick={() => setMethod('pass')}
+            />
+            <AuthModeControl
+              icon="fa-message"
+              active={method === 'otp'}
+              label={_('Send one-time pin code')}
+              onClick={() => setMethod('otp')}
+            />
+            <AuthModeControl
+              icon="fa-wand-magic-sparkles"
+              active={method === 'magic'}
+              label={_('Send magic link')}
+              onClick={() => setMethod('magic')}
+            />
+          </div>
         </div>
+        {method === 'pass' ? (
+          <>
+            <div className="auth-form-password">
+              <input
+                name="secret"
+                className="auth-form-input auth-form-password-input"
+                autoComplete="off"
+                type={shown ? 'text' : 'password'}
+                placeholder={_('Enter your password')}
+              />
+              <button
+                type="button"
+                className="auth-form-password-toggle"
+                aria-label={shown ? _('Hide password') : _('Show password')}
+                aria-pressed={shown}
+                onClick={() => setShown(!shown)}
+              >
+                {shown ? '*' : 'A'}
+              </button>
+            </div>
+          </>
+        ) : null}
       </section>
-      <button className="auth-submit-btn" type="submit">{_('Submit')}</button>
+      <button className="auth-submit-btn" type="submit">
+        {_('Submit')}
+      </button>
       <hr />
       <a
         className="auth-email-footer-link"
-        href="/auth/signin"
+        href={`${config.path('auth.base', '/auth')}/signin`}
       >
         {_('Choose a different sign-in method')}
       </a>
@@ -68,10 +131,17 @@ export function EmailSigninForm() {
 export function EmailSigninBody() {
   //hooks
   const { _ } = useLanguage();
-  const config = useConfig();
+  const { config, request, response } = useServer<
+    AuthPageProps,
+    Record<string, string>,
+    { email?: string }
+  >();
   const { theme, toggle } = useTheme();
   //variables
   const dark = theme === 'dark';
+  const sent = response.code === 200 &&
+    request.method === 'POST' &&
+    request.data.path('auth', 'pass') === 'magic';
   //render
   return (
     <main className="auth-signin-options auth-page">
@@ -96,7 +166,23 @@ export function EmailSigninBody() {
               <i className={`fas fa-fw ${dark ? 'fa-moon' : 'fa-sun'}`} />
             </span>
           </header>
-          <EmailSigninForm />
+          {sent ? (
+            <main className="auth-email-message">
+              <p>{_('A magic link has been sent to your email address.')}</p>
+              <p>
+                {_('Please check your inbox and click the link to sign in.')}
+              </p>
+              <hr />
+              <a
+                className="auth-email-footer-link"
+                href={`${config.path('auth.base', '/auth')}/signin`}
+              >
+                {_('Choose a different sign-in method')}
+              </a>
+            </main>
+          ) : (
+            <EmailSigninForm />
+          )}
         </section>
       </div>
     </main>

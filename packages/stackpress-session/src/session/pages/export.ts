@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server'
 //stackpress-view
 import { setViewProps } from 'stackpress-view/helpers';
 //stackpress-session/profile
@@ -12,11 +10,7 @@ import type { SessionPlugin } from '../types.js';
 /**
  * Main page handler
  */
-export default async function AccountExport(
-  req: Request,
-  res: Response,
-  ctx: Server
-) {
+export default action(async function AccountExport({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     return;
@@ -26,7 +20,7 @@ export default async function AccountExport(
   const me = session.load(req);
   const data = await me.data();
   if (!data || await me.guest()) {
-    res.setStatus(401, 'Unauthorized');
+    res.statusCode(401, 'Unauthorized');
     return;
   }
   const response = await ctx.resolve<ProfileExtended>(
@@ -34,10 +28,10 @@ export default async function AccountExport(
     { id: data.id }
   );
   if (response.code === 404) {
-    res.setStatus(401, 'Unauthorized');
+    res.statusCode(401, 'Unauthorized');
     return;
   }
-  //When the export route is opened directly, render the warning page first so
+  //when the export route is opened directly, render the warning page first so
   // the download only starts after the user clicks the download action.
   if (!req.data('download')) {
     setViewProps(req, res, ctx);
@@ -64,5 +58,5 @@ export default async function AccountExport(
     'Content-Disposition',
     `attachment; filename=account-${Date.now()}.csv`
   );
-  res.setBody('text/csv', csv);
-};
+  res.set('text/csv', csv);
+});

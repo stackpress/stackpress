@@ -5,6 +5,7 @@ import FieldControl from 'frui/form/FieldControl';
 import Button from 'frui/Button';
 import Input from 'frui/form/Input';
 import PasswordInput from 'frui/form/PasswordInput';
+import PhoneInput from 'frui/form/PhoneInput';
 import Progress from 'frui/Progress';
 //stackpress-view
 import type { NestedObject } from 'stackpress-view/client/types';
@@ -214,11 +215,12 @@ export function AuthSignupForm(props: AuthSignupFormProps) {
         error={errors.phone as string|undefined} 
         className="control"
       >
-        <Input
+        <PhoneInput
           name="phone"
+          defaultCountry="PH"
           className="field"
-          error={!!errors.phone}
           defaultValue={input.phone}
+          placeholder={_('Phone Number')}
         />
       </FieldControl>
       <FieldControl 

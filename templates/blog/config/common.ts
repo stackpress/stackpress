@@ -151,6 +151,8 @@ export const auth = {
   '2fa': {},
   //captcha settings
   captcha: {},
+  //email settings
+  email: {},
   //default roles for new users
   roles: [ 'USER' ],
   menu: [
@@ -574,7 +576,10 @@ export const session = {
       //page routes
       { method: 'ALL', route: '/' },
       { method: 'ALL', route: '/articles/**' },
-      { method: 'ALL', route: '/auth/**' },
+      { method: 'ALL', route: '/auth/signup' },
+      { method: 'ALL', route: '/auth/signin' },
+      { method: 'ALL', route: '/auth/signin/**' },
+      { method: 'ALL', route: '/auth/signout' },
       { method: 'ALL', route: '/api/**' },
       { method: 'ALL', route: '/mcp' }
     ]

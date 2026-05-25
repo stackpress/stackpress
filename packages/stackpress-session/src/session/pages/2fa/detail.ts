@@ -1,7 +1,5 @@
 //modules
-import type Request from '@stackpress/ingest/Request';
-import type Response from '@stackpress/ingest/Response';
-import type Server from '@stackpress/ingest/Server';
+import { action } from '@stackpress/ingest/Server';
 import qrcode from 'qrcode';
 //stackpress-csrf
 import type { CsrfPlugin } from 'stackpress-csrf/types';
@@ -18,11 +16,7 @@ import { generateSecret, verifyTOTP } from '../../helpers.js';
 /**
  * Main page handler
  */
-export default async function TwoFactorPage(
-  req: Request, 
-  res: Response, 
-  ctx: Server
-) {
+export default action(async function TwoFactorPage({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     return;
@@ -36,7 +30,7 @@ export default async function TwoFactorPage(
   const me = session.load(req);
   const data = await me.data();
   if (!data || await me.guest()) {
-    res.setStatus(401, 'Unauthorized');
+    res.statusCode(401, 'Unauthorized');
     //NOTE: no need for csrf here...
     return;
   }
@@ -45,7 +39,7 @@ export default async function TwoFactorPage(
     { id: data.id }
   );
   if (profile.code === 404) {
-    res.setStatus(401, 'Unauthorized');
+    res.statusCode(401, 'Unauthorized');
     //NOTE: no need for csrf here...
     return;
   }
@@ -92,7 +86,7 @@ export default async function TwoFactorPage(
     const padded = code.padStart(6, '0');
     if (!code || padded.length < 6) {
       res.setError('Invalid code');
-      res.setResults({ url: qr, secret });
+      res.results({ url: qr, secret });
       //generate csrf token before returning
       csrf.generate(res, ctx);
       return;
@@ -101,7 +95,7 @@ export default async function TwoFactorPage(
     const valid = verifyTOTP(padded, secret);
     if (!valid) {
       res.setError('Invalid code');
-      res.setResults({ url: qr, secret });
+      res.results({ url: qr, secret });
       //generate csrf token before returning
       csrf.generate(res, ctx);
       return;
@@ -136,7 +130,7 @@ export default async function TwoFactorPage(
   }
 
   //set results for template
-  res.setResults({ 
+  res.results({ 
     url: qr,
     secret,
     profile: profile.results,
@@ -144,4 +138,4 @@ export default async function TwoFactorPage(
   });
   //generate csrf token before returning
   csrf.generate(res, ctx);
-};
+});

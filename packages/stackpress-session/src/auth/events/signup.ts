@@ -6,6 +6,7 @@ import Exception from '../../Exception.js';
 import type { ProfileAuth } from '../../profile/types.js';
 //stackpress-session/auth
 import AuthActions from '../AuthActions.js';
+import { normalizePhone } from '../helpers.js';
 
 export default action(async function AuthSignup({ req, res, ctx }) {
   //get the roles from the config
@@ -17,6 +18,8 @@ export default action(async function AuthSignup({ req, res, ctx }) {
     roles,
     ...(req.data() as Record<string, any>)  
   };
+  //normalize the phone
+  input.phone = normalizePhone(input.phone);
   let results: Partial<ProfileAuth>; 
   try { //to sign up
     results = await actions.signup(input);
@@ -32,7 +35,7 @@ export default action(async function AuthSignup({ req, res, ctx }) {
   }
   //if email was provided
   if (input.email) {
-    ctx.resolve('email-send', { email: input.email, ...results });
+    ctx.resolve('email-email-send', { email: input.email, ...results });
   }
   //if phone was provided
   if (input.phone) {
