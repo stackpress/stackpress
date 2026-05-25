@@ -77,6 +77,10 @@ Use `stackpress-plugin-idea-generator` when the task moves into:
 - patching generated package exports
 - reconnecting generated artifacts back into runtime
 
+Use `stackpress-plugin-views` when the plugin shell exists and the task moves
+from folder shape into implementing handwritten `pages/` plus `views/` page
+behavior.
+
 Read the detailed shape guide in:
 
 - `references/plugin-scaffold.md`
@@ -95,6 +99,10 @@ When working in `components/`, `views/`, or `client.ts`:
 - do not import server-only modules
 - do not leak Node-only dependencies into browser-facing files
 - keep shared browser-facing exports isolated from server runtime code
+
+This skill stops at plugin structure, lifecycle wiring, and browser-safe folder
+boundaries. It does not own the full Stackpress page-view contract for
+handwritten `views/*.tsx` files.
 
 ## Package Registration Rule
 

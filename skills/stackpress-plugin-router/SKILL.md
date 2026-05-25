@@ -174,10 +174,10 @@ Common signals:
 
 Use next:
 
-- `stackpress-plugin-scaffold`
-
-In the current skill library, route/view work still lives under runtime plugin
-scaffold because pages and views are part of the plugin shape.
+- `stackpress-plugin-scaffold` if the plugin shell or route wiring does not
+  exist yet
+- `stackpress-plugin-views` for the handwritten page and route/view pairing
+  work
 
 Examples:
 
@@ -248,6 +248,8 @@ Good handoffs:
 - "This belongs in a generation plugin because the same helper should be
   emitted for every searchable model. Use `stackpress-plugin-scaffold` for the
   plugin shell, then `stackpress-plugin-idea-generator`."
+- "This belongs in handwritten page-view work because the route already points
+  at a custom page under `views/`. Use `stackpress-plugin-views`."
 
 Bad handoffs:
 

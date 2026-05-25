@@ -22,6 +22,8 @@ generation, plugin work, and verification.
   - decides whether work belongs in schema, runtime, generation, or route/view
 - `stackpress-plugin-scaffold`
   - scaffolds Stackpress plugin structure and wiring
+- `stackpress-plugin-views`
+  - implements handwritten Stackpress plugin pages and route/view pairing
 - `stackpress-plugin-idea-generator`
   - implements generation plugins through `idea` and `transform/`
 - `stackpress-app-verification`
@@ -37,7 +39,8 @@ The intended order is:
 4. `stackpress-idea-authoring`
 5. run `stackpress generate`
 6. `stackpress-plugin-router`
-7. `stackpress-plugin-scaffold` and/or `stackpress-plugin-idea-generator`
+7. `stackpress-plugin-scaffold`, `stackpress-plugin-views`, and/or
+   `stackpress-plugin-idea-generator`
 8. `stackpress-app-verification`
 
 In practice, `stackpress-app-coordinator` is the top-level workflow skill and
@@ -107,6 +110,8 @@ Example requests:
 - "Use `stackpress-app-coordinator` to build this app in phases."
 - "Use `stackpress-plugin-router` to decide whether this feature belongs in
   schema, runtime, or generation."
+- "Use `stackpress-plugin-views` to implement this custom Stackpress page and
+  its route/view pairing."
 
 ## Portability Notes
 

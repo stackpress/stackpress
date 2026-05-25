@@ -136,6 +136,18 @@ Use:
 
 - `stackpress-plugin-scaffold`
 
+### Route to handwritten page-view work when:
+
+- the main work is a custom page surface
+- the plugin already exists or can be scaffolded quickly
+- the task depends on `pages/*.ts`, `server.view.get(...)`, or `views/*.tsx`
+- the page needs custom layout, `Head`, or Stackpress view-layer props
+
+Use:
+
+- `stackpress-plugin-scaffold` for plugin shape first when needed
+- `stackpress-plugin-views` for the handwritten page implementation
+
 ### Route to generator plugin work when:
 
 - the feature should be emitted from schema metadata

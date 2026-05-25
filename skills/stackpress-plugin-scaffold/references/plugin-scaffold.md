@@ -161,6 +161,9 @@ export default function plugin(server: Server) {
 }
 ```
 
+If the route is already being registered and the task moves into authoring the
+handwritten page module under `views/`, use `stackpress-plugin-views`.
+
 ## Idea Lifecycle
 
 Use `idea` when the plugin needs to participate in generation.
@@ -244,6 +247,10 @@ Good candidates for `client.ts`:
  - browser-safe components
  - generated client-facing registries
  - shared browser-safe types or constants
+
+When the task is specifically about implementing a Stackpress page under
+`views/` with `Head`, layouts, `setViewProps`, or page props, hand off to
+`stackpress-plugin-views`.
 
 ## Index File
 
@@ -368,4 +375,3 @@ export default function plugin(server: Server) {}
 
 Everything else is optional and should be added only when the plugin actually
 needs it.
-
