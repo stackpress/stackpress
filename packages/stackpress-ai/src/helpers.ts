@@ -6,6 +6,7 @@ import { fromJSONSchema } from 'zod';
 import type { Application, Session } from 'stackpress-api/types';
 //client
 import type {
+  ArtifactResult,
   AuthContext,
   NormalizedToolConfig,
   Token,
@@ -421,14 +422,52 @@ export function sendText(
  * Wrap results into the MCP text content format.
  */
 export function toMcpText<T>(results: T): CallToolResult {
+  const text = typeof results === 'string'
+    ? results
+    : isArtifactResult(results)
+      ? formatArtifactText(results)
+      : JSON.stringify(results, null, 2);
+
   return {
     content: [{
       type: 'text',
-      text: typeof results === 'string'
-        ? results
-        : JSON.stringify(results, null, 2)
+      text
     }]
   };
+}
+
+/**
+ * Narrow unknown MCP payloads to the artifact runtime contract.
+ */
+export function isArtifactResult(value: unknown): value is ArtifactResult {
+  return isRecord(value)
+    && value.type === 'artifact'
+    && typeof value.title === 'string'
+    && typeof value.url === 'string'
+    && typeof value.route === 'string'
+    && typeof value.operation === 'string'
+    && typeof value.model === 'string'
+    && typeof value.disposition === 'string';
+}
+
+/**
+ * Flatten one artifact payload into stable plain text lines.
+ */
+export function formatArtifactText(result: ArtifactResult) {
+  const lines = [
+    `Artifact: ${result.title}`,
+    `URL: ${result.url}`,
+    `Route: ${result.route}`,
+    `Operation: ${result.operation}`,
+    `Model: ${result.model}`,
+    `Disposition: ${result.disposition}`
+  ];
+
+  if (result.description?.trim().length) {
+    lines.push(`Description: ${result.description}`);
+  }
+
+  return lines.join('\n');
 }
 
 /**

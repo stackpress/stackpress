@@ -252,4 +252,18 @@ describe('ai/registry', () => {
       }]
     });
   });
+
+  it('should keep non-artifact object results as JSON text', () => {
+    const result = toMcpText({
+      ok: true,
+      count: 2
+    });
+
+    expect(result).to.deep.equal({
+      content: [{
+        type: 'text',
+        text: JSON.stringify({ ok: true, count: 2 }, null, 2)
+      }]
+    });
+  });
 });
