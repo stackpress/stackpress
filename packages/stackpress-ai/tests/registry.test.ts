@@ -7,6 +7,7 @@ import {
   parseAuthorization,
   requiresSecret,
   resolveListAuth,
+  toMcpText,
   validateInput,
   withToolData
 } from '../src/helpers.js';
@@ -221,6 +222,34 @@ describe('ai/registry', () => {
 
     expect(validateInput(tool, { query: 'elden ring' })).to.deep.equal({
       query: 'elden ring'
+    });
+  });
+
+  it('should render artifact results as readable MCP text', () => {
+    const result = toMcpText({
+      type: 'artifact',
+      title: 'Article Search',
+      url: 'https://example.com/admin/article/search?artifact=1',
+      route: '/admin/article/search',
+      operation: 'search',
+      model: 'article',
+      disposition: 'body',
+      description: 'Admin article search page rendered without header or navigation.'
+    });
+
+    expect(result).to.deep.equal({
+      content: [{
+        type: 'text',
+        text: [
+          'Artifact: Article Search',
+          'URL: https://example.com/admin/article/search?artifact=1',
+          'Route: /admin/article/search',
+          'Operation: search',
+          'Model: article',
+          'Disposition: body',
+          'Description: Admin article search page rendered without header or navigation.'
+        ].join('\n')
+      }]
     });
   });
 });

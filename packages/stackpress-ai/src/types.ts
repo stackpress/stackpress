@@ -108,6 +108,25 @@ export type ResolvedResponse<T> = {
   results?: T
 };
 
+export type ArtifactOperation =
+  | 'search'
+  | 'detail';
+
+export type ArtifactDisposition = 'body';
+
+export type ArtifactResult = {
+  type: 'artifact',
+  title: string,
+  url: string,
+  route: string,
+  operation: ArtifactOperation,
+  model: string,
+  disposition: ArtifactDisposition,
+  mimeType?: 'text/html',
+  description?: string,
+  meta?: Record<string, unknown>
+};
+
 export type { McpServer };
 
 //this server contract narrows Stackpress with the resolve() shape that the
