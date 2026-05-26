@@ -28,6 +28,17 @@ export const JSON_SCHEMA_TYPES: Record<string, JsonSchema> = {
   Unknown: {}
 };
 
+/**
+ * Build the shared artifact toggle schema for generated read tools.
+ */
+export function buildArtifactInput(): JsonSchema {
+  return {
+    description: 'Return an admin artifact link instead of data.',
+    type: 'integer',
+    enum: [ 1 ]
+  };
+}
+
 //--------------------------------------------------------------------//
 // Functions
 
@@ -119,6 +130,10 @@ export function buildCreateInput(model: Model): JsonSchema {
  */
 export function buildDetailInput(model: Model): JsonSchema {
   const properties: Record<string, JsonSchema> = {
+    artifact: {
+      ...buildArtifactInput(),
+      description: 'Return an admin artifact link instead of detail data.'
+    },
     columns: {
       description: [
         'Select which columns to include in the detail response.',
@@ -144,6 +159,10 @@ export function buildDetailInput(model: Model): JsonSchema {
  */
 export function buildSearchInput(model: Model): JsonSchema {
   const properties: Record<string, JsonSchema> = {
+    artifact: {
+      ...buildArtifactInput(),
+      description: 'Return an admin artifact link instead of search data.'
+    },
     columns: {
       description: [
         'Select which columns to include in each search result row.',

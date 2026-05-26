@@ -62,8 +62,17 @@ describe('ai/transform', () => {
     const articleTools = directory.getSourceFileOrThrow(
       'Article/tools/index.ts'
     );
+    const articleSearch = directory.getSourceFileOrThrow(
+      'Article/tools/search.ts'
+    );
+    const articleDetail = directory.getSourceFileOrThrow(
+      'Article/tools/detail.ts'
+    );
     const articleCreate = directory.getSourceFileOrThrow(
       'Article/tools/create.ts'
+    );
+    const articleUpdate = directory.getSourceFileOrThrow(
+      'Article/tools/update.ts'
     );
     const packageJson = JSON.parse(
       fs.readFileSync(path.join(tmpdir, 'package.json'), 'utf-8')
@@ -82,7 +91,19 @@ describe('ai/transform', () => {
     expect(articleTools.getFullText()).to.contain(
       "'article-update-tool'"
     );
+    expect(articleSearch.getFullText()).to.contain('"artifact": {');
+    expect(articleSearch.getFullText()).to.contain(
+      '"description": "Return an admin artifact link instead of search data."'
+    );
+    expect(articleSearch.getFullText()).to.contain('"type": "integer"');
+    expect(articleSearch.getFullText()).to.match(/"enum": \[\s*1\s*\]/);
+    expect(articleDetail.getFullText()).to.contain('"artifact": {');
+    expect(articleDetail.getFullText()).to.contain(
+      '"description": "Return an admin artifact link instead of detail data."'
+    );
     expect(articleCreate.getFullText()).to.contain('"event": "article-create"');
+    expect(articleCreate.getFullText()).to.not.contain('"artifact": {');
+    expect(articleUpdate.getFullText()).to.not.contain('"artifact": {');
     expect(packageJson.exports['./tools']).to.equal('./tools.js');
     expect(packageJson.exports['./Article/tools']).to.equal(
       './Article/tools/index.js'
