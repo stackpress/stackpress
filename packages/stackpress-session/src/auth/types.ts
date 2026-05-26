@@ -137,7 +137,7 @@ export type AuthConfig = {
   redirect?: string,
   '2fa'?: {},
   captcha?: {},
-  email?: AuthEmailConfig
+  email?: AuthEmailConfig,
   roles?: string[],
   //static signin options
   menu?: AuthMenuConfig[],
