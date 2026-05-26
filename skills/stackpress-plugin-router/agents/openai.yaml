@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stackpress Plugin Router"
+  short_description: "Route Stackpress features to the right lane."
+  default_prompt: "Use $stackpress-plugin-router to classify this Stackpress feature into schema, runtime, generation, or route/view work."
+
+policy:
+  allow_implicit_invocation: true

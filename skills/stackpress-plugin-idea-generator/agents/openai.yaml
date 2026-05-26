@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stackpress Plugin Idea Generator"
+  short_description: "Build Stackpress generation plugins."
+  default_prompt: "Use $stackpress-plugin-idea-generator to implement this Stackpress generation plugin transform."
+
+policy:
+  allow_implicit_invocation: true

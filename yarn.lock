@@ -830,46 +830,46 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.60.3.tgz#cc6f094a3ffe5556bb4a831ee6fb572b8cd81a75"
   integrity sha512-hPt/bgL5cE+Qp+/TPHBqptcAgPzgj46mPcg/16zNUmbQk0j+mOEQV/+Lqu8QRtDV3Ek95Q6FeFITpuhl6OTsAA==
 
-"@stackpress/idea-parser@0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@stackpress/idea-parser/-/idea-parser-0.10.3.tgz#641ff53371eb470c85e80a6a5eb8456d9d9366e5"
-  integrity sha512-TOKriN0eyloXpKgEkIqZ58bSnYsod9Mh3nnXgZ687pCF1AMI8GAcmkceqLL5Qwcf0oImIC17VdH35zJDXBZ8lQ==
+"@stackpress/idea-parser@0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@stackpress/idea-parser/-/idea-parser-0.10.4.tgz#dc8cad3ba75d365f8b87039e74138dcd8180fcfe"
+  integrity sha512-AdDa9EIfVtf3QTGb5dkU+xkw0ac9nHsmqT+pMuqVRMo0tp/xTtJk+k/yJ9xFBMh6XSUu8Y+C6rcVuvo+jRPV4A==
   dependencies:
-    "@stackpress/lib" "0.10.3"
+    "@stackpress/lib" "0.10.4"
 
-"@stackpress/idea-transformer@0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@stackpress/idea-transformer/-/idea-transformer-0.10.3.tgz#0f764c633dd5aac677723c5cf707958949bc7421"
-  integrity sha512-c2u5fhhycHOhsnklneDyWogOy/d2Lmsr4f4auqtu4YpAeY7447laHXFUix9fZSOKBG/7m4va1wIEwcgK+aJR2Q==
+"@stackpress/idea-transformer@0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@stackpress/idea-transformer/-/idea-transformer-0.10.4.tgz#929c0f979607ad1704c7a75246b23370fbe2aa56"
+  integrity sha512-5jIFI0orrvRjI4Be89unzj369EEDqAyqtUOK0tChPP6J4hEV0Kjkw0Tlg8lNwE1jLXK06QVigqlG6/pVxQQPGw==
   dependencies:
-    "@stackpress/idea-parser" "0.10.3"
+    "@stackpress/idea-parser" "0.10.4"
 
-"@stackpress/ingest@0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@stackpress/ingest/-/ingest-0.10.3.tgz#b08e67288b645482105e4dedc930e7a1e90b2b22"
-  integrity sha512-UDnscuufDDgASIdwpbbx/R/NQPYMBYqH3WsBcnAEuVZRtDB4bS8b3IvKqKj98DLLNu/8UCPCip4SlEcqXKwShA==
+"@stackpress/ingest@0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@stackpress/ingest/-/ingest-0.10.4.tgz#3daae963afb4664a4e6b65c6f9941fb6d33d3279"
+  integrity sha512-KMTA+jttadKF3BggDSFhWzLoSIxlAuH2VjIReJn7B146CGyYlOHqVN5/tiwbw59MQgdqNN+FldtC4bEVnTma7w==
   dependencies:
-    "@stackpress/lib" "0.10.3"
+    "@stackpress/lib" "0.10.4"
     "@whatwg-node/server" "0.10.17"
 
-"@stackpress/inquire-pglite@0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@stackpress/inquire-pglite/-/inquire-pglite-0.10.3.tgz#36a248cfc0184385e9ccab8ba2f8f583b8f1383f"
-  integrity sha512-bcJ4MgeBQoGuECl4KP+tR+ktE2akqrGqepehT6mmNLXlLI8G0VH1T4hcBNPTv0XcktVgCZxwL3yUg3x6gpVM8Q==
+"@stackpress/inquire-pglite@0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@stackpress/inquire-pglite/-/inquire-pglite-0.10.4.tgz#26d92c308ee8bf39a111a844c39cdbc727a5b053"
+  integrity sha512-jyY3XrfOJNa7S1jOlJ8j5ruxfQ/ic5EqR7NzzI5r4BHFYXfiIRWtEL+BItjgrhEv9wp1feYbjKCE0hQowNHHtA==
   dependencies:
-    "@stackpress/inquire" "0.10.3"
+    "@stackpress/inquire" "0.10.4"
 
-"@stackpress/inquire@0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@stackpress/inquire/-/inquire-0.10.3.tgz#2e4ca4860bc198198706c3e9c0a3c6e875a39a59"
-  integrity sha512-LWEE9T58OaCOeBeh2jWdZslCVBsb74pG4JpfdxCVqEiMtDpx6oyUgdF2LS2sZ5Ohu5pw0+07tdPh2fM5hEh9fg==
+"@stackpress/inquire@0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@stackpress/inquire/-/inquire-0.10.4.tgz#b5e819ac92afac4740358ce290e22354f045d73c"
+  integrity sha512-pB7dCrqyF760Xq77AKWVL8xQuklcpIqIltcn49WhnNj0qelg7mG2MmliCNjfFwIjT3yyPXeoYw1ptLe+Yh9rlA==
   dependencies:
-    "@stackpress/lib" "0.10.3"
+    "@stackpress/lib" "0.10.4"
 
-"@stackpress/lib@0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@stackpress/lib/-/lib-0.10.3.tgz#f7b5192ccd077800f5363dcc087c523d1a4dfd9a"
-  integrity sha512-SWPLZDKADEpdUnKnOQTiLPXMBRrz4I7w1jc6IHKogAmaFvILp9ynUcHIjL4gCZ/TBRlXGN07LgGibjc/ckc8CQ==
+"@stackpress/lib@0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@stackpress/lib/-/lib-0.10.4.tgz#5332e15e098eb8b0392c52c7461bf4aae80a422b"
+  integrity sha512-+2384yEhXMe6OQ2G4VjiayjQTS6086Zf+BStZMS0kDGg8FeLrTGCyE6F0Y5YdxNIlBiN2nGfha2Zn/EUVidiAA==
 
 "@ts-morph/common@~0.28.1":
   version "0.28.1"
@@ -3120,12 +3120,12 @@ react@19.2.4:
   resolved "https://registry.yarnpkg.com/react/-/react-19.2.4.tgz#438e57baa19b77cb23aab516cf635cd0579ee09a"
   integrity sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==
 
-reactus@0.10.3:
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.10.3.tgz#e1ecb853bd8240fa2a6be4531d46c59dc9da7112"
-  integrity sha512-uGISuRnlfHEJfw9A5Mtd4Sbbv+LJKt9Fy+PGials4UHgRpGnKazZmyQbzUNjX3aFl2GNLjSBl830JDodlTiQZg==
+reactus@0.10.4:
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/reactus/-/reactus-0.10.4.tgz#3e1d502f03e81e016dccfd20e57b0e5e0fc4316b"
+  integrity sha512-v4MnXalLqMEC32iO8sgfqJTHz2WKUy4TlnmdjbQ7O2VPCgX40dPdjXt8EA145HvsUZRiurYAFkJSUGakpVaYHA==
   dependencies:
-    "@stackpress/lib" "0.10.3"
+    "@stackpress/lib" "0.10.4"
 
 readdirp@^5.0.0:
   version "5.0.0"

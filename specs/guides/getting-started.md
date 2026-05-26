@@ -45,6 +45,11 @@ After you finish the tutorial track, these supporting guides become the next bes
 
  - [Project Anatomy](./project-anatomy.md)
  - [Generate And Build](./generate-and-build.md)
+ - [Views And Pages](./views-and-pages.md)
+ - [Views Guide Set](./views/README.md)
+ - [Layouts](./views/layouts.md)
+ - [Language And Translations](./views/language-and-translations.md)
+ - [Notifier](./views/notifier.md)
  - [Using The Client](./using-the-client.md)
  - [Plugins And Customization](./plugins-and-customization.md)
  - [Debugging And Inspection](./debugging-and-inspection.md)
