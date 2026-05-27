@@ -7,55 +7,100 @@ import { useLanguage } from 'r22n';
 import type { ServerConfigPageProps } from 'stackpress/view/client';
 import { useResponse, LayoutPanel } from 'stackpress/view/client';
 //client
-import type { ArticleExtended } from 'blog-client/types';
-
-//--------------------------------------------------------------------//
-// Helpers
-
-/**
- * Date string formatter consistent with hydration
- */
-function formatDate(dateString: string | Date) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
+import type { ArticleExtended, CommentExtended } from 'blog-client/types';
+//plugins/app
+import {
+  formatArticleDate,
+  getCommentCountLabel,
+  getReadingTimeLabel
+} from '../helpers.js';
 
 //--------------------------------------------------------------------//
 // Components
 
+type ArticlePageArticle = ArticleExtended & {
+  comments?: CommentExtended[];
+};
+
 export function Body() {
-  const response = useResponse<ArticleExtended>();
+  const response = useResponse<ArticlePageArticle>();
   const article = response.results!;
   const { _ } = useLanguage();
+  const tags = [
+    ...(article.tags || []).slice(0, 3),
+    ...(article.keywords || []).slice(0, 2)
+  ].slice(0, 4);
+  const comments = article.comments || [];
+
   return (
-    <main className="flex flex-col w-full h-full article-detail">
-      <div className="px-p-10 px-mw-960 mx-auto">
-        {!!article.published && (
-          <em className="inline-flex items-center">
-            <i className="fas fa-fw fa-calendar inline-block px-mr-5" />
-            {formatDate(article.published)}
-          </em>
-        )}
-        <div className="px-mt-5 px-h-200 overflow-hidden">
-          {!!article.banner && (
-            <img src={article.banner} alt={article.title} />
+    <main className='knowledge-app article-detail'>
+      <div className='knowledge-shell knowledge-shell-reading'>
+        <a className='article-backlink' href='/'>
+          {_('Back to knowledge console')}
+        </a>
+
+        <header className='article-hero knowledge-panel'>
+          <p className='knowledge-section-label'>{_('Publication Entry')}</p>
+          <h1 className='article-title'>{_(article.title)}</h1>
+          <div className='article-meta'>
+            <span>{formatArticleDate(article.published)}</span>
+            <span>{article.profile?.name || _('Stackpress')}</span>
+            <span>{getReadingTimeLabel(article.contents)}</span>
+          </div>
+          {!!tags.length && (
+            <div className='article-tags'>
+              {tags.map(tag => (
+                <span key={tag} className='article-tag'>{tag}</span>
+              ))}
+            </div>
           )}
-        </div>
-        <h1 className="px-mt-5 text-xl font-bold">
-          {_(article.title)}
-        </h1>
-        <em className="inline-flex items-center">
-          <i className="fas fa-fw fa-user inline-block px-mr-5" />
-          by: {article.profile.name}
-        </em>
-        <div 
-          className="px-mt-10" 
-          dangerouslySetInnerHTML={{ __html: article.contents || '' }} 
-        />
+        </header>
+
+        {!!article.banner && (
+          <div className='article-banner knowledge-panel'>
+            <img src={article.banner} alt={article.title} />
+          </div>
+        )}
+
+        <section className='article-reading-surface knowledge-panel'>
+          <div
+            className='article-prose'
+            dangerouslySetInnerHTML={{ __html: article.contents || '' }}
+          />
+        </section>
+
+        <section className='article-comments knowledge-panel'>
+          <div className='article-comments-head'>
+            <div>
+              <p className='knowledge-section-label'>{_('Discussion')}</p>
+              <h2 className='article-comments-title'>
+                {_(getCommentCountLabel(comments))}
+              </h2>
+            </div>
+            <p className='article-comments-copy'>
+              {_('Reader responses attached to this entry appear here as part of the article record.')}
+            </p>
+          </div>
+          {!!comments.length ? (
+            <div className='article-comment-list'>
+              {comments.map(comment => (
+                <article key={comment.id} className='article-comment-card'>
+                  <div className='article-comment-meta'>
+                    <strong>{comment.profile?.name || _('Reader')}</strong>
+                    <span>{formatArticleDate(comment.created)}</span>
+                  </div>
+                  <p className='article-comment-body'>
+                    {comment.comment || _('No comment text provided.')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className='article-comments-empty'>
+              <p>{_('No discussion has been attached to this article yet.')}</p>
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );

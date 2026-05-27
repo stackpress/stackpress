@@ -17,8 +17,13 @@ export default action(async function HomePage({ req, res, ctx }) {
     || !articles.results 
     || !articles.results.length
   ) return;
+  //get comments for the article
+  const comments = await ctx.resolve(
+    'comment-search',
+    { eq: { articleId: articles.results[0].id } }
+  );
   //set the results
-  res.results(articles.results[0]);
+  res.results({ ...articles.results[0], comments: comments.results || [] });
   //set view props (like brand, logo, view from config...)
   setViewProps(req, res, ctx);
 });

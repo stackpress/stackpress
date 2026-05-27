@@ -38,6 +38,10 @@ including the server page handler pairing that feeds those views.
 Use `stackpress-plugin-router` for lane selection and
 `stackpress-plugin-scaffold` for plugin shape first when needed.
 
+For local UnoCSS and utility-class guidance, read:
+
+- `references/stackpress-unocss.md`
+
 ## Core Workflow
 
 1. Confirm the route/view lane is correct and the target plugin already exists.
