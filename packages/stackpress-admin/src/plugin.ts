@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
-import { action } from '@stackpress/ingest/Server';
 //stackpress-sql
 import type { ClientPlugin } from 'stackpress-sql/types';
 
@@ -14,7 +13,7 @@ import type { ClientPlugin } from 'stackpress-sql/types';
  */
 export default function plugin(ctx: Server) {
   //on route, add admin routes
-  ctx.on('route', action(async ({ ctx }) => {
+  ctx.on('route', async ({ ctx }) => {
     //it's possible that the client isnt generated yet...
     //config, registry, model, fieldset
     const client = ctx.plugin<ClientPlugin>('client');
@@ -26,7 +25,7 @@ export default function plugin(ctx: Server) {
       //register all the admin routes
       typeof model.admin === 'function' && model.admin(ctx);
     }
-  }));
+  });
   //generate some code in the client folder
   ctx.on('idea', async ({ req }) => {
     //get the transformer from the request

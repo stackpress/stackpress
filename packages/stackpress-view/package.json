@@ -39,6 +39,22 @@
       "require": "./cjs/config/*.js",
       "import": "./esm/config/*.js"
     },
+    "./events/*": {
+      "require": "./cjs/events/*.js",
+      "import": "./esm/events/*.js"
+    },
+    "./events": {
+      "require": "./cjs/events/index.js",
+      "import": "./esm/events/index.js"
+    },
+    "./scripts/*": {
+      "require": "./cjs/scripts/*.js",
+      "import": "./esm/scripts/*.js"
+    },
+    "./scripts": {
+      "require": "./cjs/scripts/index.js",
+      "import": "./esm/scripts/index.js"
+    },
     "./layout/*": {
       "require": "./cjs/client/layout/*.js",
       "import": "./esm/client/layout/*.js"
@@ -108,6 +124,18 @@
       ],
       "config/*": [
         "./cjs/config/*.d.ts"
+      ],
+      "events/*": [
+        "./cjs/events/*.d.ts"
+      ],
+      "events": [
+        "./cjs/events/index.d.ts"
+      ],
+      "scripts/*": [
+        "./cjs/scripts/*.d.ts"
+      ],
+      "scripts": [
+        "./cjs/scripts/index.d.ts"
       ],
       "layout/*": [
         "./cjs/client/layout/*.d.ts"

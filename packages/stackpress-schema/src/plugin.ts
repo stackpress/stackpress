@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import type Server from '@stackpress/ingest/Server';
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
-import { action } from '@stackpress/ingest/Server';
 //stackpress-schema
 import { generate } from './events/index.js';
 
@@ -14,7 +13,7 @@ import { generate } from './events/index.js';
  */
 export default function plugin(ctx: Server) {
   //on config, register the client as a plugin
-  ctx.on('config', action(async ({ ctx }) => {
+  ctx.on('config', async ({ ctx }) => {
     const module = ctx.config.path('client.module', 'stackpress-client');
     ctx.register('client', async (nullable = false) => {
       if (!nullable) {
@@ -26,12 +25,12 @@ export default function plugin(ctx: Server) {
         return null;
       }
     });
-  }), 10);
+  }, 10);
   //on listen
-  ctx.on('listen', action(({ ctx }) => {
+  ctx.on('listen', ({ ctx }) => {
     //add schema scripts
     ctx.on('generate', generate);
-  }));
+  });
   //generate some code in the client folder
   ctx.on('idea', async ({ req }) => {
     //get the transformer from the request

@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
+//stackpress-view
+import { build } from './events/index.js';
 
 /**
  * This interface is intended for the Stackpress library.
@@ -23,6 +25,11 @@ export default function plugin(ctx: Server) {
       const { config } = await import('./config/development.js');
       config(ctx);
     }
+  });
+  //on listen
+  ctx.on('listen', ({ ctx }) => {
+    //add view scripts
+    ctx.on('build', build);
   });
   //on route, 
   ctx.on('route', async ({ ctx }) => {

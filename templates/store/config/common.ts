@@ -158,17 +158,9 @@ export const auth = {
   //on signin (or already signed in)
   redirect: '/',
   //two factor authentication settings
-  '2fa': {},
-  //captcha settings
-  captcha: {},
+  '2fa': { issuer: 'Stackpress' },
   //default roles for new users
   roles: [ 'USER' ],
-  //allow signin with username
-  username: true,
-  //allow signin with email address
-  email: true,
-  //allow signin with phone
-  phone: true,
   //password settings
   password: {
     min: 8,

@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
-import { action } from '@stackpress/ingest/Server';
 //stackpress-sql
 import type { ClientPlugin } from './types.js';
 import {
@@ -24,7 +23,7 @@ import {
  */
 export default function plugin(ctx: Server) {
   //on listen, add database events
-  ctx.on('listen', action(async ({ ctx }) => {
+  ctx.on('listen', async ({ ctx }) => {
     //add sql scripts
     ctx.on('install', install);
     ctx.on('migrate', migrate);
@@ -45,7 +44,7 @@ export default function plugin(ctx: Server) {
       //register all the model events
       typeof model.listen === 'function' && model.listen(ctx);
     }
-  }));
+  });
   //generate some code in the client folder
   ctx.on('idea', async ({ req }) => {
     //get the transformer from the request

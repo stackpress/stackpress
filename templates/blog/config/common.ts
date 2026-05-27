@@ -148,11 +148,7 @@ export const auth = {
   //on signin (or already signed in)
   redirect: '/',
   //two factor authentication settings
-  '2fa': {
-    issuer: 'Stackpress'
-  },
-  //email settings
-  email: {},
+  '2fa': { issuer: 'Stackpress' },
   //default roles for new users
   roles: [ 'USER' ],
   menu: [

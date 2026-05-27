@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import type { CLIProps } from '@stackpress/idea-transformer/types';
 import type Transformer from '@stackpress/idea-transformer/Transformer';
 import type Server from '@stackpress/ingest/Server';
-import { action } from '@stackpress/ingest/Server';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { AnySchema } from '@modelcontextprotocol/sdk/server/zod-compat.js';
 import { fromJSONSchema } from 'zod';
@@ -104,7 +103,7 @@ export default function plugin(ctx: Server) {
   //if no MCP config, skip registering the plugin
   if (!ctx.config.has('mcp')) return;
 
-  ctx.on('listen', action(async ({ ctx }) => {
+  ctx.on('listen', async ({ ctx }) => {
     //load the generated client tools if the client package already exists 
     // and let that registry attach its plugin-mode resolver events first.
     const client = ctx.plugin<ClientPlugin>('client');
@@ -128,7 +127,7 @@ export default function plugin(ctx: Server) {
     if (ctx.config.has('mcp.sse') && shouldAttachSseToServer(ctx)) {
       attachSseToServer(ctx);
     }
-  }));
+  });
 
   //generate MCP tool code into the client package through the standard idea
   // plugin pipeline instead of reparsing schema files at runtime.
