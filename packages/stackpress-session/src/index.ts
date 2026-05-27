@@ -1,31 +1,8 @@
-//local
+import AuthActions from './auth/AuthActions.js';
 import StackpressSessionException from './Exception.js';
-import Session from './Session.js';
-import * as actions from './actions.js';
+import Session from './session/Session.js';
 
-export type {
-  SessionRoute,
-  SessionPermission,
-  SessionPermissionList,
-  SessionData,
-  SessionTokenData,
-  SessionServerConstructor,
-  SignupInput,
-  SigninInput,
-  SigninType,
-  AuthConfigProps,
-  AuthPageProps,
-  AuthConfig,
-  SessionConfig,
-  SessionPlugin,
-  Profile,
-  ProfileExtended,
-  ProfileInput,
-  Auth,
-  AuthExtended,
-  AuthInput,
-  ProfileAuth
-} from './types.js';
+export type * from './types.js';
 
 export {
   matchAnyEvent,
@@ -33,6 +10,12 @@ export {
   matchEvent,
   matchRoute,
   isRegExp
-} from './helpers.js';
+} from './session/helpers.js';
 
-export { actions, Session, StackpressSessionException };
+const actions = AuthActions;
+
+export {
+  actions,
+  Session,
+  StackpressSessionException
+};

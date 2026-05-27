@@ -151,14 +151,42 @@ export const auth = {
   '2fa': {},
   //captcha settings
   captcha: {},
+  //email settings
+  email: {},
   //default roles for new users
   roles: [ 'USER' ],
-  //allow signin with username
-  username: true,
-  //allow signin with email address
-  email: true,
-  //allow signin with phone
-  phone: true,
+  menu: [
+    {
+      name: 'With Username',
+      icon: 'user',
+      path: '/auth/signin/username'
+    },
+    {
+      name: 'With Email',
+      icon: 'envelope',
+      path: '/auth/signin/email'
+    },
+    {
+      name: 'With Phone',
+      icon: 'phone',
+      path: '/auth/signin/phone'
+    },
+    {
+      name: 'Create a New Account',
+      icon: 'user-plus',
+      path: '/auth/signup'
+    },
+    {
+      type: 'footer',
+      name: 'Terms of Use',
+      path: '/auth/terms-of-use'
+    },
+    {
+      type: 'footer',
+      name: 'Privacy Policy',
+      path: '/auth/privacy-policy'
+    }
+  ],
   //password settings
   password: {
     min: 8,
@@ -548,7 +576,10 @@ export const session = {
       //page routes
       { method: 'ALL', route: '/' },
       { method: 'ALL', route: '/articles/**' },
-      { method: 'ALL', route: '/auth/**' },
+      { method: 'ALL', route: '/auth/signup' },
+      { method: 'ALL', route: '/auth/signin' },
+      { method: 'ALL', route: '/auth/signin/**' },
+      { method: 'ALL', route: '/auth/signout' },
       { method: 'ALL', route: '/api/**' },
       { method: 'ALL', route: '/mcp' }
     ]

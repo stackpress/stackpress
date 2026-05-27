@@ -14,7 +14,9 @@ export default function LayoutUserMenu() {
         {session.data.id ? (
           <div className="info">
             <i className="icon fas fa-user-circle" />
-            <span>{session.data.name}</span>
+            <a className="account-link" href="/auth/account">
+              {session.data.name}
+            </a>
           </div>
         ) : null}
         <nav className="lang">

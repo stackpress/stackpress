@@ -112,12 +112,292 @@
   text-decoration: none;
 }
 
+/* Auth Options Page */
+
+.auth-signin-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-signin-options .auth-modal .icon {
+  margin-right: 10px;
+}
+
+.auth-signin-options .auth-modal header {
+  align-items: center;
+  display: flex;
+}
+
+.auth-signin-options .auth-modal header h1 {
+  flex-grow: 1;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.auth-signin-options .auth-modal header .theme {
+  align-items: center;
+  background-color: rgb(234, 88, 12);
+  border: 0;
+  border-radius: 9999px;
+  color: white;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+}
+
+.dark .auth-signin-options .auth-modal header .theme {
+  background-color: rgb(75, 85, 99);
+}
+
+.auth-signin-options .auth-modal main a {
+  align-items: center;
+  border-bottom: 1px solid var(--bg-third);
+  display: flex;
+  padding: 15px 10px;
+}
+
+.auth-signin-options .auth-modal main a:last-child {
+  border-bottom: 0;
+}
+
+.auth-signin-options .auth-modal main a span {
+  flex-grow: 1;
+}
+
+.auth-signin-options .auth-modal footer {
+  align-items: center;
+  border-top: 1px solid var(--bg-third);
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding: 10px;
+}
+
 /* Auth Signin Page */
 
 .auth-signin-page {
   align-items: center;
   display: flex;
   justify-content: center;
+}
+
+/* Auth 2FA Signin Page */
+
+.auth-2fa-page .auth-2fa-instructions {
+  padding-top: 20px;
+}
+
+.auth-2fa-page .auth-2fa-otp {
+  color: var(--default);
+}
+
+/* OTP Field */
+
+.otp-field {
+  --otp-digits: 6;
+  --otp-ls: 2ch;
+  --otp-gap: 1.25;
+
+  /* private consts */
+  --_otp-bgsz: calc(var(--otp-ls) + 1ch);
+  --_otp-digit: 0;
+
+  all: unset;
+  background: linear-gradient(90deg,
+    var(--otp-bg, #EEEEEE) calc(var(--otp-gap) * var(--otp-ls)),
+    transparent 0),
+    linear-gradient(90deg,
+    var(--otp-bg, #EEEEEE) calc(var(--otp-gap) * var(--otp-ls)),
+    transparent 0
+  );
+  background-position: calc(var(--_otp-digit) * var(--_otp-bgsz)) 0, 0 0;
+  background-repeat: no-repeat, repeat-x;
+  background-size: var(--_otp-bgsz) 100%;
+  caret-color: var(--otp-cc, #222222);
+  caret-shape: block;
+  clip-path: inset(0% calc(var(--otp-ls) / 2) 0% 0%);
+  font-family: ui-monospace, monospace;
+  font-size: var(--otp-fz, 2.25em);
+  inline-size: calc(var(--otp-digits) * var(--_otp-bgsz));
+  letter-spacing: var(--otp-ls);
+  padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
+}
+
+/* Auth Email Signin Page */
+
+.auth-submit-btn {
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  color: var(--white);
+  padding-bottom: 8px;
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 8px;
+  width: 100%;
+}
+
+.auth-input {
+  background-color: var(--bg-second);
+  border: 1px solid var(--bg-third);
+  color: var(--default);
+  padding: 10px;
+  width: 100%;
+}
+
+.auth-email-form {
+  padding-bottom: 10px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-form-input {
+  border-color: var(--default);
+  border-style: solid;
+  border-width: 1px;
+  color: var(--default);
+  padding: 8px;
+}
+
+.auth-form-password {
+  align-items: stretch;
+  display: flex;
+  width: 100%;
+}
+
+.auth-form-password .auth-form-password-input {
+  border-right: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.auth-form-password .auth-form-password-toggle {
+  background-color: var(--bg-second);
+  border-color: var(--default);
+  border-style: solid;
+  border-width: 1px;
+  color: var(--default);
+  cursor: pointer;
+  min-width: 42px;
+  padding: 8px 10px;
+}
+
+.auth-email-mode-section {
+  gap: 0px;
+}
+
+.auth-email-mode-row {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.auth-email-mode-label {
+  color: var(--default);
+  font-size: 14px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.auth-email-mode-note {
+  font-style: italic;
+}
+
+.auth-email-mode-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
+.auth-email-mode-icon {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--default);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 12px;
+  height: 24px;
+  justify-content: center;
+  padding: 0;
+  width: 24px;
+}
+
+.auth-email-mode-icon.active {
+  background-color: var(--bg-third);
+}
+
+.auth-email-instructions,
+.auth-email-message {
+  color: var(--default);
+}
+
+.auth-email-message {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.auth-email-message p {
+  margin: 0;
+}
+
+.auth-form-error {
+  color: var(--error);
+  font-size: 12px;
+}
+
+.auth-form-phone .frui-form-phone-input-control {
+  background-color: var(--white, #FFFFFF);
+  border-color: var(--default);
+  border-style: solid;
+  border-width: 1px;
+}
+
+.auth-form-phone .frui-form-phone-input-control .frui-button {
+  background-color: var(--white, #FFFFFF);
+  border-right: 1px solid var(--bg-third);
+  color: var(--default);
+}
+
+.auth-form-phone .frui-form-phone-input-control .frui-form-input {
+  background-color: var(--white, #FFFFFF);
+  color: var(--default);
+}
+
+.auth-form-phone .frui-form-phone-input-control .frui-form-input::placeholder {
+  color: var(--bg-third);
+}
+
+.auth-email-form hr {
+  border: 0;
+  border-top: 1px solid var(--bg-third);
+  margin: 0 -10px;
+  width: calc(100% + 20px);
+}
+
+.auth-signin-options .auth-modal .auth-email-footer-link {
+  border-bottom: 0;
+  color: var(--default);
+  display: block;
+  font-size: 14px;
+  padding: 0;
+  text-align: center;
+  text-decoration: underline;
+  width: 100%;
 }
 
 /* Auth Signup Page */
@@ -138,4 +418,494 @@
   color: var(--error);
   display: inline-block;
   margin-right: 5px;
+}
+
+/* Account Pages */
+
+.account-page {
+  background-color: var(--bg-zero);
+  box-sizing: border-box;
+  color: var(--default);
+  height: 100%;
+  overflow: auto;
+  padding: 20px;
+  width: 100%;
+}
+
+.account-page-header {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-height: 44px;
+  padding-bottom: 10px;
+}
+
+.account-page-title {
+  flex-grow: 1;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.account-page-title-icon,
+.account-page-back {
+  color: var(--default);
+  flex: 0 0 auto;
+  font-size: 24px;
+  text-decoration: none;
+}
+
+.account-card {
+  border: 1px solid var(--bg-third);
+  box-sizing: border-box;
+  padding: 20px;
+  width: 100%;
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.account-control {
+  box-sizing: border-box;
+  min-width: 0;
+  padding-bottom: 0;
+  width: 100%;
+}
+
+.account-control .frui-form-input,
+.account-control .frui-form-password-input-control,
+.account-control .frui-form-phone-input-control {
+  background-color: var(--white);
+  border-color: var(--default);
+  box-sizing: border-box;
+  color: #222222;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.account-control .frui-form-phone-input {
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.account-control .frui-form-phone-input-control {
+  display: flex;
+}
+
+.account-control .frui-form-phone-input-control .frui-button {
+  flex: 0 0 auto;
+}
+
+.account-control .frui-form-phone-input-control .frui-form-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.account-control .frui-form-input::placeholder {
+  color: #9CA3AF;
+}
+
+.account-primary-button,
+.account-danger-button,
+.account-secondary-button {
+  align-self: flex-start;
+  border-radius: 0;
+  font-size: 16px;
+  min-height: 38px;
+  text-decoration: none;
+}
+
+.account-primary-button .fa,
+.account-primary-button .fas {
+  margin-right: 8px;
+}
+
+.account-secondary-button {
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+
+.account-profile-card {
+  align-items: flex-start;
+  display: flex;
+  gap: 20px;
+  max-width: 100%;
+}
+
+.account-profile-image-panel {
+  flex: 0 0 190px;
+  text-align: center;
+}
+
+.account-profile-image {
+  border: 1px solid var(--bg-third);
+  border-radius: 9999px;
+  display: inline-block;
+  height: 128px;
+  object-fit: cover;
+  width: 128px;
+}
+
+.account-profile-form {
+  flex: 1 1 auto;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.account-profile-actions {
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.account-profile-actions .action {
+  border-radius: 4px;
+  color: white;
+  display: inline-block;
+  font-size: 16px;
+  padding: 8px 14px;
+  text-decoration: none;
+}
+
+.account-profile-actions .action.update {
+  background-color: var(--warning);
+}
+
+.account-profile-actions .action .icon {
+  margin-right: 8px;
+}
+
+.account-profile-details {
+  flex: 1 1 auto;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.account-profile-details .admin-table-head {
+  background-color: var(--bg-second);
+  border-color: var(--bg-second) !important;
+  text-align: left;
+}
+
+.account-profile-details .admin-table-even {
+  background-color: var(--bg-zero);
+  border-color: var(--bg-first) !important;
+}
+
+.account-profile-details .admin-table-odd {
+  background-color: var(--bg-first);
+  border-color: var(--bg-second) !important;
+}
+
+.account-profile-details .results-label {
+  border-top: 1px solid var(--bg-second) !important;
+  font-weight: bold;
+  width: 180px;
+}
+
+.account-profile-details .results-value {
+  border-top: 1px solid var(--bg-second) !important;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.account-security-list {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.account-security-list-item {
+  align-items: center;
+  border-bottom: 1px solid var(--bg-third);
+  color: var(--default);
+  display: flex;
+  min-height: 88px;
+  text-decoration: none;
+}
+
+.account-security-list-item:last-child {
+  border-bottom: 0;
+}
+
+.account-security-list-item span {
+  flex: 1 1 auto;
+}
+
+.account-security-list-item .fa,
+.account-security-list-item .fas {
+  flex: 0 0 auto;
+  font-size: 20px;
+}
+
+.account-export-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.account-export-description {
+  margin: 0;
+}
+
+.account-export-notice {
+  border: 2px solid var(--warning);
+  padding: 30px;
+}
+
+.account-export-notice h2 {
+  align-items: center;
+  display: flex;
+  font-size: 20px;
+  font-weight: bold;
+  gap: 12px;
+  margin: 0 0 20px;
+}
+
+.account-export-notice ul {
+  line-height: 1.6;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+@media (max-width: 960px) {
+  .account-page {
+    padding: 16px;
+  }
+
+  .account-page-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .account-profile-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .account-profile-image-panel {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .account-profile-details .results-label,
+  .account-profile-details .results-value {
+    white-space: normal;
+    width: auto;
+  }
+}
+
+@media (max-width: 540px) {
+  .account-page {
+    padding: 12px;
+  }
+
+  .account-card {
+    padding: 14px;
+  }
+
+  .account-page-title {
+    font-size: 22px;
+  }
+}
+
+/* Account Security: Index */
+
+.account-security-index-page {
+  background-color: var(--bg-zero);
+  height: 100%;
+  overflow: auto;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.account-security-index-header {
+  align-items: center;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.account-security-index-title {
+  flex-grow: 1;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.account-security-index-card {
+  border: 1px solid var(--bg-third);
+}
+
+.account-security-index-link {
+  align-items: center;
+  color: var(--default);
+  display: flex;
+  padding: 20px;
+  text-decoration: none;
+}
+
+.account-security-index-link:hover {
+  background-color: var(--bg-first);
+}
+
+.account-security-index-link-label {
+  flex-grow: 1;
+}
+
+.account-security-index-link-icon {
+  margin-left: 5px;
+}
+
+/* Account Security: 2FA Detail */
+
+.account-security-2fa-detail-page {
+  background-color: var(--bg-zero);
+  height: 100%;
+  overflow: auto;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.account-security-2fa-detail-header {
+  align-items: center;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.account-security-2fa-detail-back {
+  align-items: center;
+  color: var(--default);
+  display: flex;
+  font-size: 24px;
+  margin-right: 14px;
+  text-decoration: none;
+}
+
+.account-security-2fa-detail-back:hover {
+  color: var(--default);
+}
+
+.account-security-2fa-detail-title {
+  flex-grow: 1;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.account-security-2fa-detail-form {
+  border: 1px solid var(--bg-third);
+  padding: 20px;
+  text-align: center;
+}
+
+.account-security-2fa-detail-control {
+  padding-bottom: 10px;
+}
+
+.account-security-2fa-detail-qr {
+  display: inline-block;
+  height: 200px;
+  margin-top: 20px;
+  width: 200px;
+}
+
+.account-security-2fa-detail-secret {
+  background-color: var(--bg-second);
+  margin-top: 10px;
+  max-width: 200px;
+  text-align: center;
+}
+
+.account-security-2fa-detail-regenerate {
+  color: inherit;
+  display: block;
+  padding-bottom: 10px;
+  text-decoration: underline;
+}
+
+.account-security-2fa-detail-otp-control {
+  padding-bottom: 10px;
+  padding-top: 40px;
+}
+
+.account-security-2fa-detail-otp {
+  color: var(--default);
+  margin-top: 20px;
+  text-align: left;
+}
+
+.account-security-2fa-detail-verify-btn,
+.account-security-2fa-detail-remove-btn {
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.account-security-2fa-detail-remove-btn {
+  display: inline-flex;
+  margin-left: 16px;
+  margin-top: 20px;
+  width: auto;
+}
+
+/* Account Security: 2FA Remove */
+
+.account-security-2fa-remove-page {
+  background-color: var(--bg-zero);
+  height: 100%;
+  overflow: auto;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.account-security-2fa-remove-header {
+  align-items: center;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.account-security-2fa-remove-back {
+  align-items: center;
+  color: var(--default);
+  display: flex;
+  font-size: 24px;
+  margin-right: 14px;
+  text-decoration: none;
+}
+
+.account-security-2fa-remove-back:hover {
+  color: var(--default);
+}
+
+.account-security-2fa-remove-title {
+  flex-grow: 1;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.account-security-2fa-remove-card {
+  border: 1px solid var(--bg-third);
+  padding: 20px;
+  text-align: center;
+}
+
+.account-security-2fa-remove-message {
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
+.account-security-2fa-remove-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.account-security-2fa-remove-confirm,
+.account-security-2fa-remove-cancel {
+  font-size: 20px;
+  text-transform: uppercase;
 }

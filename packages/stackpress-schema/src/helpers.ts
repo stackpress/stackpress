@@ -103,7 +103,7 @@ export function encrypt(value: string, seed: string) {
  */
 export function hash(string: string) {
   return crypto
-    .createHash('shake256')
+    .createHash('shake256', { outputLength: 32 })
     .update(string)
     .digest('hex');
 };
