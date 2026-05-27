@@ -1,6 +1,5 @@
 //modules
 import type Server from '@stackpress/ingest/Server';
-import { action } from '@stackpress/ingest/Server';
 //stackpress-server
 import { develop, emit, serve } from './events/index.js';
 
