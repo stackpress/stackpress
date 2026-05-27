@@ -2,7 +2,7 @@
 import type { ProfileAuth } from 'stackpress';
 import { action } from 'stackpress/server';
 
-const secret = process.env.ADMIN_PASS || 'admin';
+const secret = process.env.ADMIN_PASS || 'Admin123!';
 
 export default action(async function Populate({ ctx }) {
   const admin = await ctx.resolve<ProfileAuth>('auth-signup', {

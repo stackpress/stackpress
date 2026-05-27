@@ -3,7 +3,7 @@ import path from 'node:path';
 //modules
 import type { ToastPosition } from 'react-toastify';
 //types
-import type { Method, APIType } from 'stackpress/types';
+import type { Method, ApiType } from 'stackpress/types';
 export type { Config } from 'stackpress/types';
 export type Cascade = 'CASCADE'|'RESTRICT'|'SET NULL';
 //pathnames
@@ -51,6 +51,24 @@ export const admin = {
       icon: 'coffee',
       path: '/admin/session/search',
       match: '/admin/session'
+    },
+    {
+      name: 'Products',
+      icon: 'box-open',
+      path: '/admin/product/search',
+      match: '/admin/product'
+    },
+    {
+      name: 'Carts',
+      icon: 'cart-shopping',
+      path: '/admin/cart/search',
+      match: '/admin/cart'
+    },
+    {
+      name: 'Orders',
+      icon: 'receipt',
+      path: '/admin/order/search',
+      match: '/admin/order'
     }
   ]
 };
@@ -83,7 +101,7 @@ export const api = {
     {
       method: 'GET' as Method,
       route: '/api/auth/search',
-      type: 'public' as APIType,
+      type: 'public' as ApiType,
       event: 'auth-search',
       cors: true,
       data: {}
@@ -92,7 +110,7 @@ export const api = {
     {
       method: 'GET' as Method,
       route: '/api/profile/search',
-      type: 'app' as APIType,
+      type: 'app' as ApiType,
       scopes: [ 'user' ],
       event: 'profile-search',
       data: {}
@@ -100,7 +118,7 @@ export const api = {
     {
       method: 'GET' as Method,
       route: '/api/profile/detail/:id',
-      type: 'app' as APIType,
+      type: 'app' as ApiType,
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}
@@ -108,7 +126,7 @@ export const api = {
     {
       method: 'GET' as Method,
       route: '/api/profile/get/:key/:value',
-      type: 'app' as APIType,
+      type: 'app' as ApiType,
       scopes: [ 'user' ],
       event: 'profile-get',
       data: {}
@@ -117,7 +135,7 @@ export const api = {
     {
       method: 'GET' as Method,
       route: '/api/my/address',
-      type: 'session' as APIType,
+      type: 'session' as ApiType,
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}
@@ -126,7 +144,7 @@ export const api = {
     {
       method: 'GET' as Method,
       route: '/api/my/files',
-      type: 'session' as APIType,
+      type: 'session' as ApiType,
       scopes: [ 'user' ],
       event: 'profile-detail',
       data: {}

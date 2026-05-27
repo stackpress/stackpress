@@ -6,6 +6,10 @@
   "plugins": [
     "./plugins/app/plugin",
     "./plugins/store/plugin",
+    "./plugins/product/plugin",
+    "./plugins/cart/plugin",
+    "./plugins/checkout/plugin",
+    "./plugins/order/plugin",
     "stackpress"
   ],
   "scripts": {
@@ -18,7 +22,8 @@
     "preview": "dotenv -e .env -- stackpress serve --b config/preview -v",
     "purge": "dotenv -e .env -- stackpress purge --b config/develop -v",
     "push": "dotenv -e .env -- stackpress push --b config/develop -v",
-    "query": "dotenv -e .env -- stackpress query --b config/develop -v"
+    "query": "dotenv -e .env -- stackpress query --b config/develop -v",
+    "test": "tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.15",
