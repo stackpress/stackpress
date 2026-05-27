@@ -24,6 +24,11 @@
     "view": "yarn --cwd packages/stackpress-view",
     "blog": "yarn --cwd templates/blog",
     "store": "yarn --cwd templates/store",
-    "website": "yarn --cwd templates/website"
+    "website": "yarn --cwd templates/website",
+    "test": "yarn test:core",
+    "test:core": "yarn test:server && yarn test:schema && yarn test:sql",
+    "test:server": "yarn server test",
+    "test:schema": "yarn schema test",
+    "test:sql": "yarn sql test"
   }
 }

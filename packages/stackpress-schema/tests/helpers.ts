@@ -1,5 +1,6 @@
 //node
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 //stackpress/lib
 import FileLoader from '@stackpress/lib/FileLoader';
 //stackpress/idea
@@ -8,7 +9,8 @@ import type {
   AttributeValue,
   IdentifierToken,
   LiteralToken,
-  DataToken
+  DataToken,
+  SchemaConfig
 } from '@stackpress/idea-parser';
 import { Lexer, Compiler } from '@stackpress/idea-parser';
 import { Transformer } from '@stackpress/idea-transformer';
@@ -21,16 +23,91 @@ import { server as http } from '@stackpress/ingest/http';
 //--------------------------------------------------------------------//
 // Constants
 
-export const cwd = process.cwd();
+const filename = fileURLToPath(import.meta.url);
+const tests = path.dirname(filename);
+
+export const cwd = path.resolve(tests, '..');
 export const paths = {
   cwd,
-  tests: path.join(cwd, 'tests'),
-  idea: path.join(cwd, 'tests/fixtures/test.idea'),
+  tests,
+  idea: path.join(tests, 'fixtures/test.idea'),
   tsconfig: path.join(cwd, 'tsconfig.json'),
-  out: path.join(cwd, 'tests/out'),
-  client: path.join(cwd, 'tests/out/client'),
-  build: path.join(cwd, 'tests/out/build'),
-  database: path.join(cwd, 'tests/out/database')
+  out: path.join(tests, 'out'),
+  client: path.join(tests, 'out/client'),
+  build: path.join(tests, 'out/build'),
+  database: path.join(tests, 'out/database')
+};
+
+const mockSchemaConfig: SchemaConfig = {
+  enum: {
+    Role: {
+      ADMIN: 'ADMIN',
+      EDITOR: 'EDITOR',
+      USER: 'USER'
+    }
+  },
+  type: {
+    Address: {
+      name: 'Address',
+      mutable: false,
+      attributes: {},
+      columns: [
+        {
+          name: 'street',
+          type: 'String',
+          attributes: {},
+          required: true,
+          multiple: false
+        }
+      ]
+    }
+  },
+  model: {
+    BasicModel: {
+      name: 'BasicModel',
+      mutable: false,
+      attributes: {},
+      columns: [
+        {
+          name: 'id',
+          type: 'String',
+          attributes: { id: true },
+          required: true,
+          multiple: false
+        },
+        {
+          name: 'sink',
+          type: 'KitchenSink',
+          attributes: {},
+          required: true,
+          multiple: true
+        }
+      ]
+    },
+    KitchenSink: {
+      name: 'KitchenSink',
+      mutable: false,
+      attributes: {},
+      columns: [
+        {
+          name: 'basicId',
+          type: 'String',
+          attributes: { id: true },
+          required: true,
+          multiple: false
+        },
+        {
+          name: 'basic',
+          type: 'BasicModel',
+          attributes: {
+            relation: [ { local: 'basicId', foreign: 'id' } ]
+          },
+          required: true,
+          multiple: false
+        }
+      ]
+    }
+  }
 };
 
 //--------------------------------------------------------------------//
@@ -217,8 +294,7 @@ export async function mockSchema() {
  * Mocks a schema instance
  */
 export async function mockConfig() {
-  const transformer = mockTransformer();
-  return await transformer.schema();
+  return mockSchemaConfig;
 };
 
 //--------------------------------------------------------------------//
