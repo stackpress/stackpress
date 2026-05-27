@@ -17,7 +17,7 @@ export function Body() {
   const links = response.results?.links || [];
 
   return (
-    <main className="min-h-full w-full overflow-auto">
+    <main className="flex h-full w-full flex-col overflow-auto">
       <div className="mx-auto max-w-5xl p-6 md:p-10">
         <section className="overflow-hidden rounded-[2rem] border border-[#d9c9b4] bg-[linear-gradient(135deg,rgba(255,255,255,0.94),rgba(247,239,226,0.92))] shadow-[0_24px_60px_rgba(78,53,23,0.10)]">
           <div className="grid gap-10 p-8 md:grid-cols-[minmax(0,1.6fr)_minmax(17rem,1fr)] md:p-12">

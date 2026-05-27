@@ -140,17 +140,41 @@ export const auth = {
   //on signin (or already signed in)
   redirect: '/',
   //two factor authentication settings
-  '2fa': {},
-  //captcha settings
-  captcha: {},
+  '2fa': { issuer: '__STACKPRESS_BRAND_NAME__' },
   //default roles for new users
   roles: [ 'USER' ],
-  //allow signin with username
-  username: true,
-  //allow signin with email address
-  email: true,
-  //allow signin with phone
-  phone: true,
+  menu: [
+    {
+      name: 'With Username',
+      icon: 'user',
+      path: '/auth/signin/username'
+    },
+    {
+      name: 'With Email',
+      icon: 'envelope',
+      path: '/auth/signin/email'
+    },
+    {
+      name: 'With Phone',
+      icon: 'phone',
+      path: '/auth/signin/phone'
+    },
+    {
+      name: 'Create a New Account',
+      icon: 'user-plus',
+      path: '/auth/signup'
+    },
+    {
+      type: 'footer',
+      name: 'Terms of Use',
+      path: '/auth/terms-of-use'
+    },
+    {
+      type: 'footer',
+      name: 'Privacy Policy',
+      path: '/auth/privacy-policy'
+    }
+  ],
   //password settings
   password: {
     min: 8,
@@ -209,7 +233,45 @@ export const database = {
   schema: {
     onDelete: 'CASCADE' as Cascade,
     onUpdate: 'RESTRICT' as Cascade
-  }
+  },
+  populate: [
+    {
+      event: 'profile-create',
+      data: {
+        id: 'developer',
+        name: 'Developer',
+        type: 'person',
+        roles: [ 'ADMIN' ]
+      }
+    },
+    {
+      event: 'auth-create',
+      data: {
+        profileId: 'developer',
+        type: 'username',
+        token: 'developer',
+        secret: 'developer'
+      }
+    },
+    {
+      event: 'auth-create',
+      data: {
+        profileId: 'developer',
+        type: 'email',
+        token: 'developer@shoppable.ph',
+        secret: 'developer'
+      }
+    },
+    {
+      event: 'application-create',
+      data: {
+        profileId: 'developer',
+        name: 'Developer App',
+        scopes: [ 'profile-write', 'auth-read' ],
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+      }
+    }
+  ]
 };
 
 export const email = {

@@ -159,6 +159,15 @@ Fail generation verification when:
 
 Do not route downstream plugin work off a failed or stale generation pass.
 
+If the app also depends on local population for the sample flow, verify that
+the active populate source matches the current app pattern.
+
+Examples:
+
+- config-driven seed rows exist where the app expects them
+- there is not a stale plugin populate path being assumed after the app moved
+  to config-driven population
+
 ## 4. Plugin Wiring Verification
 
 When verifying plugin work, confirm that the plugin exists and is actually
@@ -207,6 +216,7 @@ When the phase includes handwritten pages or views, also verify:
 - shared styles are present when required
 - the route does not degrade into a blank or half-hydrated page because the
   page contract is incomplete
+- the intended scroll owner actually scrolls when the page uses `LayoutPanel`
 
 ## 6. Direct TypeScript Verification
 
@@ -224,6 +234,23 @@ This is especially important for:
 - `pages/*.ts`
 - `views/*.tsx`
 - config files that define typed Stackpress behavior
+
+## Environment Verification
+
+Confirm that verification is using the expected local database target.
+
+Minimum evidence:
+
+- the app is using its normal local database path when it relies on a file-
+  backed `.build` database
+- an alternate local database target is only used intentionally
+- if an alternate target is used, the reason is explicit
+
+Do not introduce a second disposable file-backed local database by default when
+the app already has a normal `.build` workflow.
+
+Alternate scratch databases are more acceptable for server-based database
+setups.
 
 ## Verification by Feature Type
 
@@ -291,6 +318,13 @@ Stop verification and return the workflow to the responsible skill when:
 
 Do not soften a failed gate into a partial success just to keep momentum.
 
+## Cleanup Expectation
+
+If verification required starting a local dev server, stop it before claiming
+completion unless the user asked to keep it running.
+
+Do not leave a local Stackpress server bound to a port by accident.
+
 ## Anti-Rationalization Checks
 
 Before passing a phase, ask:
@@ -311,3 +345,6 @@ If the answer is unclear, the phase is not verified yet.
 - forgetting `package.json.plugins`
 - declaring route work complete without route-to-view binding
 - moving the coordinator forward based on assumptions instead of evidence
+- verifying against the wrong local database target without calling that out
+- leaving a dev server running after verification when the user did not ask for
+  that

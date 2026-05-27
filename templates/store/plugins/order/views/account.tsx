@@ -24,7 +24,7 @@ export function Body() {
   const orders = response.results?.orders || [];
 
   return (
-    <main className="w-full h-full overflow-auto">
+    <main className="flex h-full w-full flex-col overflow-auto">
       <div className="mx-auto max-w-3xl p-8">
         <h1 className="text-3xl font-bold">Your Orders</h1>
         {!!response.results?.email && (

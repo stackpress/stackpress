@@ -24,7 +24,7 @@ export function Body() {
   const products = response.results?.products || [];
 
   return (
-    <main className="min-h-full w-full overflow-auto">
+    <main className="flex h-full w-full flex-col overflow-auto">
       <div className="mx-auto max-w-5xl p-6 md:p-10">
         <section className="rounded-[2rem] border border-[#dacbb9] bg-white/80 p-8 shadow-[0_24px_60px_rgba(78,53,23,0.08)]">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#9a6a2f]">

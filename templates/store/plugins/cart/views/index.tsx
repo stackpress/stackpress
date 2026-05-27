@@ -27,7 +27,7 @@ export function Body() {
   const total = response.results?.total || 0;
 
   return (
-    <main className="min-h-full w-full overflow-auto">
+    <main className="flex h-full w-full flex-col overflow-auto">
       <div className="mx-auto max-w-5xl p-6 md:p-10">
         <div className="grid gap-6 md:grid-cols-[minmax(0,1.5fr)_20rem]">
           <section className="rounded-[2rem] border border-[#dacbb9] bg-white/82 p-8 shadow-[0_24px_60px_rgba(78,53,23,0.08)]">

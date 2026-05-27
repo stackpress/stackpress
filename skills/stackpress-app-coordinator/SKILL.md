@@ -71,6 +71,31 @@ Examples:
 Do not let architecture-teaching goals collapse into a generic app build just
 because the feature flow is familiar.
 
+## Local Database Rule
+
+Prefer the app's normal local database target when it uses a file-backed
+database in `.build`.
+
+- if the project already uses a file-based local database such as SQLite or
+  PGlite through its normal Yarn workflow, use that existing target by default
+- do not create an ad hoc second file-backed local database unless there is a
+  concrete reason
+- alternate scratch databases are more acceptable for server-based database
+  setups, where isolation may be operationally cleaner
+- if you intentionally diverge from the app's default database target, say why
+
+## Sample Data Rule
+
+Prefer config-driven sample data when the app already supports it and the seed
+records are static.
+
+- use config population for simple sample rows that do not need custom runtime
+  logic
+- do not invent or preserve plugin `populate.ts` scripts when config-driven
+  population is the cleaner default for the app
+- only route sample data into custom populate code when the data setup needs
+  logic that config alone cannot express
+
 ## The Gate Rule
 
 ```text
@@ -153,6 +178,10 @@ entrypoint is unclear, stop and resolve that uncertainty before running it.
 
 After generation, inspect what changed before jumping into plugin work.
 
+If the app uses config-driven population as part of its normal local workflow,
+keep that in the same expected path instead of introducing a second seeding
+mechanism by convenience.
+
 ## 5. Implementation Routing
 
 After generation, decide what remaining work belongs in each lane.
@@ -229,6 +258,15 @@ Do not hide broken core behavior behind polish work.
 
 If there is no dedicated polish skill available, keep this as a manual late
 pass rather than forcing the coordinator to invent a new required phase.
+
+## Execution Hygiene
+
+Close temporary local runtime processes that you started for the workflow.
+
+- if you started a local Stackpress dev server for verification, stop it before
+  claiming the work is done unless the user asked to leave it running
+- treat temporary server cleanup as part of phase completion, not as an
+  optional courtesy
 
 ## State Tracking
 

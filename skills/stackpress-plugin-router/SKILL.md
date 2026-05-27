@@ -95,6 +95,18 @@ Evaluate the feature in this order:
 This order matters because many runtime patches are really schema or generation
 problems in disguise.
 
+## Sample Data Routing Rule
+
+When the task is about sample or starter data, classify whether it belongs in
+config before routing it into custom plugin code.
+
+- static sample rows for a template or starter app usually belong in config
+- custom populate scripts should be reserved for seed behavior that needs
+  runtime logic, conditional creation, external input, or more than simple data
+  declaration
+- do not route static template seed data into plugin runtime code just because
+  a `populate.ts` file would be familiar
+
 ## Ownership Checks
 
 Before finalizing the lane, ask:
@@ -178,6 +190,8 @@ Use next:
 
 - `stackpress-plugin-scaffold`
 
+Do not route here for static sample data when config can express it directly.
+
 Examples:
 
 - "Send an email when an order is placed."
@@ -214,6 +228,24 @@ Examples:
 
 Treat examples as illustrative page-surface patterns, not literal route
 defaults.
+
+## Route To Config When
+
+The request is really a configuration concern rather than plugin logic.
+
+Common signals:
+
+- static sample data for local population
+- local brand, route, or environment values that the app already expresses in
+  config
+- defaults that belong to the app shell rather than a feature plugin
+
+Use next:
+
+- update the app's existing config file in the normal local pattern
+
+Do not create plugin code when the app already has a clear config lane for the
+same concern.
 
 ## Mixed Cases
 

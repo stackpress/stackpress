@@ -161,6 +161,38 @@ export const auth = {
   '2fa': { issuer: 'Stackpress' },
   //default roles for new users
   roles: [ 'USER' ],
+  menu: [
+    {
+      name: 'With Username',
+      icon: 'user',
+      path: '/auth/signin/username'
+    },
+    {
+      name: 'With Email',
+      icon: 'envelope',
+      path: '/auth/signin/email'
+    },
+    {
+      name: 'With Phone',
+      icon: 'phone',
+      path: '/auth/signin/phone'
+    },
+    {
+      name: 'Create a New Account',
+      icon: 'user-plus',
+      path: '/auth/signup'
+    },
+    {
+      type: 'footer',
+      name: 'Terms of Use',
+      path: '/auth/terms-of-use'
+    },
+    {
+      type: 'footer',
+      name: 'Privacy Policy',
+      path: '/auth/privacy-policy'
+    }
+  ],
   //password settings
   password: {
     min: 8,
@@ -219,7 +251,100 @@ export const database = {
   schema: {
     onDelete: 'CASCADE' as Cascade,
     onUpdate: 'RESTRICT' as Cascade
-  }
+  },
+  populate: [
+    {
+      event: 'profile-create',
+      data: {
+        id: 'developer',
+        name: 'Developer',
+        type: 'person',
+        roles: [ 'ADMIN' ]
+      }
+    },
+    {
+      event: 'auth-create',
+      data: {
+        profileId: 'developer',
+        type: 'username',
+        token: 'developer',
+        secret: 'developer'
+      }
+    },
+    {
+      event: 'auth-create',
+      data: {
+        profileId: 'developer',
+        type: 'email',
+        token: 'developer@shoppable.ph',
+        secret: 'developer'
+      }
+    },
+    {
+      event: 'application-create',
+      data: {
+        profileId: 'developer',
+        name: 'Developer App',
+        scopes: [ 'profile-write', 'auth-read' ],
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+      }
+    },
+    {
+      event: 'product-create',
+      data: {
+        id: 'plugin-first-mug',
+        title: 'Plugin First Mug',
+        slug: 'plugin-first-mug',
+        summary: 'A seeded sample product for the plugin-composition demo.',
+        price: 18.5,
+        active: true
+      }
+    },
+    {
+      event: 'product-create',
+      data: {
+        id: 'route-priority-tee',
+        title: 'Route Priority Tee',
+        slug: 'route-priority-tee',
+        summary: 'A second seeded product for cart and checkout testing.',
+        price: 32,
+        active: true
+      }
+    },
+    {
+      event: 'product-create',
+      data: {
+        id: 'event-driven-tote',
+        title: 'Event Driven Tote',
+        slug: 'event-driven-tote',
+        summary: 'A lightweight tote bag themed around StackPress events.',
+        price: 24,
+        active: true
+      }
+    },
+    {
+      event: 'product-create',
+      data: {
+        id: 'schema-contract-notebook',
+        title: 'Schema Contract Notebook',
+        slug: 'schema-contract-notebook',
+        summary: 'A notebook for mapping models, routes, and generated output.',
+        price: 14,
+        active: true
+      }
+    },
+    {
+      event: 'product-create',
+      data: {
+        id: 'layout-panel-hoodie',
+        title: 'Layout Panel Hoodie',
+        slug: 'layout-panel-hoodie',
+        summary: 'A cozy hoodie inspired by the shared StackPress app shell.',
+        price: 48,
+        active: true
+      }
+    }
+  ]
 };
 
 export const email = {

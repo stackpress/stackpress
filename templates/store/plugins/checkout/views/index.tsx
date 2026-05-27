@@ -42,7 +42,7 @@ export function Page(props: ServerConfigPageProps) {
       request={request}
       response={response}
     >
-      <main className="min-h-full w-full overflow-auto">
+      <main className="flex h-full w-full flex-col overflow-auto">
         <div className="mx-auto grid max-w-5xl gap-6 p-6 md:grid-cols-[minmax(0,1.2fr)_minmax(18rem,1fr)] md:p-10">
           <section className="rounded-[2rem] border border-[#dacbb9] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(247,239,226,0.90))] p-8 shadow-[0_24px_60px_rgba(78,53,23,0.08)]">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#9a6a2f]">
