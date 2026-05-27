@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-ai",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "license": "MIT",
   "description": "MCP server package for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
