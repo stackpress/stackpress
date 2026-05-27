@@ -22,6 +22,7 @@ generation, verify builds, or author project-specific business logic.
 - writing or revising `schema.idea` for the user's domain
 - running `install`, `generate`, `build`, or runtime verification commands
 - inventing app-specific logic beyond the baseline scaffold
+- reshaping or repurposing an existing Stackpress app or template
 
 Use `stackpress-plugin-scaffold` for plugin work after the app exists.
 
@@ -85,6 +86,8 @@ If the folder already contains project files:
 
 - stop and ask before mixing scaffold files into the existing contents
 - do not overwrite user files silently
+- route the work back toward discovery, coordination, or plugin/schema skills
+  instead of forcing scaffold into an existing project
 
 ## Output Contract
 

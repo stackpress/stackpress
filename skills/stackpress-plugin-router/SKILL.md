@@ -48,6 +48,20 @@ That usually means:
 
 Do not choose a lower layer just because it feels faster to patch.
 
+## Plugin Ownership Rule
+
+Classify plugin ownership before choosing the implementation lane.
+
+Common ownership types:
+
+- infrastructure plugin
+- shared app plugin
+- feature plugin
+- generation plugin
+
+Do not treat a shared or infrastructure plugin as the default owner for feature
+logic.
+
 ## Routing Gate
 
 ```text
@@ -81,6 +95,14 @@ Evaluate the feature in this order:
 This order matters because many runtime patches are really schema or generation
 problems in disguise.
 
+## Ownership Checks
+
+Before finalizing the lane, ask:
+
+- is this infrastructure, shared app behavior, or feature ownership?
+- is one plugin absorbing this only because no better home was chosen yet?
+- should this concern stay isolated so other plugins can compose around it?
+
 ## 1. Route Back to Schema When
 
 The request changes the app's domain contract.
@@ -107,6 +129,8 @@ Examples:
 - "The admin list should show a better label for this model."
 
 Do not solve these with ad hoc runtime fields or one-off page code.
+Treat examples as illustrative routing patterns, not literal model requirements
+or preferred domains.
 
 ## 2. Route to Generation Plugin Work When
 
@@ -133,6 +157,8 @@ Examples:
 - "Create generated page modules for a repeated model-driven pattern."
 
 Do not route here for one-off routes or simple runtime listeners.
+Treat examples as illustrative generation patterns, not literal generated
+artifacts every app should have.
 
 ## 3. Route to Runtime Plugin Work When
 
@@ -159,6 +185,7 @@ Examples:
 - "Add a webhook listener for inventory updates."
 
 Do not move repeated model-driven code here just because runtime feels familiar.
+Treat examples as illustrative runtime patterns, not default integrations.
 
 ## 4. Route to Route/View Work When
 
@@ -185,11 +212,18 @@ Examples:
 - "Create a custom checkout page."
 - "Expose a profile dashboard route."
 
+Treat examples as illustrative page-surface patterns, not literal route
+defaults.
+
 ## Mixed Cases
 
 Many real features span more than one lane.
 
 Split them instead of forcing a single implementation style.
+
+When a feature is really a multi-step user flow, decompose it across the lanes
+that actually own it instead of putting the whole flow into one plugin by
+convenience.
 
 Examples:
 
@@ -198,15 +232,19 @@ Examples:
   - route/view lane: product review pages
   - runtime lane: moderation or notification events
 
-- "Build a product catalog."
-  - schema lane: product, category, inventory metadata
+- "Build a multi-entity browsing flow."
+  - schema lane: entity, grouping, and relationship metadata
   - generation lane: repeated generated helpers if the pattern is model-driven
-  - route/view lane: catalog pages and detail pages
+  - route/view lane: listing and detail pages
 
-- "Add checkout."
-  - schema lane: carts, orders, addresses
-  - runtime lane: payment and order events
-  - route/view lane: checkout UI
+- "Add a multi-step user flow."
+  - schema lane: the records and transitions the flow depends on
+  - runtime lane: orchestration, external integrations, or side effects
+  - route/view lane: the route surfaces that expose the flow
+
+Architecture-oriented samples should be decomposed the same way even when the
+end-user flow is intentionally minimal.
+Treat examples as illustrative decomposition patterns, not literal app types.
 
 ## Anti-Rationalization Checks
 
@@ -225,6 +263,11 @@ Before choosing generation, ask:
 Before choosing route/view work, ask:
 
 - is this just a page surface for a deeper schema or runtime gap?
+
+Before choosing a shared plugin as the owner, ask:
+
+- is this really shared infrastructure?
+- is this actually a feature concern that deserves its own plugin?
 
 ## When to Stop and Re-Route
 
@@ -266,3 +309,4 @@ Bad handoffs:
   required
 - forcing a multi-lane feature into one plugin hook
 - choosing the fastest patch instead of the correct layer
+- centralizing feature ownership inside a shared or infrastructure plugin

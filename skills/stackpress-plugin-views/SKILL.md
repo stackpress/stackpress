@@ -50,7 +50,7 @@ Use `stackpress-plugin-router` for lane selection and
    - call `setViewProps(req, res, ctx)` for shared `view`, `brand`, and
      `language` data
 4. In the `views/*.tsx` file, export:
-   - an optional `Head`
+   - a `Head` when the page depends on shared styles, favicon, or page metadata
    - a main page component
    - the page component as the `default` export
 5. Keep the page component thin:
@@ -79,6 +79,9 @@ Treat these as a pair:
 
 If one side is missing, the page contract is incomplete.
 
+Treat examples in this skill as illustrative page-contract patterns, not
+literal route names or required page modules.
+
 ## Page Handler Rules
 
 In `pages/*.ts`, the common responsibilities are:
@@ -88,6 +91,13 @@ In `pages/*.ts`, the common responsibilities are:
 - place page-specific view props in `res.data.set(...)`
 - call `setViewProps(req, res, ctx)` before rendering when the page should have
   shared view, brand, and language props
+
+The normal handler contract should also be reviewed for:
+
+- request path, query, and post-data access patterns
+- session access patterns
+- guarded `ctx.resolve(...)` or `ctx.emit(...)` usage
+- redirect and status handling
 
 Use `res.data` for view-facing configuration-like values. Do not stuff those
 values into `response.results`.
@@ -191,6 +201,9 @@ links.
 
 If metadata depends on the main results payload, read it from `props.response`.
 
+If the page depends on shared CSS such as `/styles/global.css`, `Head` is
+usually required in practice even if the metadata itself is minimal.
+
 ## Browser-Safe Rule
 
 Files in `views/` are browser-facing.
@@ -208,6 +221,7 @@ Prefer the smallest checks that prove the page is real:
 - inspect the page handler for `setViewProps(...)` and response shaping
 - open the route through the app and confirm the page renders
 - confirm `Head` metadata or layout choice when that was the requested change
+- confirm that required shared styles are actually present on the page
 
 ## Common Mistakes
 
@@ -216,6 +230,9 @@ Prefer the smallest checks that prove the page is real:
 - calling context hooks in the page component before the layout/provider
   boundary exists
 - forgetting `setViewProps(req, res, ctx)` on rendered HTML pages
+- omitting `Head` on pages that rely on shared styles or favicon/meta behavior
+- using the wrong prop type or wrong prop passing shape for `LayoutPanel` or
+  `LayoutBlank`
 - importing server-only code into `views/*.tsx`
 - treating `views/` files as generic React pages with no Stackpress contract
 - using the schema `@view.*` meaning when the task is actually handwritten page

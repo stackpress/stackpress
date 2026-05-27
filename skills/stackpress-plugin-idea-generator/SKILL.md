@@ -38,6 +38,7 @@ instead of recreating generation logic at runtime.
 - browser-only component work
 - route scaffolding without generation
 - store registration without generation
+- one-off handwritten feature behavior that is not truly model-driven
 
 Use `stackpress-plugin-scaffold` first when the main question is overall plugin
 shape or folder setup.
@@ -53,6 +54,9 @@ Treat generation and runtime as separate concerns.
 
 Do not re-parse the project schema at runtime if the same job belongs in the
 transform pipeline.
+
+If the feature is not clearly repeated per model or clearly derived from schema
+metadata, route back out before implementing generation logic.
 
 ## Standard Idea Hook
 
@@ -188,6 +192,8 @@ Prefer the smallest checks that prove the generator is real:
 ## Common Mistakes
 
 - put generation logic into runtime hooks instead of `idea`
+- use generation for one-off handwritten behavior that should stay in runtime or
+  route/view code
 - overexplain the `idea` hook while underbuilding `transform/index.ts`
 - generate files that runtime cannot import later
 - forget to patch generated exports when new entrypoints are added

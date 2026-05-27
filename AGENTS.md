@@ -126,6 +126,19 @@ Within templates, these directories are especially important:
 Generated directories such as `.build` and `client_source` are disposable and
 can be deleted safely because they can be rebuilt.
 
+## Skills
+
+The repository `skills/` folder contains the Stackpress skill source files used
+for documentation and skill maintenance work.
+
+When editing skills:
+
+ - treat each `skills/<skill-name>/SKILL.md` file as the primary source for that skill
+ - preserve the distinction between skill instructions, `agents/` support files, `references/`, and `assets/`
+ - prefer tightening guidance and examples over broad rewrites unless the skill scope is intentionally changing
+ - keep examples illustrative rather than literal so they are not mistaken for required domains, plugin names, or file layouts
+ - ignore an `archives/` folder entirely if it exists; do not use it as active context and do not mix archived material into current skill edits unless explicitly requested
+
 ## Working Agreement
 
 Keep changes scoped to the workspace you are touching and avoid unrelated
