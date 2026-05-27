@@ -2,298 +2,368 @@
 
 ## Summary
 
-This spec defines the first complete design for `templates/store` as a StackPress sample application.
+This spec redefines `templates/store` around its actual purpose.
 
-The goal is to make `templates/store` a commerce-oriented example in the same spirit as `templates/blog`: a developer should be able to inspect the schema, generated admin behavior, custom plugin pages, and seeded content to understand how a real StackPress app is assembled.
+`templates/store` is not a monolithic commerce template just because the folder
+is named `store`. In this sample, `store` refers to storage and persistence
+infrastructure. The template should still expose a working end-to-end flow
+using example commerce-like features such as `product`, `cart`, `checkout`,
+and `order`, but the main lesson is architectural: separate responsibilities
+into distinct plugins and let StackPress weave them together through plugin
+registration, events, and route priorities.
 
-The sample is intentionally instructional rather than production-grade. It should demonstrate a coherent storefront flow from catalog browsing through demo checkout and order placement, while keeping the domain model lean enough to stay approachable.
+This task is also an experiment. The sample should help evaluate whether the
+installed StackPress and ChrisAI skill families guide this kind of work
+correctly or push it in the wrong direction.
 
 ## Goals
 
-- Provide a full sample storefront flow for StackPress.
-- Demonstrate how `schema.idea` drives generated data and admin behavior.
-- Demonstrate how custom plugin pages shape the public-facing storefront.
-- Demonstrate lightweight runtime logic for guest carts, checkout, and order creation.
-- Mirror the educational role that `templates/blog` already plays in the monorepo.
-- Let a developer generate, populate, run, and explore the sample locally with minimal setup.
+- Keep `plugins/store` infrastructure-only.
+- Keep `plugins/app` focused on shared app infrastructure.
+- Model `product`, `cart`, `checkout`, and `order` as separate plugins in
+  separate folders.
+- Expose a working end-to-end flow across those plugins with a minimal,
+  understandable UX.
+- Demonstrate separation of responsibility and decoupling through normal
+  StackPress composition points.
+- Use the work as a test case for `stackpress-app-coordinator`,
+  `chrisai-usage`, and their downstream skill families.
 
 ## Non-Goals
 
-- Real payment integration.
-- Production-grade tax, shipping, discount, or promotion systems.
-- Product variants such as size or color.
-- Inventory tracking or stock reservation logic.
-- Marketplace or multi-vendor behavior.
-- Advanced fulfillment, fraud, notification, or ERP-style workflows.
+- Turning `plugins/store` into the owner of commerce behavior.
+- Building one large plugin that owns the whole user flow.
+- Treating `plugins/app` as a catch-all for unrelated feature logic.
+- Production-grade commerce features such as inventory engines, shipping
+  systems, discount logic, tax logic, or payment gateways.
+- Evaluating only isolated single skills without considering the family they
+  route into.
 
 ## Current State
 
-`templates/store` already exists as a workspace, but it is still a thin baseline compared with `templates/blog`.
+`templates/store` already exists, but its current shape is much thinner than
+the intended sample.
 
-Observed differences:
+Observed local reality:
 
-- `templates/store/schema.idea` currently only imports `stackpress/stackpress.idea`.
-- `templates/store` has app and store plugin folders, but not a complete commerce-oriented data model.
-- `templates/blog` is the stronger end-to-end reference today because it contains a richer `schema.idea`, custom public pages, and a more complete generated-flow example.
+- `plugins/store/plugin.ts` registers the database connection and populate
+  event.
+- `plugins/store/connect.ts` is the PGlite-backed connection wiring.
+- `plugins/store/populate.ts` creates baseline admin and application data.
+- `plugins/app/plugin.ts` currently owns a minimal home route and basic app
+  error behavior.
+- `schema.idea` currently imports the baseline StackPress idea and does not yet
+  define the feature-oriented model set needed for the sample flow.
 
-This design turns `templates/store` into a parallel reference sample focused on commerce instead of editorial content.
+That means the existing template already supports the interpretation that
+`store` is infrastructure, not the place to dump domain logic.
 
 ## Recommended Approach
 
-Build `templates/store` as a full sample storefront with generated admin and a thin custom public layer.
+Build `templates/store` as a plugin-composition sample.
 
-This approach keeps the example realistic without expanding it into a production commerce platform. The schema should cover products, carts, checkout, orders, and basic profile-linked customer data. The public app should provide a branded storefront experience with authored pages. Admin behavior should stay generated wherever StackPress already provides a strong default.
+The template should still present a small working product-to-order flow, but
+the architectural lesson comes first:
 
-This is the recommended approach because it best matches the role of `templates/blog`: it shows the intended StackPress split between generated structure and authored experience without introducing unnecessary commerce complexity.
+- `store` owns persistence infrastructure
+- `app` owns shared app infrastructure
+- `product`, `cart`, `checkout`, and `order` own the domain flow in separate
+  plugins
+
+This is the recommended approach because it tests the real StackPress value
+proposition more directly than a single-plugin example would. It also creates a
+better experiment for the installed skill families because the work depends on
+correct routing, clean boundaries, and verification across multiple layers.
 
 ## Alternatives Considered
 
-### Option 1: Full sample storefront with generated admin and thin custom public pages
+### Option 1: Domain-per-plugin sample with thin shared infrastructure
 
 This is the selected approach.
 
 Benefits:
 
-- Closest equivalent to the role `templates/blog` already serves.
-- Demonstrates StackPress end-to-end using realistic but manageable commerce flows.
-- Keeps most complexity in data modeling and page composition rather than niche commerce concerns.
+- Best demonstration of separation of responsibility.
+- Makes plugin boundaries visible to developers reading the template.
+- Forces the sample to use StackPress weaving instead of hidden coupling.
+- Produces a better test for coordinator and routing skills.
 
 Tradeoffs:
 
-- Requires more schema and route work than a minimal catalog sample.
-- Needs a small amount of runtime logic for cart and checkout orchestration.
+- Requires more deliberate wiring than a single-plugin sample.
+- Increases the need for clear ownership decisions between schema, runtime, and
+  views.
 
-### Option 2: Heavier commerce sample
+### Option 2: Monolithic sample plugin with supporting infra plugins
 
-This version would include taxes, discounts, shipping rules, richer order states, and broader post-order workflows.
+This would keep `store` and `app` narrow, but place `product`, `cart`,
+`checkout`, and `order` into one broad commerce plugin.
 
 Benefits:
 
-- Shows more commerce breadth.
+- Simpler to implement quickly.
 
 Tradeoffs:
 
-- Distracts from StackPress fundamentals.
-- Makes the example harder to learn from and maintain.
-- Increases the number of domain decisions that are unrelated to the framework itself.
+- Weak demonstration of decoupling.
+- Does not test event and route composition meaningfully.
+- Makes it harder to evaluate whether the StackPress skill family preserves
+  correct boundaries.
 
-This option is rejected for the first sample.
+This option is rejected.
 
-### Option 3: Minimal catalog and cart sample without real orders
+### Option 3: Architecture-only sample with no meaningful end-to-end flow
 
-This version would stop before a persisted checkout or order lifecycle.
+This would focus on plugin boundaries while keeping the user experience mostly
+stubbed.
 
 Benefits:
 
-- Smaller surface area.
+- Smallest implementation surface.
 
 Tradeoffs:
 
-- Feels incomplete next to `templates/blog`.
-- Fails to demonstrate a full business workflow.
-- Misses the value of showing how guest flow, account creation, and generated admin fit together.
+- Fails the requirement for a working end-to-end user flow.
+- Makes it harder for developers to understand why the plugin split matters.
+- Weakens the value of the sample as a realistic reference.
 
 This option is also rejected.
 
-## App Summary
+## Plugin Responsibilities
 
-`templates/store` should become the canonical commerce sample for StackPress.
+The template should use separate plugin folders with explicit ownership.
 
-The sample should let a user:
+### `plugins/store`
 
-- browse a custom storefront homepage
-- view product detail pages
-- add products to a cart
-- update cart quantities
-- proceed through demo checkout
-- optionally create an account during checkout
-- place a demo order
-- review order history later when signed in
+Purpose:
 
-The sample should let an admin:
+- database registration
+- connection wiring
+- persistence-oriented populate hooks
+- storage-related shared setup
 
-- manage products through generated admin tooling
-- inspect orders through generated admin tooling
-- review customer profile data that supports the commerce example
+Boundary:
 
-## Audience
+`store` should not absorb `product`, `cart`, `checkout`, or `order` logic just
+because the template directory is named `store`.
 
-The primary audience is developers learning how to build a StackPress application from a working sample.
+### `plugins/app`
 
-Secondary audiences include:
+Purpose:
 
-- maintainers validating framework behavior against a realistic template
-- developers comparing StackPress patterns across content and commerce use cases
+- app-wide error handling
+- shared layouts
+- common components used across multiple plugins
+- utility helpers that do not belong to one feature
+- neutral glue when a responsibility is app-wide rather than feature-specific
 
-Because the audience is instructional, clarity and coverage matter more than production-grade feature depth.
+Boundary:
 
-## Core Entities
+`app` should not become the default home for feature ownership. If logic
+clearly belongs to `product`, `cart`, `checkout`, or `order`, it should live
+there.
 
-The first sample should model a small, understandable commerce system with these primary entities:
+### `plugins/product`
 
-- `Product`
-  Purpose: a simple purchasable catalog item with public merchandising fields.
-- `Cart`
-  Purpose: an active shopping cart associated with either a guest session or a signed-in profile.
-- `CartItem`
-  Purpose: a line item inside a cart that stores product reference, quantity, and a unit price snapshot.
-- `Order`
-  Purpose: a placed checkout record containing customer identity snapshot, totals, demo payment state, and fulfillment state.
-- `OrderItem`
-  Purpose: a line item inside a placed order with product snapshot, quantity, and pricing snapshot.
-- `Profile` extension fields
-  Purpose: customer information needed for account-linked order history and checkout prefill.
+Purpose:
 
-The first sample should keep products intentionally simple:
+- product model ownership
+- product-oriented routes and handlers
+- product listing or detail views
+- product-related populate data
 
-- no variants
-- no inventory counts
-- no bundled pricing rules
+Boundary:
 
-## Main User Flows
+`product` should not own checkout or placed-order logic.
 
-The sample should support these public flows:
+### `plugins/cart`
 
-1. browse the storefront homepage
-2. open a product detail page
-3. add a product to cart with quantity
-4. review and update cart contents
-5. start checkout as a guest
-6. enter contact and shipping details
-7. optionally create an account during checkout
-8. complete a demo payment step
-9. place the order
-10. view order confirmation
-11. later sign in to review past orders if an account exists
+Purpose:
 
-The first sample should optimize for a complete, understandable path rather than covering every possible edge case.
+- cart lifecycle
+- cart actions and updates
+- guest or session cart resolution
+- cart page behavior
 
-## Auth And Roles
+Boundary:
 
-The auth model should support guest browsing and guest cart usage by default.
+`cart` should not own checkout orchestration or final order persistence.
 
-Checkout should not require sign-in before the user starts the flow. During checkout, the user may optionally create an account. If they do, the placed order should be associated with that account profile so the order appears in later account history.
+### `plugins/checkout`
 
-Roles should remain simple:
+Purpose:
 
-- guest shopper
-- signed-in customer
-- admin
+- checkout flow
+- validation
+- optional account creation during checkout
+- transition from cart state into order creation
 
-No staff approval, wholesale role, or multi-role commerce workflow is needed for the sample.
+Boundary:
 
-## Admin Responsibilities
+`checkout` coordinates the handoff, but it should not become the long-term
+owner of order behavior after placement.
 
-The generated admin surface should support the minimum management tasks needed to demonstrate StackPress:
+### `plugins/order`
 
-- create, edit, activate, and deactivate products
-- search and review orders
-- inspect customer-related profile information
-- inspect order lifecycle status values used by the sample
+Purpose:
 
-The admin area should remain mostly generated. The sample should avoid building custom admin workflows unless the framework requires a small targeted extension.
+- placed-order records
+- order confirmation behavior
+- order account views
+- order-oriented admin views or extensions when needed
 
-## StackPress Lanes
+Boundary:
 
-The design should make the framework boundaries explicit.
+`order` should not backfill product browsing or cart lifecycle behavior.
+
+## End-To-End Flow
+
+The sample should expose a minimal but complete flow across decoupled plugins:
+
+1. the home page introduces the sample and links into product browsing
+2. the `product` plugin provides listing and detail behavior
+3. the `cart` plugin accepts add-to-cart and cart-update actions
+4. the `cart` plugin hands the user into the `checkout` flow
+5. the `checkout` plugin validates input and optionally creates an account
+6. the `checkout` plugin hands off order creation
+7. the `order` plugin owns the placed-order state and confirmation readback
+
+The UX can stay intentionally minimal. The important point is that the flow is
+real, understandable, and composed from multiple plugins with narrow
+responsibilities.
+
+## Composition Rules
+
+This template should explicitly demonstrate StackPress weaving rather than
+hidden coupling.
+
+Preferred composition signals:
+
+- plugin registration order
+- event-driven extension points
+- route ownership per plugin
+- route or event priorities where they clarify feature weaving
+- shared app-level helpers only where the concern is truly cross-cutting
+
+Avoid:
+
+- large cross-plugin imports that expose internals unnecessarily
+- central orchestration code that effectively recreates a monolith
+- pushing schema gaps into runtime code when the issue belongs in `schema.idea`
+
+## Schema And Runtime Lanes
+
+The template should still use the normal StackPress split of responsibilities.
 
 ### `schema.idea`
 
-`schema.idea` should carry most of the sample definition:
+`schema.idea` should define the model layer needed for the sample flow.
 
-- product, cart, cart item, order, and order item models
-- customer-oriented profile fields needed by checkout and account history
-- labels, display templates, searchability, filters, relations, and admin-friendly field metadata
-- status enums for order lifecycle and demo payment state
+At minimum, it should support:
 
-### Custom Public Pages
+- product data
+- cart-related data
+- checkout-related customer fields if needed
+- order and order-item style records
+- relations and metadata needed for generated admin usefulness
 
-Custom plugin pages should provide the authored storefront experience:
+The schema should be strong enough that generated output is meaningful and the
+runtime plugins do not need to compensate for weak modeling decisions.
 
-- homepage
-- product detail page
-- cart page
-- checkout page
-- order confirmation page
-- account order history page if the default generated account surface is insufficient
+### Runtime And View Work
 
-This mirrors how `templates/blog` authors public editorial pages on top of generated structures.
+Handwritten plugin code should own:
 
-### Runtime Logic
+- route handlers
+- event wiring
+- custom public pages
+- flow coordination across plugins
+- shared app surfaces that do not belong to one feature plugin
 
-Custom runtime behavior should remain narrow and purpose-driven:
-
-- resolve a guest or signed-in cart
-- add or update cart items
-- convert a cart into an order and order items
-- optionally create an account during checkout
-- flag and record demo payment completion
-- populate the sample with seeded products
-
-The sample should not introduce broad custom commerce engines or unnecessary abstractions.
-
-## Public Experience
-
-The public-facing app should feel intentionally authored rather than like unstyled scaffolding.
-
-Minimum public surfaces:
-
-- a custom storefront homepage
-- product detail pages
-- cart page
-- checkout form flow
-- order confirmation page
-
-The visual layer does not need to be heavily branded, but it should clearly show how StackPress supports custom public experiences on top of generated data and admin behavior.
-
-## Seed Data And Local Workflow
-
-The sample should include enough seeded content to be useful immediately after setup.
-
-Populate behavior should provide:
-
-- multiple sample products
-- merchandising-ready content for homepage and detail pages
-- enough variety to make cart and checkout testing meaningful
-
-The local workflow should remain straightforward for developers:
-
-- generate
-- migrate or push
-- populate
-- run the app
-- click through a demo purchase flow
+This sample should make it easy to see which parts are generated and which
+parts are authored.
 
 ## Success Criteria
 
-The sample is successful when all of the following are true:
+The architecture sample is successful when all of the following are true:
 
-- `templates/store` is understandable as a first-class StackPress sample alongside `templates/blog`.
-- A developer can run the store locally and complete an end-to-end demo purchase flow.
-- The template clearly demonstrates the division between generated schema/admin behavior and custom public/plugin code.
-- Seeded content makes the sample useful immediately after setup.
-- The sample stays intentionally simple enough to teach StackPress rather than advanced commerce implementation details.
+- `plugins/store` remains infrastructure-only.
+- `plugins/app` remains shared app infrastructure.
+- `product`, `cart`, `checkout`, and `order` exist as separate plugin folders.
+- The sample exposes a working end-to-end flow across those plugins.
+- The code demonstrates separation of responsibility clearly enough that a
+  developer can explain why each plugin exists.
+- The UX is minimal but understandable.
+- The template shows StackPress weaving through plugins, events, routes, or
+  priorities rather than through tight coupling.
+
+## Experiment Criteria
+
+This task is also a skill-evaluation experiment.
+
+### StackPress Skill Family
+
+Evaluate:
+
+- whether `stackpress-app-coordinator` chooses the right phases and avoids
+  pushing the work into the wrong app shape
+- whether downstream StackPress skills preserve the plugin boundaries instead
+  of collapsing them
+- whether the family distinguishes correctly between schema work, plugin
+  runtime work, view work, and verification
+- where the StackPress skill family is helpful, incomplete, or misleading
+
+### ChrisAI Skill Family
+
+Evaluate:
+
+- whether `chrisai-usage` routes follow-on work to the correct documentation,
+  coding, or QA specialist
+- whether the selected downstream ChrisAI skills add clarity and structure
+  instead of noise
+- whether the family is useful for documenting, reviewing, and verifying this
+  kind of architecture-first sample
+- where the ChrisAI skill family is helpful, incomplete, or misleading
+
+### Evidence To Capture
+
+The follow-up work should explicitly note:
+
+- where a router selected the right next skill
+- where a router selected the wrong next skill
+- where the router was fine but the downstream specialist was weak
+- what improvements would make these skill families safer or more useful for
+  similar StackPress work
 
 ## Risks And Guardrails
 
-Primary risk:
+Primary risks:
 
-- the sample grows into a pseudo-production commerce app and stops being a clear educational reference
+- the sample drifts back into a monolithic plugin design
+- `store` becomes a misleading owner of feature code
+- `app` becomes a dumping ground
+- the skill experiment gets lost and the work is treated as only an app build
 
 Guardrails:
 
-- keep payment demo-only
-- keep products simple
-- keep admin mostly generated
-- avoid adding discounts, taxes, shipping engines, or variant logic in the first sample
-- favor clarity of framework usage over breadth of commerce features
+- keep plugin ownership explicit
+- keep `store` infra-only
+- keep `app` shared-infra-only unless a concern is genuinely cross-cutting
+- prefer feature plugins over convenience grouping
+- keep the public flow minimal
+- record skill-family outcomes as part of the task, not as an afterthought
 
 ## Implementation Signals
 
-This design implies three main follow-up workstreams:
+This design implies these follow-up workstreams:
 
-1. extend `templates/store/schema.idea` into a complete commerce sample model
-2. add or refine plugin pages and runtime actions for storefront, cart, checkout, and confirmation flows
-3. verify the template’s local developer workflow, seeded content, and end-to-end demo usability
+1. strengthen `schema.idea` so generated admin and data structures support the
+   sample flow
+2. create or refine separate `product`, `cart`, `checkout`, and `order`
+   plugins
+3. keep `store` and `app` narrowly scoped to infrastructure concerns
+4. wire the plugins into one working end-to-end flow
+5. verify both the sample behavior and the skill-family experiment outcomes
 
-Those workstreams should be broken down into a formal implementation plan after this spec is reviewed.
+These workstreams should be broken down into the implementation plan after this
+updated spec is reviewed.
