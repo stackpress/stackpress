@@ -19,6 +19,12 @@ The coordinator keeps the build moving in the right order, stops weak handoffs,
 and routes work to narrower Stackpress skills instead of improvising across
 layers.
 
+This skill must preserve the real goal of the project. Some Stackpress work is
+mainly about delivering end-user behavior. Some Stackpress work is mainly about
+demonstrating architecture, plugin boundaries, or generation patterns. The
+coordinator should keep that distinction explicit because it changes what
+"correct" sequencing and verification look like.
+
 ## Use This Skill For
 
 - turning a plain-English app request into a staged Stackpress build workflow
@@ -41,6 +47,29 @@ step.
 
 The coordinator decides what happens next. Specialist skills decide how that
 step is performed.
+
+## Local Context Rule
+
+Do not infer app purpose from names alone.
+
+- verify what an app, template, or plugin is really for by inspecting local
+  config, schema, plugins, and existing routes
+- treat folder names, package names, or template names as hints, not as proof
+- if local context contradicts the name, follow the local context
+
+## Architecture Goal Rule
+
+If the project is intended to teach or demonstrate Stackpress architecture,
+keep that goal explicit through the whole workflow.
+
+Examples:
+
+- a sample whose main point is plugin separation
+- a sample whose main point is schema-driven generation
+- a sample whose main point is infrastructure versus feature ownership
+
+Do not let architecture-teaching goals collapse into a generic app build just
+because the feature flow is familiar.
 
 ## The Gate Rule
 
@@ -83,6 +112,8 @@ At minimum, clarify:
 - auth requirements
 - admin requirements
 - custom pages or special runtime behavior
+- whether the project is mainly a product app, a teaching sample, or an
+  architecture sample
 
 Prefer one question at a time when the request is still vague.
 
@@ -211,6 +242,17 @@ Keep a compact mental checklist of:
 
 When a phase completes, summarize the new state before moving to the next one.
 
+## Required Phase Summary
+
+Before implementation begins for any new phase, restate:
+
+1. the current phase
+2. the artifact to produce
+3. why this phase is next
+4. which Stackpress skill should own the work
+
+Do not skip this summary when the workflow changes shape after user feedback.
+
 ## Handoff Rules
 
 Before invoking another Stackpress skill, make the handoff explicit:
@@ -228,6 +270,9 @@ Examples:
 - "Scaffold a runtime plugin for custom checkout routes."
 - "Implement a generation plugin that emits per-model storefront helpers."
 
+Treat examples as illustrative patterns, not literal project names, required
+domains, or prescribed plugin folders.
+
 ## When to Stop and Ask
 
 Stop coordinating and ask for clarification when:
@@ -239,6 +284,17 @@ Stop coordinating and ask for clarification when:
 - verification shows the current phase is not actually complete
 
 Do not force the next phase just to preserve momentum.
+
+## Correction Reset Rule
+
+When the user corrects the architecture or intent:
+
+1. restate the corrected model
+2. discard the stale assumption explicitly
+3. re-evaluate the current phase against the corrected model
+4. do not keep layering work on top of the stale framing
+
+Architecture corrections are resets, not minor edits.
 
 ## Failure Recovery
 
@@ -254,9 +310,13 @@ Do not continue piling phases on top of a broken foundation.
 ## Common Mistakes
 
 - acting like the coordinator is also the implementer
+- inferring app purpose from a template or folder name without checking local
+  context
 - running generation before the schema is meaningful
 - solving schema gaps with runtime code
 - sending generator work into runtime hooks
 - scattering plugin work before checking whether a schema change should happen
+- failing to route unresolved architecture questions through
+  `stackpress-plugin-router`
 - skipping verification because the structure "looks right"
 - losing track of what phase the app is currently in

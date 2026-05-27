@@ -66,6 +66,7 @@ By the end of discovery, capture these areas:
 - custom runtime behavior
 - custom pages or app surfaces
 - initial scaffold values
+- project shape classification
 
 ## Question Strategy
 
@@ -85,6 +86,20 @@ one.
 
 ## Required Discovery Areas
 
+### 0. Project Shape
+
+Classify what kind of Stackpress deliverable this is.
+
+Examples:
+
+- product-oriented app
+- teaching sample
+- architecture-composition sample
+- production-oriented baseline
+
+This affects how the later phases should prioritize schema clarity, plugin
+boundaries, and runtime polish.
+
 ### 1. App Concept
 
 Clarify the basic product shape.
@@ -98,6 +113,10 @@ Examples:
 - content site with commerce
 
 Make sure the concept is specific enough to imply likely models and routes.
+
+Do not assume the folder or template name is the concept. Verify the concept
+from the actual request and local project context.
+Treat examples as illustrative patterns, not literal domains the app must fit.
 
 ### 2. Target Audience
 
@@ -118,6 +137,9 @@ Examples:
 - wholesale buyers
 - general public with optional accounts
 
+Treat examples as illustrative audience patterns, not a fixed Stackpress app
+taxonomy.
+
 ### 3. Core Entities
 
 Identify the nouns that probably become models.
@@ -135,6 +157,7 @@ Examples:
 
 Do not write the schema here. Just identify the likely domain objects and their
 purpose.
+Treat examples as illustrative entity patterns, not literal required models.
 
 ### 4. Main User Flows
 
@@ -151,6 +174,7 @@ Examples:
 - manage profile
 
 If a flow is central to the app, it should be named explicitly here.
+Treat examples as illustrative flow patterns, not a prescribed product map.
 
 ### 5. Auth Model
 
@@ -179,6 +203,18 @@ Examples:
 - promotions
 
 This strongly affects which models need richer metadata in `schema.idea`.
+Treat examples as illustrative admin-surface patterns, not required admin
+modules.
+
+### 6.5. Shared Infrastructure Versus Feature Concerns
+
+Clarify what belongs to:
+
+- shared app infrastructure
+- storage or infra plugins
+- feature ownership
+
+This gives the router and scaffold skills a cleaner starting point later.
 
 ### 7. Custom Runtime Behavior
 
@@ -195,6 +231,8 @@ Examples:
 
 These are routing signals for `stackpress-plugin-router`, not implementation
 tasks yet.
+Treat examples as illustrative runtime patterns, not default assumptions for
+every Stackpress app.
 
 ### 8. Custom Pages or App Surfaces
 
@@ -210,6 +248,8 @@ Examples:
 - informational utility pages
 
 This helps the coordinator distinguish schema-only work from route/view work.
+Treat examples as illustrative page-surface patterns, not a literal route
+checklist.
 
 ### 9. Scaffold Values
 
@@ -235,6 +275,7 @@ The final discovery brief should be short, concrete, and structured around:
 7. custom behavior signals
 8. custom page signals
 9. scaffold values
+10. project shape classification
 
 This brief should read like a handoff artifact, not a brainstorming transcript.
 

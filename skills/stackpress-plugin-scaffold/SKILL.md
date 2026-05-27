@@ -12,17 +12,31 @@ inventing a new structure.
 
 1. Confirm the project root and check for a `plugins/` folder.
 2. If `plugins/` does not exist, ask the user where to create the plugin.
-3. Create `plugins/<plugin-name>/plugin.ts` first.
-4. Add only the extra folders and files the plugin actually needs.
+3. Classify the plugin role before creating files.
+4. Create `plugins/<plugin-name>/plugin.ts` first.
+5. Add only the extra folders and files the plugin actually needs.
 5. Choose the correct lifecycle hook:
    - `config` for config reads and shared service registration
    - `listen` for event listeners
    - `route` for routes and view bindings
    - `idea` for generation-time transforms
 6. Keep browser-facing code browser safe.
-7. Register the plugin in the app's top-level `package.json.plugins` array.
+7. Register the plugin in the app's top-level `package.json.plugins` array
+   only after the plugin entry file exists.
 8. Add or update scripts only after the plugin files and config exist.
 9. Run the smallest relevant verification commands for the plugin type.
+
+## Plugin Role Classification
+
+Before scaffolding, classify the plugin as one of:
+
+- infrastructure plugin
+- shared app plugin
+- feature plugin
+- generation plugin
+
+This affects which folders are justified and which lifecycle hooks should be
+preferred.
 
 ## Default Location
 
@@ -48,6 +62,10 @@ The short version is:
 - `types.ts` for shared TypeScript types
 
 Only create the folders the plugin really needs.
+
+When architecture is still being composed, a thin shell plugin is often the
+right first step. Start with `plugin.ts`, then add only the folders needed to
+support the chosen role.
 
 ## Plugin Entry File
 
@@ -128,6 +146,9 @@ Example:
 
 If the plugin is not in `package.json.plugins`, Stackpress will not load it.
 
+Do not edit `package.json.plugins` before a real `plugin.ts` exists, even if
+the first version is only a blank export.
+
 ## Verification
 
 Choose verification based on plugin role:
@@ -143,7 +164,13 @@ Choose verification based on plugin role:
 
 - assume `plugins/` exists without checking
 - create every optional folder by default
+- register the plugin before the entry file exists
 - put generation logic in runtime hooks instead of `idea`
 - import server-only code into browser-facing files
 - edit `package.json` before the files exist
 - forget to register the plugin in `package.json.plugins`
+- use a shared or infrastructure plugin as a generic dumping ground for feature
+  ownership
+
+Treat examples in this skill as illustrative plugin-role patterns, not literal
+plugin names or required folder sets.

@@ -66,6 +66,29 @@ existing idea file toward that shape.
 7. Prefer a practical first draft over an over-decorated schema.
 8. Re-check every suggested attribute against Stackpress-supported built-ins.
 
+## Admin Intentionality Rule
+
+Every non-relation field should be reviewed intentionally for generated admin
+surfaces.
+
+For each field, consider:
+
+- `@field.*`
+- `@filter.*`
+- `@span.*`
+- `@list.*`
+- `@view.*`
+
+It is acceptable to omit any of these, but omission should be deliberate and
+defensible.
+
+Examples:
+
+- generated or system-managed fields usually should not become editable fields
+- range-style controls usually make more sense for dates and numbers
+- background control fields may be searchable or filterable without needing
+  prominent list or view treatment
+
 ## Refine Workflow
 
 1. Read the existing model shape before editing.
@@ -102,6 +125,9 @@ existing idea file toward that shape.
   benefits from display metadata.
 - Use `@searchable`, `@sortable`, `@active`, `@timestamp`, `@unique`, and
   `@default(...)` only when the model behavior needs them.
+- Treat generated or system-managed fields such as identifiers and lifecycle
+  timestamps as non-editable by default unless the user explicitly wants them
+  exposed differently.
 - Prefer the canonical patterns summarized in
   `references/stackpress-idea-patterns.md`.
 - Keep generic Idea flexibility in the background unless it explains a parsing
@@ -118,6 +144,20 @@ Before finalizing a schema recommendation:
 3. Check whether the generated UI metadata is justified or just decorative.
 4. Check whether the result uses Stackpress conventions instead of arbitrary
    parser-valid syntax.
+5. Check whether every important field was intentionally exposed or hidden in
+   generated admin behavior.
+
+## Pre-Generate Review Gate
+
+Before handing a schema off to generation, summarize:
+
+- the main models
+- the critical relations
+- which fields are intended to be editable
+- which fields are intended to be filterable or searchable
+- which fields are intentionally hidden from list or view surfaces
+
+Do not move to generation with accidental admin metadata.
 
 ## Core References
 
@@ -138,9 +178,13 @@ Use the broader Idea specs only for:
 ## Common Mistakes
 
 - treating Idea as only a database schema language
+- treating Idea as only a storage contract instead of a generated admin/view
+  contract
 - inventing attributes because the parser would accept them
 - using generic Idea flexibility where Stackpress expects specific built-ins
 - over-specifying field or view metadata before the model shape is stable
+- under-specifying field or view metadata when generated admin output is part of
+  the requirement
 - debugging runtime output before checking `schema.idea`
 - assuming a generator bug when the schema is using unsupported conventions
 

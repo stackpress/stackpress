@@ -58,6 +58,7 @@ Check the current phase in this order:
 3. generation evidence
 4. plugin wiring evidence
 5. runtime reachability evidence
+6. direct TypeScript evidence when handwritten TypeScript changed
 
 Only verify the phases that are supposed to exist already.
 
@@ -200,6 +201,30 @@ Fail runtime verification when:
 - a view exists without route-to-view binding
 - generated artifacts exist but runtime cannot consume them
 
+When the phase includes handwritten pages or views, also verify:
+
+- the page shell renders
+- shared styles are present when required
+- the route does not degrade into a blank or half-hydrated page because the
+  page contract is incomplete
+
+## 6. Direct TypeScript Verification
+
+When handwritten TypeScript or TSX changed, run a direct TypeScript pass before
+declaring the phase complete.
+
+Minimum evidence:
+
+- the relevant `tsc --noEmit` or equivalent compile pass completes cleanly
+- the compile pass covers the touched app or package, not just isolated test
+  files
+
+This is especially important for:
+
+- `pages/*.ts`
+- `views/*.tsx`
+- config files that define typed Stackpress behavior
+
 ## Verification by Feature Type
 
 ### Schema-heavy feature
@@ -226,6 +251,7 @@ Focus on:
 - page handler presence
 - view binding
 - minimal page reachability
+- stylesheet and page-shell correctness when shared assets are expected
 
 ### Generation plugin feature
 
@@ -273,6 +299,7 @@ Before passing a phase, ask:
 - was the relevant command actually run when command evidence matters?
 - is the behavior reachable, not merely present on disk?
 - is this enough proof for this phase, without pretending the whole app is done?
+- did handwritten TS or TSX changes actually pass compile?
 
 If the answer is unclear, the phase is not verified yet.
 
