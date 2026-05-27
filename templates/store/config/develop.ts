@@ -63,6 +63,14 @@ export const config: Config = {
         { method: 'GET', route: '/styles/**' },
         { method: 'GET', route: '/favicon.ico' },
         { method: 'GET', route: '/favicon.png' },
+        { method: 'GET', route: '/products' },
+        { method: 'GET', route: '/products/**' },
+        { method: 'GET', route: '/cart' },
+        { method: 'POST', route: '/cart/items' },
+        { method: 'GET', route: '/checkout' },
+        { method: 'POST', route: '/checkout' },
+        { method: 'GET', route: '/orders/confirmation/**' },
+        { method: 'GET', route: '/account/orders' }
       ],
       USER: [
         ...common.session.access.USER,
@@ -81,6 +89,14 @@ export const config: Config = {
         { method: 'GET', route: '/styles/**' },
         { method: 'GET', route: '/favicon.ico' },
         { method: 'GET', route: '/favicon.png' },
+        { method: 'GET', route: '/products' },
+        { method: 'GET', route: '/products/**' },
+        { method: 'GET', route: '/cart' },
+        { method: 'POST', route: '/cart/items' },
+        { method: 'GET', route: '/checkout' },
+        { method: 'POST', route: '/checkout' },
+        { method: 'GET', route: '/orders/confirmation/**' },
+        { method: 'GET', route: '/account/orders' }
       ],
       GUEST: [
         ...common.session.access.GUEST,
@@ -99,6 +115,14 @@ export const config: Config = {
         { method: 'GET', route: '/styles/**' },
         { method: 'GET', route: '/favicon.ico' },
         { method: 'GET', route: '/favicon.png' },
+        { method: 'GET', route: '/products' },
+        { method: 'GET', route: '/products/**' },
+        { method: 'GET', route: '/cart' },
+        { method: 'POST', route: '/cart/items' },
+        { method: 'GET', route: '/checkout' },
+        { method: 'POST', route: '/checkout' },
+        { method: 'GET', route: '/orders/confirmation/**' },
+        { method: 'GET', route: '/account/orders' }
       ]
     }
   },

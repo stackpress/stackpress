@@ -1,1 +1,326 @@
 use "stackpress/stackpress.idea"
+
+enum OrderStatus {
+  PLACED "PLACED"
+  COMPLETE "COMPLETE"
+}
+
+model Product
+  @labels("Product" "Products")
+  @icon("box-open")
+  @display("{{title}}")
+{
+  id          String
+              @label("ID")
+              @id @default("cuid()")
+              @list.clip({ length 10 hellip true })
+              @description("Unique generated identifier.")
+
+  title       String
+              @label("Title")
+              @searchable
+              @field.string
+              @filter.string
+              @is.required("Title is required")
+              @list.string
+              @view.string
+              @description("Name of the sample product.")
+
+  slug        String
+              @label("Slug")
+              @unique
+              @field.slug
+              @filter.string
+              @is.required("Slug is required")
+              @list.string
+              @view.string
+              @description("URL-safe product slug.")
+
+  summary     Text?
+              @label("Summary")
+              @field.textarea
+              @list.text
+              @view.text
+              @description("Short merchandising description.")
+
+  price       Float
+              @label("Price")
+              @default(0)
+              @field.price
+              @filter.price
+              @span.price
+              @list.price
+              @view.price
+              @description("Display price for the product.")
+
+  active      Boolean
+              @label("Active")
+              @default(true) @active
+              @filter.switch
+              @view.yesno
+              @description("Controls whether the product appears in active flows.")
+
+  created     Datetime
+              @label("Created")
+              @default("now()") @sortable
+              @span.date("m d, Y")
+              @list.date("m d, Y h:iA")
+              @view.date("m d, Y h:iA")
+              @description("Generated creation timestamp.")
+
+  updated     Datetime
+              @label("Updated")
+              @default("now()") @timestamp @sortable
+              @span.date("m d, Y")
+              @list.date("m d, Y h:iA")
+              @view.date("m d, Y h:iA")
+              @description("Generated update timestamp.")
+
+  cartItems   CartItem[] @label("Cart Items")
+  orderItems  OrderItem[] @label("Order Items")
+}
+
+model Cart
+  @labels("Cart" "Carts")
+  @icon("cart-shopping")
+  @display("{{id}}")
+  @query("*" "items.*" "items.product.*")
+{
+  id          String
+              @label("ID")
+              @id @default("cuid()")
+              @list.clip({ length 10 hellip true })
+              @description("Unique generated identifier.")
+
+  sessionId   String?
+              @label("Session ID")
+              @field.string
+              @filter.string
+              @list.clip({ length 12 hellip true })
+              @view.string
+              @description("Guest cart session identifier.")
+
+  created     Datetime
+              @label("Created")
+              @default("now()") @sortable
+              @span.date("m d, Y")
+              @list.date("m d, Y h:iA")
+              @view.date("m d, Y h:iA")
+              @description("Generated creation timestamp.")
+
+  updated     Datetime
+              @label("Updated")
+              @default("now()") @timestamp @sortable
+              @span.date("m d, Y")
+              @list.date("m d, Y h:iA")
+              @view.date("m d, Y h:iA")
+              @description("Generated update timestamp.")
+
+  items       CartItem[] @label("Items")
+}
+
+model CartItem
+  @labels("Cart Item" "Cart Items")
+  @icon("cart-plus")
+  @display("{{product.title}}")
+  @query("*" "cart.*" "product.*")
+{
+  id          String
+              @label("ID")
+              @id @default("cuid()")
+              @list.clip({ length 10 hellip true })
+              @description("Unique generated identifier.")
+
+  cartId      String
+              @label("Cart")
+              @field.relation({
+                id "id"
+                search "/admin/cart/search?json"
+                template "{{id}}"
+              })
+              @filter.relation({
+                id "id"
+                search "/admin/cart/search?json"
+                template "{{id}}"
+              })
+              @list.template({ template "{{cart.id}}" })
+              @view.template({ template "{{cart.id}}" })
+              @description("Owning cart for this item.")
+
+  productId   String
+              @label("Product")
+              @field.relation({
+                id "id"
+                search "/admin/product/search?json&q={{query}}"
+                template "{{title}}"
+              })
+              @filter.relation({
+                id "id"
+                search "/admin/product/search?json&q={{query}}"
+                template "{{title}}"
+              })
+              @list.template({ template "{{product.title}}" })
+              @view.template({ template "{{product.title}}" })
+              @description("Selected product.")
+
+  quantity    Integer
+              @label("Quantity")
+              @default(1)
+              @field.integer({ min 1 })
+              @filter.integer
+              @span.integer
+              @list.number
+              @view.number
+              @description("Quantity chosen for the cart.")
+
+  unitPrice   Float
+              @label("Unit Price")
+              @default(0)
+              @field.price
+              @filter.price
+              @span.price
+              @list.price
+              @view.price
+              @description("Snapshot of the price at add-to-cart time.")
+
+  cart        Cart @relation({ local "cartId" foreign "id" })
+  product     Product @relation({ local "productId" foreign "id" })
+}
+
+model Order
+  @labels("Order" "Orders")
+  @icon("receipt")
+  @display("{{email}}")
+  @query("*" "items.*" "items.product.*")
+{
+  id          String
+              @label("ID")
+              @id @default("cuid()")
+              @list.clip({ length 10 hellip true })
+              @description("Unique generated identifier.")
+
+  email       String
+              @label("Email")
+              @searchable
+              @field.email
+              @filter.email
+              @is.required("Email is required")
+              @list.string
+              @view.string
+              @description("Checkout email address.")
+
+  name        String
+              @label("Name")
+              @searchable
+              @field.string
+              @filter.string
+              @is.required("Name is required")
+              @list.string
+              @view.string
+              @description("Checkout display name.")
+
+  status      OrderStatus
+              @label("Status")
+              @default("PLACED")
+              @field.select({ options [ "PLACED" "COMPLETE" ] })
+              @filter.select({ options [ "PLACED" "COMPLETE" ] })
+              @list.string
+              @view.string
+              @description("Current order status.")
+
+  total       Float
+              @label("Total")
+              @default(0)
+              @field.price
+              @filter.price
+              @span.price
+              @list.price
+              @view.price
+              @description("Stored order total.")
+
+  created     Datetime
+              @label("Created")
+              @default("now()") @sortable
+              @span.date("m d, Y")
+              @list.date("m d, Y h:iA")
+              @view.date("m d, Y h:iA")
+              @description("Generated creation timestamp.")
+
+  updated     Datetime
+              @label("Updated")
+              @default("now()") @timestamp @sortable
+              @span.date("m d, Y")
+              @list.date("m d, Y h:iA")
+              @view.date("m d, Y h:iA")
+              @description("Generated update timestamp.")
+
+  items       OrderItem[] @label("Items")
+}
+
+model OrderItem
+  @labels("Order Item" "Order Items")
+  @icon("receipt")
+  @display("{{product.title}}")
+  @query("*" "order.*" "product.*")
+{
+  id          String
+              @label("ID")
+              @id @default("cuid()")
+              @list.clip({ length 10 hellip true })
+              @description("Unique generated identifier.")
+
+  orderId     String
+              @label("Order")
+              @field.relation({
+                id "id"
+                search "/admin/order/search?json"
+                template "{{email}}"
+              })
+              @filter.relation({
+                id "id"
+                search "/admin/order/search?json"
+                template "{{email}}"
+              })
+              @list.template({ template "{{order.email}}" })
+              @view.template({ template "{{order.email}}" })
+              @description("Owning order for this line item.")
+
+  productId   String
+              @label("Product")
+              @field.relation({
+                id "id"
+                search "/admin/product/search?json&q={{query}}"
+                template "{{title}}"
+              })
+              @filter.relation({
+                id "id"
+                search "/admin/product/search?json&q={{query}}"
+                template "{{title}}"
+              })
+              @list.template({ template "{{product.title}}" })
+              @view.template({ template "{{product.title}}" })
+              @description("Ordered product.")
+
+  quantity    Integer
+              @label("Quantity")
+              @default(1)
+              @field.integer({ min 1 })
+              @filter.integer
+              @span.integer
+              @list.number
+              @view.number
+              @description("Quantity stored on the order.")
+
+  unitPrice   Float
+              @label("Unit Price")
+              @default(0)
+              @field.price
+              @filter.price
+              @span.price
+              @list.price
+              @view.price
+              @description("Stored price snapshot for this order item.")
+
+  order       Order @relation({ local "orderId" foreign "id" })
+  product     Product @relation({ local "productId" foreign "id" })
+}

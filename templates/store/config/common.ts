@@ -51,6 +51,24 @@ export const admin = {
       icon: 'coffee',
       path: '/admin/session/search',
       match: '/admin/session'
+    },
+    {
+      name: 'Products',
+      icon: 'box-open',
+      path: '/admin/product/search',
+      match: '/admin/product'
+    },
+    {
+      name: 'Carts',
+      icon: 'cart-shopping',
+      path: '/admin/cart/search',
+      match: '/admin/cart'
+    },
+    {
+      name: 'Orders',
+      icon: 'receipt',
+      path: '/admin/order/search',
+      match: '/admin/order'
     }
   ]
 };

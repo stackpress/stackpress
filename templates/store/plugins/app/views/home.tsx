@@ -1,19 +1,38 @@
-//--------------------------------------------------------------------//
-// Imports
-
-import type { ServerPageProps } from 'stackpress/view/client';
-import { LayoutAdmin, useResponse } from 'stackpress/view/client';
+//modules
 import { useLanguage } from 'r22n';
+//stackpress
+import type { ServerPageProps } from 'stackpress/view/client';
+import { LayoutPanel, useResponse } from 'stackpress/view/client';
 
-//--------------------------------------------------------------------//
-// Components
+type HomeResults = {
+  title: string;
+  links: Array<{ href: string; label: string }>;
+};
 
 export function Body() {
-  const response = useResponse<{ title: string }>();
+  const response = useResponse<HomeResults>();
+  const links = response.results?.links || [];
   return (
-    <main className="border-t theme-bc-1 w-full h-full">
-      <div className="flex flex-col w-full h-full">
-        <h1>{response.results?.title || 'The Store'}</h1>
+    <main className="w-full h-full overflow-auto">
+      <div className="mx-auto max-w-3xl p-8">
+        <h1 className="text-3xl font-bold">
+          {response.results?.title || 'Store Sample'}
+        </h1>
+        <p className="mt-3 text-sm text-slate-600">
+          A small StackPress sample focused on plugin composition.
+        </p>
+        <ul className="mt-8 flex flex-col gap-3">
+          {links.map(link => (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                className="inline-flex rounded border border-slate-300 px-4 py-2 hover:bg-slate-50"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </main>
   );
@@ -24,7 +43,7 @@ export function Head(props: ServerPageProps) {
   const { _ } = useLanguage();
   return (
     <>
-      <title>{_('The Store')}</title>
+      <title>{_('Store Sample')}</title>
       <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
@@ -35,17 +54,11 @@ export function Head(props: ServerPageProps) {
 };
 
 export function Page(props: ServerPageProps) {
-  const { session, request, response } = props;
   return (
-    <LayoutAdmin
-      session={session}
-      request={request}
-      response={response}
-    >
+    <LayoutPanel {...props}>
       <Body />
-    </LayoutAdmin>
+    </LayoutPanel>
   );
 };
 
-//defaults to page
 export default Page;
