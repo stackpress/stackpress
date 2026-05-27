@@ -1,6 +1,9 @@
 //stackpress
-import type { ServerPageProps } from 'stackpress/view/client';
+import type { ServerConfigPageProps } from 'stackpress/view/client';
 import { LayoutPanel, useResponse } from 'stackpress/view/client';
+
+const title = 'Your Cart';
+const description = 'Cart review page for the StackPress store sample.';
 
 // shapes the cart payload consumed by the public cart page
 type CartResults = {
@@ -35,22 +38,22 @@ export function Body() {
               Your Cart
             </h1>
             <ul className="mt-6 flex flex-col gap-4">
-          {items.map(item => (
-            <li
-              key={item.id}
-              className="rounded-[1.5rem] border border-[#e0d4c5] bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(249,243,235,0.92))] p-5"
-            >
-              <div className="text-lg font-semibold text-[#2e2016]">
-                {item.product?.title || 'Product'}
-              </div>
-              <div className="mt-2 text-sm text-[#6a5540]">
-                Quantity: {item.quantity}
-              </div>
-              <div className="mt-1 text-sm text-[#6a5540]">
-                Unit Price: ${item.unitPrice.toFixed(2)}
-              </div>
-            </li>
-          ))}
+              {items.map(item => (
+                <li
+                  key={item.id}
+                  className="rounded-[1.5rem] border border-[#e0d4c5] bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(249,243,235,0.92))] p-5"
+                >
+                  <div className="text-lg font-semibold text-[#2e2016]">
+                    {item.product?.title || 'Product'}
+                  </div>
+                  <div className="mt-2 text-sm text-[#6a5540]">
+                    Quantity: {item.quantity}
+                  </div>
+                  <div className="mt-1 text-sm text-[#6a5540]">
+                    Unit Price: ${item.unitPrice.toFixed(2)}
+                  </div>
+                </li>
+              ))}
             </ul>
           </section>
           <aside className="rounded-[2rem] border border-[#dacbb9] bg-[#fffaf2] p-6 shadow-[0_24px_60px_rgba(78,53,23,0.08)]">
@@ -74,12 +77,43 @@ export function Body() {
   );
 }
 
+export function Head(props: ServerConfigPageProps) {
+  const { styles = [] } = props;
+
+  return (
+    <>
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content="/icon.png" />
+      <meta property="og:type" content="website" />
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content="/icon.png" />
+      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+      {styles.map((href, index) => (
+        <link key={index} rel="stylesheet" type="text/css" href={href} />
+      ))}
+    </>
+  );
+}
+
 /**
  * Wraps the cart page in the shared panel layout.
  */
-export function Page(props: ServerPageProps) {
+export function Page(props: ServerConfigPageProps) {
+  const { data, session, request, response } = props;
+
   return (
-    <LayoutPanel {...props}>
+    <LayoutPanel
+      data={data}
+      session={session}
+      request={request}
+      response={response}
+    >
       <Body />
     </LayoutPanel>
   );

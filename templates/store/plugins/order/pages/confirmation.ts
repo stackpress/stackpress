@@ -12,6 +12,10 @@ export default action(async function OrderConfirmationPage({ req, res, ctx }) {
 
   // confirmation uses the placed order id emitted from checkout
   const order = await ctx.resolve<Order>('order-detail', { id });
+  if (!order.results) {
+    res.code = 404;
+    return;
+  }
   res.results(order.results);
   setViewProps(req, res, ctx);
 });

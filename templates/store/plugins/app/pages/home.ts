@@ -1,7 +1,8 @@
 //modules
-import { action } from '@stackpress/ingest';
+import { action } from 'stackpress/server';
+import { setViewProps } from 'stackpress/view';
 
-export default action(async function HomePage({ res }) {
+export default action(async function HomePage({ req, res, ctx }) {
   res.results({
     title: 'Store Sample',
     links: [
@@ -9,4 +10,5 @@ export default action(async function HomePage({ res }) {
       { href: '/cart', label: 'View Cart' }
     ]
   });
+  setViewProps(req, res, ctx);
 });

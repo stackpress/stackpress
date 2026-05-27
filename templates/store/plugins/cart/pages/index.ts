@@ -5,29 +5,20 @@ import { setViewProps } from 'stackpress/view';
 import type { Cart, CartItemExtended, Product } from 'store-client/types';
 
 /**
- * Resolves the active cart for the current session, creating one when needed.
- */
-async function resolveCart(ctx: any, sessionId: string) {
-  // keep guest carts stable across requests with a single session lookup
-  const carts = await ctx.resolve<Cart[]>('cart-search', {
-    eq: { sessionId }
-  });
-
-  if (carts.results?.length) {
-    return carts.results[0];
-  }
-
-  const created = await ctx.resolve<Cart>('cart-create', { sessionId });
-  return created.results!;
-}
-
-/**
  * Handles cart readback and add-to-cart submissions.
  */
 export default action(async function CartPage({ req, res, ctx }) {
-  // this sample falls back to a fixed guest session when auth is absent
-  const sessionId = req.session?.id || 'guest-session';
-  const cart = await resolveCart(ctx, sessionId);
+  // use the auth session token when available, otherwise keep a shared guest cart
+  const sessionId = req.session.has('session')
+    ? req.session('session') as string
+    : 'guest-session';
+
+  // keep the cart lookup inside the typed action context
+  const carts = await ctx.resolve<Cart[]>('cart-search', {
+    eq: { sessionId }
+  });
+  const cart = carts.results?.[0]
+    || (await ctx.resolve<Cart>('cart-create', { sessionId })).results!;
 
   if (req.method === 'POST') {
     const productId = req.data<string>('productId');

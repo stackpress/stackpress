@@ -10,27 +10,17 @@ import type {
 } from 'store-client/types';
 
 /**
- * Resolves the current cart without creating one during checkout.
- */
-async function resolveCart(ctx: any, sessionId: string) {
-  const carts = await ctx.resolve<Cart[]>('cart-search', {
-    eq: { sessionId }
-  });
-
-  if (!carts.results?.length) {
-    return null;
-  }
-
-  return carts.results[0];
-}
-
-/**
  * Handles checkout display and order placement.
  */
 export default action(async function CheckoutPage({ req, res, ctx }) {
   // checkout reads from the same guest or signed-in cart used by the cart page
-  const sessionId = req.session?.id || 'guest-session';
-  const cart = await resolveCart(ctx, sessionId);
+  const sessionId = req.session.has('session')
+    ? req.session('session') as string
+    : 'guest-session';
+  const carts = await ctx.resolve<Cart[]>('cart-search', {
+    eq: { sessionId }
+  });
+  const cart = carts.results?.[0] || null;
 
   if (req.method === 'POST') {
     const name = req.data<string>('name');

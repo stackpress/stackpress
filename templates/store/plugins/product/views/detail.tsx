@@ -1,6 +1,9 @@
 //stackpress
-import type { ServerPageProps } from 'stackpress/view/client';
+import type { ServerConfigPageProps } from 'stackpress/view/client';
 import { LayoutPanel, useResponse } from 'stackpress/view/client';
+
+const title = 'Product Detail';
+const description = 'Public product detail page for the store sample.';
 
 // keeps the detail page response typed without leaking server-only types
 type ProductDetailResults = {
@@ -70,12 +73,43 @@ export function Body() {
   );
 }
 
+export function Head(props: ServerConfigPageProps) {
+  const { styles = [] } = props;
+
+  return (
+    <>
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content="/icon.png" />
+      <meta property="og:type" content="website" />
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content="/icon.png" />
+      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+      {styles.map((href, index) => (
+        <link key={index} rel="stylesheet" type="text/css" href={href} />
+      ))}
+    </>
+  );
+}
+
 /**
  * Wraps the product detail page in the shared panel layout.
  */
-export function Page(props: ServerPageProps) {
+export function Page(props: ServerConfigPageProps) {
+  const { data, session, request, response } = props;
+
   return (
-    <LayoutPanel {...props}>
+    <LayoutPanel
+      data={data}
+      session={session}
+      request={request}
+      response={response}
+    >
       <Body />
     </LayoutPanel>
   );

@@ -1,6 +1,9 @@
 //stackpress
-import type { ServerPageProps } from 'stackpress/view/client';
+import type { ServerConfigPageProps } from 'stackpress/view/client';
 import { LayoutPanel, useResponse } from 'stackpress/view/client';
+
+const title = 'Order Confirmed';
+const description = 'Order confirmation page for the store sample.';
 
 // captures the order header shown after a successful checkout
 type OrderConfirmationResults = {
@@ -31,7 +34,7 @@ export function Body() {
             order plugin.
           </p>
           <p className="mt-6 text-sm text-[#6a5540]">
-          Order ID: {response.results?.id}
+            Order ID: {response.results?.id}
           </p>
           <p className="mt-2 text-sm text-[#6a5540]">
             Email: {response.results?.email}
@@ -54,12 +57,43 @@ export function Body() {
   );
 }
 
+export function Head(props: ServerConfigPageProps) {
+  const { styles = [] } = props;
+
+  return (
+    <>
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content="/icon.png" />
+      <meta property="og:type" content="website" />
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content="/icon.png" />
+      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link rel="stylesheet" type="text/css" href="/styles/global.css" />
+      {styles.map((href, index) => (
+        <link key={index} rel="stylesheet" type="text/css" href={href} />
+      ))}
+    </>
+  );
+}
+
 /**
  * Wraps the confirmation page in the shared panel layout.
  */
-export function Page(props: ServerPageProps) {
+export function Page(props: ServerConfigPageProps) {
+  const { data, session, request, response } = props;
+
   return (
-    <LayoutPanel {...props}>
+    <LayoutPanel
+      data={data}
+      session={session}
+      request={request}
+      response={response}
+    >
       <Body />
     </LayoutPanel>
   );
