@@ -17,6 +17,9 @@ type AuthModeControlProps = {
   onClick: () => void;
 };
 
+/**
+ * Renders one icon toggle for the available email sign-in methods.
+ */
 function AuthModeControl(props: AuthModeControlProps) {
   const { icon, active, label, onClick } = props;
   return (
@@ -32,13 +35,16 @@ function AuthModeControl(props: AuthModeControlProps) {
   );
 }
 
+/**
+ * Renders the email sign-in form and switches its fields by selected method.
+ */
 export function EmailSigninForm() {
   //hooks
   const { _ } = useLanguage();
   const { config } = useServer();
   const [ shown, setShown ] = useState(false);
   const [ method, setMethod ] = useState('pass');
-  //variables
+  //derive the csrf payload once so every submission path posts the same token
   const tokenKey = config.path('csrf.name', 'csrf');
   const token = config.path('csrf.token', '');
   //render
@@ -61,6 +67,7 @@ export function EmailSigninForm() {
           role="tablist"
           aria-label={_('Sign in method')}
         >
+          {/* swap the helper copy when the screen is sending a challenge instead */}
           {method === 'pass' ? (
             <label className="auth-email-mode-label">{_('Password *')}</label>
           ) : (
@@ -91,27 +98,26 @@ export function EmailSigninForm() {
             />
           </div>
         </div>
+        {/* only show the password input when this flow signs in immediately */}
         {method === 'pass' ? (
-          <>
-            <div className="auth-form-password">
-              <input
-                name="secret"
-                className="auth-form-input auth-form-password-input"
-                autoComplete="off"
-                type={shown ? 'text' : 'password'}
-                placeholder={_('Enter your password')}
-              />
-              <button
-                type="button"
-                className="auth-form-password-toggle"
-                aria-label={shown ? _('Hide password') : _('Show password')}
-                aria-pressed={shown}
-                onClick={() => setShown(!shown)}
-              >
-                {shown ? '*' : 'A'}
-              </button>
-            </div>
-          </>
+          <div className="auth-form-password">
+            <input
+              name="secret"
+              className="auth-form-input auth-form-password-input"
+              autoComplete="off"
+              type={shown ? 'text' : 'password'}
+              placeholder={_('Enter your password')}
+            />
+            <button
+              type="button"
+              className="auth-form-password-toggle"
+              aria-label={shown ? _('Hide password') : _('Show password')}
+              aria-pressed={shown}
+              onClick={() => setShown(!shown)}
+            >
+              {shown ? '*' : 'A'}
+            </button>
+          </div>
         ) : null}
       </section>
       <button className="auth-submit-btn" type="submit">
@@ -128,6 +134,9 @@ export function EmailSigninForm() {
   );
 };
 
+/**
+ * Chooses between the email form and the post-send magic-link confirmation copy.
+ */
 export function EmailSigninBody() {
   //hooks
   const { _ } = useLanguage();
@@ -137,7 +146,7 @@ export function EmailSigninBody() {
     { email?: string }
   >();
   const { theme, toggle } = useTheme();
-  //variables
+  //detect the one case where the request succeeded without signing in yet
   const dark = theme === 'dark';
   const sent = response.code === 200 &&
     request.method === 'POST' &&
@@ -166,6 +175,10 @@ export function EmailSigninBody() {
               <i className={`fas fa-fw ${dark ? 'fa-moon' : 'fa-sun'}`} />
             </span>
           </header>
+          {/*
+            keep the user on the page after a magic-link send so the next step
+            is obvious and there is no temptation to resubmit the form
+          */}
           {sent ? (
             <main className="auth-email-message">
               <p>{_('A magic link has been sent to your email address.')}</p>
@@ -189,6 +202,9 @@ export function EmailSigninBody() {
   );
 }
 
+/**
+ * Builds the document head for the email sign-in page.
+ */
 export function EmailSigninHead(props: AuthPageProps) {
   //props
   const { data, styles = [] } = props;
@@ -218,6 +234,9 @@ export function EmailSigninHead(props: AuthPageProps) {
   );
 }
 
+/**
+ * Wraps the email sign-in body with the blank auth layout.
+ */
 export function EmailSigninPage(props: AuthPageProps) {
   return (
     <LayoutBlank {...props}>

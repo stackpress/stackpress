@@ -8,7 +8,11 @@ import {
 //stackpress-session/auth
 import type { AuthExtended, AuthPageProps } from '../../types.js';
 
+/**
+ * Renders the OTP challenge form after the email step sends the code.
+ */
 export function OTPSigninBody() {
+  //hooks
   const { _ } = useLanguage();
   const { config, request, response } = useServer<
     AuthPageProps['data'],
@@ -16,11 +20,13 @@ export function OTPSigninBody() {
     AuthExtended
   >();
   const { theme, toggle } = useTheme();
+  //derive the route and csrf values the form needs to post back safely
   const dark = theme === 'dark';
   const base = config.path('auth.base', '/auth');
   const redirect = request.data.path<string>('redirect_uri', '/');
   const tokenKey = config.path('csrf.name', 'csrf');
   const token = config.path('csrf.token', '');
+  //prefer the loaded auth payload, then fall back to request data on errors
   const email = response.results?.token || request.data.path('email', '');
   return (
     <main className="auth-signin-options auth-page auth-2fa-page">
@@ -75,9 +81,15 @@ export function OTPSigninBody() {
   );
 }
 
+/**
+ * Builds the document head for the OTP challenge page.
+ */
 export function OTPSigninHead(props: AuthPageProps) {
+  //props
   const { data, styles = [] } = props;
+  //hooks
   const { _ } = useLanguage();
+  //keep favicon handling aligned with the other auth pages
   const { favicon = '/favicon.ico' } = data?.brand || {};
   const mimetype = favicon.endsWith('.png')
     ? 'image/png'
@@ -100,6 +112,9 @@ export function OTPSigninHead(props: AuthPageProps) {
   );
 }
 
+/**
+ * Wraps the OTP body with the blank auth layout.
+ */
 export function OTPSigninPage(props: AuthPageProps) {
   return (
     <LayoutBlank {...props}>

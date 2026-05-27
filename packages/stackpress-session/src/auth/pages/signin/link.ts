@@ -1,5 +1,5 @@
 //modules
-import { action } from '@stackpress/ingest/Server' 
+import { action } from '@stackpress/ingest/Server';
 //stackpress-schema
 import { hash } from 'stackpress-schema/helpers';
 //stackpress-view
@@ -25,9 +25,9 @@ export default action(async function MagicLinkSignInPage({ req, res, ctx }) {
   //get the auth config
   const auth = ctx.config.path<AuthConfig>('auth');
   //set auth props for view as well
-  res.data.set('auth', { 
+  res.data.set('auth', {
     base: auth.base || '/auth',
-    roles: auth.roles || [], 
+    roles: auth.roles || [],
     menu: auth.menu || [],
     password: auth.password || {}
   });
@@ -35,7 +35,7 @@ export default action(async function MagicLinkSignInPage({ req, res, ctx }) {
   const redirect = req.data.path<string>('redirect_uri', '/');
   //load session
   const me = session.load(req);
-  //skip magic-link validation for signed-in users 
+  //skip magic-link validation for signed-in users
   if (!await me.guest()) {
     //redirect
     res.redirect(redirect);
@@ -69,8 +69,8 @@ export default action(async function MagicLinkSignInPage({ req, res, ctx }) {
     res.setError('Magic link is invalid or expired.');
     return;
   }
-  //if we are here the magic-link proof passes, reuse the shared 2FA 
-  // route so email sign-in and app-based 2FA finish through one final 
+  //if we are here the magic-link proof passes, reuse the shared 2FA
+  // route so email sign-in and app-based 2FA finish through one final
   // checkpoint.
   const twoFactorChallenge = hash(results.consumed.toString());
   res.redirect(

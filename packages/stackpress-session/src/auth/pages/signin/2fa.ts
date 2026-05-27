@@ -1,5 +1,5 @@
 //modules
-import { action } from '@stackpress/ingest/Server'
+import { action } from '@stackpress/ingest/Server';
 //stackpress-schema
 import { hash } from 'stackpress-schema/helpers';
 //stackpress-csrf
@@ -20,7 +20,7 @@ export default action(async function TwoFactorSignInPage({ req, res, ctx }) {
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
     return;
-  }  
+  }
   //get session plugin
   const session = ctx.plugin<SessionPlugin>('session');
   //get csrf plugin
@@ -30,9 +30,9 @@ export default action(async function TwoFactorSignInPage({ req, res, ctx }) {
   //get the auth config
   const auth = ctx.config.path<AuthConfig>('auth');
   //set auth props for view as well
-  res.data.set('auth', { 
+  res.data.set('auth', {
     base: auth.base || '/auth',
-    roles: auth.roles || [], 
+    roles: auth.roles || [],
     menu: auth.menu || [],
     password: auth.password || {}
   });
@@ -56,13 +56,15 @@ export default action(async function TwoFactorSignInPage({ req, res, ctx }) {
   const profileId = String(req.data.path('profile', ''));
   const authId = String(req.data.path('auth', ''));
   const challenge = String(req.data.path('challenge', ''));
+  //send incomplete challenge links back to the chooser because there is
+  // nothing left on the URL to verify or recover here.
   if (!authId || !profileId) {
     res.redirect(`${base}/signin?redirect_uri=${encodeURIComponent(redirect)}`);
     return;
   }
   //get all the authentications for the user
   const search = await ctx.resolve<AuthExtended[]>('auth-search', {
-    eq: { profileId },
+    eq: { profileId }
   });
   //if there is an error
   if (search.code !== 200) {
@@ -84,14 +86,14 @@ export default action(async function TwoFactorSignInPage({ req, res, ctx }) {
       'flash',
       JSON.stringify({
         type: 'error',
-        message: 'Two-factor authentication failed.',
-      }),
+        message: 'Two-factor authentication failed.'
+      })
     );
     //then redirect to signin page...
     res.redirect(
       `${base}/signin/${currentAuth.type}?redirect_uri=${encodeURIComponent(
-        redirect,
-      )}`,
+        redirect
+      )}`
     );
     return;
   }
@@ -99,6 +101,8 @@ export default action(async function TwoFactorSignInPage({ req, res, ctx }) {
   const twoFA = search.results.find((auth) => auth.type === '2fa');
   //if no 2fa
   if (!twoFA) {
+    //finish the sign-in immediately because the earlier challenge already
+    // proved ownership of the current auth method.
     //allow passwordless signin on this page...
     req.data.set('password', false);
     //set auth type
@@ -122,7 +126,7 @@ export default action(async function TwoFactorSignInPage({ req, res, ctx }) {
   if (req.method === 'POST') {
     //if invalid csrf
     if (!csrf.valid(req, res)) return;
-    //validate the code
+    //validate the code before asking the TOTP helper to compare secrets
     const code = String(req.data.path('code', ''));
     const padded = code.padStart(6, '0');
     if (!code || padded.length < 6) {
@@ -135,6 +139,8 @@ export default action(async function TwoFactorSignInPage({ req, res, ctx }) {
       res.setError('Invalid code');
       return;
     }
+    //once the second factor passes, rebuild the auth-signin payload in the
+    // same shape the shared signin event already expects.
     //allow passwordless signin...
     req.data.set('password', false);
     //set auth type

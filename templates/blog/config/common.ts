@@ -148,9 +148,9 @@ export const auth = {
   //on signin (or already signed in)
   redirect: '/',
   //two factor authentication settings
-  '2fa': {},
-  //captcha settings
-  captcha: {},
+  '2fa': {
+    issuer: 'Stackpress'
+  },
   //email settings
   email: {},
   //default roles for new users

@@ -6,15 +6,15 @@ import type {
 } from 'stackpress-schema/types';
 import type { SchemaInterface } from 'stackpress-schema';
 //stackpress-sql
-import type StoreInterface from 'stackpress-sql/StoreInterface';
 import type ActionsInterface from 'stackpress-sql/ActionsInterface';
+import type StoreInterface from 'stackpress-sql/StoreInterface';
 //stackpress-view
-import { 
-  ServerConfigProps, 
-  ServerPageProps 
+import type {
+  ServerConfigProps,
+  ServerPageProps
 } from 'stackpress-view/types';
 //stackpress-session/profile
-import { Profile } from '../profile/types.js';
+import type { Profile } from '../profile/types.js';
 //stackpress-session/auth
 import type IdColumn from './columns/IdColumn.js';
 import type ProfileIdColumn from './columns/ProfileIdColumn.js';
@@ -28,6 +28,7 @@ import type CreatedColumn from './columns/CreatedColumn.js';
 import type UpdatedColumn from './columns/UpdatedColumn.js';
 import type ProfileStore from '../profile/ProfileStore.js';
 
+// stores the persisted authentication record shape that auth actions return
 export type Auth = {
   id: string;
   profileId: string;
@@ -40,6 +41,8 @@ export type Auth = {
   created: Date;
   updated: Date;
 };
+
+// describes the writable payload callers can send into auth create or update
 export type AuthInput = {
   id?: string;
   profileId: string;
@@ -52,6 +55,8 @@ export type AuthInput = {
   created?: Date;
   updated?: Date;
 };
+
+// maps the generated auth schema columns so store and schema helpers stay typed
 export type AuthColumns = {
   id: IdColumn;
   profileId: ProfileIdColumn;
@@ -64,18 +69,25 @@ export type AuthColumns = {
   created: CreatedColumn;
   updated: UpdatedColumn;
 };
+
+// exposes the generated assert handlers for each auth column
 export type AuthAssertInterfaceMap = AssertInterfaceMap<AuthColumns>;
+// exposes the generated serialize handlers for each auth column
 export type AuthSerializeInterfaceMap = SerializeInterfaceMap<AuthColumns>;
+// exposes the generated unserialize handlers for each auth column
 export type AuthUnserializeInterfaceMap = UnserializeInterfaceMap<AuthColumns>;
 
 export interface AuthSchemaInterface extends SchemaInterface<
   Auth,
   AuthColumns
-> {};
+> {}
 
+// expands auth rows with the joined profile record used by page handlers and views
 export type AuthExtended = Auth & {
   profile: Profile;
 };
+
+// describes the generated relationship wiring between auth and profile stores
 export type AuthRelations = {
   profile: {
     store: ProfileStore;
@@ -99,6 +111,7 @@ export interface AuthActionsInterface extends ActionsInterface<
   AuthRelations
 > {};
 
+// carries helper options for auth-related actions such as seeded ids and password rules
 export type ActionOptions = {
   seed?: string,
   password?: AuthPasswordConfig
@@ -107,11 +120,13 @@ export type ActionOptions = {
 //--------------------------------------------------------------------//
 // Config Types
 
+// configures the sender identity for auth emails such as OTP and magic links
 export type AuthEmailConfig = {
   name: string;
   address: string;
-}
+};
 
+// configures password policy checks shared by signup and password updates
 export type AuthPasswordConfig = {
   min?: number,
   max?: number,
@@ -121,6 +136,7 @@ export type AuthPasswordConfig = {
   special?: boolean
 };
 
+// describes the sign-in menu entries rendered on the auth landing page
 export type AuthMenuConfig = {
   //use 'footer' to make it a footer link
   type?: string,
@@ -132,6 +148,7 @@ export type AuthMenuConfig = {
 };
 
 //ie. ctx.config<AuthConfig>('auth')
+// collects package-level auth settings that pages and events read at runtime
 export type AuthConfig = {
   base?: string,
   redirect?: string,
@@ -144,10 +161,10 @@ export type AuthConfig = {
   password?: AuthPasswordConfig
 };
 
-
 //--------------------------------------------------------------------//
 // Page Types
 
+// captures the signup form payload before it fans out into auth and profile records
 export type SignupInput = {
   name: string,
   type?: string,
@@ -158,6 +175,7 @@ export type SignupInput = {
   roles: string[]
 };
 
+// captures the shared sign-in payload before each route narrows by method
 export type SigninInput = {
   type?: SigninType,
   username?: string,
@@ -166,13 +184,16 @@ export type SigninInput = {
   secret: string
 };
 
+// names the built-in sign-in methods that the generic signin event accepts
 export type SigninType = 'username' | 'email' | 'phone';
 
 //--------------------------------------------------------------------//
 // View Types
 
+// extends page config props with the auth config block used by the views
 export type AuthConfigProps = ServerConfigProps & {
   auth: AuthConfig
 };
 
+// carries the full page props shape shared by stackpress-session auth pages
 export type AuthPageProps = ServerPageProps<AuthConfigProps>;

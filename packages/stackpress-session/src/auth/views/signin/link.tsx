@@ -8,10 +8,15 @@ import {
 //stackpress-session
 import type { AuthPageProps } from '../../types.js';
 
+/**
+ * Renders the fallback screen for invalid or expired magic-link requests.
+ */
 export function MagicLinkSigninBody() {
+  //hooks
   const { _ } = useLanguage();
   const { config, request, response } = useServer();
   const { theme, toggle } = useTheme();
+  //derive the navigation values from the current failed request
   const dark = theme === 'dark';
   const base = config.path('auth.base', '/auth');
   const redirect = request.data.path<string>('redirect_uri', '/');
@@ -53,9 +58,15 @@ export function MagicLinkSigninBody() {
   );
 }
 
+/**
+ * Builds the document head for the magic-link fallback page.
+ */
 export function MagicLinkSigninHead(props: AuthPageProps) {
+  //props
   const { data, styles = [] } = props;
+  //hooks
   const { _ } = useLanguage();
+  //pick a favicon mime type that matches whatever brand asset the app exposes
   const { favicon = '/favicon.ico' } = data?.brand || {};
   const mimetype = favicon.endsWith('.png')
     ? 'image/png'
@@ -78,6 +89,9 @@ export function MagicLinkSigninHead(props: AuthPageProps) {
   );
 }
 
+/**
+ * Wraps the magic-link message with the blank auth layout.
+ */
 export function MagicLinkSigninPage(props: AuthPageProps) {
   return (
     <LayoutBlank {...props}>

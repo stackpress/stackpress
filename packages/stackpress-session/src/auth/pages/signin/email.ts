@@ -7,7 +7,7 @@ import { action } from '@stackpress/ingest/Server';
 //stackpress-csrf
 import type { CsrfPlugin } from 'stackpress-csrf/types';
 //stackpress-email
-import type { EmailConfig } from 'stackpress-email/types'
+import type { EmailConfig } from 'stackpress-email/types';
 //stackpress-schema
 import { hash } from 'stackpress-schema/helpers';
 //stackpress-view
@@ -18,18 +18,18 @@ import type { SessionPlugin } from '../../../session/types.js';
 import type { AuthConfig, AuthExtended } from '../../types.js';
 import {
   makeMagicLinkTemplate,
-  makeOTPTemplate,
+  makeOTPTemplate
 } from './../../templates.js';
 
 /**
  * Main page handler
  */
-export default action(async function EmailSignInPage({ req, res, ctx}) {
+export default action(async function EmailSignInPage({ req, res, ctx }) {
   //if there is a response body or there is an error code
   if (res.body || (res.code && res.code !== 200)) {
     //let the response pass through
     return;
-  }  
+  }
   //get session plugin
   const session = ctx.plugin<SessionPlugin>('session');
   //get csrf plugin
@@ -39,9 +39,9 @@ export default action(async function EmailSignInPage({ req, res, ctx}) {
   //get the auth config
   const auth = ctx.config.path<AuthConfig>('auth');
   //set auth props for view as well
-  res.data.set('auth', { 
+  res.data.set('auth', {
     base: auth.base || '/auth',
-    roles: auth.roles || [], 
+    roles: auth.roles || [],
     menu: auth.menu || [],
     password: auth.password || {}
   });
@@ -56,10 +56,10 @@ export default action(async function EmailSignInPage({ req, res, ctx}) {
     //if authentication method is with password
     if (method === 'pass') {
       await PasswordSignin(req, res, ctx);
-    //if authentication method is with otp
+      //if authentication method is with otp
     } else if (method === 'otp') {
       await OTPSignin(req, res, ctx);
-    //if authentication method is with magic
+      //if authentication method is with magic
     } else if (method === 'magic') {
       await MagicLinkSignin(req, res, ctx);
     } else {
@@ -83,13 +83,13 @@ export default action(async function EmailSignInPage({ req, res, ctx}) {
 });
 
 /**
- * Password Sign In method
+ * Completes the classic email-and-password sign-in flow.
  */
 export async function PasswordSignin(
   req: Request,
   res: Response,
   ctx: Server
-) {
+): Promise<void> {
   //prevent passwordless sign in on this page...
   req.data.set('password', true);
   //set auth type
@@ -107,13 +107,13 @@ export async function PasswordSignin(
 }
 
 /**
- * OTP Sign In method
+ * Sends a one-time pin email, then redirects the browser to the OTP challenge page.
  */
 export async function OTPSignin(
   req: Request,
   res: Response,
   ctx: Server
-) {
+): Promise<void> {
   //get email
   const email = req.data.path('email', '').trim();
   //if no email
@@ -148,7 +148,7 @@ export async function OTPSignin(
   const base = auth.base || '/auth';
   //get redirect from url query
   const redirect = req.data.path<string>('redirect_uri', '/');
-  //prepare variables for the challenge link
+  //prepare the delivery context that the email template needs
   const port = ctx.config.path('server.port', 3000);
   const host = ctx.config.path('host', `http://localhost:${port}`);
   const brand = ctx.config.path('brand.name', 'Stackpress');
@@ -156,7 +156,7 @@ export async function OTPSignin(
   const code = Math.floor(Math.random() * 1000000)
     .toString()
     .padStart(6, '0');
-  //bind the otp code to the consumed timestamp 
+  //bind the otp code to the consumed timestamp
   const challenge = hash(current.consumed.toString() + code);
   //build the challenge link
   const link = `${base}/signin/otp/${encodeURIComponent(current.id)}/${
@@ -179,16 +179,16 @@ export async function OTPSignin(
     //do not send email
     return;
   }
-  //form email data 
+  //form email data
   const mail: SendMailOptions = {
     from: { name: auth.email.name, address: auth.email.address },
     to: email,
     subject: template.subject,
     text: template.text,
     html: template.html
-  }
+  };
   //send email
-  const sent = await ctx.resolve('email-send', mail, res)
+  const sent = await ctx.resolve('email-send', mail, res);
   //if not ok
   if (sent.code !== 200) {
     //sync sent response object to response
@@ -203,11 +203,14 @@ export async function OTPSignin(
   res.redirect(link);
 }
 
+/**
+ * Sends a magic-link email without signing the user in on this first step.
+ */
 export async function MagicLinkSignin(
   req: Request,
   res: Response,
-  ctx: Server,
-) {
+  ctx: Server
+): Promise<void> {
   //get email
   const email = req.data.path('email', '').trim();
   //if no email
@@ -238,6 +241,7 @@ export async function MagicLinkSignin(
   //get auth config
   const auth = ctx.config<AuthConfig>('auth');
   const base = auth.base || '/auth';
+  //reuse the current host and brand config so the email can deep-link back here
   const redirect = req.data.path<string>('redirect_uri', '/');
   const port = ctx.config.path('server.port', 3000);
   const host = ctx.config.path('host', `http://localhost:${port}`);
@@ -246,7 +250,8 @@ export async function MagicLinkSignin(
   const challenge = hash(current.consumed.toString());
   //build the link
   const link = `${base}/signin/link/${encodeURIComponent(current.id)}/${
-    encodeURIComponent(challenge)}?redirect_uri=${encodeURIComponent(redirect)}`;
+    encodeURIComponent(challenge)
+  }?redirect_uri=${encodeURIComponent(redirect)}`;
   //get email config
   const config = ctx.config<EmailConfig>('email');
   //if no config, do nothing.
@@ -263,16 +268,16 @@ export async function MagicLinkSignin(
     //do not send email
     return;
   }
-  //form email data 
+  //form email data
   const mail: SendMailOptions = {
     from: { name: auth.email.name, address: auth.email.address },
     to: email,
     subject: template.subject,
     text: template.text,
     html: template.html
-  }
+  };
   //send email
-  const sent = await ctx.resolve('email-send', mail, res)
+  const sent = await ctx.resolve('email-send', mail, res);
   //if not ok
   if (sent.code !== 200) {
     //sync sent response object to response

@@ -1,5 +1,5 @@
 //modules
-import { action } from '@stackpress/ingest/Server' 
+import { action } from '@stackpress/ingest/Server';
 //stackpress-schema
 import { hash } from 'stackpress-schema/helpers';
 //stackpress-csrf
@@ -30,7 +30,7 @@ export default action(async function OTPSignInPage({ req, res, ctx }) {
   const redirect = req.data.path<string>('redirect_uri', '/');
   //get me
   const me = session.load(req);
-  //skip otp screen for signed-in users 
+  //skip otp screen for signed-in users
   if (!await me.guest()) {
     csrf.clear(req, res, ctx);
     res.redirect(redirect);
@@ -51,7 +51,7 @@ export default action(async function OTPSignInPage({ req, res, ctx }) {
   const authId = req.data.path('auth', '');
   //get challenge
   const challenge = req.data.path('challenge', '');
-  //reject incomplete links early because there is no record or 
+  //reject incomplete links early because there is no record or
   // challenge to validate against once either route parameter is missing.
   if (!authId || !challenge) {
     res.statusCode(404, 'Not Found');
@@ -70,7 +70,7 @@ export default action(async function OTPSignInPage({ req, res, ctx }) {
   }
   //get first result
   const found = current.results?.[0];
-  //if no record found 
+  //if no record found
   if (!found) {
     //set error as expired-link
     res.statusCode(404, 'Not Found');
@@ -81,7 +81,7 @@ export default action(async function OTPSignInPage({ req, res, ctx }) {
   const { secret: _secret, ...results } = found;
   //set results
   res.results(results);
-  //stop on GET after the auth payload is ready so the form can render 
+  //stop on GET after the auth payload is ready so the form can render
   // without running any of the OTP submission checks below.
   if (req.method !== 'POST') {
     return;
@@ -91,7 +91,7 @@ export default action(async function OTPSignInPage({ req, res, ctx }) {
   //continue on validation check
   const code = String(req.data.path('code', '')).trim();
   const padded = code.padStart(6, '0');
-  //normalize the user input to six digits so short entries can still 
+  //normalize the user input to six digits so short entries can still
   // match the stored OTP challenge format.
   if (!code || padded.length !== 6) {
     res.setError('Invalid Parameters', { code: 'OTP code is required' });
@@ -109,7 +109,7 @@ export default action(async function OTPSignInPage({ req, res, ctx }) {
   }
   //remove csrf
   csrf.clear(req, res, ctx);
-  //if we are here OTP challenge passes, hand the user off to the shared 
+  //if we are here OTP challenge passes, hand the user off to the shared
   // 2FA route so email OTP and app-based 2FA continue through the same
   // final checkpoint.
   const twoFactorChallenge = hash(results.consumed.toString());
@@ -121,4 +121,3 @@ export default action(async function OTPSignInPage({ req, res, ctx }) {
     }`
   );
 });
-
