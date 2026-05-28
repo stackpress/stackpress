@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from 'frui/Button';
 import FieldControl from 'frui/form/FieldControl';
 import Input from 'frui/form/Input';
+import PasswordInput from 'frui/form/PasswordInput';
 import PhoneInput from 'frui/form/PhoneInput';
 //stackpress-view
 import { useLanguage, useServer } from 'stackpress-view/client';
@@ -94,6 +95,20 @@ export function AccountUpdateBody() {
               placeholder={_('Enter your phone number')}
               className="account-phone-input"
             />
+          </FieldControl>
+          <FieldControl
+            label={_('Current Password')}
+            className="account-control"
+          >
+            <PasswordInput
+              name="current"
+              placeholder={_('Enter your current password')}
+            />
+            <p className="account-control-note">
+              {_(
+                'Required only when adding a new username, email, or phone sign-in method.'
+              )}
+            </p>
           </FieldControl>
           <Button info type="submit" className="account-primary-button">
             {_('Update')}

@@ -21,6 +21,10 @@ export default function plugin(ctx: Server) {
       () => import('./pages/signup.js')
     );
     ctx.import.get(
+      `${base}/privacy-policy`,
+      () => import('./pages/privacy.js')
+    );
+    ctx.import.get(
       `${base}/signin`,
       () => import('./pages/signin.js')
     );
@@ -51,6 +55,10 @@ export default function plugin(ctx: Server) {
     ctx.import.get(
       `${base}/signout`,
       () => import('./pages/signout.js')
+    );
+    ctx.import.get(
+      `${base}/terms-of-use`,
+      () => import('./pages/terms.js')
     );
 
     ctx.import.post(
@@ -89,6 +97,11 @@ export default function plugin(ctx: Server) {
       -100
     );
     ctx.view.get(
+      `${base}/privacy-policy`,
+      'stackpress-session/esm/auth/views/privacy',
+      -100
+    );
+    ctx.view.get(
       `${base}/signin`,
       'stackpress-session/esm/auth/views/signin/index',
       -100
@@ -121,6 +134,11 @@ export default function plugin(ctx: Server) {
     ctx.view.get(
       `${base}/signin/username`,
       'stackpress-session/esm/auth/views/signin/username',
+      -100
+    );
+    ctx.view.get(
+      `${base}/terms-of-use`,
+      'stackpress-session/esm/auth/views/terms',
       -100
     );
 
