@@ -576,8 +576,6 @@ export const session = {
       { method: 'ALL', route: '/auth/signin' },
       { method: 'ALL', route: '/auth/signin/**' },
       { method: 'ALL', route: '/auth/signout' },
-      { method: 'ALL', route: '/auth/terms-of-use' },
-      { method: 'ALL', route: '/auth/privacy-policy' },
       { method: 'ALL', route: '/api/**' },
       { method: 'ALL', route: '/mcp' }
     ]
