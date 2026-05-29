@@ -1,7 +1,14 @@
 //modules
+import type { Field } from '@stackpress/inquire/types';
+import { jsonCompare } from '@stackpress/inquire/helpers';
 import { isObject } from '@stackpress/lib/Nest';
+//stackpress-schema
+import type Model from 'stackpress-schema/Model';
+import type Schema from 'stackpress-schema/Schema';
+//stackpress-sql
+import { makeCreateQuery } from './transform/helpers.js';
 //stackpress/sql
-import type { StorePath, StoreSelector } from './types.js';
+import type { ColumnSignature, CreateBuild, ForeignBuild, RenameRisk, StorePath, StoreSelector } from './types.js';
 
 /**
  * Formats an inputted value to an acceptable SQL string
@@ -233,3 +240,138 @@ export function storeSelectorToSqlSelector(selector: StoreSelector, q = '"') {
     //address_location
     : `${q}${column}${q}`;
 };
+
+/**
+ * Detect rename-like column changes by comparing removed and added fields
+ * within the same model using the SQL shape Stackpress already generates.
+ */
+export function findLikelyRenameRisks(from: Schema, to: Schema) {
+  const risks: RenameRisk[] = [];
+  const previous = Array.from(from.models.values());
+  const current = Array.from(to.models.values());
+
+  for (const after of current) {
+    const before = previous.find(
+      model => model.name.snakeCase === after.name.snakeCase
+    );
+    if (!before) continue;
+
+    const beforeBuild = makeCreateQuery(before).build();
+    const afterBuild = makeCreateQuery(after).build();
+    const removed = Object.keys(beforeBuild.fields).filter(
+      name => !afterBuild.fields[name]
+    );
+    const added = Object.keys(afterBuild.fields).filter(
+      name => !beforeBuild.fields[name]
+    );
+    if (!removed.length || !added.length) continue;
+
+    const remaining = [ ...added ];
+    for (const fromField of removed) {
+      const fromColumn = getColumnByField(before, fromField);
+      if (!fromColumn) continue;
+      const fromSignature = getColumnSignature(beforeBuild, fromField);
+
+      const matchIndex = remaining.findIndex(toField => {
+        const toColumn = getColumnByField(after, toField);
+        if (!toColumn) return false;
+        return jsonCompare(
+          fromSignature,
+          getColumnSignature(afterBuild, toField)
+        );
+      });
+
+      if (matchIndex === -1) continue;
+      const toField = remaining.splice(matchIndex, 1)[0];
+      const toColumn = getColumnByField(after, toField);
+      if (!toColumn) continue;
+      risks.push({
+        model: after.name.toString(),
+        table: after.name.snakeCase,
+        from: fromColumn.name.toString(),
+        fromField,
+        to: toColumn.name.toString(),
+        toField
+      });
+    }
+  }
+
+  return risks;
+}
+
+/**
+ * Format one user-facing warning that makes the destructive risk explicit
+ * before `push` reaches the SQL diff step.
+ */
+export function formatRenameRiskMessage(risks: RenameRisk[]) {
+  if (!risks.length) return '';
+  const lines = [
+    'Potential destructive field rename detected.',
+    'Running `stackpress push` now would drop the old column and add a new one, which can erase populated values.',
+    'Back up the database before continuing.'
+  ];
+
+  for (const risk of risks) {
+    lines.push(
+      `- ${risk.model}: ${risk.from} (${risk.fromField}) -> ${risk.to} (${risk.toField})`
+    );
+  }
+
+  lines.push('Re-run with `--force` only if you intend to accept the data-loss risk.');
+  return lines.join('\n');
+}
+
+function getColumnByField(model: Model, field: string) {
+  return model.columns.findValue(
+    column => column.name.snakeCase === field
+  ) || null;
+}
+
+function getColumnSignature(build: CreateBuild, field: string): ColumnSignature {
+  return {
+    field: normalizeField(build.fields[field]),
+    primary: build.primary.includes(field),
+    unique: getKeysForField(build.unique, field),
+    keys: getKeysForField(build.keys, field),
+    foreign: getForeignForField(build.foreign, field)
+  };
+}
+
+function getForeignForField(
+  foreign: Record<string, ForeignBuild>,
+  field: string
+) {
+  return Object.values(foreign)
+    .filter(relation => relation.local === field)
+    .map(relation => ({
+      table: relation.table || '',
+      foreign: relation.foreign || '',
+      local: relation.local || '',
+      delete: relation.delete || '',
+      update: relation.update || ''
+    }))
+    .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+}
+
+function getKeysForField(
+  entries: Record<string, string|string[]>,
+  field: string
+) {
+  return Object.entries(entries)
+    .filter(([, value]) => [ value ].flat().includes(field))
+    .map(([ name ]) => name)
+    .sort();
+}
+
+function normalizeField(field: Field) {
+  return {
+    type: field.type,
+    length: field.length,
+    nullable: field.nullable,
+    default: field.default,
+    autoIncrement: field.autoIncrement,
+    attribute: field.attribute,
+    comment: field.comment,
+    unsigned: field.unsigned
+  };
+}

@@ -8,6 +8,10 @@ import Terminal from 'stackpress-server/Terminal';
 import type { ClientConfig } from 'stackpress-schema/types';
 import Revisions from 'stackpress-schema/Revisions';
 //stackpress-sql
+import {
+  findLikelyRenameRisks,
+  formatRenameRiskMessage
+} from '../helpers.js';
 import { makeCreateQuery } from '../transform/helpers';
 
 export default async function upgrade(
@@ -34,6 +38,14 @@ export default async function upgrade(
       'Not enough revision history to perform upgrade.'
     );
     return;
+  }
+  //stop before building SQL when one revision looks like a field rename.
+  const risks = findLikelyRenameRisks(from.schema, to.schema);
+  const forced = Boolean((terminal as Terminal & { force?: boolean })?.force);
+  if (risks.length && !forced) {
+    const message = formatRenameRiskMessage(risks);
+    terminal?.control.error(message);
+    throw new Error(message);
   }
   //create a registry from the history
   const previous = Array.from(from.schema.models.values()).map(
