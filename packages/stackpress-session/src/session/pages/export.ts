@@ -19,18 +19,29 @@ export default action(async function AccountExport({ req, res, ctx }) {
   const session = ctx.plugin<SessionPlugin>('session');
   const me = session.load(req);
   const data = await me.data();
+  //if no data or is a guest
   if (!data || await me.guest()) {
+    //unauthorize user
     res.statusCode(401, 'Unauthorized');
     return;
   }
+  //get profile
   const response = await ctx.resolve<ProfileExtended>(
     'profile-detail', 
     { id: data.id }
   );
-  if (response.code === 404) {
-    res.statusCode(401, 'Unauthorized');
-    return;
-  }
+  //if response has error or no results
+  if (response.code !== 200 || !response.results) {
+     //if response code is 404
+     if (response.code === 404) {
+       //unauthorize user
+       res.statusCode(401, 'Unauthorized');
+       return;
+     }
+     //else, sync profile error response to response
+     res.fromStatusResponse(response);
+     return;
+   }
   //when the export route is opened directly, render the warning page first so
   // the download only starts after the user clicks the download action.
   if (!req.data('download')) {
@@ -51,7 +62,14 @@ export default action(async function AccountExport({ req, res, ctx }) {
         .replaceAll(':', ': ')
         .replaceAll(':  ', ': ');
     }
-    return [ key, JSON.stringify(value) ];
+    //CSV injection protection for spreadsheet apps
+    //Prefix formula-like values so spreadsheet apps treat them as plain 
+    // text, e.g. "=SUM(A1:A2)".
+    let cell = String(value);
+    if (/^[=+\-@]/.test(cell)) {
+      cell = `'${cell}`;
+    }
+    return [ key, JSON.stringify(cell) ];
   });
   const csv = entries.map(row => row.join(',')).join('\n');
   res.headers.set(

@@ -1,11 +1,12 @@
 //modules
 import { useLanguage } from 'r22n';
 //stackpress-view
-import { useSession } from '../server/hooks.js';
+import { useConfig, useSession } from '../server/hooks.js';
 
 export default function LayoutUserMenu() {
   //hooks
   const session = useSession();
+  const config = useConfig();
   const { changeLanguage } = useLanguage();
   //render
   return (
@@ -14,7 +15,7 @@ export default function LayoutUserMenu() {
         {session.data.id ? (
           <div className="info">
             <i className="icon fas fa-user-circle" />
-            <a className="account-link" href="/auth/account">
+            <a className="account-link" href={`${config.path('auth.base', '/auth')}/account`}>
               {session.data.name}
             </a>
           </div>
