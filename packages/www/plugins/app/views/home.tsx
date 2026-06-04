@@ -1,8 +1,8 @@
 //--------------------------------------------------------------------//
 // Imports
 
-import type { ServerPageProps } from 'stackpress/view/client';
-import { LayoutAdmin, useResponse } from 'stackpress/view/client';
+import type { ServerConfigPageProps } from 'stackpress/view/client';
+import { LayoutBlank, useResponse } from 'stackpress/view/client';
 import { useLanguage } from 'r22n';
 
 //--------------------------------------------------------------------//
@@ -19,7 +19,7 @@ export function Body() {
   );
 }
 
-export function Head(props: ServerPageProps) {
+export function Head(props: ServerConfigPageProps) {
   const { styles = [] } = props;
   const { _ } = useLanguage();
   return (
@@ -34,16 +34,17 @@ export function Head(props: ServerPageProps) {
   );
 };
 
-export function Page(props: ServerPageProps) {
-  const { session, request, response } = props;
+export function Page(props: ServerConfigPageProps) {
+  const { data, session, request, response } = props;
   return (
-    <LayoutAdmin
+    <LayoutBlank
+      data={data}
       session={session}
       request={request}
       response={response}
     >
       <Body />
-    </LayoutAdmin>
+    </LayoutBlank>
   );
 };
 

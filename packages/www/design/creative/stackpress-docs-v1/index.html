@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Creative Draft - Home</title>
+  <link rel="stylesheet" href="./styles.css?v=round3" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <img src="./assets/logo.png" alt="Stackpress" />
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html#start">Start</a>
+      <a href="./concepts-index.html">Concepts</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <button class="global-menu-button" type="button" data-panel-toggle="global-menu-panel" aria-label="Open main menu" aria-expanded="false">☰</button>
+    <button class="theme-switch" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+      <span class="theme-icon sun" aria-hidden="true">☀</span>
+      <span class="theme-icon moon" aria-hidden="true">☾</span>
+    </button>
+    <a class="github-link" href="https://github.com/stackpress" aria-label="GitHub">GitHub</a>
+  </header>
+  <div class="global-menu-panel" id="global-menu-panel">
+    <a href="./index.html#start">Start</a>
+    <a href="./concepts-index.html">Concepts</a>
+    <a href="./guides.html">Guides</a>
+    <a href="./api.html">API</a>
+  </div>
+
+  <main>
+    <section class="hero" aria-labelledby="home-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Developer documentation</p>
+        <h1 id="home-title">Learn Stackpress by building the first working app.</h1>
+        <p class="lead">A docs-first entry point that gets developers to one visible result, then branches into concepts, guides, and API lookup.</p>
+        <div class="actions">
+          <a class="button primary" href="./index.html#start">Start tutorial</a>
+          <a class="button secondary" href="./concepts.html">Browse API</a>
+        </div>
+      </div>
+      <aside class="code-card" aria-label="Quick start command preview">
+        <div class="code-card-header">
+          <span></span>
+          <span></span>
+          <span></span>
+          <strong>first run</strong>
+        </div>
+        <pre><code>yarn install
+yarn blog generate
+yarn blog push
+yarn blog dev</code></pre>
+      </aside>
+    </section>
+
+    <div class="anchor-target" id="start" aria-hidden="true"></div>
+    <section class="path-section" aria-labelledby="path-title">
+      <div>
+        <p class="eyebrow">Recommended path</p>
+        <h2 id="path-title">Start with one visible result, then add the framework layers.</h2>
+      </div>
+      <ol class="path-list">
+        <li><a href="./concepts.html">Hello World Route</a><span>smallest route</span></li>
+        <li><a href="./concepts.html">First React Page</a><span>view layer</span></li>
+        <li><a href="./concepts.html">Project Shape</a><span>config and plugins</span></li>
+        <li><a href="./concepts.html">Schema Generation</a><span>idea files</span></li>
+        <li><a href="./concepts.html">Database And Populate</a><span>SQL workflow</span></li>
+        <li><a href="./concepts.html">Render Article Data</a><span>full loop</span></li>
+      </ol>
+    </section>
+
+    <section class="shelf-grid" aria-label="Documentation shelves">
+      <article>
+        <span>01</span>
+        <h3>Start Building</h3>
+        <p>Guided tutorial track and common project tasks.</p>
+        <a href="./concepts.html">Open guides</a>
+      </article>
+      <article>
+        <span>02</span>
+        <h3>Understand Stackpress</h3>
+        <p>Architecture, idea files, generation, plugins, and views.</p>
+        <a href="./concepts.html">Open concepts</a>
+      </article>
+      <article>
+        <span>03</span>
+        <h3>Look Up APIs</h3>
+        <p>Public imports, config, CLI, SQL, schema, and view reference.</p>
+        <a href="./concepts.html">Open reference</a>
+      </article>
+    </section>
+
+    <section class="feature-band" aria-label="Framework model">
+      <div>
+        <h2>Schema-first, plugin-shaped, server-first.</h2>
+        <p>A compact model of how Stackpress combines app configuration, idea files, generated artifacts, and server-rendered views.</p>
+      </div>
+      <div class="mini-grid">
+        <span>Routes</span>
+        <span>Views</span>
+        <span>SQL</span>
+        <span>Admin</span>
+        <span>Session</span>
+        <span>API</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Creative draft only</span>
+    <span>Visual direction review, not production implementation</span>
+  </footer>
+  <script src="./theme.js"></script>
+</body>
+</html>

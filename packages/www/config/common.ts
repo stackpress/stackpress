@@ -6,7 +6,8 @@ import type { ToastPosition } from 'react-toastify';
 export type { Config } from 'stackpress/types';
 //pathnames
 export const cwd = process.cwd();
-export const docs = path.join(cwd, 'docs');
+export const root = path.resolve(cwd, '../..');
+export const docs = path.join(root, 'docs');
 export const build = path.join(cwd, '.build');
 export const assets = path.join(cwd, 'public');
 export const modules = path.join(cwd, 'node_modules');
@@ -51,7 +52,7 @@ export const server = {
 };
 
 export const terminal = {
-  label: '[BLOG]',
+  label: '[WWW]',
   idea: path.join(cwd, 'schema.idea')
 };
 

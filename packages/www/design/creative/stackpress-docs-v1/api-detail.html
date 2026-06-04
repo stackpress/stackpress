@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Creative Draft - API Detail</title>
+  <link rel="stylesheet" href="./styles.css?v=round3" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <img src="./assets/logo.png" alt="Stackpress" />
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html#start">Start</a>
+      <a href="./concepts-index.html">Concepts</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <button class="global-menu-button" type="button" data-panel-toggle="global-menu-panel" aria-label="Open main menu" aria-expanded="false">☰</button>
+    <button class="theme-switch" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+      <span class="theme-icon sun" aria-hidden="true">☀</span>
+      <span class="theme-icon moon" aria-hidden="true">☾</span>
+    </button>
+    <a class="github-link" href="https://github.com/stackpress" aria-label="GitHub">GitHub</a>
+  </header>
+  <div class="global-menu-panel" id="global-menu-panel">
+    <a href="./index.html#start">Start</a>
+    <a href="./concepts-index.html">Concepts</a>
+    <a href="./guides.html">Guides</a>
+    <a href="./api.html">API</a>
+  </div>
+
+  <main>
+    <section class="docs-layout" aria-labelledby="api-detail-title">
+      <div class="mobile-doc-controls" aria-label="Mobile documentation controls">
+        <button type="button" data-panel-toggle="mobile-docs-panel">Reference menu</button>
+        <button type="button" data-panel-toggle="mobile-toc-panel">On this page</button>
+      </div>
+      <div class="mobile-panel" id="mobile-docs-panel">
+        <a href="./api.html">Most Used</a>
+        <a href="./api-detail.html">Package Root</a>
+        <a href="./api-detail.html">Plugin</a>
+        <a href="./api-detail.html">Server</a>
+      </div>
+      <div class="mobile-panel" id="mobile-toc-panel">
+        <a href="#api-detail-title">Package Root</a>
+        <a href="#exports">Common exports</a>
+        <a href="#example">Example</a>
+      </div>
+      <aside class="sidebar">
+        <p class="sidebar-label">Reference</p>
+        <a href="./api.html">Most Used</a>
+        <a class="is-current" href="./api-detail.html">Package Root</a>
+        <a href="./api-detail.html">Plugin</a>
+        <a href="./api-detail.html">Server</a>
+        <a href="./api-detail.html">HTTP</a>
+        <a href="./api-detail.html">View</a>
+        <a href="./api-detail.html">Schema</a>
+      </aside>
+      <article class="doc-article">
+        <p class="eyebrow">API reference</p>
+        <h1 id="api-detail-title">Package Root</h1>
+        <p class="lead">An API detail page should make imports, exports, examples, and related pages easy to compare without a marketing layout.</p>
+        <div class="import-box">
+          <span>Import path</span>
+          <code>stackpress</code>
+        </div>
+        <h2 id="exports">Common exports</h2>
+        <table class="reference-table">
+          <tr><th>Name</th><th>Kind</th><th>Use</th></tr>
+          <tr><td><code>server</code></td><td>function</td><td>Create app server instances.</td></tr>
+          <tr><td><code>Terminal</code></td><td>class</td><td>Run CLI-style events.</td></tr>
+          <tr><td><code>Config</code></td><td>type</td><td>Type application configuration.</td></tr>
+        </table>
+        <h2 id="example">Example</h2>
+        <pre><code>import { server } from 'stackpress/http';
+
+const app = server();</code></pre>
+        <nav class="article-pager" aria-label="Article navigation">
+          <a href="./api.html"><span>Previous</span><strong>API Index</strong></a>
+          <a href="./api-detail.html"><span>Next</span><strong>Plugin</strong></a>
+        </nav>
+      </article>
+      <aside class="toc">
+        <p class="sidebar-label">On this page</p>
+        <a href="#api-detail-title">Package Root</a>
+        <a href="#exports">Common exports</a>
+        <a href="#example">Example</a>
+        <a href="#related">Related</a>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Creative draft only</span>
+    <span>Visual direction review, not production implementation</span>
+  </footer>
+  <script src="./theme.js"></script>
+</body>
+</html>

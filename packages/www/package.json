@@ -1,10 +1,14 @@
 {
   "type": "module",
   "name": "stackpress-www",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "private": true,
   "plugins": [
     "./plugins/app/plugin",
+    "./plugins/home/plugin",
+    "./plugins/concepts/plugin",
+    "./plugins/guides/plugin",
+    "./plugins/api/plugin",
     "stackpress"
   ],
   "scripts": {
@@ -16,7 +20,7 @@
   "dependencies": {
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "stackpress": "0.10.4"
+    "stackpress": "0.10.5"
   },
   "devDependencies": {
     "@types/node": "25.3.5",

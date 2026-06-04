@@ -13,8 +13,4 @@ export default function plugin(server: HttpServer<Config>) {
       }
     });
   });
-  server.on('route', async _ => {
-    server.import.get('/', () => import('./pages/home.js'));
-    server.view.get('/', '@/plugins/app/views/home');
-  });
 };

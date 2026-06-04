@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Creative Draft - Guide Detail</title>
+  <link rel="stylesheet" href="./styles.css?v=round3" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <img src="./assets/logo.png" alt="Stackpress" />
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html#start">Start</a>
+      <a href="./concepts-index.html">Concepts</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <button class="global-menu-button" type="button" data-panel-toggle="global-menu-panel" aria-label="Open main menu" aria-expanded="false">☰</button>
+    <button class="theme-switch" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+      <span class="theme-icon sun" aria-hidden="true">☀</span>
+      <span class="theme-icon moon" aria-hidden="true">☾</span>
+    </button>
+    <a class="github-link" href="https://github.com/stackpress" aria-label="GitHub">GitHub</a>
+  </header>
+  <div class="global-menu-panel" id="global-menu-panel">
+    <a href="./index.html#start">Start</a>
+    <a href="./concepts-index.html">Concepts</a>
+    <a href="./guides.html">Guides</a>
+    <a href="./api.html">API</a>
+  </div>
+
+  <main>
+    <section class="docs-layout" aria-labelledby="guide-detail-title">
+      <div class="mobile-doc-controls" aria-label="Mobile documentation controls">
+        <button type="button" data-panel-toggle="mobile-docs-panel">Guides menu</button>
+        <button type="button" data-panel-toggle="mobile-toc-panel">On this page</button>
+      </div>
+      <div class="mobile-panel" id="mobile-docs-panel">
+        <a href="./guides.html">Getting Started</a>
+        <a href="./guide-detail.html">Hello World Route</a>
+        <a href="./guide-detail.html">First React Page</a>
+        <a href="./guide-detail.html">Generate And Build</a>
+      </div>
+      <div class="mobile-panel" id="mobile-toc-panel">
+        <a href="#guide-detail-title">Hello World Route</a>
+        <a href="#create-route">Create the route</a>
+        <a href="#run-it">Run it</a>
+      </div>
+      <aside class="sidebar">
+        <p class="sidebar-label">Guides</p>
+        <span class="nav-group">Start Tutorial</span>
+        <a href="./guides.html">Getting Started</a>
+        <a class="is-current" href="./guide-detail.html">Hello World Route</a>
+        <a href="./guide-detail.html">First React Page</a>
+        <a href="./guide-detail.html">First Project Shape</a>
+        <span class="nav-group">Daily Workflows</span>
+        <a href="./guide-detail.html">Generate And Build</a>
+        <a href="./guide-detail.html">Debugging And Inspection</a>
+      </aside>
+      <article class="doc-article">
+        <p class="eyebrow">Guide</p>
+        <h1 id="guide-detail-title">Hello World Route</h1>
+        <p class="lead">A task-focused page should be linear, with a clear outcome, short explanations, and code blocks that are easy to scan.</p>
+        <div class="outcome-box">
+          <strong>Outcome</strong>
+          <span>A local route returns visible output through the Stackpress server.</span>
+        </div>
+        <h2 id="create-route">Create the route</h2>
+        <p>Keep the first step small. The reader should know exactly where the file lives and what result to expect.</p>
+        <pre><code>server.import.get('/hello', () => import('./pages/hello.js'));
+server.view.get('/hello', '@/plugins/app/views/hello');</code></pre>
+        <h2 id="run-it">Run it</h2>
+        <p>Use a short verification step before introducing more framework layers.</p>
+        <pre><code>yarn dev
+open http://127.0.0.1:3000/hello</code></pre>
+        <nav class="article-pager" aria-label="Article navigation">
+          <a href="./guides.html"><span>Previous</span><strong>Getting Started</strong></a>
+          <a href="./guide-detail.html"><span>Next</span><strong>First React Page</strong></a>
+        </nav>
+      </article>
+      <aside class="toc">
+        <p class="sidebar-label">On this page</p>
+        <a href="#guide-detail-title">Hello World Route</a>
+        <a href="#create-route">Create the route</a>
+        <a href="#run-it">Run it</a>
+        <a href="#next">Next Steps</a>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Creative draft only</span>
+    <span>Visual direction review, not production implementation</span>
+  </footer>
+  <script src="./theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Creative Draft - Guides</title>
+  <link rel="stylesheet" href="./styles.css?v=round3" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <img src="./assets/logo.png" alt="Stackpress" />
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html#start">Start</a>
+      <a href="./concepts-index.html">Concepts</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <button class="global-menu-button" type="button" data-panel-toggle="global-menu-panel" aria-label="Open main menu" aria-expanded="false">☰</button>
+    <button class="theme-switch" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+      <span class="theme-icon sun" aria-hidden="true">☀</span>
+      <span class="theme-icon moon" aria-hidden="true">☾</span>
+    </button>
+    <a class="github-link" href="https://github.com/stackpress" aria-label="GitHub">GitHub</a>
+  </header>
+  <div class="global-menu-panel" id="global-menu-panel">
+    <a href="./index.html#start">Start</a>
+    <a href="./concepts-index.html">Concepts</a>
+    <a href="./guides.html">Guides</a>
+    <a href="./api.html">API</a>
+  </div>
+
+  <main>
+    <section class="docs-layout" aria-labelledby="guide-title">
+      <div class="mobile-doc-controls" aria-label="Mobile documentation controls">
+        <button type="button" data-panel-toggle="mobile-docs-panel">Guides menu</button>
+        <button type="button" data-panel-toggle="mobile-toc-panel">On this page</button>
+      </div>
+      <div class="mobile-panel" id="mobile-docs-panel">
+        <a href="./guides.html">Getting Started</a>
+        <a href="./guide-detail.html">Hello World Route</a>
+        <a href="./guide-detail.html">First React Page</a>
+        <a href="./guide-detail.html">Generate And Build</a>
+      </div>
+      <div class="mobile-panel" id="mobile-toc-panel">
+        <a href="#guide-title">Getting Started</a>
+        <a href="#tutorial-track">Tutorial Track</a>
+        <a href="#common-tasks">Common Tasks</a>
+      </div>
+      <aside class="sidebar">
+        <p class="sidebar-label">Guides</p>
+        <span class="nav-group">Start Tutorial</span>
+        <a class="is-current" href="./guides.html">Getting Started</a>
+        <a href="./guide-detail.html">Hello World Route</a>
+        <a href="./guide-detail.html">First React Page</a>
+        <a href="./guide-detail.html">First Project Shape</a>
+        <a href="./guide-detail.html">First Schema Generation</a>
+        <span class="nav-group">Daily Workflows</span>
+        <a href="./guides.html">Generate And Build</a>
+        <a href="./guides.html">Views And Pages</a>
+        <a href="./guides.html">Plugins And Customization</a>
+        <a href="./guides.html">Debugging And Inspection</a>
+      </aside>
+      <article class="doc-article">
+        <p class="eyebrow">Guides</p>
+        <h1 id="guide-title">Getting Started</h1>
+        <p class="lead">A practical guide page keeps developers moving through visible milestones while explaining why each step exists.</p>
+        <div class="callout">
+          <strong>Recommended path:</strong>
+          <span>Start with the numbered tutorial track, then use supporting guides for project structure, generation, views, plugins, and debugging.</span>
+        </div>
+        <h2 id="tutorial-track">Tutorial Track</h2>
+        <ol class="guide-steps">
+          <li><strong>Hello World Route</strong><span>Proves the smallest route works.</span></li>
+          <li><strong>First React Page</strong><span>Adds the view layer.</span></li>
+          <li><strong>First Project Shape</strong><span>Introduces config and plugins.</span></li>
+          <li><strong>First Schema Generation</strong><span>Introduces idea files and generated output.</span></li>
+        </ol>
+        <h2 id="common-tasks">Common Tasks</h2>
+        <p>After the tutorial track, developers need direct task pages for generating, building, rendering views, customizing plugins, using the client, and inspecting failures.</p>
+        <pre><code>yarn blog generate
+yarn blog generate:client
+yarn blog push</code></pre>
+        <nav class="article-pager" aria-label="Article navigation">
+          <a href="./index.html#start"><span>Previous</span><strong>Start Path</strong></a>
+          <a href="./guide-detail.html"><span>Next</span><strong>Hello World Route</strong></a>
+        </nav>
+      </article>
+      <aside class="toc">
+        <p class="sidebar-label">On this page</p>
+        <a href="#guide-title">Getting Started</a>
+        <a href="#tutorial-track">Tutorial Track</a>
+        <a href="#common-tasks">Common Tasks</a>
+        <a href="#next">Next Steps</a>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Creative draft only</span>
+    <span>Visual direction review, not production implementation</span>
+  </footer>
+  <script src="./theme.js"></script>
+</body>
+</html>

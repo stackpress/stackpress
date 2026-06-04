@@ -69,7 +69,7 @@ async function fsCopyFolder(source: string, destination: string) {
     const stat = await fs.stat(absolute);
     //if file is a directory, recurse
     if (stat.isDirectory()) {
-      fsCopyFolder(
+      await fsCopyFolder(
         path.join(source, file),
         path.join(destination, file)
       );

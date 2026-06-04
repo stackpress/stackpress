@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Wireframe - Concepts</title>
+  <link rel="stylesheet" href="./styles.css?v=round5" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <span class="mark"></span>
+      <span>Stackpress</span>
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html#start">Start</a>
+      <a href="./concepts.html">Concepts</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <a class="search-button" href="./search.html">Search docs</a>
+    <a class="github-link" href="https://github.com/stackpress" aria-label="GitHub">GitHub</a>
+  </header>
+
+  <main>
+    <section class="docs-layout" aria-labelledby="article-title">
+      <div class="mobile-doc-controls" aria-label="Mobile documentation controls">
+        <button type="button">Docs menu</button>
+        <button type="button">On this page</button>
+      </div>
+      <aside class="sidebar">
+        <p class="sidebar-label">Docs</p>
+        <span class="nav-group">Start Building</span>
+        <a href="./guides.html">Getting Started</a>
+        <a href="./guides.html">Start Tutorial Track</a>
+        <span class="nav-group">Understand Stackpress</span>
+        <a class="is-current" href="./concepts.html">Overview</a>
+        <a href="./concepts-index.html">Architecture</a>
+        <a href="./concepts-index.html">Idea Files</a>
+        <a href="./concepts.html">Schema And Generation</a>
+        <a href="./concepts.html">Plugin System</a>
+        <a href="./concepts.html">View And Client</a>
+      </aside>
+      <article class="doc-article">
+        <p class="eyebrow">Concepts</p>
+        <h1 id="article-title">Overview</h1>
+        <p class="lead">A calm reading page for conceptual docs. The page should prioritize fast scanning, readable prose, and persistent orientation.</p>
+        <div class="callout">
+          <strong>Start here:</strong>
+          <span>Stackpress is a schema-first application framework that combines idea files, config, plugins, generated code, and server-rendered views.</span>
+        </div>
+        <h2 id="quick-start">Quick Start Mental Model</h2>
+        <p>Author the source of truth, run generation, push schema changes into the database, then run and inspect the app.</p>
+        <pre><code>schema.idea -> generate -> push -> serve</code></pre>
+        <h2 id="core-concepts">Core Concepts</h2>
+        <ul>
+          <li><code>schema.idea</code> is the main authoring surface.</li>
+          <li><code>config/*.ts</code> controls orchestration and runtime setup.</li>
+          <li>Plugins own app-specific behavior and extension points.</li>
+          <li>Generated output is disposable and inspectable.</li>
+        </ul>
+        <nav class="article-pager" aria-label="Article navigation">
+          <a href="./guides.html"><span>Previous</span><strong>Getting Started</strong></a>
+          <a href="./concepts-index.html"><span>Next</span><strong>Architecture</strong></a>
+        </nav>
+      </article>
+      <aside class="toc">
+        <p class="sidebar-label">On this page</p>
+        <a href="#article-title">Overview</a>
+        <a href="#quick-start">Quick Start</a>
+        <a href="#core-concepts">Core Concepts</a>
+        <a href="#next">Next Steps</a>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Wireframe draft only</span>
+    <span>Grayscale layout, not final visual design</span>
+  </footer>
+</body>
+</html>

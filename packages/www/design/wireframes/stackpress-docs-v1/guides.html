@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Wireframe - Guides</title>
+  <link rel="stylesheet" href="./styles.css?v=round5" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <span class="mark"></span>
+      <span>Stackpress</span>
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html#start">Start</a>
+      <a href="./concepts.html">Concepts</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <a class="search-button" href="./search.html">Search docs</a>
+    <a class="github-link" href="https://github.com/stackpress" aria-label="GitHub">GitHub</a>
+  </header>
+
+  <main>
+    <section class="docs-layout" aria-labelledby="guide-title">
+      <div class="mobile-doc-controls" aria-label="Mobile documentation controls">
+        <button type="button">Guides menu</button>
+        <button type="button">On this page</button>
+      </div>
+      <aside class="sidebar">
+        <p class="sidebar-label">Guides</p>
+        <span class="nav-group">Start Tutorial</span>
+        <a class="is-current" href="./guides.html">Getting Started</a>
+        <a href="./guide-detail.html">Hello World Route</a>
+        <a href="./guide-detail.html">First React Page</a>
+        <a href="./guide-detail.html">First Project Shape</a>
+        <a href="./guide-detail.html">First Schema Generation</a>
+        <span class="nav-group">Daily Workflows</span>
+        <a href="./guides.html">Generate And Build</a>
+        <a href="./guides.html">Views And Pages</a>
+        <a href="./guides.html">Plugins And Customization</a>
+        <a href="./guides.html">Debugging And Inspection</a>
+      </aside>
+      <article class="doc-article">
+        <p class="eyebrow">Guides</p>
+        <h1 id="guide-title">Getting Started</h1>
+        <p class="lead">A practical guide page should keep developers moving through visible milestones. It can be more procedural than Concepts, but still needs enough context to explain why each step exists.</p>
+        <div class="callout">
+          <strong>Recommended path:</strong>
+          <span>Start with the numbered tutorial track, then use supporting guides for project structure, generation, views, plugins, and debugging.</span>
+        </div>
+        <h2 id="tutorial-track">Tutorial Track</h2>
+        <ol class="guide-steps">
+          <li><strong>Hello World Route</strong><span>Proves the smallest route works.</span></li>
+          <li><strong>First React Page</strong><span>Adds the view layer.</span></li>
+          <li><strong>First Project Shape</strong><span>Introduces config and plugins.</span></li>
+          <li><strong>First Schema Generation</strong><span>Introduces idea files and generated output.</span></li>
+        </ol>
+        <h2 id="common-tasks">Common Tasks</h2>
+        <p>After the tutorial track, developers need direct task pages for generating, building, rendering views, customizing plugins, using the client, and inspecting failures.</p>
+        <pre><code>yarn blog generate
+yarn blog generate:client
+yarn blog push</code></pre>
+        <nav class="article-pager" aria-label="Article navigation">
+          <a href="./index.html#start"><span>Previous</span><strong>Start Path</strong></a>
+          <a href="./guide-detail.html"><span>Next</span><strong>Hello World Route</strong></a>
+        </nav>
+      </article>
+      <aside class="toc">
+        <p class="sidebar-label">On this page</p>
+        <a href="#guide-title">Getting Started</a>
+        <a href="#tutorial-track">Tutorial Track</a>
+        <a href="#common-tasks">Common Tasks</a>
+        <a href="#next">Next Steps</a>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Wireframe draft only</span>
+    <span>Grayscale layout, not final visual design</span>
+  </footer>
+</body>
+</html>

@@ -22,10 +22,10 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.15",
-    "@stackpress/inquire-pglite": "0.10.4",
+    "@stackpress/inquire-pglite": "0.10.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "stackpress": "0.10.4"
+    "stackpress": "0.10.5"
   },
   "devDependencies": {
     "@types/node": "25.3.5",

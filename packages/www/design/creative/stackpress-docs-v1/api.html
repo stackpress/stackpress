@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Creative Draft - API</title>
+  <link rel="stylesheet" href="./styles.css?v=round3" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <img src="./assets/logo.png" alt="Stackpress" />
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html#start">Start</a>
+      <a href="./concepts-index.html">Concepts</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <button class="global-menu-button" type="button" data-panel-toggle="global-menu-panel" aria-label="Open main menu" aria-expanded="false">☰</button>
+    <button class="theme-switch" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+      <span class="theme-icon sun" aria-hidden="true">☀</span>
+      <span class="theme-icon moon" aria-hidden="true">☾</span>
+    </button>
+    <a class="github-link" href="https://github.com/stackpress" aria-label="GitHub">GitHub</a>
+  </header>
+  <div class="global-menu-panel" id="global-menu-panel">
+    <a href="./index.html#start">Start</a>
+    <a href="./concepts-index.html">Concepts</a>
+    <a href="./guides.html">Guides</a>
+    <a href="./api.html">API</a>
+  </div>
+
+  <main>
+    <section class="docs-layout" aria-labelledby="api-title">
+      <div class="mobile-doc-controls" aria-label="Mobile documentation controls">
+        <button type="button" data-panel-toggle="mobile-docs-panel">Reference menu</button>
+        <button type="button" data-panel-toggle="mobile-toc-panel">Useful next</button>
+      </div>
+      <div class="mobile-panel" id="mobile-docs-panel">
+        <a href="./api.html">Most Used</a>
+        <a href="./api.html">Runtime APIs</a>
+        <a href="./api.html">Data And Generation</a>
+        <a href="./api.html">UI And Client</a>
+      </div>
+      <div class="mobile-panel" id="mobile-toc-panel">
+        <a href="./api.html">Config Reference</a>
+        <a href="./api.html">Idea Reference</a>
+        <a href="./api.html">View Client</a>
+        <a href="./api.html">Types</a>
+      </div>
+      <aside class="sidebar">
+        <p class="sidebar-label">Reference</p>
+        <a class="is-current" href="./api.html">Most Used</a>
+        <a href="./api.html">Runtime APIs</a>
+        <a href="./api.html">Data And Generation</a>
+        <a href="./api.html">UI And Client</a>
+        <a href="./api.html">Support APIs</a>
+      </aside>
+      <article class="doc-article">
+        <p class="eyebrow">API reference</p>
+        <h1 id="api-title">Find the public surface fast.</h1>
+        <p class="lead">The API index behaves like a lookup surface, not another marketing page. It uses grouping, short descriptions, and scannable module cards without search.</p>
+        <h2>Most Used</h2>
+        <div class="reference-grid">
+          <a href="./api-detail.html"><strong>Package Root</strong><span>Core app-facing imports.</span></a>
+          <a href="./api-detail.html"><strong>Plugin</strong><span>Lifecycle and extension hooks.</span></a>
+          <a href="./api-detail.html"><strong>Server</strong><span>Server construction and events.</span></a>
+          <a href="./api-detail.html"><strong>HTTP</strong><span>Request, response, routing helpers.</span></a>
+          <a href="./api-detail.html"><strong>View</strong><span>Reactus view rendering.</span></a>
+          <a href="./api-detail.html"><strong>Schema</strong><span>Columns, models, generation shape.</span></a>
+          <a href="./api-detail.html"><strong>SQL</strong><span>Query and dialect tools.</span></a>
+          <a href="./api-detail.html"><strong>CLI</strong><span>Build, emit, query, and utility commands.</span></a>
+        </div>
+        <div class="reference-sections" aria-label="Reference groups">
+          <section>
+            <h3>Runtime APIs</h3>
+            <p>Plugin, server, HTTP, WHATWG, session, and language modules.</p>
+          </section>
+          <section>
+            <h3>Data And Generation</h3>
+            <p>Schema, SQL dialects, and idea-file reference surfaces.</p>
+          </section>
+          <section>
+            <h3>UI And Client</h3>
+            <p>View rendering, generated client output, and UnoCSS support.</p>
+          </section>
+          <section>
+            <h3>Support APIs</h3>
+            <p>Types, config, library helpers, and CLI reference pages.</p>
+          </section>
+        </div>
+      </article>
+      <aside class="toc">
+        <p class="sidebar-label">Useful next</p>
+        <a href="./api.html">Config Reference</a>
+        <a href="./api.html">Idea Reference</a>
+        <a href="./api.html">View Client</a>
+        <a href="./api.html">Types</a>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Creative draft only</span>
+    <span>Visual direction review, not production implementation</span>
+  </footer>
+  <script src="./theme.js"></script>
+</body>
+</html>

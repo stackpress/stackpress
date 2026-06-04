@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-session",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "license": "MIT",
   "description": "Session handler library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -23,7 +23,6 @@
       "require": "./cjs/session/views/*.js",
       "import": "./esm/session/views/*.js"
     },
-    
     "./Exception": {
       "require": "./cjs/Exception.js",
       "import": "./esm/Exception.js"
@@ -40,7 +39,6 @@
       "require": "./cjs/index.js",
       "import": "./esm/index.js"
     },
-
     "./esm/auth/views/*": "./esm/auth/views/*.js",
     "./cjs/auth/views/*": "./cjs/auth/views/*.js",
     "./esm/session/views/*": "./esm/session/views/*.js",
@@ -49,18 +47,36 @@
   },
   "typesVersions": {
     "*": {
-      "auth/views/*": [ "./cjs/auth/views/*.d.ts" ],
-      "session/views/*": [ "./cjs/session/views/*.d.ts" ],
-
-      "Exception": [ "./cjs/Exception.d.ts" ],
-      "plugin": [ "./cjs/plugin.d.ts" ],
-      "types": [ "./cjs/types.d.ts" ],
-      ".": [ "./cjs/index.d.ts" ],
-      
-      "esm/auth/views/*": [ "./esm/auth/views/*.d.ts" ],
-      "cjs/auth/views/*": [ "./cjs/auth/views/*.d.ts" ],
-      "esm/session/views/*": [ "./esm/session/views/*.d.ts" ],
-      "cjs/session/views/*": [ "./cjs/session/views/*.d.ts" ]
+      "auth/views/*": [
+        "./cjs/auth/views/*.d.ts"
+      ],
+      "session/views/*": [
+        "./cjs/session/views/*.d.ts"
+      ],
+      "Exception": [
+        "./cjs/Exception.d.ts"
+      ],
+      "plugin": [
+        "./cjs/plugin.d.ts"
+      ],
+      "types": [
+        "./cjs/types.d.ts"
+      ],
+      ".": [
+        "./cjs/index.d.ts"
+      ],
+      "esm/auth/views/*": [
+        "./esm/auth/views/*.d.ts"
+      ],
+      "cjs/auth/views/*": [
+        "./cjs/auth/views/*.d.ts"
+      ],
+      "esm/session/views/*": [
+        "./esm/session/views/*.d.ts"
+      ],
+      "cjs/session/views/*": [
+        "./cjs/session/views/*.d.ts"
+      ]
     }
   },
   "files": [
@@ -68,6 +84,7 @@
     "esm",
     "LICENSE",
     "README.md",
+    "schema.idea",
     "styles.css"
   ],
   "scripts": {
@@ -86,9 +103,9 @@
     "jose": "6.2.0",
     "libphonenumber-js": "1.12.23",
     "qrcode": "1.5.4",
-    "stackpress-csrf": "0.10.4",
-    "stackpress-sql": "0.10.4",
-    "stackpress-view": "0.10.4"
+    "stackpress-csrf": "0.10.5",
+    "stackpress-sql": "0.10.5",
+    "stackpress-view": "0.10.5"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",
