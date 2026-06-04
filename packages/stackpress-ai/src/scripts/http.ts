@@ -8,14 +8,17 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 //client
 import type {
+  AuthContext,
   McpHttpSession,
   McpPlugin,
   McpServer,
   McpSessionMode,
-  Promiser
+  Promiser,
+  ToolResolverServer
 } from '../types.js';
 import {
   readJsonBody,
+  resolveListAuth,
   sendJson,
   sendText
 } from '../helpers.js';
@@ -67,6 +70,8 @@ export function shouldAttachHttpToServer(ctx: Server) {
 export class McpHttpServer {
   //this shutdown handle is exposed so the caller can stop the server cleanly
   public readonly shutdown: () => Promise<void>;
+  //this callback resolves one caller auth context from a raw request
+  protected _authResolver: (req: IncomingMessage) => Promise<AuthContext>;
   //this endpoint is the one HTTP path that accepts MCP requests
   protected _endpoint: string;
   //this flag prevents the shutdown path from running more than once
@@ -92,6 +97,7 @@ export class McpHttpServer {
    */
   public constructor(
     factory: McpPlugin,
+    authResolver: (req: IncomingMessage) => Promise<AuthContext>,
     host: string,
     port: number,
     endpoint: string,
@@ -99,6 +105,7 @@ export class McpHttpServer {
     promiser: Promiser<void>
   ) {
     this._factory = factory;
+    this._authResolver = authResolver;
     this._host = host;
     this._port = port;
     this._endpoint = endpoint;
@@ -166,8 +173,8 @@ export class McpHttpServer {
   /**
    * Resolve one MCP server instance from the registered factory.
    */
-  protected async _createServer(): Promise<McpServer> {
-    const server = await this._factory();
+  protected async _createServer(auth: AuthContext): Promise<McpServer> {
+    const server = await this._factory(auth);
 
     //if config produced no tools, fail loudly so the CLI does not hang
     if (!server) {
@@ -180,9 +187,9 @@ export class McpHttpServer {
   /**
    * Create one MCP session and attach it to the HTTP transport.
    */
-  protected async _createSession(): Promise<McpHttpSession> {
+  protected async _createSession(auth: AuthContext): Promise<McpHttpSession> {
     //first build one MCP tool server from the registered factory
-    const server = await this._createServer();
+    const server = await this._createServer(auth);
     let transport!: StreamableHTTPServerTransport;
 
     //then create the HTTP transport and record new session ids as they appear
@@ -191,7 +198,7 @@ export class McpHttpServer {
         ? undefined
         : () => randomUUID(),
       onsessioninitialized: sessionId => {
-        this._sessions[sessionId] = { server, transport };
+        this._sessions[sessionId] = { auth, server, transport };
       }
     });
 
@@ -204,7 +211,7 @@ export class McpHttpServer {
     };
 
     await server.connect(transport);
-    return { server, transport };
+    return { auth, server, transport };
   }
 
   /**
@@ -281,7 +288,9 @@ export class McpHttpServer {
 
     //without a session id, only initialize requests may create a new session
     if (!key && req.method === 'POST' && isInitializeRequest(body)) {
-      const session = await this._createSession();
+      const session = await this._createSession(
+        await this._authResolver(req)
+      );
       await session.transport.handleRequest(req, res, body);
       return;
     }
@@ -319,7 +328,7 @@ export class McpHttpServer {
     }
 
     //create one throwaway session and close it once the response finishes
-    const session = await this._createSession();
+    const session = await this._createSession(await this._authResolver(req));
     res.on('close', async () => {
       await session.transport.close();
     });
@@ -341,11 +350,18 @@ export default async function http(ctx: Server) {
 
   const factory = ctx.plugin<McpPlugin>('mcp');
   const { endpoint, host, mode, port } = resolveHttpConfig(ctx);
+  //build one per-request auth resolver so both stateless calls and new
+  // stateful sessions use the same bearer parsing behavior.
+  const authResolver = async (req: IncomingMessage) => resolveListAuth(
+    ctx as ToolResolverServer,
+    header(req, 'authorization') || undefined
+  );
 
   //then keep the event open until the underlying HTTP service closes
   return new Promise<void>(async (resolve, reject) => {
     const transport = new McpHttpServer(
       factory,
+      authResolver,
       host,
       port,
       endpoint,
@@ -372,8 +388,13 @@ export function attachHttpToServer(ctx: Server) {
   attachable[HTTP_ATTACH_KEY] = true;
   const factory = ctx.plugin<McpPlugin>('mcp');
   const { endpoint, host, mode, port } = resolveHttpConfig(ctx);
+  const authResolver = async (req: IncomingMessage) => resolveListAuth(
+    ctx as ToolResolverServer,
+    header(req, 'authorization') || undefined
+  );
   const transport = new McpHttpServer(
     factory,
+    authResolver,
     host,
     port,
     endpoint,
@@ -407,4 +428,12 @@ export function attachHttpToServer(ctx: Server) {
       return false;
     }
   });
+}
+
+/**
+ * Read one header value from a Node request, normalizing array values.
+ */
+function header(req: IncomingMessage, name: string) {
+  const value = req.headers[name.toLowerCase()];
+  return Array.isArray(value) ? value[0] : value ?? null;
 }

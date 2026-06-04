@@ -49,24 +49,6 @@ export type McpConfig = {
   version?: string
 };
 
-//this factory contract is what Stackpress stores under ctx.register('mcp')
-// so transports can request a fresh MCP server on demand.
-export type McpPlugin = () => Promise<McpServer | null>;
-
-//this HTTP session shape keeps one MCP server paired with one transport so
-// later requests can route back to the same live session.
-export type McpHttpSession = {
-  server: McpServer,
-  transport: StreamableHTTPServerTransport
-};
-
-//this SSE session shape mirrors the HTTP session pairing but uses the older
-// SSE transport contract.
-export type McpSseSession = {
-  server: McpServer,
-  transport: SSEServerTransport
-};
-
 //this is the serializable tool config contract that template configs and
 // plugin-resolved tool definitions must satisfy.
 export type ToolConfig = {
@@ -101,6 +83,27 @@ export type AuthContext
   = { kind: 'public' }
   | { kind: 'app', token: Token, application: Application }
   | { kind: 'user', token: Token, session: Session };
+
+//this factory contract is what Stackpress stores under ctx.register('mcp')
+// so transports can request a fresh MCP server on demand for one resolved
+// caller auth context.
+export type McpPlugin = (auth?: AuthContext) => Promise<McpServer | null>;
+
+//this HTTP session shape keeps one MCP server paired with one transport so
+// later requests can route back to the same live session.
+export type McpHttpSession = {
+  auth: AuthContext,
+  server: McpServer,
+  transport: StreamableHTTPServerTransport
+};
+
+//this SSE session shape mirrors the HTTP session pairing but uses the older
+// SSE transport contract.
+export type McpSseSession = {
+  auth: AuthContext,
+  server: McpServer,
+  transport: SSEServerTransport
+};
 
 //this resolve response keeps the helper boundary aligned with Stackpress
 // resolve() calls that may or may not return results.

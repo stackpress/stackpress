@@ -227,7 +227,7 @@ export async function resolveListAuth(
   }
 
   //first prefer application auth so the listing stays on the broader app view
-// when the same id could theoretically resolve in both tables.
+  // when the same id could theoretically resolve in both tables.
   const application = await resolveApplication(ctx, token.id);
   if (application) {
     return { kind: 'app', token, application };
@@ -293,8 +293,13 @@ export function withToolData(
     ...input
   };
 
+  //app-scoped tools often need the calling application id downstream.
+  if (auth?.kind === 'app') {
+    data.applicationId = auth.application.id;
+  }
+
   //if this is a user-scoped tool, then inject the user context that downstream
-// events expect to see.
+  // events expect to see.
   if (auth?.kind === 'user') {
     data.profileId = auth.session.profileId;
     data.applicationId = auth.session.applicationId;
@@ -319,19 +324,15 @@ export function toolAllowed(
   //app tools only show up for apps that own at least one required scope
   if (tool.type === 'app') {
     return auth.kind === 'app'
-      && (
-        tool.scopes.length === 0
-        || auth.application.scopes.some(scope => tool.scopes.includes(scope))
-      );
+      && hasRequiredScopes(auth.application.scopes, tool.scopes)
+      && secretAllowed(tool.method, auth.token.secret, auth.application.secret);
   }
 
   //user tools only show up for sessions that own at least one required scope
   if (tool.type === 'user') {
     return auth.kind === 'user'
-      && (
-        tool.scopes.length === 0
-        || auth.session.scopes.some(scope => tool.scopes.includes(scope))
-      );
+      && hasRequiredScopes(auth.session.scopes, tool.scopes)
+      && secretAllowed(tool.method, auth.token.secret, auth.session.secret);
   }
 
   return false;
@@ -457,4 +458,26 @@ export function inferTitle(value: string) {
  */
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * Check whether one caller has at least one required scope for a tool.
+ */
+function hasRequiredScopes(owned: string[], required: string[]) {
+  return required.length === 0 || owned.some(scope => required.includes(scope));
+}
+
+/**
+ * Check whether the caller supplied the secret needed for one tool method.
+ */
+function secretAllowed(
+  method: string,
+  provided: string,
+  expected?: string | null
+) {
+  if (!requiresSecret(method)) {
+    return true;
+  }
+
+  return !!provided.length && !!expected?.length && provided === expected;
 }
