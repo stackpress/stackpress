@@ -71,11 +71,16 @@ export function renderCode(template: string, data: Record<string, any> = {}) {
   return engine.render(template, data);
 };
 
+/**
+ * Remove stale generated schema files that no longer match the current schema.
+ */
 export async function pruneGeneratedSchemaFiles(root: string, schema: Schema) {
+  //if the generated root does not exist yet, there is nothing to prune
   if (!fs.existsSync(root)) {
     return;
   }
 
+  //build the exact list of folders and files the current schema still expects
   const expectedDirectories = new Map<string, {
     columns: Set<string>,
     tests: Set<string>
@@ -86,13 +91,18 @@ export async function pruneGeneratedSchemaFiles(root: string, schema: Schema) {
   ];
 
   for (const fieldset of modelsAndFieldsets) {
+    //generated folders are keyed by the fieldset/model path name
     const dirname = fieldset.name.toPathName();
+    //model-backed columns are generated elsewhere, so this pass only tracks
+    //the direct column artifacts for the fieldset or model folder itself
     const columns = fieldset.columns.filter(
       column => !column.type.model
     );
+    //record every column file that should still exist after regeneration
     const columnFiles = new Set(columns.map(
       column => column.name.toPathName('%sColumn.ts')
     ).toArray());
+    //only primitive columns get individual test files in this folder layout
     const testFiles = new Set(columns
       .filter(column => !column.type.fieldset)
       .map(column => column.name.toPathName('%sColumn.test.ts'))
@@ -101,6 +111,7 @@ export async function pruneGeneratedSchemaFiles(root: string, schema: Schema) {
   }
 
   for (const entry of await fsp.readdir(root, { withFileTypes: true })) {
+    //this cleaner only manages generated directories
     if (!entry.isDirectory()) {
       continue;
     }
@@ -110,6 +121,7 @@ export async function pruneGeneratedSchemaFiles(root: string, schema: Schema) {
       continue;
     }
 
+    //once the folder is confirmed valid, prune only the stale files inside it
     const expected = expectedDirectories.get(entry.name)!;
     const directory = path.join(root, entry.name);
     await pruneGeneratedGroup(
@@ -125,16 +137,21 @@ export async function pruneGeneratedSchemaFiles(root: string, schema: Schema) {
   }
 };
 
+/**
+ * Remove generated files from one folder when they are no longer expected.
+ */
 async function pruneGeneratedGroup(
   directory: string,
   expectedFiles: Set<string>,
   preservedFiles: Set<string>
 ) {
+  //skip missing folders because generation may not have created them yet
   if (!fs.existsSync(directory)) {
     return;
   }
 
   for (const entry of await fsp.readdir(directory, { withFileTypes: true })) {
+    //only generated files are deleted here, not nested directories
     if (!entry.isFile()) {
       continue;
     }

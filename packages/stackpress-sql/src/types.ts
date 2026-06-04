@@ -316,30 +316,49 @@ export type ClientPlugin<
   F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
 > = (nullable?: boolean) => Promise<Client<M, F>>;
 
-
+// Describes one foreign-key relation from a built create-table definition.
 export type ForeignBuild = {
+  //the referenced table name
   table?: string,
+  //the referenced column name on that table
   foreign?: string,
+  //the local column that owns the relation
   local?: string,
+  //the on-delete action generated for the constraint
   delete?: string,
+  //the on-update action generated for the constraint
   update?: string
 };
 
+// Captures the SQL create-table shape produced by `makeCreateQuery().build()`.
 export type CreateBuild = ReturnType<ReturnType<typeof makeCreateQuery>['build']>;
 
+// Records one likely field rename that would otherwise look like drop-and-add.
 export type RenameRisk = {
+  //the model display name shown to the developer
   model: string,
+  //the SQL table name used during migration
   table: string,
+  //the old column display name from the schema
   from: string,
+  //the old built field key used in SQL generation
   fromField: string,
+  //the new column display name from the schema
   to: string,
+  //the new built field key used in SQL generation
   toField: string
 };
 
+// Summarizes the SQL-relevant parts of a field so two columns can be compared.
 export type ColumnSignature = {
+  //the normalized base column definition
   field: Field,
+  //whether the field participates in the primary key
   primary: boolean,
+  //the unique-index names that include this field
   unique: string[],
+  //the non-unique index names that include this field
   keys: string[],
+  //the normalized foreign-key relations attached to this field
   foreign: Array<Required<ForeignBuild>>
 };
