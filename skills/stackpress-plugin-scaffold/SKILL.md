@@ -54,6 +54,7 @@ The short version is:
 - `components/` for reusable React components and layouts
 - `events/` for server event handlers
 - `pages/` for server route handlers
+- `tests/` for plugin-local tests
 - `transform/` for generation-time code emission
 - `views/` for browser-served React pages
 - `client.ts` for browser-safe reusable exports
@@ -62,6 +63,10 @@ The short version is:
 - `types.ts` for shared TypeScript types
 
 Only create the folders the plugin really needs.
+
+When adding tests for plugin behavior, put them inside the owning plugin under
+`plugins/<plugin-name>/tests/` instead of creating or extending a separate
+root-level `tests/` folder.
 
 When architecture is still being composed, a thin shell plugin is often the
 right first step. Start with `plugin.ts`, then add only the folders needed to

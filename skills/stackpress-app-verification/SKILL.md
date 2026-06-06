@@ -176,6 +176,8 @@ wired into the Stackpress app.
 Minimum evidence:
 
 - the plugin files exist in the expected `plugins/` location
+- plugin tests, when added, live under the owning plugin's
+  `plugins/<plugin-name>/tests/` folder
 - `package.json.plugins` includes the plugin entry when required
 - the plugin uses the correct lifecycle hook for its role
 - generation plugins register `idea` properly
@@ -185,6 +187,7 @@ Minimum evidence:
 Fail plugin verification when:
 
 - the plugin exists on disk but is not registered
+- plugin-specific tests were placed in a separate root-level `tests/` folder
 - the plugin uses the wrong hook for the behavior
 - generation logic was incorrectly placed in runtime hooks
 - runtime logic was incorrectly pushed into transform code

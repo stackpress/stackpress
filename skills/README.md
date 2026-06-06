@@ -10,10 +10,16 @@ generation, plugin work, and verification.
 
 ## Included Skills
 
+- `stackpress-router`
+  - routes Stackpress tasks to the right specialist skill
+- `stackpress-ai`
+  - alias for `stackpress-router`
 - `stackpress-app-discovery`
   - turns a vague app request into a buildable app brief
 - `stackpress-app-coordinator`
   - manages the full Stackpress workflow and skill handoffs
+- `stackpress-workflow-router`
+  - coordinates concurrent multi-plugin Stackpress development workflows
 - `stackpress-app-scaffold`
   - creates the baseline Stackpress app files from the embedded scaffold
 - `stackpress-idea-authoring`
@@ -22,6 +28,8 @@ generation, plugin work, and verification.
   - decides whether work belongs in schema, runtime, generation, or route/view
 - `stackpress-plugin-scaffold`
   - scaffolds Stackpress plugin structure and wiring
+- `stackpress-plugin-pages-events`
+  - implements Stackpress plugin page and event handlers
 - `stackpress-plugin-views`
   - implements handwritten Stackpress plugin pages and route/view pairing
 - `stackpress-plugin-idea-generator`
@@ -31,7 +39,11 @@ generation, plugin work, and verification.
 
 ## Recommended Workflow
 
-The intended order is:
+For unclear Stackpress tasks, start with `stackpress-router` or its
+`stackpress-ai` alias. It should choose the narrowest specialist skill instead
+of replacing the specialist workflow.
+
+For general app builds, the intended order is:
 
 1. `stackpress-app-discovery`
 2. `stackpress-app-coordinator`
@@ -39,12 +51,15 @@ The intended order is:
 4. `stackpress-idea-authoring`
 5. run `stackpress generate`
 6. `stackpress-plugin-router`
-7. `stackpress-plugin-scaffold`, `stackpress-plugin-views`, and/or
+7. `stackpress-plugin-scaffold`, `stackpress-plugin-pages-events`,
+   `stackpress-plugin-views`, and/or
    `stackpress-plugin-idea-generator`
 8. `stackpress-app-verification`
 
-In practice, `stackpress-app-coordinator` is the top-level workflow skill and
-should usually decide when the other skills are used.
+Use `stackpress-workflow-router` before this sequence only when the task
+explicitly involves developing, sequencing, or coordinating multiple local
+plugins at the same time. The workflow router should inspect local contracts
+first, then choose or present possible multi-plugin workflows.
 
 ## Folder Structure
 
@@ -105,8 +120,13 @@ How you invoke a skill depends on the client, but the basic pattern is:
 
 Example requests:
 
+- "Use `stackpress-router` to decide which Stackpress skill should handle this
+  task."
+- "Use `stackpress-ai` to route this Stackpress request."
 - "Use `stackpress-app-discovery` to turn this product idea into a Stackpress
   app brief."
+- "Use `stackpress-workflow-router` to coordinate developing multiple
+  Stackpress plugins at the same time."
 - "Use `stackpress-app-coordinator` to build this app in phases."
 - "Use `stackpress-plugin-router` to decide whether this feature belongs in
   schema, runtime, or generation."
