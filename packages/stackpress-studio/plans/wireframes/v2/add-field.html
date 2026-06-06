@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframes v2 - Add Field</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar"><div class="brand"><span class="brand-mark"></span><span>Stackpress Studio</span><span class="pill">schema.idea</span></div><div class="top-actions"><button class="button">Reload</button><button class="button primary">Save Changes</button></div></header>
+    <aside class="sidebar"><div class="side-head"><p class="side-title">Studio</p><h2>Models</h2></div><div class="side-section"><a class="side-link active" href="index.html"><span class="dot"></span><span>Article</span><small>open</small></a><a class="side-link" href="fieldsets.html"><span class="dot"></span><span>Fieldsets</span><small>4</small></a><a class="side-link" href="enums.html"><span class="dot"></span><span>Enums</span><small>3</small></a></div></aside>
+    <main class="main"><div class="main-head"><div><p class="eyebrow">Article</p><h1>Add Field</h1></div><a class="button" href="fields.html">Back to Fields</a></div><div class="toolbar"><div class="searchbox">Choosing a type reveals definition-driven controls</div></div><div class="content"><section class="panel"><div class="panel-head"><h2>Existing Fields</h2></div><div class="field-table"><a class="field-row" href="field-editor.html"><span class="mini">=</span><span class="resource-name"><strong>Title</strong><small>article_title</small></span><span class="format-stack"><small>Field text</small><small>List none</small><small>Detail none</small></span><span><span class="index-chip">Searchable</span></span><span></span></a></div></section></div></main>
+    <aside class="drawer">
+      <header class="drawer-head"><a class="icon-button" href="fields.html">‹</a><div class="drawer-title"><h2>Add Field</h2><small>New Article column</small></div><span class="pill">Draft</span></header>
+      <nav class="drawer-tabs"><a class="drawer-tab active" href="add-field.html">Field</a><a class="drawer-tab" href="fields.html">Fields Table</a></nav>
+      <section class="drawer-body">
+        <div class="field-grid">
+          <div class="field"><label>Label</label><div class="input">Hero Image</div></div>
+          <div class="field"><label>Keyword</label><div class="input">article_hero_image</div></div>
+          <div class="field"><label>Type</label><div class="select">Image Field</div></div>
+        </div>
+        <p class="section-label">Revealed After Type Selection</p>
+        <div class="callout">No Field keeps index options disabled. Image Field enables props, validators, formats, default, searchable, filterable, and sortable when supported by the definition.</div>
+        <p class="section-label">Attributes</p>
+        <div class="key-value-row"><div class="input">accept</div><div class="input">image/*</div><span class="mini">X</span></div>
+        <button class="button">Add Attribute</button>
+        <p class="section-label">Validation</p>
+        <div class="validation-row"><div class="select">Required</div><div class="input disabled">no args</div><span class="mini">X</span></div>
+        <button class="button danger">Add Validation</button>
+        <p class="section-label">Formats</p>
+        <div class="two-col"><div class="field"><label>List Format</label><div class="select">Image</div></div><div class="field"><label>Detail Format</label><div class="select">Image Carousel</div></div></div>
+      </section>
+      <footer class="drawer-foot"><div class="footer-actions"><a class="button" href="fields.html">Cancel</a><a class="button primary" href="fields.html">Save Field</a></div></footer>
+    </aside>
+  </div>
+</body>
+</html>

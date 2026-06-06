@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframe - Fieldsets</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="mark"></span><span>Stackpress Studio</span><span class="file-pill">schema.idea</span></div>
+      <div class="top-actions"><span class="status-pill">3 fieldsets</span><button class="button">Save</button></div>
+    </header>
+    <nav class="rail" aria-label="Primary">
+      <a href="index.html">Models</a>
+      <a class="active" href="fieldsets.html">Types</a>
+      <a href="enums.html">Enums</a>
+      <a href="source.html">Source</a>
+      <a href="references.html">Refs</a>
+    </nav>
+    <aside class="explorer">
+      <div class="explorer-header"><p class="eyebrow">Fieldsets</p><h2>Reusable Types</h2></div>
+      <div class="explorer-list">
+        <a class="tree-item active" href="#"><span class="dot"></span><span>Address</span><small>5</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>SeoMeta</span><small>4</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>AssetRef</span><small>3</small></a>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="content-header">
+        <div><p class="eyebrow">Types</p><h1>Fieldset Workbench</h1></div>
+        <button class="button">New Fieldset</button>
+      </div>
+      <section class="canvas grid">
+        <section class="panel">
+          <div class="panel-header"><h2>Address Fields</h2><button class="button">Add Field</button></div>
+          <table class="table">
+            <thead><tr><th>Action</th><th>Name</th><th>Label</th><th>Type</th><th>Required</th><th>Multiple</th><th>Default</th><th>Component</th></tr></thead>
+            <tbody>
+              <tr class="selected" data-select-row><td><span class="mini">E</span></td><td>street</td><td>Street</td><td>String</td><td>Yes</td><td>No</td><td>--</td><td>input</td></tr>
+              <tr data-select-row><td><span class="mini">E</span></td><td>city</td><td>City</td><td>String</td><td>Yes</td><td>No</td><td>--</td><td>input</td></tr>
+              <tr data-select-row><td><span class="mini">E</span></td><td>country</td><td>Country</td><td>String</td><td>No</td><td>No</td><td>--</td><td>country</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <section class="panel">
+          <div class="panel-header"><h2>Hidden For Fieldsets</h2></div>
+          <div class="panel-body">
+            <div class="chips">
+              <span class="chip">@id</span>
+              <span class="chip">@active</span>
+              <span class="chip">@searchable</span>
+              <span class="chip">@sortable</span>
+              <span class="chip">@relation</span>
+              <span class="chip">@timestamp</span>
+              <span class="chip">@unique</span>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+    <aside class="inspector">
+      <div class="inspector-header"><p class="eyebrow">Inspector</p><h2>street String</h2></div>
+      <div class="inspector-section field-grid">
+        <div class="field"><label>Shared Controls</label><div class="chips"><span class="chip">name</span><span class="chip">type</span><span class="chip">required</span><span class="chip">multiple</span><span class="chip">@label</span><span class="chip">@description</span></div></div>
+        <div class="field"><label>Assertions</label><div class="chips"><span class="chip">@required</span><span class="chip">@cge(2)</span></div></div>
+      </div>
+    </aside>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

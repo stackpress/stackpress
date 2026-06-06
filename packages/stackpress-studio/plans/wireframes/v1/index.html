@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframe - Models</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="mark"></span><span>Stackpress Studio</span><span class="file-pill">schema.idea</span></div>
+      <div class="top-actions">
+        <span class="status-pill">Parsed</span>
+        <button class="button">Reload</button>
+        <button class="button">Save</button>
+      </div>
+    </header>
+
+    <nav class="rail" aria-label="Primary">
+      <a class="active" href="index.html">Models</a>
+      <a href="fieldsets.html">Types</a>
+      <a href="enums.html">Enums</a>
+      <a href="source.html">Source</a>
+      <a href="references.html">Refs</a>
+    </nav>
+
+    <aside class="explorer">
+      <div class="explorer-header">
+        <p class="eyebrow">Workspace</p>
+        <h2>Idea Graph</h2>
+      </div>
+      <div class="explorer-list">
+        <a class="tree-item active" href="#"><span class="dot"></span><span>schema.idea</span><small>main</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>ideas/content.idea</span><small>use</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>ideas/shared.idea</span><small>use</small></a>
+      </div>
+      <div class="explorer-header">
+        <p class="eyebrow">Models</p>
+        <h2>7 resources</h2>
+      </div>
+      <div class="explorer-list">
+        <a class="tree-item active" href="#"><span class="dot"></span><span>Article</span><small>8</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>Author</span><small>6</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>Category</span><small>5</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>Tag</span><small>4</small></a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="content-header">
+        <div>
+          <p class="eyebrow">Models</p>
+          <h1>Model Workbench</h1>
+        </div>
+        <div class="top-actions">
+          <button class="button">New Model</button>
+          <button class="icon-button">+</button>
+        </div>
+      </div>
+      <div class="tabs">
+        <a class="tab active" href="index.html">Models</a>
+        <a class="tab" href="fieldsets.html">Fieldsets</a>
+        <a class="tab" href="enums.html">Enums</a>
+      </div>
+      <section class="canvas grid">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Model Index</h2>
+            <div class="chips"><span class="chip">table-first</span><span class="chip">relations visible</span></div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Model</th>
+                <th>Labels</th>
+                <th>Fields</th>
+                <th>Relations</th>
+                <th>File</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="selected" data-select-row>
+                <td><div class="wire-actions"><span class="mini">E</span><span class="mini">S</span></div></td>
+                <td>Article</td>
+                <td>Article / Articles</td>
+                <td>8</td>
+                <td>Author, Category, Tags</td>
+                <td>schema.idea</td>
+              </tr>
+              <tr data-select-row>
+                <td><div class="wire-actions"><span class="mini">E</span><span class="mini">S</span></div></td>
+                <td>Author</td>
+                <td>Author / Authors</td>
+                <td>6</td>
+                <td>Articles</td>
+                <td>ideas/content.idea</td>
+              </tr>
+              <tr data-select-row>
+                <td><div class="wire-actions"><span class="mini">E</span><span class="mini">S</span></div></td>
+                <td>Category</td>
+                <td>Category / Categories</td>
+                <td>5</td>
+                <td>Articles</td>
+                <td>ideas/content.idea</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid two">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Article Fields</h2>
+              <button class="button">Add Field</button>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Format</th>
+                  <th>Index</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="selected" data-select-row><td><span class="mini">=</span></td><td><strong>Title</strong><small>article_title</small></td><td><small>Field text</small><small>List none</small><small>Detail none</small></td><td><span class="chip">Searchable</span></td></tr>
+                <tr data-select-row><td><span class="mini">=</span></td><td><strong>Detail</strong><small>article_detail</small></td><td><small>Field wysiwyg</small><small>List hide</small><small>Detail none</small></td><td></td></tr>
+                <tr data-select-row><td><span class="mini">=</span></td><td><strong>Active</strong><small>article_active</small></td><td><small>Field active</small><small>List hide</small><small>Detail hide</small></td><td><span class="chip">Filterable</span><span class="chip">Sortable</span></td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header"><h2>Drawer Behavior Notes</h2></div>
+            <div class="panel-body field-grid">
+              <p class="callout">Selecting Article opens a right task drawer with Content, Fields, and Relations tabs. Locked models keep this drawer but disable mutation controls.</p>
+              <p class="callout">Field rows support drag reorder, row copy/remove, and nested field editing with Save returning to the Fields table.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <aside class="inspector">
+      <div class="inspector-header">
+        <p class="eyebrow">Task Drawer</p>
+        <h2>Update Article Model</h2>
+      </div>
+      <div class="drawer-tabs">
+        <span class="drawer-tab active">Content</span>
+        <span class="drawer-tab">Fields</span>
+        <span class="drawer-tab">Relations</span>
+      </div>
+      <div class="inspector-section field-grid">
+        <div class="field"><label>Singular Name</label><div class="input">Article</div></div>
+        <div class="field"><label>Plural Name</label><div class="input">Articles</div></div>
+        <div class="field"><label>Keyword</label><div class="input">article</div></div>
+        <div class="field"><label>Group</label><div class="input">Blog</div></div>
+        <div class="field"><label>Icon</label><div class="input">fas fa-edit</div></div>
+        <div class="field"><label>Description</label><div class="textarea">Manages Articles</div></div>
+        <div class="field"><label>Suggestion</label><div class="input">{{article_name}}</div></div>
+      </div>
+      <div class="inspector-section">
+        <h3>Nested Field Editor</h3>
+        <div class="drawer-card">
+          <div class="drawer-card-title">Update Field: Title</div>
+          <div class="field-grid compact">
+            <div class="field"><label>Type</label><div class="select">Text Field</div></div>
+            <div class="field"><label>Props</label><div class="input">Add Attribute key/value</div></div>
+            <div class="field"><label>Validation</label><div class="input">Characters Greater Than -> Number</div></div>
+            <div class="field"><label>List Format</label><div class="input">Image Carousel -> Width, Height</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="drawer-footer">
+        <button class="button">Copy</button>
+        <button class="button">Remove</button>
+        <button class="button">Publish</button>
+      </div>
+    </aside>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
