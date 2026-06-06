@@ -17,12 +17,21 @@ yarn install
 
 ## Repository Layout
 
-This repository is a Yarn workspace monorepo with two main workspace groups:
+This repository is a Yarn workspace monorepo with two main workspace groups
+and a small root-level CLI payload. Active workspace packages have their own
+`package.json`; some package directories may contain only planning notes until
+they are ready to become workspaces.
 
  - `packages/*` for the Stackpress framework packages
  - `templates/*` for example application templates
+ - `bin/` for dependency-free root CLI scripts used by GitHub `npx`
+ - `skills/` for portable Stackpress agent skills and embedded scaffold assets
 
-The root `package.json` coordinates workspace-level build commands.
+The root `package.json` coordinates workspace-level build commands and exposes
+the packable `stackpress` bin for commands such as
+`npx github:stackpress/stackpress create`. Keep root CLI files dependency-free
+because they run from npm/GitHub package cache before workspace dependencies are
+installed.
 
 Stackpress combines functionality from several sibling libraries maintained in
 related repositories and published on NPM:
@@ -50,6 +59,7 @@ Utility packages:
  - `packages/stackpress-csrf` for CSRF checks
  - `packages/stackpress-email` for generic email-send events
  - `packages/stackpress-language` for i18n translation methods
+ - `packages/stackpress-ai` for Stackpress MCP server support, including tool registry assembly, transport entrypoints, and AI-facing Stackpress integration
 
 Endpoint plugins:
 
@@ -60,6 +70,15 @@ Endpoint plugins:
 Entry package:
 
  - `packages/stackpress` aggregates Stackpress library imports and plugin entrypoints into one package
+
+Application packages:
+
+ - `packages/www` is the private Stackpress documentation and marketing website app, with route/view plugins for home, concepts, guides, API docs, and Stackpress-specific content
+
+Planning-only package directories:
+
+ - `packages/stackpress-desktop` currently contains plans for a future Electron-based desktop target package and is not an active workspace yet
+ - `packages/stackpress-studio` currently contains plans for a future browser-based Stackpress schema/idea authoring GUI and is not an active workspace yet
 
 Related libraries published on NPM that are often relevant when tracing functionality:
 
@@ -110,6 +129,24 @@ yarn store
 yarn website
 ```
 
+Root CLI commands used through GitHub `npx`:
+
+```bash
+npx github:stackpress/stackpress create
+npx github:stackpress/stackpress skills --target codex
+npx github:stackpress/stackpress skills --target claude
+npx github:stackpress/stackpress skills --target opencode
+```
+
+The root `bin/stackpress.mjs` script is intentionally dependency-free so it can
+run from npm/GitHub package cache without installing the monorepo workspaces.
+When changing this CLI, verify with:
+
+```bash
+yarn test:skills
+npm pack --dry-run --cache /private/tmp/stackpress-npm-cache
+```
+
 ## Templates
 
 `templates/blog` is the primary end-to-end example and should be the default
@@ -138,6 +175,11 @@ When editing skills:
  - prefer tightening guidance and examples over broad rewrites unless the skill scope is intentionally changing
  - keep examples illustrative rather than literal so they are not mistaken for required domains, plugin names, or file layouts
  - ignore an `archives/` folder entirely if it exists; do not use it as active context and do not mix archived material into current skill edits unless explicitly requested
+
+For `skills/stackpress-app-scaffold/assets/template/`, keep `gitignore` as the
+single scaffold source for the generated `.gitignore`. Do not add a second
+`.gitignore` source file there; npm/GitHub package runners can omit nested
+`.gitignore` files from packed installs.
 
 ## Working Agreement
 

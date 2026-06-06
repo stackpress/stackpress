@@ -30,17 +30,18 @@ Use `stackpress-plugin-scaffold` for plugin work after the app exists.
 
 1. Confirm the target directory is empty or effectively empty.
 2. Copy every file from `assets/template/` into the target directory.
-3. Apply only the supported placeholder replacements.
-4. Preserve the scaffold structure as-is unless the user explicitly asks for a
+3. Rename `assets/template/gitignore` to `.gitignore` in the target directory.
+4. Apply only the supported placeholder replacements.
+5. Preserve the scaffold structure as-is unless the user explicitly asks for a
    baseline change.
-5. Stop after writing files.
+6. Stop after writing files.
 
 ## Bundled Scaffold
 
 The scaffold lives entirely inside this skill:
 
 - `assets/template/.env.sample`
-- `assets/template/.gitignore`
+- `assets/template/gitignore`
 - `assets/template/package.json`
 - `assets/template/schema.idea`
 - `assets/template/tsconfig.json`
@@ -50,6 +51,12 @@ The scaffold lives entirely inside this skill:
 
 Do not rely on sibling repository folders such as `templates/`, `packages/`, or
 `specs/`. This skill must remain portable.
+
+`assets/template/gitignore` is the scaffold source for the generated
+`.gitignore`. Some package runners omit nested `.gitignore` files from packed
+GitHub/npm installs, so keep only `gitignore` in the scaffold source and write
+it as `.gitignore` in the generated app. Do not leave both names in the target
+project.
 
 ## Supported Customization
 

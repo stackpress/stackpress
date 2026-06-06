@@ -20,4 +20,15 @@ Stackpress is a content management framework.
  - Plugggable Design
  - Client Generator
 
+## Create a Project
+
+Create an empty folder, enter it, and run:
+
+```bash
+npx github:stackpress/stackpress create
+```
+
+The command copies the bundled Stackpress starter template into the current
+folder and sets the package name to the folder name.
+
 Checkout [Getting Started](https://www.stackpress.io/docs/getting-started) to start your journey.
