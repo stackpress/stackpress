@@ -19,13 +19,11 @@ describe('server/Terminal', () => {
       }
     };
 
-    const terminal = new Terminal(
-      [ 'emit', '-v' ],
-      server as any
-    );
+    const terminal = new Terminal([ 'emit', '-v', '--force' ], server as any);
 
     expect(terminal.server).to.equal(server);
     expect(terminal.verbose).to.equal(true);
+    expect(terminal.force).to.equal(true);
     expect(terminal.config).to.equal(null);
     expect(terminal.brand).to.equal('Stackpress');
     expect(terminal.cwd).to.equal('/workspace/app');

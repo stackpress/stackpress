@@ -10,6 +10,7 @@ import type { AnySchema } from '@modelcontextprotocol/sdk/server/zod-compat.js';
 import { fromJSONSchema } from 'zod';
 //client
 import type {
+  AuthContext,
   ClientPlugin,
   NormalizedToolConfig,
   ToolConfig,
@@ -17,8 +18,11 @@ import type {
 } from './types.js';
 import {
   buildTools,
+  listToolsForAuth,
   toMcpText,
-  validateInput
+  toolAllowed,
+  validateInput,
+  withToolData
 } from './helpers.js';
 import { http, sse, stdio } from './events/index.js';
 import { attachHttpToServer, shouldAttachHttpToServer } from './scripts/http.js';
@@ -27,15 +31,22 @@ import { attachSseToServer, shouldAttachSseToServer } from './scripts/sse.js';
 /**
  * Create one MCP server instance from the current Stackpress config.
  */
-export async function createMcpServer(ctx: ToolResolverServer) {
+export async function createMcpServer(
+  ctx: ToolResolverServer,
+  auth?: AuthContext
+) {
   //start by normalizing every configured tool into the runtime registry
   const registry = await buildTools(
     ctx,
     ctx.config.path<ToolConfig[]>('mcp.tools', [])
   );
 
+  //when a live transport resolved caller auth, only expose the visible slice
+  // of the registry to that one connected caller.
+  const visible = auth ? listToolsForAuth(registry, auth) : registry;
+
   //if the registry is empty, then there is nothing useful to expose
-  if (!registry.length) {
+  if (!visible.length) {
     return null;
   }
 
@@ -47,7 +58,7 @@ export async function createMcpServer(ctx: ToolResolverServer) {
     description: ctx.config.path<string | undefined>('mcp.description')
   });
 
-  registerCallTools(server, ctx, registry);
+  registerCallTools(server, ctx, visible, auth);
   return server;
 }
 
@@ -57,7 +68,8 @@ export async function createMcpServer(ctx: ToolResolverServer) {
 export function registerCallTools(
   server: McpServer,
   ctx: ToolResolverServer,
-  tools: NormalizedToolConfig[]
+  tools: NormalizedToolConfig[],
+  auth?: AuthContext
 ) {
   //for each normalized tool, register one callable MCP handler
   for (const tool of tools) {
@@ -76,6 +88,12 @@ export function registerCallTools(
           : undefined
       },
       async (input: unknown) => {
+        //if this server was built for one caller, enforce that same auth at
+        // call time too so stale or manually-crafted calls cannot bypass it.
+        if (auth && !toolAllowed(tool, auth)) {
+          throw new Error(`Unauthorized MCP tool call: ${tool.name}`);
+        }
+
         //validate the caller payload at the MCP edge before it reaches events
         const payload = validateInput(
           tool,
@@ -84,10 +102,11 @@ export function registerCallTools(
 
         //now merge the payload into the event call and let Stackpress do the
         // real work behind the tool.
-        const response = await ctx.resolve(tool.event, {
-          ...(tool.data || {}),
-          ...payload
-        });
+        const response = await ctx.resolve(tool.event, withToolData(
+          tool,
+          payload,
+          auth
+        ));
 
         //finally convert Stackpress results into the MCP text result shape
         return toMcpText(response?.results ?? null);
@@ -104,7 +123,7 @@ export default function plugin(ctx: Server) {
   if (!ctx.config.has('mcp')) return;
 
   ctx.on('listen', async ({ ctx }) => {
-    //load the generated client tools if the client package already exists 
+    //load the generated client tools if the client package already exists
     // and let that registry attach its plugin-mode resolver events first.
     const client = ctx.plugin<ClientPlugin>('client');
     if (typeof client === 'function') {
@@ -113,7 +132,11 @@ export default function plugin(ctx: Server) {
     }
 
     //expose the MCP factory so transport scripts can request a fresh server
-    ctx.register('mcp', async () => createMcpServer(ctx as ToolResolverServer));
+    // that is already filtered to one resolved caller auth context.
+    ctx.register('mcp', async (auth?: AuthContext) => createMcpServer(
+      ctx as ToolResolverServer,
+      auth
+    ));
 
     //then register the transport entry events that the CLI can emit later
     ctx.on('mcp-stdio', stdio);

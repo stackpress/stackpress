@@ -499,9 +499,12 @@ export const mcp = {
       scopes: [ 'articles.write' ],
       input: {
         type: 'object',
-        required: [ 'title', 'content', 'profileId' ],
+        required: [ 'title', 'slug', 'content', 'profileId', 'keywords', 'tags' ],
         properties: {
           title: { type: 'string' },
+          slug: { type: 'string' },
+          keywords: { type: 'array', items: { type: 'string' } },
+          tags: { type: 'array', items: { type: 'string' } },
           content: { type: 'string' },
           profileId: { type: 'string' },
           banner: { type: 'string' },

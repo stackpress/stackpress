@@ -152,6 +152,7 @@ const initialize = {
 function makeServer(mode: 'stateful' | 'stateless') {
   return new TestHttpServer(
     async () => null,
+    async () => ({ kind: 'public' }),
     '127.0.0.1',
     17759,
     '/mcp',

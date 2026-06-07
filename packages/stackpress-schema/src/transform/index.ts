@@ -15,7 +15,10 @@ import {
 import generateEnums from './enums.js';
 import generatePackage from './package.js';
 import generateSchemaTests from './tests/schema.js';
-import { loadProjectFile } from './helpers.js';
+import {
+  loadProjectFile,
+  pruneGeneratedSchemaFiles
+} from './helpers.js';
 
 export default async function generate(props: ClientPluginProps) {
   //------------------------------------------------------------------//
@@ -27,6 +30,8 @@ export default async function generate(props: ClientPluginProps) {
   const loader = server.loader;
   const revisionPath = server.config.path<string>('client.revisions');
   const packageName = server.config.path('client.package', 'stackpress-client');
+  //prune stale generated files first so renamed fields do not leave orphaned output.
+  await pruneGeneratedSchemaFiles(directory.getPath(), schema);
 
   //------------------------------------------------------------------//
   // 2. Generators

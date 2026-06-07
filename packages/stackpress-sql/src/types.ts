@@ -1,7 +1,7 @@
 //modules
 import type { SchemaConfig } from '@stackpress/idea-parser';
 import type { Request, Response, Server } from '@stackpress/ingest';
-import type { FlatValue } from '@stackpress/inquire/types';
+import type { Field, FlatValue } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 import type Create from '@stackpress/inquire/Create';
 //stackpress-schema
@@ -13,6 +13,7 @@ import type SchemaInterface from 'stackpress-schema/SchemaInterface';
 //stackpress-sql
 import type StoreInterface from './interface/StoreInterface.js';
 import type ActionsInterface from './interface/ActionsInterface.js';
+import { makeCreateQuery } from './transform/helpers.js';
 
 export type ValueScalar = string | number | boolean | null;
 export type ValuePrimitive = ValueScalar | Date | Record<string, any>;
@@ -314,3 +315,31 @@ export type ClientPlugin<
   //exact map of fieldsets
   F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
 > = (nullable?: boolean) => Promise<Client<M, F>>;
+
+
+export type ForeignBuild = {
+  table?: string,
+  foreign?: string,
+  local?: string,
+  delete?: string,
+  update?: string
+};
+
+export type CreateBuild = ReturnType<ReturnType<typeof makeCreateQuery>['build']>;
+
+export type RenameRisk = {
+  model: string,
+  table: string,
+  from: string,
+  fromField: string,
+  to: string,
+  toField: string
+};
+
+export type ColumnSignature = {
+  field: Field,
+  primary: boolean,
+  unique: string[],
+  keys: string[],
+  foreign: Array<Required<ForeignBuild>>
+};
