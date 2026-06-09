@@ -6,6 +6,8 @@ import path from 'node:path';
 import type { Project, Directory } from 'ts-morph';
 import Nest from '@stackpress/lib/Nest';
 import { TemplateEngine, helpers } from '@stackpress/lib/Template';
+//stackpress-schema
+import type Schema from '../Schema.js';
 
 export const cwd = process.cwd();
 
@@ -68,6 +70,98 @@ export function renderCode(template: string, data: Record<string, any> = {}) {
   const engine = new TemplateEngine({ helpers, delimiters: [ '<%', '%>' ] });
   return engine.render(template, data);
 };
+
+/**
+ * Remove stale generated schema files that no longer match the current schema.
+ */
+export async function pruneGeneratedSchemaFiles(root: string, schema: Schema) {
+  //if the generated root does not exist yet, there is nothing to prune
+  if (!fs.existsSync(root)) {
+    return;
+  }
+
+  //build the exact list of folders and files the current schema still expects
+  const expectedDirectories = new Map<string, {
+    columns: Set<string>,
+    tests: Set<string>
+  }>();
+  const modelsAndFieldsets = [
+    ...schema.fieldsets.values(),
+    ...schema.models.values()
+  ];
+
+  for (const fieldset of modelsAndFieldsets) {
+    //generated folders are keyed by the fieldset/model path name
+    const dirname = fieldset.name.toPathName();
+    //model-backed columns are generated elsewhere, so this pass only tracks
+    //the direct column artifacts for the fieldset or model folder itself
+    const columns = fieldset.columns.filter(
+      column => !column.type.model
+    );
+    //record every column file that should still exist after regeneration
+    const columnFiles = new Set(columns.map(
+      column => column.name.toPathName('%sColumn.ts')
+    ).toArray());
+    //only primitive columns get individual test files in this folder layout
+    const testFiles = new Set(columns
+      .filter(column => !column.type.fieldset)
+      .map(column => column.name.toPathName('%sColumn.test.ts'))
+      .toArray());
+    expectedDirectories.set(dirname, { columns: columnFiles, tests: testFiles });
+  }
+
+  for (const entry of await fsp.readdir(root, { withFileTypes: true })) {
+    //this cleaner only manages generated directories
+    if (!entry.isDirectory()) {
+      continue;
+    }
+    //generated fieldset/model folders should mirror the live schema exactly.
+    if (!expectedDirectories.has(entry.name)) {
+      await fsp.rm(path.join(root, entry.name), { recursive: true, force: true });
+      continue;
+    }
+
+    //once the folder is confirmed valid, prune only the stale files inside it
+    const expected = expectedDirectories.get(entry.name)!;
+    const directory = path.join(root, entry.name);
+    await pruneGeneratedGroup(
+      path.join(directory, 'columns'),
+      expected.columns,
+      new Set([ 'index.ts' ])
+    );
+    await pruneGeneratedGroup(
+      path.join(directory, 'tests', 'columns'),
+      expected.tests,
+      new Set()
+    );
+  }
+};
+
+/**
+ * Remove generated files from one folder when they are no longer expected.
+ */
+async function pruneGeneratedGroup(
+  directory: string,
+  expectedFiles: Set<string>,
+  preservedFiles: Set<string>
+) {
+  //skip missing folders because generation may not have created them yet
+  if (!fs.existsSync(directory)) {
+    return;
+  }
+
+  for (const entry of await fsp.readdir(directory, { withFileTypes: true })) {
+    //only generated files are deleted here, not nested directories
+    if (!entry.isFile()) {
+      continue;
+    }
+    //keep aggregate generated files like index.ts, but prune stale column artifacts.
+    if (preservedFiles.has(entry.name) || expectedFiles.has(entry.name)) {
+      continue;
+    }
+    await fsp.rm(path.join(directory, entry.name), { force: true });
+  }
+}
 
 export function savePackageJsonNest(pwd: string, nest: Nest) {
   if (!fs.existsSync(pwd)) {

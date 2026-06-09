@@ -45,6 +45,12 @@ stackpress push --b config -v
 
 Creates or updates database structure from the current schema and database config.
 
+- Preserves data for clear one-to-one column renames by issuing a rename instead
+  of a drop-and-add migration.
+- Stops with an ambiguity error when multiple same-shape rename candidates exist.
+- Use `--force` only when you intentionally want to accept the destructive diff
+  for an unresolved rename-like change.
+
 ## `populate`
 
 ```bash

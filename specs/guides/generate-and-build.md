@@ -31,6 +31,11 @@ Runs the client-oriented generation pass and can write readable TypeScript into 
 
 Creates or updates the local database structure from the generated schema state.
 
+If a schema change is a clear one-to-one field rename, Stackpress preserves the
+existing data by issuing a column rename. For example, renaming `summary` to
+`seoSummary` updates the column name instead of dropping the old values and
+recreating the column.
+
 ### `stackpress populate --b config -v`
 
 Inserts starter content into the local database.
