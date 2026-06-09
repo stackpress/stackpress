@@ -160,7 +160,7 @@ database: {
 - `stackpress push`
 - `stackpress populate`
 - `stackpress query`
-- generated migration output
+- generated migration output, including safe one-to-one column renames
 - default schema behavior for generated SQL
 
 ## `view`

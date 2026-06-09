@@ -9,8 +9,10 @@ import type { ClientConfig } from 'stackpress-schema/types';
 import Revisions from 'stackpress-schema/Revisions';
 //stackpress-sql
 import {
-  findLikelyRenameRisks,
-  formatRenameRiskMessage
+  formatAmbiguousRenameMessage,
+  makeRenameQueries,
+  planColumnRenames,
+  rewriteCreateQueryWithRenames
 } from '../helpers.js';
 import { makeCreateQuery } from '../transform/helpers';
 
@@ -39,24 +41,29 @@ export default async function upgrade(
     );
     return;
   }
-  //stop before building SQL when one revision looks like a field rename.
-  const risks = findLikelyRenameRisks(from.schema, to.schema);
+  //plan safe one-to-one renames before the generic diff decides to drop data.
+  const plan = planColumnRenames(from.schema, to.schema);
   const forced = Boolean((terminal as Terminal & { force?: boolean })?.force);
-  if (risks.length && !forced) {
-    const message = formatRenameRiskMessage(risks);
+  if (plan.ambiguous.length > 0 && !forced) {
+    const message = formatAmbiguousRenameMessage(plan.ambiguous);
     terminal?.control.error(message);
     throw new Error(message);
   }
   //create a registry from the history
-  const previous = Array.from(from.schema.models.values()).map(
-    model => makeCreateQuery(model)
+  const previous = Array.from(from.schema.models.values()).map(model =>
+    rewriteCreateQueryWithRenames(
+      makeCreateQuery(model),
+      forced ? [] : plan.renames
+    )
   );
   //create a registry from the new generated schema
   const current = Array.from(to.schema.models.values()).map(
     model => makeCreateQuery(model)
   );
   //this is where we are going to store all the queries
-  const queries: QueryObject[] = [];
+  const queries: QueryObject[] = forced
+    ? []
+    : makeRenameQueries(database, plan.renames);
   //loop through all 'current' the models
   for (const schema of current) {
     const name = schema.build().table;

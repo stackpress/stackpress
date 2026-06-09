@@ -330,11 +330,23 @@ export type ForeignBuild = {
   update?: string
 };
 
+// Captures the foreign-key semantics that still matter after a local rename.
+export type ForeignSignature = {
+  //the referenced table name
+  table: string,
+  //the referenced column name on that table
+  foreign: string,
+  //the on-delete action generated for the constraint
+  delete: string,
+  //the on-update action generated for the constraint
+  update: string
+};
+
 // Captures the SQL create-table shape produced by `makeCreateQuery().build()`.
 export type CreateBuild = ReturnType<ReturnType<typeof makeCreateQuery>['build']>;
 
-// Records one likely field rename that would otherwise look like drop-and-add.
-export type RenameRisk = {
+// Records one safe one-to-one rename that should preserve live column data.
+export type RenamePlan = {
   //the model display name shown to the developer
   model: string,
   //the SQL table name used during migration
@@ -349,16 +361,39 @@ export type RenameRisk = {
   toField: string
 };
 
+// Records one ambiguous rename group that Stackpress should not guess through.
+export type RenameAmbiguity = {
+  //the model display name shown to the developer
+  model: string,
+  //the SQL table name used during migration
+  table: string,
+  //the removed SQL field keys that could not be matched safely
+  fromFields: string[],
+  //the added SQL field keys that could not be matched safely
+  toFields: string[]
+};
+
+// Captures the rename planning output shared by push and migrate flows.
+export type RenamePlanResult = {
+  //the safe one-to-one renames Stackpress can execute automatically
+  renames: RenamePlan[],
+  //the ambiguous rename groups that must fail safe by default
+  ambiguous: RenameAmbiguity[]
+};
+
+// Backward-compatible alias for older rename-risk wording.
+export type RenameRisk = RenamePlan;
+
 // Summarizes the SQL-relevant parts of a field so two columns can be compared.
 export type ColumnSignature = {
   //the normalized base column definition
   field: Field,
   //whether the field participates in the primary key
   primary: boolean,
-  //the unique-index names that include this field
-  unique: string[],
-  //the non-unique index names that include this field
-  keys: string[],
+  //how many unique constraints include this field
+  unique: number,
+  //how many non-unique indexes include this field
+  keys: number,
   //the normalized foreign-key relations attached to this field
-  foreign: Array<Required<ForeignBuild>>
+  foreign: ForeignSignature[]
 };

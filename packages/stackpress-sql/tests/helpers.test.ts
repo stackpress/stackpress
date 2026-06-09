@@ -1,6 +1,8 @@
 //tests
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
+//stackpress-schema
+import Schema from 'stackpress-schema/Schema';
 //src
 import {
   toSqlString,
@@ -10,6 +12,7 @@ import {
   toSqlFloat,
   flatten,
   getAlias,
+  planColumnRenames,
   storePathToAlias,
   storeSelectorToSqlSelector
 } from '../src/helpers.js';
@@ -161,3 +164,184 @@ describe('sql/helpers', () => {
     })).to.equal(null);
   });
 });
+
+describe('sql/rename-plan', () => {
+  it('should plan a one-to-one rename for same-shape fields', () => {
+    const from = Schema.make(makeArticleSchema([
+      makeColumn('summary')
+    ]));
+    const to = Schema.make(makeArticleSchema([
+      makeColumn('seoSummary')
+    ]));
+
+    //Treat a simple same-shape remove/add pair as a rename plan.
+    expect(planColumnRenames(from, to)).to.deep.equal({
+      ambiguous: [],
+      renames: [{
+        model: 'Article',
+        table: 'article',
+        from: 'summary',
+        fromField: 'summary',
+        to: 'seoSummary',
+        toField: 'seo_summary'
+      }]
+    });
+  });
+
+  it('should preserve rename matches for unique and indexable fields', () => {
+    const from = Schema.make(makeArticleSchema([
+      makeColumn('summary', {
+        attributes: { unique: true, searchable: true }
+      })
+    ]));
+    const to = Schema.make(makeArticleSchema([
+      makeColumn('seoSummary', {
+        attributes: { unique: true, searchable: true }
+      })
+    ]));
+
+    //Ignore generated index names so role-equivalent fields still rename cleanly.
+    expect(planColumnRenames(from, to).renames).to.deep.equal([{
+      model: 'Article',
+      table: 'article',
+      from: 'summary',
+      fromField: 'summary',
+      to: 'seoSummary',
+      toField: 'seo_summary'
+    }]);
+  });
+
+  it('should preserve rename matches for foreign-key columns', () => {
+    const from = Schema.make(makeRelationSchema('basicId'));
+    const to = Schema.make(makeRelationSchema('primaryBasicId'));
+
+    //Match the foreign-key column by semantics even though the local key name changes.
+    expect(planColumnRenames(from, to).renames).to.deep.equal([{
+      model: 'KitchenSink',
+      table: 'kitchen_sink',
+      from: 'basicId',
+      fromField: 'basic_id',
+      to: 'primaryBasicId',
+      toField: 'primary_basic_id'
+    }]);
+  });
+
+  it('should fail safe when multiple same-shape rename candidates exist', () => {
+    const from = Schema.make(makeArticleSchema([
+      makeColumn('summary'),
+      makeColumn('teaser')
+    ]));
+    const to = Schema.make(makeArticleSchema([
+      makeColumn('seoSummary'),
+      makeColumn('seoTeaser')
+    ]));
+
+    const plan = planColumnRenames(from, to);
+
+    //Refuse to guess when more than one new field could explain the same removal set.
+    expect(plan.renames).to.deep.equal([]);
+    expect(plan.ambiguous).to.have.length(1);
+    expect(plan.ambiguous[0]).to.include({
+      model: 'Article',
+      table: 'article'
+    });
+    expect(plan.ambiguous[0].fromFields).to.deep.equal([
+      'summary',
+      'teaser'
+    ]);
+    expect(plan.ambiguous[0].toFields).to.deep.equal([
+      'seo_summary',
+      'seo_teaser'
+    ]);
+  });
+});
+
+/**
+ * Builds one article-model schema around the supplied columns.
+ */
+function makeArticleSchema(columns: Array<Record<string, any>>) {
+  return {
+    model: {
+      Article: {
+        name: 'Article',
+        mutable: true,
+        attributes: {},
+        columns
+      }
+    }
+  };
+}
+
+/**
+ * Builds one schema column with optional attribute overrides.
+ */
+function makeColumn(
+  name: string,
+  options: {
+    attributes?: Record<string, unknown>,
+    required?: boolean,
+    type?: string
+  } = {}
+) {
+  return {
+    name,
+    type: options.type || 'String',
+    required: options.required ?? false,
+    multiple: false,
+    attributes: options.attributes || {}
+  };
+}
+
+/**
+ * Builds a relation-backed schema that exposes a foreign-key storage column.
+ */
+function makeRelationSchema(keyName: string) {
+  return {
+    model: {
+      BasicModel: {
+        name: 'BasicModel',
+        mutable: false,
+        attributes: {},
+        columns: [
+          {
+            name: 'id',
+            type: 'String',
+            attributes: { id: true },
+            required: true,
+            multiple: false
+          },
+          {
+            name: 'sink',
+            type: 'KitchenSink',
+            attributes: {},
+            required: true,
+            multiple: true
+          }
+        ]
+      },
+      KitchenSink: {
+        name: 'KitchenSink',
+        mutable: false,
+        attributes: {},
+        columns: [
+          {
+            name: keyName,
+            type: 'String',
+            attributes: { id: true },
+            required: true,
+            multiple: false
+          },
+          {
+            name: 'basic',
+            type: 'BasicModel',
+            attributes: {
+              relation: [ { local: keyName, foreign: 'id' } ]
+            },
+            required: true,
+            multiple: false
+          }
+        ]
+      }
+    }
+  };
+}

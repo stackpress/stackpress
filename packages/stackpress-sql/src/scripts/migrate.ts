@@ -10,6 +10,12 @@ import Terminal from 'stackpress-server/Terminal';
 import Revisions from 'stackpress-schema/Revisions';
 //stackpress-sql
 import type { DatabaseConfig } from '../types';
+import {
+  formatAmbiguousRenameMessage,
+  makeRenameQueries,
+  planColumnRenames,
+  rewriteCreateQueryWithRenames
+} from '../helpers.js';
 import { 
   arrangeModelSequence, 
   makeCreateQuery 
@@ -83,16 +89,23 @@ export default async function migrate(
     const from = await revisions.index(i - 1);
     const to = await revisions.index(i);
     if (!from || !to) break;
+    //plan safe renames before the generic diff turns them into drop-and-add.
+    const plan = planColumnRenames(from.schema, to.schema);
+    if (plan.ambiguous.length > 0) {
+      const message = formatAmbiguousRenameMessage(plan.ambiguous);
+      terminal?.control.error(message);
+      throw new Error(message);
+    }
     //create a registry from the history
-    const previous = from.schema.models.toArray().map(
-      model => makeCreateQuery(model)
+    const previous = from.schema.models.toArray().map(model =>
+      rewriteCreateQueryWithRenames(makeCreateQuery(model), plan.renames)
     );
     //create a registry from the new generated schema
     const current = to.schema.models.toArray().map(
       model => makeCreateQuery(model)
     );
     //this is where we are going to store all the queries
-    const queries: QueryObject[] = [];
+    const queries: QueryObject[] = makeRenameQueries(database, plan.renames);
     //loop through all 'current' the models
     for (const schema of current) {
       const name = schema.build().table;
