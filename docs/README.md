@@ -1,17 +1,7 @@
 # API Reference
 
-This shelf documents the public importable surface of `stackpress` and `stackpress/...`. Use it when you already know the module you need and want exact import, export, and usage guidance.
-
-These pages are lookup references, not walkthrough lessons. Course files in
-`packages/www/plans/content/` should teach the problem, the concept, and the
-guided workflow; these reference files should answer exact questions about
-imports, exports, configuration keys, CLI commands, methods, return behavior,
-and integration examples.
-
-When a course needs a more precise example, use this shelf as the source-backed
-place to check the public API shape before updating lesson copy. If a reference
-page is missing a method, option, return detail, or realistic example, update
-the reference first so later lesson edits have a stable source.
+The following documentation covers the DX interfaces of the Stackpress 
+project. Visit the [website](https://www.stackpress.io/) for guides.
 
 ## Most Used Paths
 

@@ -5,7 +5,7 @@
   <a href="https://github.com/stackpress/stackpress/commits/main/"><img src="https://img.shields.io/github/last-commit/stackpress/stackpress" /></a>
   <br />
   <br />
-  <a href="https://www.stackpress.io/docs/introduction">Documentation</a>
+  <a href="https://www.stackpress.io/guides/001-what-stackpress-is/">Documentation</a>
   <br />
   <hr />
 </div>
@@ -31,4 +31,4 @@ npx github:stackpress/stackpress create
 The command copies the bundled Stackpress starter template into the current
 folder and sets the package name to the folder name.
 
-Checkout [Getting Started](https://www.stackpress.io/docs/getting-started) to start your journey.
+Checkout [Getting Started](https://www.stackpress.io/guides/002-getting-started/) to start your journey.
