@@ -23,7 +23,6 @@
     "admin": "yarn --cwd packages/stackpress-admin",
     "api": "yarn --cwd packages/stackpress-api",
     "csrf": "yarn --cwd packages/stackpress-csrf",
-    "docs": "http-server -p 8080 -c-1 docs",
     "email": "yarn --cwd packages/stackpress-email",
     "language": "yarn --cwd packages/stackpress-language",
     "schema": "yarn --cwd packages/stackpress-schema",
@@ -35,15 +34,11 @@
     "blog": "yarn --cwd templates/blog",
     "store": "yarn --cwd templates/store",
     "website": "yarn --cwd templates/website",
-    "www": "yarn --cwd packages/www",
     "test": "yarn test:core",
     "test:skills": "node --test tests/skills-installer.test.mjs",
     "test:core": "yarn test:server && yarn test:schema && yarn test:sql",
     "test:server": "yarn server test",
     "test:schema": "yarn schema test",
     "test:sql": "yarn sql test"
-  },
-  "devDependencies": {
-    "http-server": "14.1.1"
   }
 }
