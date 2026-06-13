@@ -1,78 +1,59 @@
-//stackpress
+//modules
 import type { ReactNode } from 'react';
 import type { ServerConfigPageProps } from 'stackpress/view/client';
 import { LayoutBlank, useResponse } from 'stackpress/view/client';
+//client
+import type {
+  DocsPageResults,
+  HomeResults,
+  NavGroup,
+  PagerItem,
+  ShelfResults,
+  TocItem
+} from '../types.js';
 
 //--------------------------------------------------------------------//
 // Types
 
-export type NavItem = {
-  href: string;
-  label: string;
-  level?: number;
+type DocsFrameProps = ServerConfigPageProps & {
+  children: ReactNode
 };
 
-export type NavGroup = {
-  label: string;
-  level?: number;
-  items: NavItem[];
+type DocsHeadProps = ServerConfigPageProps & {
+  description?: string,
+  title: string
 };
 
-export type TocItem = {
-  id: string;
-  level: number;
-  text: string;
+type DocsShellProps = {
+  children: ReactNode
 };
 
-export type PagerItem = {
-  href: string;
-  label: string;
+type MobilePanelsProps = {
+  groups: NavGroup[],
+  toc: TocItem[]
 };
 
-export type SiteSection = 'home' | 'guides' | 'api';
-
-export type DocsPageResults = {
-  active: string;
-  content: string;
-  description: string;
-  eyebrow: string;
-  guideLevel?: number;
-  nav: NavGroup[];
-  next?: PagerItem;
-  previous?: PagerItem;
-  section: SiteSection;
-  title: string;
-  toc: TocItem[];
+type PagerProps = {
+  next?: PagerItem,
+  previous?: PagerItem
 };
 
-export type ShelfCard = {
-  description: string;
-  href: string;
-  label: string;
-  level?: number;
+type SidebarProps = {
+  active: string,
+  groups: NavGroup[]
 };
 
-export type ShelfResults = {
-  cards: ShelfCard[];
-  description: string;
-  eyebrow: string;
-  section: SiteSection;
-  title: string;
-};
-
-export type HomeResults = {
-  description: string;
-  paths: ShelfCard[];
-  title: string;
+type TocProps = {
+  items: TocItem[]
 };
 
 //--------------------------------------------------------------------//
 // Components
 
-export function DocsHead(props: ServerConfigPageProps & {
-  description?: string;
-  title: string;
-}) {
+/**
+ * Renders shared SEO, script, and stylesheet tags for docs pages.
+ */
+export function DocsHead(props: DocsHeadProps) {
   const { description = '', styles = [], title } = props;
 
   return (
@@ -105,9 +86,10 @@ export function DocsHead(props: ServerConfigPageProps & {
   );
 }
 
-export function DocsFrame(props: ServerConfigPageProps & {
-  children: ReactNode;
-}) {
+/**
+ * Wraps docs pages in the Stackpress blank layout and docs shell.
+ */
+export function DocsFrame(props: DocsFrameProps) {
   const { children } = props;
 
   return (
@@ -117,9 +99,10 @@ export function DocsFrame(props: ServerConfigPageProps & {
   );
 }
 
-function DocsShell(props: {
-  children: ReactNode;
-}) {
+/**
+ * Provides the initial light visitor shell before client progress is applied.
+ */
+function DocsShell(props: DocsShellProps) {
   return (
     <div
       className="docs-site docs-level-1 docs-theme-light"
@@ -137,6 +120,9 @@ function DocsShell(props: {
   );
 }
 
+/**
+ * Renders the shared docs top navigation and progress controls.
+ */
 export function Header() {
   return (
     <>
@@ -205,10 +191,10 @@ export function Header() {
   );
 }
 
-export function Sidebar(props: {
-  active: string;
-  groups: NavGroup[];
-}) {
+/**
+ * Renders article navigation for the levels currently visible to the reader.
+ */
+export function Sidebar(props: SidebarProps) {
   return (
     <aside className="docs-sidebar">
       {props.groups.map(group => (
@@ -235,10 +221,10 @@ export function Sidebar(props: {
   );
 }
 
-export function MobilePanels(props: {
-  groups: NavGroup[];
-  toc: TocItem[];
-}) {
+/**
+ * Renders the mobile article menu and table of contents panels.
+ */
+export function MobilePanels(props: MobilePanelsProps) {
   return (
     <>
       <div className="docs-mobile-controls">
@@ -270,7 +256,10 @@ export function MobilePanels(props: {
   );
 }
 
-export function Toc(props: { items: TocItem[] }) {
+/**
+ * Renders the desktop table of contents for article headings.
+ */
+export function Toc(props: TocProps) {
   return (
     <aside className="docs-toc">
       <p>On this page</p>
@@ -281,10 +270,11 @@ export function Toc(props: { items: TocItem[] }) {
   );
 }
 
-export function Pager(props: {
-  next?: PagerItem;
-  previous?: PagerItem;
-}) {
+/**
+ * Renders previous and next article links when a neighbor exists.
+ */
+export function Pager(props: PagerProps) {
+  // empty pager slots should not reserve space on standalone pages
   if (!props.previous && !props.next) return null;
 
   return (
@@ -305,10 +295,14 @@ export function Pager(props: {
   );
 }
 
+/**
+ * Renders a guide or API article from the route response payload.
+ */
 export function DocBody() {
   const response = useResponse<DocsPageResults>();
   const result = response.results;
 
+  // route data is required before the article shell has useful content
   if (!result) {
     return <main className="docs-main">Document not found.</main>;
   }
@@ -333,10 +327,14 @@ export function DocBody() {
   );
 }
 
+/**
+ * Renders a guide or API index shelf from the route response payload.
+ */
 export function ShelfBody() {
   const response = useResponse<ShelfResults>();
   const result = response.results;
 
+  // route data is required before the shelf can list cards
   if (!result) {
     return <main className="docs-main">Section not found.</main>;
   }
@@ -365,10 +363,14 @@ export function ShelfBody() {
   );
 }
 
+/**
+ * Renders the documentation home page from the route response payload.
+ */
 export function HomeBody() {
   const response = useResponse<HomeResults>();
   const result = response.results;
 
+  // the fallback keeps the page readable if a route is missing results
   if (!result) {
     return <main className="docs-main">Stackpress documentation</main>;
   }

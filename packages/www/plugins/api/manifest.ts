@@ -21,12 +21,10 @@ function titleFromSlug(slug: string) {
 function hrefFromFile(file: string) {
   const relative = path.relative(referencesRoot, file);
   const parts = relative.split(path.sep);
-  const slugParts = parts.map((part, index) => {
+  const slugParts = parts.map(part => {
     const slug = part.replace(/\.md$/, '');
     const isReadme = slug === 'README';
-    const isRoot = parts.length === 1;
-    if (isRoot && isReadme) return 'overview';
-    if (isReadme && index === parts.length - 1) return '';
+    if (isReadme) return 'overview';
     return slug.toLowerCase();
   }).filter(Boolean);
   return `/api/${slugParts.join('/')}`;

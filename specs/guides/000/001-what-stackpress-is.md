@@ -111,8 +111,8 @@ should be able to place that topic on the map. Exact imports and API details
 belong in reference pages after the course gives you a reason to look them up.
 
 Start `002 Getting Started` when you are ready to build the first route. Use
-[Overview](/concepts/overview), [Schema And Generation](/concepts/schema-and-generation),
-and [Plugin System](/concepts/plugin-system) for deeper concepts.
+the API reference later, after the course gives you a reason to look up exact
+exports and runtime details.
 
 **Learning checkpoint:** Before moving on, make sure you can explain the four
 projects under Stackpress and what Stackpress adds on top. You do not need

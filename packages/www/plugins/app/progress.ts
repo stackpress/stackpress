@@ -1,8 +1,10 @@
-import type { NavGroup, ShelfCard } from './components/docs.js';
+//client
+import type { NavGroup, ShelfCard } from './types.js';
 
+// DocsProgressLevel is the numeric guide tier used by cards and navigation.
 export type DocsProgressLevel = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export type DocsLevelMeta = {
+type DocsLevelMeta = {
   badge: string;
   description: string;
   href: string;
@@ -11,17 +13,9 @@ export type DocsLevelMeta = {
   number: string;
 };
 
-export type DocsProgressState = {
-  completed: string[];
-  level: DocsProgressLevel;
-  updated?: string;
-};
+const defaultProgressLevel: DocsProgressLevel = 1;
 
-export const progressKey = 'stackpressDocsProgress';
-export const themeKey = 'stackpress-docs-theme';
-export const defaultProgressLevel: DocsProgressLevel = 1;
-
-export const levels: DocsLevelMeta[] = [
+const levels: DocsLevelMeta[] = [
   {
     badge: 'Visitor',
     description: 'Orientation, setup, first route, first view, and debugging.',
@@ -88,6 +82,9 @@ export const levels: DocsLevelMeta[] = [
   }
 ];
 
+/**
+ * Returns the progressive guide tier represented by a guide URL.
+ */
 export function getGuideLevel(href: string): DocsProgressLevel {
   const match = /^\/guides\/(\d)\d{2}/.exec(href);
   if (!match) return defaultProgressLevel;
@@ -95,39 +92,9 @@ export function getGuideLevel(href: string): DocsProgressLevel {
   return Math.max(1, Math.min(8, level)) as DocsProgressLevel;
 }
 
-export function getBadge(level: number) {
-  return levels.find(item => item.level === level)?.badge || levels[0].badge;
-}
-
-export function normalizeProgressState(state: unknown): DocsProgressState {
-  const input = state && typeof state === 'object'
-    ? state as Partial<DocsProgressState>
-    : {};
-  const level = Number.isFinite(Number(input.level))
-    ? Number(input.level)
-    : defaultProgressLevel;
-  return {
-    completed: Array.isArray(input.completed) ? input.completed : [],
-    level: Math.max(1, Math.min(8, level)) as DocsProgressLevel,
-    updated: typeof input.updated === 'string' ? input.updated : undefined
-  };
-}
-
-export function parseProgressState(value: string|string[]|undefined) {
-  const source = Array.isArray(value) ? value[0] : value;
-  if (!source) return normalizeProgressState(undefined);
-  try {
-    return normalizeProgressState(JSON.parse(source));
-  } catch (_error) {
-    return normalizeProgressState(undefined);
-  }
-}
-
-export function parseTheme(value: string|string[]|undefined) {
-  const source = Array.isArray(value) ? value[0] : value;
-  return source === 'dark' || source === 'light' ? source : 'light';
-}
-
+/**
+ * Returns all home guide cards in high-to-low order plus orientation.
+ */
 export function getHomeCards(): ShelfCard[] {
   return [
     ...[...levels].reverse().map(item => ({
@@ -145,12 +112,18 @@ export function getHomeCards(): ShelfCard[] {
   ];
 }
 
+/**
+ * Adds guide levels to shelf cards and sorts them from highest to lowest.
+ */
 export function withCardLevels(cards: ShelfCard[]) {
   return [...cards]
     .map(card => ({ ...card, level: getGuideLevel(card.href) }))
     .sort((a, b) => (b.level || 1) - (a.level || 1));
 }
 
+/**
+ * Adds guide levels to nav groups and sorts groups from highest to lowest.
+ */
 export function withNavLevels(groups: NavGroup[]) {
   return groups
     .map(group => {

@@ -25,12 +25,14 @@ Approved creative reference:
 - Shared shell, badge, unlock attributes, and reading-ahead notice:
   `packages/www/plugins/app/components/docs.tsx`
 - Home card ordering:
-  `packages/www/plugins/home/pages/home.ts`
+  `packages/www/plugins/app/progress.ts`
 - Guide index card ordering:
-  `packages/www/plugins/guides/pages/shelf.ts`
+  `packages/www/plugins/app/progress.ts`
 - Guide article metadata and nav ordering:
-  `packages/www/plugins/guides/pages/doc.ts`
-- Cookie/local progress behavior:
+  `packages/www/scripts/build.ts`
+- Static home view:
+  `packages/www/plugins/app/views/home.tsx`
+- Local storage progress behavior:
   `packages/www/public/scripts/docs.js`
 - Theme tokens and progressive chrome:
   `packages/www/public/styles/global.css`
@@ -38,9 +40,8 @@ Approved creative reference:
 ## Runtime Behavior
 
 The static HTML renders the default `100 Visitor` shell. The client script then
-reads the first-party progress cookie and local storage fallback, sets
-`data-reader-level` on `<html>`, and reveals only items with
-`data-unlock-level` less than or equal to the reader state.
+reads local storage, sets the reader level on the docs shell, and reveals only
+items with `data-unlock-level` less than or equal to the reader state.
 
 Guide pages expose:
 
@@ -54,7 +55,7 @@ writing progress. It does not count API pages.
 ## QA Expectations
 
 - Fresh visitor sees `100` and `000`, with `100` first.
-- Higher progress cookie reveals cumulative bands in descending order.
+- Higher local storage progress reveals cumulative bands in descending order.
 - Deep links render without blocking.
 - Deep links above the reader state show a reading-ahead notice.
 - Theme switch is hidden until `400`.

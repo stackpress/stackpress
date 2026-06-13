@@ -5,14 +5,12 @@
   "private": true,
   "plugins": [
     "./plugins/app/plugin",
-    "./plugins/home/plugin",
-    "./plugins/concepts/plugin",
     "./plugins/guides/plugin",
     "./plugins/api/plugin",
     "stackpress"
   ],
   "scripts": {
-    "build": "stackpress build --b config/build -v",
+    "build": "tsx scripts/build.ts",
     "dev": "stackpress serve --b config/develop -v",
     "emit": "stackpress emit",
     "preview": "stackpress serve --b config/preview -v"
