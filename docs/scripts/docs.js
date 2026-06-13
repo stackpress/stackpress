@@ -1,9 +1,15 @@
 (function docsInteractions() {
-  const progressKey = 'stackpressDocsProgress';
+  const expKey = 'spExp';
+  const historyKey = 'spHistory';
+  const levelKey = 'spLevel';
   const themeKey = 'stackpress-docs-theme';
+  const expPerGuide = 10;
+  const requiredDwellMs = 120000;
   const mermaidSource = '/scripts/docs-diagrams.js?v=10.9.6';
+  let activeVisit = null;
   let mermaidLoading = false;
   let mermaidRendered = false;
+  let scrollTrackingReady = false;
   const guideGroups = {
     1: { badge: 'Visitor', label: '100 Develop' },
     2: { badge: 'Junior', label: '200 Data' },
@@ -20,11 +26,11 @@
     root.classList.remove('is-ready');
   }
 
-  function parse(value) {
+  function parse(value, fallback) {
     try {
-      return JSON.parse(value || '{}');
+      return JSON.parse(value || '');
     } catch (_error) {
-      return {};
+      return fallback;
     }
   }
 
@@ -48,40 +54,169 @@
     }
   }
 
-  function readProgressStorage() {
-    return parse(readStorage(progressKey));
+  function clampLevel(level) {
+    return Math.max(1, Math.min(8, Number(level) || 1));
   }
 
-  function normalize(state) {
-    const level = Number.isFinite(Number(state.level)) ? Number(state.level) : 1;
-    return {
-      level: Math.max(1, Math.min(8, level)),
-      completed: Array.isArray(state.completed) ? state.completed : [],
-      updated: state.updated || new Date().toISOString()
-    };
+  function readLevel() {
+    return clampLevel(readStorage(levelKey));
   }
 
-  function readProgress() {
-    return normalize(readProgressStorage());
-  }
-
-  function writeProgress(state) {
-    const next = normalize({ ...state, updated: new Date().toISOString() });
-    writeStorage(progressKey, JSON.stringify(next));
+  function writeLevel(level) {
+    const next = clampLevel(level);
+    writeStorage(levelKey, String(next));
     return next;
   }
 
-  function upgradeProgressForCurrentGuide() {
+  function normalizeHistory(input) {
+    return input && typeof input === 'object' && !Array.isArray(input)
+      ? input
+      : {};
+  }
+
+  function readHistory() {
+    return normalizeHistory(parse(readStorage(historyKey), {}));
+  }
+
+  function writeHistory(history) {
+    const next = normalizeHistory(history);
+    writeStorage(historyKey, JSON.stringify(next));
+    return next;
+  }
+
+  function getGuideMeta() {
     const article = document.querySelector('[data-guide-level][data-guide-path]');
-    if (!article) return readProgress();
+    if (!article) return null;
+    return {
+      count: Number(article.getAttribute('data-guide-count') || 0),
+      level: clampLevel(article.getAttribute('data-guide-level') || 1),
+      path: article.getAttribute('data-guide-path') || location.pathname
+    };
+  }
 
-    const pageLevel = Number(article.getAttribute('data-guide-level') || 1);
-    const path = article.getAttribute('data-guide-path') || location.pathname;
-    const progress = readProgress();
-    if (pageLevel <= progress.level) return progress;
+  function getGuideCount() {
+    const counts = Array.from(document.querySelectorAll('[data-guide-count]'))
+      .map(node => Number(node.getAttribute('data-guide-count') || 0))
+      .filter(Boolean);
+    if (counts.length) return Math.max(...counts);
 
-    const completed = Array.from(new Set([...(progress.completed || []), path]));
-    return writeProgress({ ...progress, level: pageLevel, completed });
+    const guideItems = readGuideJourneyData();
+    if (guideItems.length) return guideItems.length;
+
+    const links = new Set(Array.from(document.querySelectorAll('a[href^="/guides/"]'))
+      .map(link => link.getAttribute('href'))
+      .filter(Boolean));
+    return Math.max(links.size, Object.keys(readHistory()).length);
+  }
+
+  function computeExp(history) {
+    return Object.values(history)
+      .filter(record => record && record.expAwarded)
+      .length * expPerGuide;
+  }
+
+  function syncExpCache(history) {
+    const exp = computeExp(history);
+    if (String(exp) !== readStorage(expKey)) {
+      writeStorage(expKey, String(exp));
+    }
+    return exp;
+  }
+
+  function upgradeLevelForCurrentGuide() {
+    const meta = getGuideMeta();
+    const current = readLevel();
+    if (!meta || meta.level <= current) return current;
+    return writeLevel(meta.level);
+  }
+
+  function getHistoryRecord(history, meta) {
+    const existing = history[meta.path] || {};
+    return {
+      bottomReached: Boolean(existing.bottomReached),
+      completedAt: existing.completedAt,
+      dwellMs: Number(existing.dwellMs) || 0,
+      expAwarded: Boolean(existing.expAwarded),
+      firstSeen: existing.firstSeen || new Date().toISOString(),
+      level: meta.level,
+      path: meta.path
+    };
+  }
+
+  function startGuideVisit() {
+    const meta = getGuideMeta();
+    if (!meta) return;
+    if (activeVisit?.path === meta.path) return;
+
+    // preserve time from a previous guide if navigation swaps content in-place
+    persistVisitTime();
+
+    const history = readHistory();
+    const record = getHistoryRecord(history, meta);
+    history[meta.path] = record;
+    writeHistory(history);
+
+    activeVisit = {
+      path: meta.path,
+      startedAt: Date.now()
+    };
+    checkBottomReached();
+  }
+
+  function persistVisitTime() {
+    if (!activeVisit) return readHistory();
+
+    const history = readHistory();
+    const record = history[activeVisit.path];
+    if (!record) return history;
+
+    const now = Date.now();
+    const elapsed = Math.max(0, now - activeVisit.startedAt);
+    activeVisit.startedAt = now;
+    record.dwellMs = (Number(record.dwellMs) || 0) + elapsed;
+    history[activeVisit.path] = record;
+    return writeHistory(history);
+  }
+
+  function awardExpIfReady() {
+    const meta = getGuideMeta();
+    if (!meta || !activeVisit) return;
+
+    const history = persistVisitTime();
+    const record = history[meta.path];
+    if (!record || record.expAwarded) {
+      syncExpCache(history);
+      return;
+    }
+
+    if (!record.bottomReached || Number(record.dwellMs) < requiredDwellMs) {
+      syncExpCache(history);
+      return;
+    }
+
+    record.completedAt = new Date().toISOString();
+    record.expAwarded = true;
+    history[meta.path] = record;
+    syncExpCache(writeHistory(history));
+  }
+
+  function checkBottomReached() {
+    const meta = getGuideMeta();
+    if (!meta) return;
+
+    const scrollBottom = window.scrollY + window.innerHeight;
+    const pageHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    if (pageHeight - scrollBottom > 80) return;
+
+    const history = persistVisitTime();
+    const record = getHistoryRecord(history, meta);
+    record.bottomReached = true;
+    history[meta.path] = record;
+    writeHistory(history);
+    awardExpIfReady();
   }
 
   function getSavedTheme() {
@@ -101,10 +236,9 @@
     updateThemeButtons();
   }
 
-  function applyProgress(state) {
+  function applyProgress(level) {
     const root = getRoot();
-    const progress = normalize(state);
-    const readerLevel = progress.level;
+    const readerLevel = clampLevel(level);
     root.dataset.readerLevel = String(readerLevel);
     for (let level = 1; level <= 8; level += 1) {
       root.classList.remove('docs-level-' + level);
@@ -115,7 +249,9 @@
       setTheme('light', { persist: false });
     } else {
       const saved = getSavedTheme();
-      setTheme(saved === 'dark' || saved === 'light' ? saved : 'light', { persist: false });
+      setTheme(saved === 'dark' || saved === 'light' ? saved : 'light', {
+        persist: false
+      });
     }
 
     document.querySelectorAll('[data-unlock-level]').forEach(node => {
@@ -123,28 +259,130 @@
       node.hidden = level > readerLevel;
     });
     orderGuideNav(readerLevel);
-
-    document.querySelectorAll('[data-progress-count], [data-badge-label]').forEach(node => {
-      node.textContent = guideGroups[readerLevel].badge;
-    });
-
-    document.querySelectorAll('[data-current-path]').forEach(node => {
-      node.textContent = guideGroups[readerLevel].label;
-    });
-
-    document.querySelectorAll('[data-progress-list]').forEach(node => {
-      node.innerHTML = '';
-      Object.entries(guideGroups).forEach(([level, group]) => {
-        if (Number(level) > readerLevel) return;
-        const item = document.createElement('li');
-        item.textContent = group.badge + ' - ' + group.label;
-        node.appendChild(item);
-      });
-    });
+    renderBadge(readerLevel);
 
     document.querySelectorAll('.docs-theme-switch').forEach(button => {
       button.hidden = readerLevel < 4;
       button.disabled = readerLevel < 4;
+    });
+  }
+
+  function readGuideJourneyData() {
+    const node = document.getElementById('docs-guide-journey-data');
+    const items = parse(node?.textContent, []);
+    if (!Array.isArray(items)) return [];
+
+    const unique = new Map();
+    items.forEach(item => {
+      const href = typeof item?.href === 'string' ? item.href : '';
+      const label = typeof item?.label === 'string' ? item.label : '';
+      if (!href || !label || unique.has(href)) return;
+      unique.set(href, {
+        href,
+        label,
+        level: clampLevel(item.level || 1)
+      });
+    });
+    return Array.from(unique.values());
+  }
+
+  function getVisibleJourneyLinks(readerLevel) {
+    const sections = Array.from(document.querySelectorAll(
+      `.docs-sidebar [data-unlock-level="${readerLevel}"]`
+    ));
+    const links = sections.flatMap(section => Array.from(
+      section.querySelectorAll('a[href^="/guides/"]')
+    ));
+
+    if (links.length) return links;
+    return Array.from(document.querySelectorAll(
+        `a[data-unlock-level="${readerLevel}"][href^="/guides/"]`
+    ));
+  }
+
+  function normalizeJourneyLink(item, history) {
+    return {
+      completed: Boolean(history[item.href]?.expAwarded),
+      href: item.href,
+      label: item.label
+    };
+  }
+
+  function getJourneyLinks(readerLevel, history) {
+    const manifestItems = readGuideJourneyData()
+      .filter(item => item.level === readerLevel)
+      .map(item => normalizeJourneyLink(item, history));
+    if (manifestItems.length) return manifestItems;
+
+    const links = getVisibleJourneyLinks(readerLevel);
+    const unique = new Map();
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && !unique.has(href)) {
+        unique.set(href, {
+          completed: Boolean(history[href]?.expAwarded),
+          href,
+          label: link.getAttribute('data-journey-label') || link.textContent.trim()
+        });
+      }
+    });
+    return Array.from(unique.values());
+  }
+
+  function renderJourney(readerLevel, history) {
+    const items = getJourneyLinks(readerLevel, history);
+    const next = items.find(item => !item.completed);
+    const completed = items
+      .filter(item => item.completed && item.href !== next?.href)
+      .reverse();
+    return [
+      ...(next ? [{ ...next, next: true }] : []),
+      ...completed
+    ].slice(0, 7);
+  }
+
+  function renderBadge(readerLevel) {
+    const history = readHistory();
+    const exp = syncExpCache(history);
+    const maxExp = Math.max(expPerGuide, getGuideCount() * expPerGuide);
+    const percent = Math.max(0, Math.min(100, Math.round((exp / maxExp) * 100)));
+
+    document.querySelectorAll('[data-progress-count], [data-badge-label]')
+      .forEach(node => {
+        node.textContent = guideGroups[readerLevel].badge;
+      });
+
+    document.querySelectorAll('[data-exp-fill]').forEach(node => {
+      node.style.width = percent + '%';
+    });
+
+    document.querySelectorAll('[data-exp-meter]').forEach(node => {
+      node.setAttribute('aria-valuenow', String(percent));
+    });
+
+    document.querySelectorAll('[data-exp-value]').forEach(node => {
+      node.textContent = exp.toLocaleString();
+    });
+
+    document.querySelectorAll('[data-progress-list]').forEach(node => {
+      node.innerHTML = '';
+      renderJourney(readerLevel, history).forEach(item => {
+        const row = document.createElement('li');
+        const icon = document.createElement('i');
+        const link = document.createElement('a');
+
+        row.className = item.next ? 'is-next' : 'is-complete';
+        icon.className = item.next
+          ? 'fa-solid fa-arrow-right'
+          : 'fa-solid fa-check';
+        icon.setAttribute('aria-hidden', 'true');
+        link.href = item.href;
+        link.textContent = item.label;
+
+        row.appendChild(icon);
+        row.appendChild(link);
+        node.appendChild(row);
+      });
     });
   }
 
@@ -196,6 +434,22 @@
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
+  function positionBadgePopover(button, popover) {
+    const gap = 10;
+    const margin = 18;
+    const rect = button.getBoundingClientRect();
+    popover.style.left = '';
+    popover.style.right = '';
+    popover.style.top = rect.bottom + gap + 'px';
+
+    const width = popover.offsetWidth || Math.min(420, window.innerWidth - margin * 2);
+    const left = Math.max(
+      margin,
+      Math.min(rect.right - width, window.innerWidth - width - margin)
+    );
+    popover.style.left = left + 'px';
+  }
+
   function loadMermaid() {
     if (mermaidLoading) {
       return;
@@ -245,7 +499,12 @@
     if (badgeButton) {
       const popover = document.querySelector('[data-badge-popover]');
       if (popover) {
-        popover.hidden = !popover.hidden;
+        const shouldOpen = popover.hidden;
+        popover.hidden = !shouldOpen;
+        badgeButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+        if (shouldOpen) {
+          positionBadgePopover(badgeButton, popover);
+        }
       }
       return;
     }
@@ -256,10 +515,31 @@
     }
   }
 
+  function registerEngagementTracking() {
+    if (scrollTrackingReady) return;
+    scrollTrackingReady = true;
+    window.addEventListener('scroll', checkBottomReached, { passive: true });
+    window.addEventListener('beforeunload', () => {
+      awardExpIfReady();
+      persistVisitTime();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        awardExpIfReady();
+      } else if (activeVisit) {
+        activeVisit.startedAt = Date.now();
+      }
+    });
+    window.setInterval(awardExpIfReady, 15000);
+  }
+
   function initialize(options) {
     hideUntilReady();
-    applyProgress(upgradeProgressForCurrentGuide());
+    const level = upgradeLevelForCurrentGuide();
+    startGuideVisit();
+    applyProgress(level);
     updateThemeButtons();
+    registerEngagementTracking();
     if (window.hljs) {
       window.hljs.highlightAll();
     }

@@ -23,9 +23,12 @@ project docs.
 
 ## Reader Model
 
-The site should store local progress in a cookie or local storage. A page should
-count as completed only after the reader stays for the estimated reading time
-and reaches the lower part of the page while the tab is visible.
+The static site should store reader progress in local storage. `spLevel`
+controls the visible guide band, while `spHistory` and the optional `spExp`
+cache track experience. A guide page awards `10` experience only after the
+reader spends at least `2` minutes on the page and reaches the bottom region.
+Experience does not unlock guide bands; opening a guide URL above the current
+band upgrades `spLevel` directly.
 
 Visible navigation should follow the reader's current level:
 

@@ -9,14 +9,14 @@ import { setViewProps } from 'stackpress/view';
 import * as scripts from 'stackpress-view/scripts';
 //client
 import { docs } from '../config/common.js';
-import { getApiDocResults, getApiShelfResults } from '../plugins/api/data.js';
+import { getApiDocResults, getApiShelfResults } from '../plugins/api/helpers.js';
 import { docs as apiDocs } from '../plugins/api/manifest.js';
-import { getHomeResults } from '../plugins/app/data.js';
 import {
   getGuideDocResults,
   getGuideShelfResults
-} from '../plugins/guides/data.js';
+} from '../plugins/guides/helpers.js';
 import { docs as guideDocs } from '../plugins/guides/manifest.js';
+import { getHomeResults } from '../plugins/home/helpers.js';
 import bootstrap from '../config/build.js';
 
 type StaticArtifact = {
@@ -33,7 +33,7 @@ const generatedPublicPaths = [
 ];
 const guideDocView = '@/plugins/guides/views/doc';
 const guideShelfView = '@/plugins/guides/views/shelf';
-const homeView = '@/plugins/app/views/home';
+const homeView = '@/plugins/home/views/home';
 
 /**
  * Builds the GitHub Pages-ready static documentation output.

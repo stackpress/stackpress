@@ -2,6 +2,14 @@
 import type { ReactNode } from 'react';
 import type { ServerConfigPageProps } from 'stackpress/view/client';
 import { LayoutBlank, useResponse } from 'stackpress/view/client';
+import { useLanguage } from 'stackpress/view/client';
+import Control from 'frui/form/FieldControl';
+import Button from 'frui/Button';
+import Input from 'frui/form/Input';
+import Country from 'frui/form/CountrySelect';
+import Taglist from 'frui/form/Taglist';
+import { Table, Thead, Trow, Tcol } from 'frui/Table';
+import Tags from 'frui/view/Tags';
 //client
 import type {
   DocsPageResults,
@@ -46,6 +54,64 @@ type SidebarProps = {
 type TocProps = {
   items: TocItem[]
 };
+
+type GuideJourneyItem = {
+  href: string,
+  label: string,
+  level?: number
+};
+
+type FoundryProject = {
+  description: string,
+  github: string,
+  image: string,
+  label: string,
+  npm: string,
+  website: string
+};
+
+const foundryProjects: FoundryProject[] = [
+  {
+    description:
+      'Idea language specification and parser. Streamline and automate '
+      + 'major parts of your software development.',
+    github: 'https://github.com/stackpress/idea',
+    image: '/images/idea-logo-badge.png',
+    label: 'Idea',
+    npm: 'https://www.npmjs.com/package/@stackpress/idea',
+    website: 'https://www.stackpress.io/idea'
+  },
+  {
+    description:
+      'An event driven server/less framework. Deploy to AWS Lambda, GCP '
+      + 'Functions, Azure, Netlify, and Vercel.',
+    github: 'https://github.com/stackpress/ingest',
+    image: '/images/ingest-logo-badge.png',
+    label: 'Ingest',
+    npm: 'https://www.npmjs.com/package/@stackpress/ingest',
+    website: 'https://www.stackpress.io/ingest'
+  },
+  {
+    description:
+      'SQL query builder and composite engine for MySQL, Postgres, SQLite, '
+      + 'Cockroach DB, Neon DB, Supabase and more.',
+    github: 'https://github.com/stackpress/inquire',
+    image: '/images/inquire-logo-badge.png',
+    label: 'Inquire',
+    npm: 'https://www.npmjs.com/package/@stackpress/inquire',
+    website: 'https://www.stackpress.io/inquire'
+  },
+  {
+    description:
+      'A reactive React template engine for next generation server focused '
+      + 'web applications.',
+    github: 'https://github.com/stackpress/reactus',
+    image: '/images/reactus-logo-badge.png',
+    label: 'Reactus',
+    npm: 'https://www.npmjs.com/package/reactus',
+    website: 'https://www.stackpress.io/reactus'
+  }
+];
 
 //--------------------------------------------------------------------//
 // Components
@@ -113,10 +179,47 @@ function DocsShell(props: DocsShellProps) {
       <Header />
       {props.children}
       <footer className="docs-footer">
-        <span>Stackpress documentation</span>
-        <span>Generated from specs</span>
+        <a href="https://github.com/stackpress" rel="noreferrer" target="_blank">
+          github
+        </a>
+        <a
+          href="https://www.npmjs.com/package/stackpress"
+          rel="noreferrer"
+          target="_blank"
+        >
+          npm
+        </a>
+        <a
+          href="https://github.com/stackpress/stackpress/blob/main/LICENSE"
+          rel="noreferrer"
+          target="_blank"
+        >
+          terms
+        </a>
       </footer>
     </div>
+  );
+}
+
+/**
+ * Emits compact guide metadata for client-only progress menus on non-guide pages.
+ */
+function GuideJourneyData(props: { items?: GuideJourneyItem[] }) {
+  if (!props.items?.length) return null;
+
+  const items = props.items.map(({ href, label, level }) => ({
+    href,
+    label,
+    level
+  }));
+  const json = JSON.stringify(items).replace(/</g, '\\u003c');
+
+  return (
+    <script
+      dangerouslySetInnerHTML={{ __html: json }}
+      id="docs-guide-journey-data"
+      type="application/json"
+    />
   );
 }
 
@@ -167,20 +270,39 @@ export function Header() {
           <i className="fa-solid fa-circle-info" aria-hidden="true" />
           <strong data-progress-count suppressHydrationWarning>Visitor</strong>
         </button>
-        <a className="docs-github" href="https://github.com/stackpress">
+        <a
+          className="docs-github"
+          href="https://github.com/stackpress"
+          rel="noreferrer"
+          target="_blank"
+        >
           GitHub
         </a>
       </header>
       <div className="docs-progress-popover" data-badge-popover hidden>
-        <p className="docs-eyebrow">Guide progress</p>
+        <p className="docs-eyebrow">Stackpress mastery</p>
         <strong data-badge-label suppressHydrationWarning>Visitor</strong>
-        <p>
-          Current path:{' '}
-          <span data-current-path suppressHydrationWarning>
-            100 Develop
-          </span>
+        <div
+          aria-label="Experience progress"
+          aria-valuemax={100}
+          aria-valuemin={0}
+          aria-valuenow={0}
+          className="docs-exp-meter"
+          data-exp-meter
+          role="progressbar"
+          suppressHydrationWarning
+        >
+          <span data-exp-fill suppressHydrationWarning />
+        </div>
+        <p className="docs-exp-value" data-exp-value suppressHydrationWarning>
+          0
         </p>
-        <ul data-progress-list suppressHydrationWarning />
+        <p className="docs-eyebrow">Your next journey</p>
+        <ul
+          className="docs-journey-list"
+          data-progress-list
+          suppressHydrationWarning
+        />
       </div>
       <nav className="docs-global-panel" id="global-menu-panel">
         <a href="/#start">Start</a>
@@ -307,23 +429,31 @@ export function DocBody() {
     return <main className="docs-main">Document not found.</main>;
   }
 
+  const guideAttributes = result.section === 'guides' ? {
+    'data-guide-count': result.guideCount || 0,
+    'data-guide-level': result.guideLevel || 1,
+    'data-guide-path': result.active
+  } : {};
+
   return (
-    <main className="docs-main">
-      <section className="docs-layout">
-        <MobilePanels groups={result.nav} toc={result.toc} />
-        <Sidebar active={result.active} groups={result.nav} />
-        <article
-          className="docs-article"
-          data-guide-level={result.guideLevel || 1}
-          data-guide-path={result.active}
-        >
-          <p className="docs-eyebrow">{result.eyebrow}</p>
-          <div dangerouslySetInnerHTML={{ __html: result.content }} />
-          <Pager previous={result.previous} next={result.next} />
-        </article>
-        <Toc items={result.toc} />
-      </section>
-    </main>
+    <>
+      <GuideJourneyData items={result.guideJourney} />
+      <main className="docs-main">
+        <section className="docs-layout">
+          <MobilePanels groups={result.nav} toc={result.toc} />
+          <Sidebar active={result.active} groups={result.nav} />
+          <article
+            className="docs-article"
+            {...guideAttributes}
+          >
+            <p className="docs-eyebrow">{result.eyebrow}</p>
+            <div dangerouslySetInnerHTML={{ __html: result.content }} />
+            <Pager previous={result.previous} next={result.next} />
+          </article>
+          <Toc items={result.toc} />
+        </section>
+      </main>
+    </>
   );
 }
 
@@ -340,26 +470,30 @@ export function ShelfBody() {
   }
 
   return (
-    <main className="docs-main">
-      <section className="docs-shelf">
-        <p className="docs-eyebrow">{result.eyebrow}</p>
-        <h1>{result.title}</h1>
-        <p className="docs-lead">{result.description}</p>
-        <div className="docs-card-grid">
-          {result.cards.map(card => (
-            <a
-              data-unlock-level={card.level || 1}
-              hidden={(card.level || 1) > 1}
-              href={card.href}
-              key={card.href}
-            >
-              <strong>{card.label}</strong>
-              <span>{card.description}</span>
-            </a>
-          ))}
-        </div>
-      </section>
-    </main>
+    <>
+      <GuideJourneyData items={result.guideJourney} />
+      <main className="docs-main">
+        <section className="docs-shelf" data-guide-count={result.guideCount || 0}>
+          <p className="docs-eyebrow">{result.eyebrow}</p>
+          <h1>{result.title}</h1>
+          <p className="docs-lead">{result.description}</p>
+          <div className="docs-card-grid">
+            {result.cards.map(card => (
+              <a
+                data-journey-label={card.label}
+                data-unlock-level={card.level || 1}
+                hidden={(card.level || 1) > 1}
+                href={card.href}
+                key={card.href}
+              >
+                <strong>{card.label}</strong>
+                <span>{card.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
 
@@ -367,6 +501,7 @@ export function ShelfBody() {
  * Renders the documentation home page from the route response payload.
  */
 export function HomeBody() {
+  const { _ } = useLanguage();
   const response = useResponse<HomeResults>();
   const result = response.results;
 
@@ -376,47 +511,211 @@ export function HomeBody() {
   }
 
   return (
-    <main className="docs-main">
-      <section className="docs-hero">
-        <div>
-          <p className="docs-eyebrow">Docs for developers</p>
-          <h1>{result.title}</h1>
-          <p className="docs-lead">{result.description}</p>
-          <div className="docs-actions">
-            <a className="docs-button primary" href="/guides/100-develop">
-              Start tutorial
-            </a>
-            <a className="docs-button" href="/api">
-              API reference
-            </a>
+    <>
+      <GuideJourneyData items={result.guideJourney} />
+      <main className="docs-main">
+        <section className="docs-hero">
+          <div>
+            <p className="docs-eyebrow">Stackpress</p>
+            <h1>{result.title}</h1>
+            <p className="docs-lead">{result.description}</p>
+            <div className="docs-actions">
+              <a className="docs-button primary" href="/guides/100-develop">
+                Get Started
+              </a>
+              <a className="docs-button" href="/api">
+                API Reference
+              </a>
+            </div>
           </div>
-        </div>
-        <div className="docs-code-card">
-          <span>schema.idea</span>
-          <span>generate</span>
-          <span>push</span>
-          <span>serve</span>
-        </div>
-      </section>
-      <section className="docs-paths" id="start">
-        <div>
-          <p className="docs-eyebrow">Start here</p>
-          <h2>Choose the right path</h2>
-        </div>
-        <div>
-          {result.paths.map(path => (
-            <a
-              data-unlock-level={path.level || 1}
-              hidden={(path.level || 1) > 1}
-              href={path.href}
-              key={`${path.level || 1}-${path.href}-${path.label}`}
-            >
-              <strong>{path.label}</strong>
-              <span>{path.description}</span>
-            </a>
-          ))}
-        </div>
-      </section>
-    </main>
+          <div className="docs-example-card">
+            <div className="theme-bg-bg0 px-p-20">
+              <h4 className="font-bold px-fs-20 px-mb-20">
+                {_('Search Users')}
+              </h4>
+              <div className="overflow-x-auto">
+                <Table>
+                  <Thead noWrap className="theme-bg-bg2 theme-info text-right cursor-pointer border-0">
+                    {_('ID')}
+                    <i className="inline-block px-ml-10 fas fa-sort" />
+                  </Thead>
+                  <Thead className="theme-bg-bg2 text-left border-0">
+                    {_('Name')}
+                  </Thead>
+                  <Thead className="theme-bg-bg2 text-center border-0">
+                    {_('Role')}
+                  </Thead>
+                  <Thead className="theme-bg-bg2 text-left border-0">
+                    {_('Tags')}
+                  </Thead>
+                  <Thead className="theme-bg-bg2 text-left border-0">
+                    {_('Country')}
+                  </Thead>
+                  <Thead className="theme-bg-bg2 text-center border-0">
+                    {_('Active')}
+                  </Thead>
+                  <Thead noWrap className="theme-bg-bg2 theme-info text-right cursor-pointer border-0">
+                    {_('Created')}
+                    <i className="inline-block px-ml-10 fas fa-sort" />
+                  </Thead>
+                  <Thead className="theme-bg-bg2 px-r--1 border-0" stickyRight>
+                    &nbsp;
+                  </Thead>
+                  <Trow>
+                    <Tcol className="theme-bg-bg0 text-right border-0">
+                      10431
+                    </Tcol>
+                    <Tcol noWrap className="theme-bg-bg0 text-left border-0">
+                      John Doe
+                    </Tcol>
+                    <Tcol className="theme-bg-bg0 theme-info text-center cursor-pointer border-0">
+                      user
+                    </Tcol>
+                    <Tcol className="theme-bg-bg0 theme-info text-left border-0">
+                      <Tags className="rounded-full theme-bg-warning" value={[ 'location', 'commerce', 'address' ]} />
+                    </Tcol>
+                    <Tcol noWrap className="theme-bg-bg0 theme-info text-left cursor-pointer border-0">
+                      United States
+                    </Tcol>
+                    <Tcol className="theme-bg-bg0 theme-info text-center cursor- border-0">
+                      Yes
+                    </Tcol>
+                    <Tcol noWrap className="theme-bg-bg0 text-right border-0">
+                      2 days ago
+                    </Tcol>
+                    <Tcol className="theme-bg-bg0 border-0 px-r--1" stickyRight>
+                      <Button info>
+                        <i className="fas fa-fw fa-caret-right"></i>
+                      </Button>
+                    </Tcol>
+                  </Trow>
+                  <Trow>
+                    <Tcol className="theme-bg-bg1 text-right border-0">
+                      10432
+                    </Tcol>
+                    <Tcol noWrap className="theme-bg-bg1 text-left border-0">
+                      Jane Doe
+                    </Tcol>
+                    <Tcol className="theme-bg-bg1 theme-info text-center cursor-pointer border-0">
+                      admin
+                    </Tcol>
+                    <Tcol className="theme-bg-bg1 theme-info text-left border-0">
+                      <Tags className="rounded-full theme-bg-warning" value={[ 'location', 'commerce', 'address' ]} />
+                    </Tcol>
+                    <Tcol className="theme-bg-bg1 theme-info text-left cursor-pointer border-0">
+                      Canada
+                    </Tcol>
+                    <Tcol className="theme-bg-bg1 theme-info text-center cursor-pointer border-0">
+                      Yes
+                    </Tcol>
+                    <Tcol noWrap className="theme-bg-bg1 text-right border-0">
+                      last week
+                    </Tcol>
+                    <Tcol className="theme-bg-bg1 border-0 px-r--1" stickyRight>
+                      <Button info>
+                        <i className="fas fa-fw fa-caret-right"></i>
+                      </Button>
+                    </Tcol>
+                  </Trow>
+                </Table>
+              </div>
+              <div className="rmd-hidden">
+                <Control label="Name">
+                  <Input placeholder="ie. John Doe" />
+                </Control>
+                <Control className="px-py-10" label="Country">
+                  <Country />
+                </Control>
+                <Control className="px-py-10" label="Tags">
+                  <Taglist value={['commerce', 'address']} />
+                </Control>
+                <Button info>{_('Create User')}</Button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          className="docs-paths"
+          data-guide-count={result.guideCount || 0}
+          id="start"
+        >
+          <div>
+            <p className="docs-eyebrow">Start here</p>
+            <h2>Choose the right path</h2>
+          </div>
+          <div>
+            {result.paths.map(path => (
+              <a
+                data-journey-label={path.label}
+                data-unlock-level={path.level || 1}
+                hidden={(path.level || 1) > 1}
+                href={path.href}
+                key={`${path.level || 1}-${path.href}-${path.label}`}
+              >
+                <strong>{path.label}</strong>
+                <span>{path.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+        <section className="docs-foundry" aria-labelledby="docs-foundry-title">
+          <div className="docs-foundry-intro">
+            <p className="docs-eyebrow">Open source</p>
+            <h2 id="docs-foundry-title">Open Source Foundry</h2>
+            <p>
+              Built on top of both popular and open source projects we manage
+              with Apache GPLv3 Licenses.
+            </p>
+          </div>
+          <div className="docs-foundry-grid">
+            {foundryProjects.map(project => (
+              <article className="docs-foundry-card" key={project.label}>
+                <a
+                  className="docs-foundry-badge"
+                  href={project.website}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <img src={project.image} alt={`${project.label} logo`} />
+                </a>
+                <h3>
+                  <a href={project.website} rel="noreferrer" target="_blank">
+                    {project.label}
+                  </a>
+                </h3>
+                <p>{project.description}</p>
+                <nav aria-label={`${project.label} links`}>
+                  <a
+                    aria-label={`${project.label} on GitHub`}
+                    href={project.github}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <i className="fab fa-github" aria-hidden="true" />
+                  </a>
+                  <a
+                    aria-label={`${project.label} on npm`}
+                    className="docs-foundry-npm"
+                    href={project.npm}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <i className="fab fa-npm" aria-hidden="true" />
+                  </a>
+                  <a
+                    aria-label={`${project.label} website`}
+                    href={project.website}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <i className="fas fa-globe" aria-hidden="true" />
+                  </a>
+                </nav>
+              </article>
+            ))}
+          </div>
+        </section>
+      </main>
+    </>
   );
 }

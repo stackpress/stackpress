@@ -7,6 +7,16 @@ import {
   nav,
   title
 } from './manifest.js';
+import {
+  docs as guideDocs,
+  readingOrder as guideReadingOrder
+} from '../guides/manifest.js';
+
+const guideJourney = guideReadingOrder.map(({ href, label, level }) => ({
+  href,
+  label,
+  level
+}));
 
 /**
  * Builds the shared API index response payload.
@@ -20,6 +30,8 @@ export function getApiShelfResults(): ShelfResults {
     })),
     description,
     eyebrow: 'API reference',
+    guideCount: guideDocs.length,
+    guideJourney,
     section: 'api',
     title
   };
@@ -42,6 +54,8 @@ export async function getApiDocResults(
     content: parsed.html,
     description: parsed.description || item.description,
     eyebrow: 'API reference',
+    guideCount: guideDocs.length,
+    guideJourney,
     nav,
     next: docs[index + 1],
     previous: docs[index - 1],

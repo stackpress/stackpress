@@ -5,6 +5,7 @@
   "private": true,
   "plugins": [
     "./plugins/app/plugin",
+    "./plugins/home/plugin",
     "./plugins/guides/plugin",
     "./plugins/api/plugin",
     "stackpress"

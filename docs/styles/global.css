@@ -600,20 +600,104 @@ body,
   box-shadow: var(--docs-shadow);
   color: var(--docs-ink);
   display: grid;
-  gap: 10px;
-  min-width: 280px;
-  padding: 16px;
+  gap: 8px;
+  max-width: calc(100vw - 36px);
+  padding: 18px;
   position: fixed;
-  right: 118px;
   top: 64px;
+  width: min(360px, calc(100vw - 36px));
   z-index: 20;
 }
 
-.docs-progress-popover ul {
+.docs-progress-popover .docs-eyebrow {
+  color: var(--docs-muted);
+  margin: 0;
+}
+
+.docs-progress-popover > strong {
+  color: var(--docs-ink);
+  display: block;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.docs-exp-meter {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.docs-exp-meter span {
+  background: var(--docs-blue);
+  display: block;
+  height: 100%;
+  width: 0;
+}
+
+.docs-exp-value {
+  color: var(--docs-ink);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  margin: -2px 4px 0 0;
+  text-align: right;
+}
+
+.docs-journey-list {
   display: grid;
-  gap: 5px;
-  list-style: disc;
-  padding-left: 18px;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.docs-journey-list li {
+  align-items: center;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 20px minmax(0, 1fr);
+}
+
+.docs-journey-list i {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 10px;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+}
+
+.docs-journey-list a {
+  color: var(--docs-muted);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+}
+
+.docs-journey-list .is-next i {
+  color: var(--docs-ink);
+  font-size: 16px;
+}
+
+.docs-journey-list .is-next a {
+  color: var(--docs-blue);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.docs-journey-list .is-complete a {
+  font-weight: 400;
+}
+
+.docs-journey-list .is-complete i {
+  background: #28a745;
+  color: #ffffff;
 }
 
 .docs-global-panel {
@@ -685,7 +769,7 @@ body,
   color: #ffffff;
 }
 
-.docs-code-card,
+.docs-example-card,
 .docs-paths,
 .docs-card-grid a,
 .docs-article,
@@ -696,21 +780,6 @@ body,
   border: 1px solid var(--docs-line);
   border-radius: var(--docs-radius);
   box-shadow: var(--docs-shadow);
-}
-
-.docs-code-card {
-  align-self: center;
-  display: grid;
-  gap: 12px;
-  padding: 28px;
-}
-
-.docs-code-card span {
-  background: var(--docs-code);
-  border-radius: 6px;
-  color: #e9f2ff;
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  padding: 13px 15px;
 }
 
 .docs-paths {
@@ -977,6 +1046,120 @@ body,
   color: var(--docs-muted);
 }
 
+.docs-foundry {
+  margin-top: 44px;
+  padding: 24px 0 10px;
+}
+
+.docs-foundry-intro {
+  margin: 0 auto;
+  max-width: 760px;
+  text-align: center;
+}
+
+.docs-foundry-intro h2 {
+  color: var(--docs-ink);
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin: 0 0 14px;
+}
+
+.docs-foundry-intro p {
+  color: var(--docs-muted);
+  font-size: 18px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.docs-foundry-grid {
+  display: grid;
+  gap: 34px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 36px auto 0;
+  max-width: 1040px;
+}
+
+.docs-foundry-card {
+  align-items: center;
+  background: var(--docs-paper);
+  border: 1px solid var(--docs-line);
+  border-radius: var(--docs-radius);
+  box-shadow: var(--docs-shadow);
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  min-height: 280px;
+  padding: 30px;
+  text-align: center;
+}
+
+.docs-foundry-badge {
+  display: inline-flex;
+}
+
+.docs-foundry-badge img {
+  display: block;
+  height: 80px;
+  object-fit: contain;
+  width: 80px;
+}
+
+.docs-foundry-card h3 {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.docs-foundry-card h3 a {
+  color: var(--docs-ink);
+  text-decoration: none;
+}
+
+.docs-foundry-card p {
+  color: var(--docs-muted);
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 420px;
+}
+
+.docs-foundry-card nav {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+}
+
+.docs-foundry-card nav a {
+  align-items: center;
+  color: var(--docs-ink);
+  display: inline-flex;
+  font-size: 24px;
+  justify-content: center;
+  min-height: 30px;
+  min-width: 30px;
+  text-decoration: none;
+}
+
+.docs-foundry-card nav a:hover,
+.docs-foundry-card h3 a:hover {
+  color: var(--docs-blue-dark);
+}
+
+.docs-foundry-npm {
+  background: #cb3837;
+  border-radius: 999px;
+  color: #ffffff !important;
+  font-size: 15px !important;
+  height: 28px;
+  width: 28px;
+}
+
 .docs-mobile-controls,
 .docs-mobile-panel {
   display: none;
@@ -992,6 +1175,16 @@ body,
   gap: 16px;
   justify-content: center;
   padding: 24px;
+}
+
+.docs-footer a {
+  color: var(--docs-blue-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.docs-footer a:hover {
+  text-decoration: underline;
 }
 
 .docs-site.docs-level-1 {
@@ -1095,13 +1288,17 @@ body,
 }
 
 .docs-site.docs-level-1 {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 
-.docs-site.docs-level-1 h1,
-.docs-site.docs-level-1 h2,
-.docs-site.docs-level-1 h3 {
-  font-family: "Times New Roman", Times, serif;
+.docs-site.docs-level-1 pre,
+.docs-site.docs-level-1 code {
+  font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+.docs-site.docs-level-1 pre,
+.docs-site.docs-level-1 code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
 .docs-site.docs-level-1 .docs-topbar {
@@ -1240,6 +1437,13 @@ body,
     text-decoration: none;
   }
 
+  .docs-progress-popover {
+    left: 18px;
+    right: 18px;
+    top: 82px;
+    width: auto;
+  }
+
   .docs-main {
     padding: 32px 18px;
   }
@@ -1256,6 +1460,11 @@ body,
   }
 
   .docs-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-foundry-grid {
+    gap: 18px;
     grid-template-columns: 1fr;
   }
 
@@ -1326,6 +1535,24 @@ body,
     font-size: 17px;
   }
 
+  .docs-foundry {
+    margin-top: 28px;
+    padding-top: 12px;
+  }
+
+  .docs-foundry-intro h2 {
+    font-size: 30px;
+  }
+
+  .docs-foundry-intro p {
+    font-size: 16px;
+  }
+
+  .docs-foundry-card {
+    min-height: 0;
+    padding: 22px;
+  }
+
   .docs-article {
     padding: 20px;
   }
@@ -1333,5 +1560,13 @@ body,
   .docs-pager,
   .docs-paths a {
     grid-template-columns: 1fr;
+  }
+
+  .docs-progress-popover {
+    padding: 16px;
+  }
+
+  .docs-journey-list a {
+    font-size: 14px;
   }
 }

@@ -5,7 +5,7 @@ import {
   DocsFrame,
   DocsHead,
   HomeBody
-} from '../components/docs.js';
+} from '../../app/components/docs.js';
 
 /**
  * Renders the static home page head tags.
@@ -14,8 +14,8 @@ export function Head(props: ServerConfigPageProps) {
   return (
     <DocsHead
       {...props}
-      title="Stackpress Docs"
-      description="Learn Stackpress by building the first working app."
+      title="Stackpress - Full Stack App Framework"
+      description="Stackpress is a turn-key app framework with modern routing, react templating, SQL dialects and an admin generator. Go from zero to sixty and 💯 open source."
     />
   );
 }

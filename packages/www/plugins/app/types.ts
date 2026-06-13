@@ -4,6 +4,8 @@
 // HomeResults is the page payload for the documentation landing page.
 export type HomeResults = {
   description: string,
+  guideCount?: number,
+  guideJourney?: NavItem[],
   paths: ShelfCard[],
   title: string
 };
@@ -28,6 +30,8 @@ export type DocsPageResults = {
   content: string,
   description: string,
   eyebrow: string,
+  guideCount?: number,
+  guideJourney?: NavItem[],
   guideLevel?: number,
   nav: NavGroup[],
   next?: PagerItem,
@@ -56,6 +60,8 @@ export type ShelfResults = {
   cards: ShelfCard[],
   description: string,
   eyebrow: string,
+  guideCount?: number,
+  guideJourney?: NavItem[],
   section: SiteSection,
   title: string
 };

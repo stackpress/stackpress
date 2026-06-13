@@ -3,7 +3,7 @@ import type { HttpServer } from '@stackpress/ingest';
 //client
 import type { Config } from '../../config/common.js';
 import { setDocsViewProps } from '../app/helpers.js';
-import { getGuideDocResults, getGuideShelfResults } from './data.js';
+import { getGuideDocResults, getGuideShelfResults } from './helpers.js';
 import { docs } from './manifest.js';
 
 /**

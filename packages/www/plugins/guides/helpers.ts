@@ -10,6 +10,12 @@ import {
   title
 } from './manifest.js';
 
+const guideJourney = readingOrder.map(({ href, label, level }) => ({
+  href,
+  label,
+  level
+}));
+
 /**
  * Builds the shared guide index response payload.
  */
@@ -22,6 +28,8 @@ export function getGuideShelfResults(): ShelfResults {
     }))),
     description,
     eyebrow: 'Guides',
+    guideCount: docs.length,
+    guideJourney,
     section: 'guides',
     title
   };
@@ -45,6 +53,8 @@ export async function getGuideDocResults(
     content: parsed.html,
     description: parsed.description || item.description,
     eyebrow: 'Guides',
+    guideCount: docs.length,
+    guideJourney,
     guideLevel: getGuideLevel(item.href),
     nav: withNavLevels(nav),
     next: readingOrder[index + 1],

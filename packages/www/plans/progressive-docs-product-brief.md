@@ -14,11 +14,11 @@ attention.
 ## Product Goals
 
 - Show only the beginner path at first so the site feels approachable.
-- Reveal higher-level guides after the reader spends meaningful time with the
-  previous level.
+- Reveal higher-level guides when the reader reaches that guide band, while
+  separately measuring page-by-page engagement as experience.
 - Keep every page URL-addressable for direct links, search, and sharing.
 - Keep API reference pages always reachable.
-- Make higher levels feel earned through visible badges, richer navigation, and
+- Make higher levels feel like status through visible badges, richer navigation, and
   progressively more mature themes.
 - Use anonymous progress only. Do not require accounts or login.
 - Build the production static site into the repository root `docs/` directory.
@@ -31,8 +31,8 @@ but should not be expected to understand the Stackpress package boundaries on
 their first visit.
 
 The secondary reader is an experienced evaluator who opens a deep URL directly.
-They should be able to read the page, but the page chrome should make it clear
-that they are reading ahead of the recommended path.
+They should be able to read the page, and the page chrome can adapt to that
+guide band without blocking or shaming the direct visit.
 
 ## Level Model
 
@@ -43,47 +43,82 @@ reader state. It is always visible alongside `100 Develop` on first visit.
 | Level | Guide Folder | Topic | Default Visibility |
 | --- | --- | --- | --- |
 | 1 | `000`, `100` | Orientation and Develop | Visible on first visit |
-| 2 | `200` | Data | Unlocked after Level 1 checkpoint |
-| 3 | `300` | Idea | Unlocked after Level 2 checkpoint |
-| 4 | `400` | Build and Deploy | Unlocked after Level 3 checkpoint |
-| 5 | `500` | Project Structure | Unlocked after Level 4 checkpoint |
-| 6 | `600` | Built-ins | Unlocked after Level 5 checkpoint |
-| 7 | `700` | Studio | Unlocked after Level 6 checkpoint |
-| 8 | `800` | AI | Unlocked after Level 7 checkpoint |
+| 2 | `200` | Data | Visible after entering a Level 2 guide |
+| 3 | `300` | Idea | Visible after entering a Level 3 guide |
+| 4 | `400` | Build and Deploy | Visible after entering a Level 4 guide |
+| 5 | `500` | Project Structure | Visible after entering a Level 5 guide |
+| 6 | `600` | Built-ins | Visible after entering a Level 6 guide |
+| 7 | `700` | Studio | Visible after entering a Level 7 guide |
+| 8 | `800` | AI | Visible after entering a Level 8 guide |
 
 The first visit should show `000` and `100` navigation only. If the reader
-opens a Level 4 page directly, the page should render, but Level 4 navigation
-should not become globally visible until the reader has earned that level.
+opens a Level 4 page directly, the page should render and Level 4 navigation
+should become visible for future browsing.
 
 ## Unlock Rules
 
-Progress should be stored in an anonymous first-party cookie. Local storage can
-be used as a fallback or companion store if the implementation needs richer
-client state, but the cookie should be the source used to initialize server or
-static-page rendering state.
+Progress is static-site client state. The production site is built for GitHub
+Pages and has no server session, so progress must be stored in `localStorage`.
 
-A page can count toward a checkpoint only when all of these signals are true:
+The unlock level is stored independently from experience:
 
-- the tab is visible for the estimated reading time
-- the reader reaches the lower part of the article
-- the reader is on a guide page, not an API reference page
-- the page belongs to the next level the reader is trying to unlock
-
-Recommended checkpoint rule:
-
-- Level 1 is granted by default and includes both `000 Orientation` and
+- `spLevel` stores the highest visible guide band, from `1` through `8`.
+- A fresh visitor starts at `1`, which shows both `000 Orientation` and
   `100 Develop`.
-- Level 2 unlocks after sufficient engagement with at least one Level 1 parent
-  page and one Level 1 child page.
-- Levels 3 through 8 unlock after sufficient engagement with either the level's
-  parent overview page or two pages from the previous level.
+- When a reader opens any guide page above their current `spLevel`, the client
+  upgrades `spLevel` to that page's guide level.
+- Readers can skip levels if they know a URL. This is acceptable because direct
+  links should stay readable and the site should not behave like a hard gate.
+- API pages do not change `spLevel`.
 
-This keeps progression lightweight. The goal is not a quiz system; it is a
-reasonable confidence signal that the reader spent time in the learning path.
+Levels and experience are independent. It is possible to be a `Legend` with low
+experience if the reader opened an `800` URL directly without reading many guide
+pages.
+
+## Experience Model
+
+Experience measures meaningful guide-page engagement. It is not used to unlock
+guide levels.
+
+Experience state uses two local storage keys:
+
+- `spHistory` is the source of truth. It stores per-guide engagement history so
+  the same page cannot award experience more than once.
+- `spExp` is an optional derived cache. The client should be able to recompute
+  the displayed experience total from `spHistory` even if `spExp` is missing,
+  stale, or manually cleared.
+
+A guide page awards `10` experience when all of these are true:
+
+- the reader is on a guide page, not an API reference page
+- the reader reaches the bottom region of the guide page
+- the reader has spent at least `2` minutes on that guide page
+- the guide page has not already awarded experience in `spHistory`
+
+Recommended `spHistory` shape:
+
+```json
+{
+  "/guides/320-modeling": {
+    "bottomReached": true,
+    "completedAt": "2026-06-13T00:00:00.000Z",
+    "dwellMs": 132000,
+    "expAwarded": true,
+    "firstSeen": "2026-06-13T00:00:00.000Z",
+    "level": 3,
+    "path": "/guides/320-modeling"
+  }
+}
+```
+
+Maximum possible experience is the number of guide Markdown files under
+`specs/guides/` multiplied by `10`. The UI uses this value to calculate the
+progress bar percentage, but it should not show the max value. The dropdown
+should display only the reader's current experience total.
 
 ## Navigation Behavior
 
-The visible guide navigation should include all earned levels and no locked
+The visible guide navigation should include all visible levels and no locked
 levels.
 
 Examples:
@@ -94,7 +129,7 @@ Examples:
 - A Level 8 reader sees the full course guide nav.
 
 Visible guide navigation and home guide cards should be ordered with the
-highest earned guide band first. For example, a Level 5 reader sees `500`,
+highest visible guide band first. For example, a Level 5 reader sees `500`,
 `400`, `300`, `200`, `100`, then `000`.
 
 The top-level site nav should remain stable:
@@ -111,27 +146,25 @@ UI until unlocked, even though the URLs keep working.
 ## Reading Ahead State
 
 When a reader opens a guide page above their current level, the page should
-show a restrained reading-ahead notice near the top of the article.
+render normally and upgrade `spLevel` to that page's guide band. The site should
+avoid language that makes the reader feel punished for opening a direct link.
 
-Recommended copy:
-
-```text
-You are reading ahead.
-
-This page assumes earlier Stackpress guide context. You can keep reading, but
-the main navigation will reveal this level after you complete the recommended
-path.
-```
-
-The notice should not block content, hide examples, or redirect the reader.
-The site should avoid language that makes the reader feel punished for opening
-a direct link.
-
-## Badge And Theme Progression
+## Badge, Experience, And Theme Progression
 
 The site should make progress feel like status without turning the docs into a
 game UI. Badges should be visible in the docs shell, mobile menu, and guide
-index.
+index. Experience should be visible in the header badge dropdown.
+
+The header badge dropdown should show:
+
+- `Stackpress mastery` as the section label
+- the current badge name, such as `Backend`
+- an experience progress bar based on current experience divided by maximum
+  possible guide experience
+- the current experience number only, with thousands separators
+- `Your next journey`
+- the next unread guide in the current visible band with an arrow icon
+- recently completed guides in that band with check icons
 
 | Level | Badge | Theme Direction |
 | --- | --- | --- |
@@ -196,7 +229,7 @@ Recommended Wayback windows for older references:
 Guide source should continue to come from `specs/guides/`. API reference source
 should continue to come from `specs/references/`.
 
-The guide index should group pages by earned level. Locked levels should be
+The guide index should group pages by visible level. Locked levels should be
 completely hidden from navigation and index pages. They remain accessible only
 when the reader already knows the URL.
 
@@ -236,28 +269,20 @@ export const docs = path.join(root, 'docs');
 
 ### Suggested Runtime Pieces
 
-Add a small progress module under `packages/www/plugins/app/` or a dedicated
-docs plugin. It should provide:
+Add small progress and helper modules under the docs plugins. They should
+provide:
 
 - level metadata
 - guide-to-level mapping
-- estimated reading time helper
-- cookie read/write helper
+- local storage key naming for client behavior
 - nav filtering helper
-- reading-ahead helper
+- guide count for experience percentage calculations
 
-Suggested cookie fields:
+Suggested local storage keys:
 
-```json
-{
-  "level": 2,
-  "completed": ["100-develop", "120-pages"],
-  "updated": "2026-06-08T00:00:00.000Z"
-}
-```
-
-Keep the cookie compact. If completed pages become too large for a cookie,
-store only the highest level and a short checkpoint record.
+- `spLevel`
+- `spHistory`
+- `spExp`
 
 ### Client Progress Script
 
@@ -267,21 +292,22 @@ for guide pages.
 The script should:
 
 - read page metadata from `data-*` attributes on the article shell
-- start a timer only when `document.visibilityState === 'visible'`
-- track whether the reader reached the lower portion of the page
-- write the progress cookie after the checkpoint is satisfied
+- track page dwell time and pause/resume around document visibility changes
+- track whether the reader reached the bottom region of the page
+- write `spLevel` when a guide page is above the stored visible level
+- write `spHistory` when a guide earns experience
+- keep `spExp` in sync as a derived cache
 - avoid counting API pages
-- avoid repeatedly writing the same cookie value
+- avoid awarding experience twice for the same guide page
 
 The article shell should expose enough metadata for the script:
 
 ```html
-<main
-  data-doc-kind="guide"
-  data-guide-id="120-pages"
+<article
+  data-guide-count="123"
   data-guide-level="1"
-  data-reading-minutes="6"
->
+  data-guide-path="/guides/120-pages"
+></article>
 ```
 
 ### Server And Static Rendering
@@ -289,13 +315,12 @@ The article shell should expose enough metadata for the script:
 Because the production site is static, the first HTML response cannot be
 personalized per reader on the server. The implementation should render a
 default Level 1 shell, then let the client script upgrade the visible nav and
-theme after reading the cookie.
+theme after reading local storage.
 
 To avoid layout flashes:
 
-- add a tiny early script in the document head that reads the progress cookie
-  and sets `data-reader-level` on `<html>`
-- define CSS themes behind `[data-reader-level="N"]`
+- hide the docs shell until the client applies level and theme classes
+- define CSS themes behind level classes such as `.docs-level-3`
 - keep locked nav hidden by default until the client confirms the level
 
 ### Package Areas To Touch
@@ -303,11 +328,13 @@ To avoid layout flashes:
 Likely implementation files:
 
 - `packages/www/plugins/guides/manifest.ts` for generated guide metadata
-- `packages/www/plugins/guides/pages/doc.ts` for guide page props
-- `packages/www/plugins/guides/views/doc.tsx` for article metadata and notices
+- `packages/www/plugins/guides/helpers.ts` for guide page props
+- `packages/www/plugins/guides/views/doc.tsx` for article metadata
 - `packages/www/plugins/guides/views/shelf.tsx` for guide index progression
 - `packages/www/plugins/app/components/docs.tsx` for shell nav, badge, and
   theme data
+- `packages/www/plugins/home/helpers.ts` for home page guide count and cards
+- `packages/www/plugins/home/views/home.tsx` for the static home view
 - `packages/www/public/scripts/docs.js` for client-side progress tracking
 - `packages/www/public/styles/global.css` for level themes
 - `packages/www/scripts/build.ts` only if the static route list needs to include
@@ -320,9 +347,9 @@ signals through normal analytics if analytics are later added.
 
 Useful events:
 
-- `guide_checkpoint_reached`
+- `guide_experience_awarded`
 - `guide_level_unlocked`
-- `reading_ahead_page_view`
+- `guide_direct_level_upgrade`
 - `api_reference_view`
 
 Do not store personally identifying information. Do not create user accounts
@@ -339,21 +366,25 @@ for this feature.
 
 ## Open Decisions
 
-- Exact reading-time formula. A reasonable default is 200 words per minute plus
-  extra time for code-heavy pages.
-- Whether direct visits to high-level pages can ever count toward unlocks. The
-  recommended default is no; only the expected previous level should count.
+- Whether the `2` minute dwell threshold should ever vary for very short or
+  very long guide pages.
+- Whether the badge dropdown should show only the current guide band or include
+  completed guides from earlier visible bands.
 
 ## Success Criteria
 
 - A new visitor sees only `000` and `100` guide navigation under the `100 Visitor`
   state.
-- A returning visitor with a higher progress cookie sees the correct unlocked
-  guide levels.
+- A returning visitor with a higher `spLevel` sees the correct unlocked guide
+  levels.
 - Direct high-level URLs render without blocking.
-- Direct high-level URLs show a reading-ahead notice when the reader has not
-  earned that level.
+- Direct high-level URLs upgrade `spLevel` to that guide band.
 - API reference pages are always visible and reachable.
+- API reference pages do not award experience.
+- Guide pages award `10` experience only after bottom scroll plus at least
+  `2` minutes of dwell time.
+- Clearing `spExp` does not lose experience because the value is recalculated
+  from `spHistory`.
 - Theme, badge, and nav density change by reader level.
 - Static production output writes to root `docs/`.
 - Development workflow uses the `packages/www` dev server.
