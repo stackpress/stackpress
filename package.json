@@ -34,6 +34,7 @@
     "blog": "yarn --cwd templates/blog",
     "store": "yarn --cwd templates/store",
     "website": "yarn --cwd templates/website",
+    "www": "yarn --cwd packages/www",
     "test": "yarn test:core",
     "test:skills": "node --test tests/skills-installer.test.mjs",
     "test:core": "yarn test:server && yarn test:schema && yarn test:sql",

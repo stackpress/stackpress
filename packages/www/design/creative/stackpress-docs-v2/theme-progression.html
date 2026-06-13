@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Creative V2 - Theme Progression</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><img src="./assets/logo.png" alt="Stackpress" /></a>
+    <nav class="topnav" aria-label="Primary"><a href="./index.html">Home</a><a href="./guides.html">Guides</a><a href="./api.html">API</a></nav>
+    <a class="api-link" href="./api.html">API reference</a>
+    <button class="theme-switch" type="button" data-theme-toggle aria-label="Toggle theme"><span>☀</span><span>☾</span></button>
+    <div class="badge-wrap"><button class="badge" type="button" data-badge-toggle><svg class="fa-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg><strong data-progress-count>Visitor</strong></button><div class="popover" data-badge-popover hidden><p class="eyebrow">Guide progress</p><strong class="badge-name" data-badge-label>Visitor</strong><p>Current path: <span data-current-path>100 Develop</span></p><ul data-progress-list></ul></div></div>
+  </header>
+  <main>
+    <section class="article" aria-labelledby="theme-title">
+      <p class="eyebrow">Creative system</p>
+      <h1 id="theme-title">Theme progression board</h1>
+      <p class="lead">Each badge keeps the Stackpress identity stable while changing nav density, shell weight, badge treatment, and guide presentation.</p>
+      <div class="theme-board">
+        <a class="theme-swatch" href="./level-visitor.html" data-preview="1" data-sim-level="1"><header><strong>Visitor</strong><span class="number">100</span></header><span class="theme-ref">Python docs</span><p>Bare pre-2005 document style for the first visit.</p><ul class="cue-list"><li>Default-blue links</li><li>No shadows</li><li>Plain table-of-contents feel</li></ul><div class="theme-mini-shell"><span class="theme-mini-nav"></span><span class="theme-mini-card"></span></div></a>
+        <a class="theme-swatch" href="./level-junior.html" data-preview="2" data-sim-level="2"><header><strong>Junior</strong><span class="number">200</span></header><span class="theme-ref">W3Schools / PHP manual</span><p>Early web cues, stronger borders, simple tabs.</p><ul class="cue-list"><li>Obvious link color</li><li>Boxy tabs</li><li>Examples feel editable</li></ul><div class="theme-mini-shell"><span class="theme-mini-nav"></span><span class="theme-mini-card"></span><span class="theme-mini-code"></span></div></a>
+        <a class="theme-swatch" href="./level-backend.html" data-preview="3" data-sim-level="3"><header><strong>Backend</strong><span class="number">300</span></header><span class="theme-ref">Bootstrap 3 / Rails Guides</span><p>2010s docs: clearer cards and heavier affordances.</p><ul class="cue-list"><li>Categorized guide index</li><li>Larger nav targets</li><li>Heavier sectioning</li></ul><div class="theme-mini-shell"><span class="theme-mini-nav"></span><span class="theme-mini-card"></span><span class="theme-mini-card"></span></div></a>
+        <a class="theme-swatch" href="./level-builder.html" data-preview="4" data-sim-level="4"><header><strong>Builder</strong><span class="number">400</span></header><span class="theme-ref">Astro / Stripe docs</span><p>Current polished docs with balanced spacing.</p><ul class="cue-list"><li>Modern callouts</li><li>Mature code examples</li><li>Balanced page shell</li></ul><div class="theme-mini-shell"><span class="theme-mini-nav"></span><span class="theme-mini-card"></span><span class="theme-mini-code"></span></div></a>
+        <a class="theme-swatch" href="./level-devops.html" data-preview="5" data-sim-level="5"><header><strong>DevOps</strong><span class="number">500</span></header><span class="theme-ref">Fly.io / Terraform</span><p>Warmer operational theme for deploy and structure.</p><ul class="cue-list"><li>Deploy-first steps</li><li>CLI setup blocks</li><li>Infrastructure grouping</li></ul><div class="theme-mini-shell"><span class="theme-mini-nav"></span><span class="theme-mini-card"></span><span class="theme-mini-code"></span></div></a>
+        <a class="theme-swatch" href="./level-senior.html" data-preview="6" data-sim-level="6"><header><strong>Senior</strong><span class="number">600</span></header><span class="theme-ref">Kubernetes / Terraform</span><p>Cooler dense power-user navigation.</p><ul class="cue-list"><li>Nested navigation</li><li>Version controls</li><li>Reference scanning</li></ul><div class="theme-mini-shell"><span class="theme-mini-nav"></span><span class="theme-mini-card"></span><span class="theme-mini-card"></span><span class="theme-mini-code"></span></div></a>
+        <a class="theme-swatch" href="./level-architect.html" data-preview="7" data-sim-level="7"><header><strong>Architect</strong><span class="number">700</span></header><span class="theme-ref">Stripe / Cloudflare</span><p>Premium docs treatment with richer surfaces.</p><ul class="cue-list"><li>System explanations</li><li>Diagram-ready panels</li><li>Refined sidebars</li></ul><div class="theme-mini-shell"><span class="theme-mini-nav"></span><span class="theme-mini-card"></span><span class="theme-mini-code"></span></div></a>
+        <a class="theme-swatch" href="./level-legend.html" data-preview="8" data-sim-level="8"><header><strong>Legend</strong><span class="number">800</span></header><span class="theme-ref">Claude / OpenAI docs</span><p>Command-center density and AI-oriented surfaces.</p><ul class="cue-list"><li>Model/tool grouping</li><li>Workflow entry points</li><li>Expert reference density</li></ul><div class="theme-mini-shell"><span class="theme-mini-nav"></span><span class="theme-mini-card"></span><span class="theme-mini-card"></span><span class="theme-mini-code"></span></div></a>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><span>Creative draft only</span><span>Theme progression board</span></footer>
+</body>
+</html>

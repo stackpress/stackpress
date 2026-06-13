@@ -36,12 +36,13 @@ that they are reading ahead of the recommended path.
 
 ## Level Model
 
-Guide folders under `specs/guides/` map to site levels.
+Guide folders under `specs/guides/` map to site levels. The reader-facing
+progression starts at `100 Visitor`; `000 Orientation` is not a separate
+reader state. It is always visible alongside `100 Develop` on first visit.
 
 | Level | Guide Folder | Topic | Default Visibility |
 | --- | --- | --- | --- |
-| 0 | `000` | Orientation | Visible on first visit |
-| 1 | `100` | Develop | Visible on first visit |
+| 1 | `000`, `100` | Orientation and Develop | Visible on first visit |
 | 2 | `200` | Data | Unlocked after Level 1 checkpoint |
 | 3 | `300` | Idea | Unlocked after Level 2 checkpoint |
 | 4 | `400` | Build and Deploy | Unlocked after Level 3 checkpoint |
@@ -50,7 +51,7 @@ Guide folders under `specs/guides/` map to site levels.
 | 7 | `700` | Studio | Unlocked after Level 6 checkpoint |
 | 8 | `800` | AI | Unlocked after Level 7 checkpoint |
 
-The first visit should show Level 0 and Level 1 navigation only. If the reader
+The first visit should show `000` and `100` navigation only. If the reader
 opens a Level 4 page directly, the page should render, but Level 4 navigation
 should not become globally visible until the reader has earned that level.
 
@@ -70,8 +71,8 @@ A page can count toward a checkpoint only when all of these signals are true:
 
 Recommended checkpoint rule:
 
-- Level 0 is granted by default.
-- Level 1 is granted by default.
+- Level 1 is granted by default and includes both `000 Orientation` and
+  `100 Develop`.
 - Level 2 unlocks after sufficient engagement with at least one Level 1 parent
   page and one Level 1 child page.
 - Levels 3 through 8 unlock after sufficient engagement with either the level's
@@ -87,10 +88,14 @@ levels.
 
 Examples:
 
-- A new reader sees Level 0 and Level 1 guide nav.
-- A Level 4 reader sees Level 0, Level 1, Level 2, Level 3, and Level 4 guide
+- A new reader sees the Level 1 guide nav, including `000` and `100`.
+- A Level 4 reader sees Level 1, Level 2, Level 3, and Level 4 guide
   nav.
 - A Level 8 reader sees the full course guide nav.
+
+Visible guide navigation and home guide cards should be ordered with the
+highest earned guide band first. For example, a Level 5 reader sees `500`,
+`400`, `300`, `200`, `100`, then `000`.
 
 The top-level site nav should remain stable:
 
@@ -130,8 +135,7 @@ index.
 
 | Level | Badge | Theme Direction |
 | --- | --- | --- |
-| 0 | Visitor | Pre-badge orientation, almost no decoration |
-| 1 | Newbie | Barebones text-first docs, sharp edges, minimal color |
+| 1 | Visitor | Barebones text-first docs, sharp edges, minimal color |
 | 2 | Junior | Early 2000s web: stronger borders, simple tabs, playful but readable |
 | 3 | Backend | 2010s documentation: clearer cards, larger nav, heavier affordances |
 | 4 | Builder | Current docs: polished layout, balanced spacing, modern components |
@@ -139,6 +143,10 @@ index.
 | 6 | Senior | Cooler power-user theme with denser advanced navigation |
 | 7 | Architect | Premium docs treatment, richer diagrams and advanced surfaces |
 | 8 | Legend | Distinct expert theme with command-center density and AI-oriented surfaces |
+
+Dark mode is not available for Levels 1 through 3. The theme switch appears
+starting at Level 4 and remains available through Level 8. Level 8 defaults to
+an expert dark treatment with readable light text.
 
 Theme changes should affect:
 
@@ -157,6 +165,31 @@ Theme changes should not affect:
 - readable contrast
 - logo identity
 - basic keyboard navigation
+
+### Reference Websites For Theme Progression
+
+These websites are design references, not implementation requirements. Use them
+to calibrate visual direction, navigation density, and page treatment for each
+reader level while keeping the Stackpress logo, content model, and URL shape
+stable.
+
+| Level | Badge | Reference Sites | Useful Design Cues |
+| --- | --- | --- | --- |
+| 1 | Visitor | [Python documentation](https://docs.python.org/3/) and sparse early docs references | Text-first hierarchy, familiar docs layout, clear section lists, low visual commitment. |
+| 2 | Junior | [W3Schools via Wayback](https://web.archive.org/web/*/https://www.w3schools.com/), [PHP manual via Wayback](https://web.archive.org/web/*/https://www.php.net/manual/en/) | Strong borders, simple tabs, obvious link colors, early-web affordances that still scan cleanly. |
+| 3 | Backend | [Bootstrap 3 docs](https://getbootstrap.com/docs/3.3/), [Ruby on Rails Guides](https://guides.rubyonrails.org/) | 2010s documentation structure, larger navigation, heavier sectioning, categorized guide indexes. |
+| 4 | Builder | [Astro docs](https://docs.astro.build/), [Stripe docs](https://docs.stripe.com/) | Polished current docs treatment, balanced spacing, modern callouts, mature code examples. |
+| 5 | DevOps | [Fly.io docs](https://fly.io/docs/), [Terraform docs](https://developer.hashicorp.com/terraform/docs) | Deploy-first flows, CLI setup steps, operational groupings, project and infrastructure cues. |
+| 6 | Senior | [Kubernetes docs](https://kubernetes.io/docs/home/), [Terraform docs](https://developer.hashicorp.com/terraform/docs) | Dense nested navigation, versioning controls, advanced references, power-user scanning surfaces. |
+| 7 | Architect | [Stripe docs](https://docs.stripe.com/), [Cloudflare developer docs](https://developers.cloudflare.com/) | Premium API documentation, system-level explanations, richer diagrams, refined search and sidebar behavior. |
+| 8 | Legend | [Claude API docs](https://platform.claude.com/docs/en/home), [OpenAI docs](https://docs.openai.com/) | AI-oriented expert surfaces, command-center density, model/tool/reference grouping, advanced workflow entry points. |
+
+Recommended Wayback windows for older references:
+
+- W3Schools: `2003` through `2006`
+- PHP manual: `2004` through `2008`
+- Bootstrap: `2013` through `2015`
+- Rails Guides: `2010` through `2015`
 
 ## Content Organization
 
@@ -255,7 +288,7 @@ The article shell should expose enough metadata for the script:
 
 Because the production site is static, the first HTML response cannot be
 personalized per reader on the server. The implementation should render a
-default Level 0/1 shell, then let the client script upgrade the visible nav and
+default Level 1 shell, then let the client script upgrade the visible nav and
 theme after reading the cookie.
 
 To avoid layout flashes:
@@ -306,8 +339,6 @@ for this feature.
 
 ## Open Decisions
 
-- Whether Level 0 should show `Visitor` anywhere in the public UI or stay
-  internal-only before the public badge ladder starts at `LVL1 Newbie`.
 - Exact reading-time formula. A reasonable default is 200 words per minute plus
   extra time for code-heavy pages.
 - Whether direct visits to high-level pages can ever count toward unlocks. The
@@ -315,7 +346,8 @@ for this feature.
 
 ## Success Criteria
 
-- A new visitor sees only Level 0 and Level 1 guide navigation.
+- A new visitor sees only `000` and `100` guide navigation under the `100 Visitor`
+  state.
 - A returning visitor with a higher progress cookie sees the correct unlocked
   guide levels.
 - Direct high-level URLs render without blocking.

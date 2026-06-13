@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs V2 Wireframe - Guide Detail</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="mark"></span><span>Stackpress</span></a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html">Home</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <a class="api-button" href="./api.html">API reference</a>
+    <div class="badge-wrap">
+      <button class="badge" type="button" data-badge-toggle aria-label="Guide progress">
+        <svg class="fa-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg>
+        <strong data-progress-count>0 of 8</strong>
+      </button>
+      <div class="badge-popover" data-badge-popover hidden>
+        <p class="eyebrow">Guide progress</p>
+        <ul data-progress-list></ul>
+        <button type="button" data-reset-progress>Reset prototype</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="mobile-actions">
+      <a href="./mobile-menu.html">Docs menu</a>
+      <a href="#page-title">On this page</a>
+    </div>
+    <section class="docs-layout" aria-labelledby="page-title">
+      <aside class="sidebar">
+        <p class="sidebar-label">100 Develop</p>
+        <a href="./guides.html">100 Develop</a>
+        <a href="./guide-detail.html">110 Plugins</a>
+        <a class="is-current" href="./guide-detail.html">120 Pages</a>
+        <a href="./guide-detail.html">121 Request</a>
+        <a href="./guide-detail.html">122 Response</a>
+        <a href="./guide-detail.html">140 Views</a>
+      </aside>
+      <article class="doc-article" data-doc-kind="guide" data-guide-id="120-pages" data-guide-group="100" data-reading-minutes="6">
+        <div class="meta-row">
+          <span>100 Develop</span>
+          <span>6 min read</span>
+          <span>Guide progress is tracked in the badge</span>
+        </div>
+        <p class="eyebrow">API usage guide</p>
+        <h1 id="page-title">Pages</h1>
+        <p class="lead">A page route is where an incoming request becomes an outgoing answer. The lesson starts with the route problem, then follows the smallest useful handler before adding request and response details.</p>
+
+        <h2 id="problem">What a page handler solves</h2>
+        <p>The article opens with the everyday problem: a browser asks for a path, and the app needs a focused place to decide what answer belongs there.</p>
+
+        <h2 id="minimal">Minimal handler</h2>
+        <p>The first example is small enough to verify before the reader sees variations.</p>
+        <pre><code>server.get('/hello', ({ res }) => {
+  res.html('&lt;h1&gt;Hello Stackpress&lt;/h1&gt;');
+});</code></pre>
+
+        <h2 id="walkthrough">Follow the request</h2>
+        <ol class="step-list">
+          <li><strong>Browser requests `/hello`</strong><span>The route owns the URL match.</span></li>
+          <li><strong>Handler prepares the answer</strong><span>The handler reads input and chooses output.</span></li>
+          <li><strong>Response sends HTML</strong><span>The result is visible immediately.</span></li>
+        </ol>
+
+        <h2 id="verify">Check it</h2>
+        <p>The final section tells the reader what changed, how to verify the page, and which concept should be clear before moving on.</p>
+        <div class="checkpoint">
+          <strong>Prototype action</strong>
+          <span>Mark this guide complete to update the badge popup.</span>
+          <button type="button" data-complete-guide="120-pages">Mark complete</button>
+        </div>
+
+        <nav class="article-pager" aria-label="Article navigation">
+          <a href="./guides.html"><span>Previous</span><strong>Develop path</strong></a>
+          <a href="./guides.html"><span>Next</span><strong>Continue guides</strong></a>
+        </nav>
+      </article>
+      <aside class="toc">
+        <p class="sidebar-label">On this page</p>
+        <a class="is-current" href="#page-title">Pages</a>
+        <a href="#problem">Problem</a>
+        <a href="#minimal">Minimal handler</a>
+        <a href="#walkthrough">Walkthrough</a>
+        <a href="#verify">Check it</a>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Wireframe draft only</span>
+    <span>Guide detail includes progress metadata</span>
+  </footer>
+</body>
+</html>

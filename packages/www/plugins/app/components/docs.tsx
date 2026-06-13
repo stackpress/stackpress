@@ -9,10 +9,12 @@ import { LayoutBlank, useResponse } from 'stackpress/view/client';
 export type NavItem = {
   href: string;
   label: string;
+  level?: number;
 };
 
 export type NavGroup = {
   label: string;
+  level?: number;
   items: NavItem[];
 };
 
@@ -27,13 +29,14 @@ export type PagerItem = {
   label: string;
 };
 
-export type SiteSection = 'home' | 'concepts' | 'guides' | 'api';
+export type SiteSection = 'home' | 'guides' | 'api';
 
 export type DocsPageResults = {
   active: string;
   content: string;
   description: string;
   eyebrow: string;
+  guideLevel?: number;
   nav: NavGroup[];
   next?: PagerItem;
   previous?: PagerItem;
@@ -46,6 +49,7 @@ export type ShelfCard = {
   description: string;
   href: string;
   label: string;
+  level?: number;
 };
 
 export type ShelfResults = {
@@ -84,11 +88,19 @@ export function DocsHead(props: ServerConfigPageProps & {
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content="/icon.png" />
       <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+      />
       <link rel="stylesheet" type="text/css" href="/styles/global.css" />
       {styles.map((href, index) => (
         <link key={index} rel="stylesheet" type="text/css" href={href} />
       ))}
-      <script src="/scripts/docs.js?v=20260601f" defer></script>
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+        defer
+      ></script>
+      <script src="/scripts/docs.js?v=20260612t" defer></script>
     </>
   );
 }
@@ -100,15 +112,28 @@ export function DocsFrame(props: ServerConfigPageProps & {
 
   return (
     <LayoutBlank {...props}>
-      <div className="docs-site">
-        <Header />
-        {children}
-        <footer className="docs-footer">
-          <span>Stackpress documentation</span>
-          <span>Generated from specs</span>
-        </footer>
-      </div>
+      <DocsShell>{children}</DocsShell>
     </LayoutBlank>
+  );
+}
+
+function DocsShell(props: {
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className="docs-site docs-level-1 docs-theme-light"
+      data-reader-level="1"
+      data-theme="light"
+      suppressHydrationWarning
+    >
+      <Header />
+      {props.children}
+      <footer className="docs-footer">
+        <span>Stackpress documentation</span>
+        <span>Generated from specs</span>
+      </footer>
+    </div>
   );
 }
 
@@ -117,11 +142,10 @@ export function Header() {
     <>
       <header className="docs-topbar">
         <a className="docs-brand" href="/">
-          <img src="/images/stackpress-logo.png" alt="Stackpress" />
+          <img src="/images/stackpress-logo-icon.png" alt="Stackpress" />
         </a>
         <nav className="docs-topnav" aria-label="Primary">
           <a href="/#start">Start</a>
-          <a href="/concepts">Concepts</a>
           <a href="/guides">Guides</a>
           <a href="/api">API</a>
         </nav>
@@ -136,20 +160,44 @@ export function Header() {
         </button>
         <button
           aria-label="Toggle dark mode"
-          aria-pressed="false"
           className="docs-theme-switch"
+          data-theme-toggle
+          disabled
+          hidden
+          aria-pressed="false"
+          suppressHydrationWarning
           type="button"
         >
           <span aria-hidden="true">☀</span>
           <span aria-hidden="true">☾</span>
         </button>
+        <button
+          aria-label="Guide progress"
+          className="docs-progress-badge"
+          data-badge-toggle
+          suppressHydrationWarning
+          type="button"
+        >
+          <i className="fa-solid fa-circle-info" aria-hidden="true" />
+          <strong data-progress-count suppressHydrationWarning>Visitor</strong>
+        </button>
         <a className="docs-github" href="https://github.com/stackpress">
           GitHub
         </a>
       </header>
+      <div className="docs-progress-popover" data-badge-popover hidden>
+        <p className="docs-eyebrow">Guide progress</p>
+        <strong data-badge-label suppressHydrationWarning>Visitor</strong>
+        <p>
+          Current path:{' '}
+          <span data-current-path suppressHydrationWarning>
+            100 Develop
+          </span>
+        </p>
+        <ul data-progress-list suppressHydrationWarning />
+      </div>
       <nav className="docs-global-panel" id="global-menu-panel">
         <a href="/#start">Start</a>
-        <a href="/concepts">Concepts</a>
         <a href="/guides">Guides</a>
         <a href="/api">API</a>
       </nav>
@@ -164,12 +212,18 @@ export function Sidebar(props: {
   return (
     <aside className="docs-sidebar">
       {props.groups.map(group => (
-        <div key={group.label}>
+        <div
+          data-unlock-level={group.level || 1}
+          hidden={(group.level || 1) > 1}
+          key={group.label}
+        >
           <p>{group.label}</p>
           {group.items.map(item => (
             <a
+              data-unlock-level={item.level || group.level || 1}
               className={item.href === props.active ? 'is-current' : ''}
               href={item.href}
+              hidden={(item.level || group.level || 1) > 1}
               key={item.href}
             >
               {item.label}
@@ -197,7 +251,14 @@ export function MobilePanels(props: {
       </div>
       <nav className="docs-mobile-panel" id="mobile-docs-panel">
         {props.groups.flatMap(group => group.items).map(item => (
-          <a href={item.href} key={item.href}>{item.label}</a>
+          <a
+            data-unlock-level={item.level || 1}
+            hidden={(item.level || 1) > 1}
+            href={item.href}
+            key={item.href}
+          >
+            {item.label}
+          </a>
         ))}
       </nav>
       <nav className="docs-mobile-panel" id="mobile-toc-panel">
@@ -257,7 +318,11 @@ export function DocBody() {
       <section className="docs-layout">
         <MobilePanels groups={result.nav} toc={result.toc} />
         <Sidebar active={result.active} groups={result.nav} />
-        <article className="docs-article">
+        <article
+          className="docs-article"
+          data-guide-level={result.guideLevel || 1}
+          data-guide-path={result.active}
+        >
           <p className="docs-eyebrow">{result.eyebrow}</p>
           <div dangerouslySetInnerHTML={{ __html: result.content }} />
           <Pager previous={result.previous} next={result.next} />
@@ -284,7 +349,12 @@ export function ShelfBody() {
         <p className="docs-lead">{result.description}</p>
         <div className="docs-card-grid">
           {result.cards.map(card => (
-            <a href={card.href} key={card.href}>
+            <a
+              data-unlock-level={card.level || 1}
+              hidden={(card.level || 1) > 1}
+              href={card.href}
+              key={card.href}
+            >
               <strong>{card.label}</strong>
               <span>{card.description}</span>
             </a>
@@ -311,11 +381,11 @@ export function HomeBody() {
           <h1>{result.title}</h1>
           <p className="docs-lead">{result.description}</p>
           <div className="docs-actions">
-            <a className="docs-button primary" href="/guides/start">
+            <a className="docs-button primary" href="/guides/100-develop">
               Start tutorial
             </a>
-            <a className="docs-button" href="/concepts">
-              Read concepts
+            <a className="docs-button" href="/api">
+              API reference
             </a>
           </div>
         </div>
@@ -333,7 +403,12 @@ export function HomeBody() {
         </div>
         <div>
           {result.paths.map(path => (
-            <a href={path.href} key={path.href}>
+            <a
+              data-unlock-level={path.level || 1}
+              hidden={(path.level || 1) > 1}
+              href={path.href}
+              key={`${path.level || 1}-${path.href}-${path.label}`}
+            >
               <strong>{path.label}</strong>
               <span>{path.description}</span>
             </a>

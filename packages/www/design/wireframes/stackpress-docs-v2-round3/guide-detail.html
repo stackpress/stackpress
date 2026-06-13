@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs V2 Round 3 - Guide Detail</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="mark"></span><span>Stackpress</span></a>
+    <nav class="topnav" aria-label="Primary"><a href="./index.html">Home</a><a href="./guides.html">Guides</a><a href="./api.html">API</a></nav>
+    <a class="api-link" href="./api.html">API reference</a>
+    <div class="badge-wrap"><button class="badge" type="button" data-badge-toggle><svg class="fa-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg><strong data-progress-count>0 of 8</strong></button><div class="popover" data-badge-popover hidden><p class="eyebrow">Guide progress</p><ul data-progress-list></ul></div></div>
+  </header>
+
+  <main>
+    <div class="mobile-actions"><a class="api-link" href="./mobile-menu.html">Docs menu</a><a class="api-link" href="#article-title">On this page</a></div>
+    <section class="docs-layout" aria-labelledby="article-title">
+      <aside class="sidebar">
+        <p class="label">100 Develop</p>
+        <a href="./guides.html">100 Develop</a>
+        <a href="./guide-detail.html">110 Plugins</a>
+        <a class="is-current" href="./guide-detail.html">120 Pages</a>
+        <a href="./guide-detail.html">121 Request</a>
+        <a href="./guide-detail.html">122 Response</a>
+        <a href="./guide-detail.html">140 Views</a>
+      </aside>
+      <article class="article" data-doc-kind="guide" data-guide-id="120-pages" data-guide-group="100" data-reading-minutes="6">
+        <div class="meta"><span>100 Develop</span><span>6 min read</span><span>Progress shown in badge</span></div>
+        <p class="eyebrow">API usage guide</p>
+        <h1 id="article-title">Pages</h1>
+        <p class="lead">A page route is where an incoming request becomes an outgoing answer. The lesson starts with the route problem, then follows the smallest useful handler.</p>
+        <h2 id="problem">What a page handler solves</h2>
+        <p>A browser asks for a path, and the app needs one focused place to decide what answer belongs there.</p>
+        <h2 id="minimal">Minimal handler</h2>
+        <pre><code>server.get('/hello', ({ res }) => {
+  res.html('&lt;h1&gt;Hello Stackpress&lt;/h1&gt;');
+});</code></pre>
+        <h2 id="follow">Follow the request</h2>
+        <ol class="lesson-list">
+          <li><strong>Browser requests `/hello`</strong><span>The route owns the URL match.</span></li>
+          <li><strong>Handler prepares the answer</strong><span>The handler reads input and chooses output.</span></li>
+          <li><strong>Response sends HTML</strong><span>The result is visible immediately.</span></li>
+        </ol>
+        <h2 id="check">Check it</h2>
+        <p>The closing section tells the reader what changed, how to verify the page, and which idea should be clear before the next guide.</p>
+        <nav class="pager" aria-label="Article navigation"><a href="./guides.html"><span>Previous</span><strong>Develop path</strong></a><a href="./guides.html"><span>Next</span><strong>Continue guides</strong></a></nav>
+      </article>
+      <aside class="toc"><p class="label">On this page</p><a class="is-current" href="#article-title">Pages</a><a href="#problem">Problem</a><a href="#minimal">Minimal handler</a><a href="#follow">Follow request</a><a href="#check">Check it</a></aside>
+    </section>
+  </main>
+
+  <aside class="simulator" aria-label="Review-only simulator"><p class="label">Review-only simulator</p><button type="button" data-sim-complete>Simulate finished 160</button><button type="button" data-sim-reset>Reset first visit</button></aside>
+  <footer class="footer"><span>Wireframe draft only</span><span>Round 3 final structural candidate</span></footer>
+</body>
+</html>

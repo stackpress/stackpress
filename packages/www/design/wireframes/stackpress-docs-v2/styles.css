@@ -1,0 +1,568 @@
+:root {
+  background: #f3f3f3;
+  color: #1f1f1f;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+.topbar {
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #c6c6c6;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: auto 1fr auto auto;
+  min-height: 72px;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.brand,
+.topnav,
+.badge,
+.actions,
+.footer,
+.meta-row,
+.mobile-actions,
+.api-button {
+  align-items: center;
+  display: flex;
+}
+
+.brand {
+  font-weight: 700;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.mark {
+  background: #1f1f1f;
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+}
+
+.topnav {
+  gap: 18px;
+}
+
+.topnav a,
+.github-link {
+  color: #555555;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.api-button,
+.badge {
+  background: #f5f5f5;
+  border: 1px solid #c6c6c6;
+  color: #1f1f1f;
+  min-height: 38px;
+  padding: 8px 12px;
+  text-decoration: none;
+}
+
+.badge {
+  cursor: pointer;
+  gap: 8px;
+}
+
+.badge strong {
+  font-size: 13px;
+}
+
+.badge-wrap {
+  position: relative;
+}
+
+.badge-popover {
+  background: #ffffff;
+  border: 1px solid #c6c6c6;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  display: grid;
+  gap: 12px;
+  min-width: 280px;
+  padding: 16px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 5;
+}
+
+.badge-popover ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.badge-popover button,
+.step-list button,
+.checkpoint button {
+  background: #f5f5f5;
+  border: 1px solid #c6c6c6;
+  cursor: pointer;
+  justify-self: start;
+  min-height: 34px;
+  padding: 6px 10px;
+}
+
+.badge-popover button:hover,
+.step-list button:hover,
+.checkpoint button:hover {
+  background: #eeeeee;
+}
+
+.step-list button:disabled {
+  color: #666666;
+  cursor: default;
+}
+
+.fa-icon {
+  display: inline-block;
+  fill: currentColor;
+  height: 16px;
+  width: 16px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+main {
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 20px 16px;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 52px;
+  line-height: 1.05;
+  margin-bottom: 22px;
+}
+
+h2 {
+  font-size: 28px;
+  line-height: 1.18;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+.eyebrow,
+.sidebar-label,
+.kicker {
+  color: #666666;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.lead {
+  color: #4f4f4f;
+  font-size: 20px;
+  max-width: 720px;
+}
+
+.home-grid {
+  display: grid;
+  gap: 44px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.58fr);
+}
+
+.hero-copy {
+  align-self: center;
+}
+
+.actions {
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.button {
+  border: 1px solid #8a8a8a;
+  display: inline-flex;
+  font-weight: 700;
+  min-height: 44px;
+  padding: 10px 16px;
+  text-decoration: none;
+}
+
+.button.primary {
+  background: #1f1f1f;
+  color: #ffffff;
+}
+
+.start-panel,
+.progress-card,
+.course-band,
+.guide-card,
+.doc-article,
+.sidebar,
+.toc,
+.notice,
+.reference-card,
+.mobile-drawer,
+.checkpoint,
+.step-list li,
+.api-row {
+  background: #ffffff;
+  border: 1px solid #c6c6c6;
+}
+
+.start-panel {
+  align-self: start;
+  padding: 20px;
+}
+
+.compact-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.progress-card {
+  align-self: start;
+  padding: 20px;
+}
+
+.progress-meter {
+  background: #eeeeee;
+  border: 1px solid #c6c6c6;
+  height: 14px;
+  margin: 14px 0 18px;
+}
+
+.progress-fill {
+  background: #333333;
+  display: block;
+  height: 100%;
+  width: 28%;
+}
+
+.checkpoint {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 14px;
+}
+
+.course-band {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: 0.48fr 1fr;
+  margin-top: 40px;
+  padding: 28px;
+}
+
+.guide-card-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.guide-card {
+  display: grid;
+  gap: 8px;
+  min-height: 150px;
+  padding: 18px;
+  text-decoration: none;
+}
+
+.guide-card.locked {
+  background: #eeeeee;
+  color: #777777;
+}
+
+.guide-card .number {
+  color: #777777;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.utility-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 24px;
+}
+
+.docs-layout {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 250px minmax(0, 1fr) 220px;
+}
+
+.sidebar,
+.toc {
+  align-self: start;
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  position: sticky;
+  top: 96px;
+}
+
+.sidebar a,
+.toc a,
+.drawer-section a,
+.mobile-drawer > a {
+  color: #444444;
+  text-decoration: none;
+}
+
+.sidebar .is-current,
+.toc .is-current {
+  background: #eeeeee;
+  border: 1px solid #c6c6c6;
+  color: #1f1f1f;
+  padding: 8px;
+}
+
+.nav-group {
+  border-top: 1px solid #d8d8d8;
+  color: #666666;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 10px;
+  padding-top: 12px;
+  text-transform: uppercase;
+}
+
+.doc-article {
+  min-width: 0;
+  padding: 18px;
+}
+
+.meta-row {
+  color: #666666;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.meta-row span {
+  border: 1px solid #d4d4d4;
+  padding: 4px 8px;
+}
+
+.notice {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 24px;
+  padding: 16px;
+}
+
+.step-list {
+  counter-reset: lesson;
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.step-list li {
+  counter-increment: lesson;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+}
+
+.step-list li::before {
+  color: #777777;
+  content: counter(lesson, decimal-leading-zero);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.step-list li.is-complete {
+  background: #eeeeee;
+}
+
+.next-guide {
+  border-style: dashed;
+}
+
+pre {
+  background: #eeeeee;
+  border: 1px solid #c6c6c6;
+  overflow: auto;
+  padding: 18px;
+}
+
+code {
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+.article-pager {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 32px;
+}
+
+.article-pager a {
+  border: 1px solid #c6c6c6;
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  text-decoration: none;
+}
+
+.article-pager span {
+  color: #777777;
+  font-size: 12px;
+}
+
+.api-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.api-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.reference-card,
+.api-row {
+  padding: 18px;
+}
+
+.api-row {
+  display: grid;
+  gap: 6px;
+}
+
+.mobile-actions {
+  display: none;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.mobile-actions a {
+  border: 1px solid #c6c6c6;
+  padding: 10px 12px;
+  text-decoration: none;
+}
+
+.mobile-drawer {
+  display: grid;
+  gap: 14px;
+  margin: 0 auto;
+  max-width: 420px;
+  padding: 20px;
+}
+
+.drawer-header {
+  align-items: center;
+  border-bottom: 1px solid #d8d8d8;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 14px;
+}
+
+.drawer-section {
+  border-top: 1px solid #d8d8d8;
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+}
+
+.footer {
+  border-top: 1px solid #c6c6c6;
+  color: #666666;
+  font-size: 13px;
+  gap: 20px;
+  justify-content: space-between;
+  margin: 30px auto 0;
+  max-width: 1280px;
+  padding: 24px 32px;
+}
+
+.has-next-guides .topbar {
+  min-height: 64px;
+}
+
+.has-next-guides main {
+  max-width: 1360px;
+}
+
+.has-next-guides .docs-layout {
+  grid-template-columns: 285px minmax(0, 1fr) 240px;
+}
+
+.has-next-guides .doc-article {
+  padding: 16px;
+}
+
+.has-next-guides .guide-card,
+.has-next-guides .step-list li,
+.has-next-guides .reference-card {
+  background: #f8f8f8;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    grid-template-columns: auto 1fr;
+    padding: 0 18px;
+  }
+
+  .topnav,
+  .github-link,
+  .topbar .badge-wrap {
+    display: none;
+  }
+
+  main {
+    padding: 28px 18px;
+  }
+
+  h1 {
+    font-size: 38px;
+  }
+
+  .home-grid,
+  .course-band,
+  .docs-layout,
+  .guide-card-grid,
+  .utility-grid,
+  .api-grid,
+  .article-pager {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar,
+  .toc {
+    display: none;
+  }
+
+  .mobile-actions {
+    display: flex;
+  }
+}

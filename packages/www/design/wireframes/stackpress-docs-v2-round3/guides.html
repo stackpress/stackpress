@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs V2 Round 3 - Guides</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="mark"></span><span>Stackpress</span></a>
+    <nav class="topnav" aria-label="Primary"><a href="./index.html">Home</a><a href="./guides.html">Guides</a><a href="./api.html">API</a></nav>
+    <a class="api-link" href="./api.html">API reference</a>
+    <div class="badge-wrap"><button class="badge" type="button" data-badge-toggle><svg class="fa-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg><strong data-progress-count>0 of 8</strong></button><div class="popover" data-badge-popover hidden><p class="eyebrow">Guide progress</p><ul data-progress-list></ul></div></div>
+  </header>
+
+  <main>
+    <div class="mobile-actions"><a class="api-link" href="./mobile-menu.html">Docs menu</a><a class="api-link" href="./api.html">API</a></div>
+    <section class="docs-layout" aria-labelledby="guides-title">
+      <aside class="sidebar">
+        <p class="label">Guides</p>
+        <span class="nav-group">000 Orientation</span>
+        <a href="./guide-detail.html">000 Course Path</a>
+        <a href="./guide-detail.html">001 What Stackpress Is</a>
+        <a href="./guide-detail.html">002 Getting Started</a>
+        <span class="nav-group">100 Develop</span>
+        <a class="is-current" href="./guides.html">100 Develop</a>
+        <a href="./guide-detail.html">110 Plugins</a>
+        <a href="./guide-detail.html">120 Pages</a>
+        <a href="./guide-detail.html">140 Views</a>
+        <a href="./guide-detail.html">160 Debugging</a>
+        <span class="nav-group" data-after-160 hidden>200 Data</span>
+        <a href="./completed.html" data-after-160 hidden>200 Data</a>
+      </aside>
+      <article class="article">
+        <p class="eyebrow">Guides</p>
+        <h1 id="guides-title">Develop path</h1>
+        <p class="lead">The guide index is a table of contents for the visible starter path. It should read like a guided book, not a full framework inventory.</p>
+        <h2>000 Orientation</h2>
+        <ol class="lesson-list">
+          <li data-guide-row="000-course-path"><strong>Course Path</strong><span>How the numbered guides and API reference work together.</span></li>
+          <li data-guide-row="001-what-stackpress-is"><strong>What Stackpress Is</strong><span>The short framework explanation before package boundaries.</span></li>
+          <li data-guide-row="002-getting-started"><strong>Getting Started</strong><span>Create the smallest useful app and read the first logs.</span></li>
+        </ol>
+        <h2>100 Develop</h2>
+        <ol class="lesson-list">
+          <li data-guide-row="100-develop"><strong>Develop</strong><span>Why runtime development comes before project structure.</span></li>
+          <li data-guide-row="110-plugins"><strong>Plugins</strong><span>Give app behavior a focused home.</span></li>
+          <li data-guide-row="120-pages"><strong>Pages</strong><span>Follow request, handler, response, and view output.</span></li>
+          <li data-guide-row="140-views"><strong>Views</strong><span>Turn server-prepared data into a React-rendered page.</span></li>
+          <li data-guide-row="160-debugging"><strong>Debugging And Inspection</strong><span>Find the layer that proves what changed.</span></li>
+        </ol>
+        <div class="callout" data-after-160 hidden><strong>200 Data is now available.</strong><span>The next group appears as a normal continuation after the starter path.</span></div>
+      </article>
+      <aside class="toc"><p class="label">On this page</p><a class="is-current" href="#guides-title">Develop path</a><a href="./guide-detail.html">Next guide</a><a href="./api.html">API lookup</a></aside>
+    </section>
+  </main>
+
+  <aside class="simulator" aria-label="Review-only simulator"><p class="label">Review-only simulator</p><button type="button" data-sim-complete>Simulate finished 160</button><button type="button" data-sim-reset>Reset first visit</button></aside>
+  <footer class="footer"><span>Wireframe draft only</span><span>Round 3 final structural candidate</span></footer>
+</body>
+</html>

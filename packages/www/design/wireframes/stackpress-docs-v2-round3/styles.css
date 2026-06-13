@@ -1,0 +1,469 @@
+:root {
+  background: #f2f2f2;
+  color: #202020;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+.topbar {
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #c8c8c8;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: auto 1fr auto auto;
+  min-height: 68px;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.brand,
+.topnav,
+.badge,
+.actions,
+.footer,
+.meta,
+.mobile-actions,
+.api-link {
+  align-items: center;
+  display: flex;
+}
+
+.brand {
+  font-weight: 700;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.mark {
+  background: #202020;
+  display: block;
+  height: 26px;
+  width: 26px;
+}
+
+.topnav {
+  gap: 18px;
+}
+
+.topnav a {
+  color: #555555;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.api-link,
+.badge,
+.button,
+.simulator button {
+  background: #f7f7f7;
+  border: 1px solid #c8c8c8;
+  color: #202020;
+  min-height: 38px;
+  padding: 8px 12px;
+  text-decoration: none;
+}
+
+.button.primary {
+  background: #202020;
+  color: #ffffff;
+}
+
+.badge {
+  cursor: pointer;
+  gap: 8px;
+}
+
+.badge-wrap {
+  position: relative;
+}
+
+.fa-icon {
+  fill: currentColor;
+  height: 16px;
+  width: 16px;
+}
+
+.popover {
+  background: #ffffff;
+  border: 1px solid #c8c8c8;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  display: grid;
+  gap: 12px;
+  min-width: 300px;
+  padding: 16px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 8;
+}
+
+.popover ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+main {
+  margin: 0 auto;
+  max-width: 1240px;
+  padding: 24px 20px;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 48px;
+  line-height: 1.06;
+  margin-bottom: 18px;
+}
+
+h2 {
+  font-size: 26px;
+  line-height: 1.18;
+}
+
+h3 {
+  font-size: 19px;
+}
+
+.eyebrow,
+.label {
+  color: #666666;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.lead {
+  color: #4d4d4d;
+  font-size: 19px;
+  max-width: 700px;
+}
+
+.hero {
+  display: grid;
+  gap: 40px;
+  grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+.intro-panel,
+.section,
+.guide-card,
+.article,
+.sidebar,
+.toc,
+.api-card,
+.api-row,
+.drawer,
+.callout,
+.simulator {
+  background: #ffffff;
+  border: 1px solid #c8c8c8;
+}
+
+.intro-panel,
+.section,
+.article,
+.api-card,
+.api-row,
+.drawer,
+.callout,
+.simulator {
+  padding: 18px;
+}
+
+.actions {
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.guide-map {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 0.45fr 1fr;
+  margin-top: 28px;
+}
+
+.guide-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.guide-card {
+  display: grid;
+  gap: 8px;
+  min-height: 140px;
+  padding: 16px;
+  text-decoration: none;
+}
+
+.number {
+  color: #777777;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.utility-grid,
+.api-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
+.docs-layout {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 240px minmax(0, 1fr) 210px;
+}
+
+.sidebar,
+.toc {
+  align-self: start;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  position: sticky;
+  top: 88px;
+}
+
+.sidebar a,
+.toc a,
+.drawer a {
+  color: #444444;
+  text-decoration: none;
+}
+
+.is-current {
+  background: #eeeeee;
+  border: 1px solid #c8c8c8;
+  padding: 8px;
+}
+
+.nav-group {
+  border-top: 1px solid #d8d8d8;
+  color: #666666;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 8px;
+  padding-top: 10px;
+  text-transform: uppercase;
+}
+
+.article {
+  min-width: 0;
+}
+
+.meta {
+  color: #666666;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.meta span {
+  border: 1px solid #d6d6d6;
+  padding: 4px 8px;
+}
+
+.lesson-list {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lesson-list li {
+  background: #ffffff;
+  border: 1px solid #c8c8c8;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.lesson-list li.is-done {
+  background: #eeeeee;
+}
+
+pre {
+  background: #eeeeee;
+  border: 1px solid #c8c8c8;
+  overflow: auto;
+  padding: 16px;
+}
+
+.pager {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 28px;
+}
+
+.pager a {
+  border: 1px solid #c8c8c8;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  text-decoration: none;
+}
+
+.api-grid {
+  margin-top: 24px;
+}
+
+.api-card,
+.api-row {
+  display: grid;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.mobile-actions {
+  display: none;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.drawer {
+  display: grid;
+  gap: 14px;
+  margin: 0 auto;
+  max-width: 430px;
+}
+
+.drawer-header {
+  align-items: center;
+  border-bottom: 1px solid #d8d8d8;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+.drawer-section {
+  border-top: 1px solid #d8d8d8;
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.simulator {
+  bottom: 18px;
+  display: grid;
+  gap: 8px;
+  max-width: 300px;
+  position: fixed;
+  right: 18px;
+  z-index: 6;
+}
+
+.simulator .label {
+  margin: 0;
+}
+
+.simulator button {
+  cursor: pointer;
+  justify-self: start;
+}
+
+.has-completed-160 main {
+  max-width: 1320px;
+}
+
+.has-completed-160 .topbar {
+  min-height: 62px;
+}
+
+.has-completed-160 .docs-layout {
+  grid-template-columns: 270px minmax(0, 1fr) 230px;
+}
+
+.has-completed-160 .guide-card,
+.has-completed-160 .article,
+.has-completed-160 .api-card {
+  background: #f8f8f8;
+}
+
+.footer {
+  border-top: 1px solid #c8c8c8;
+  color: #666666;
+  font-size: 13px;
+  justify-content: space-between;
+  margin: 24px auto 0;
+  max-width: 1240px;
+  padding: 22px 20px;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    grid-template-columns: auto 1fr;
+    padding: 0 18px;
+  }
+
+  .topnav,
+  .topbar .badge-wrap {
+    display: none;
+  }
+
+  main {
+    padding: 18px;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+
+  .hero,
+  .guide-map,
+  .guide-grid,
+  .utility-grid,
+  .api-grid,
+  .docs-layout,
+  .pager {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar,
+  .toc {
+    display: none;
+  }
+
+  .mobile-actions {
+    display: flex;
+  }
+
+  .simulator {
+    bottom: 0;
+    left: 0;
+    max-width: none;
+    right: 0;
+  }
+}

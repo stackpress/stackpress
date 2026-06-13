@@ -46,6 +46,7 @@ export function markdownToHtml(markdown: string): ParsedMarkdown {
   let paragraph: string[] = [];
   let list: string[] = [];
   let code: string[] = [];
+  let codeLanguage = '';
   let table: string[][] = [];
   let inCode = false;
 
@@ -84,10 +85,17 @@ export function markdownToHtml(markdown: string): ParsedMarkdown {
       closeList();
       closeTable();
       if (inCode) {
-        html.push(`<pre><code>${escapeHtml(code.join('\n'))}</code></pre>`);
+        if (codeLanguage.toLowerCase() === 'mermaid') {
+          html.push(`<div class="mermaid">${escapeHtml(code.join('\n'))}</div>`);
+        } else {
+          const className = codeLanguage ? ` class="language-${escapeHtml(codeLanguage)}"` : '';
+          html.push(`<pre><code${className}>${escapeHtml(code.join('\n'))}</code></pre>`);
+        }
         code = [];
+        codeLanguage = '';
         inCode = false;
       } else {
+        codeLanguage = line.replace(/^```/, '').trim().split(/\s+/)[0] || '';
         inCode = true;
       }
       continue;

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs V2 Wireframe - Mobile Menu</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="mark"></span><span>Stackpress</span></a>
+    <a class="api-button" href="./api.html">API reference</a>
+  </header>
+
+  <main>
+    <section aria-labelledby="mobile-title">
+      <p class="eyebrow">Mobile navigation state</p>
+      <h1 id="mobile-title">Progress-aware drawer</h1>
+      <div class="mobile-drawer">
+        <div class="drawer-header">
+          <strong>Stackpress Docs</strong>
+          <span>Close</span>
+        </div>
+        <button class="badge" type="button" data-badge-toggle>
+          <svg class="fa-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg>
+          <strong data-progress-count>0 of 8</strong>
+        </button>
+        <div class="badge-popover" data-badge-popover hidden>
+          <p class="eyebrow">Guide progress</p>
+          <ul data-progress-list></ul>
+          <button type="button" data-reset-progress>Reset prototype</button>
+        </div>
+        <a href="./index.html">Home</a>
+        <a href="./guides.html">Guides</a>
+        <a href="./api.html">API reference</a>
+        <div class="drawer-section">
+          <span class="sidebar-label">Guides</span>
+          <a href="./guide-detail.html">000 Orientation</a>
+          <a href="./guide-detail.html">100 Develop</a>
+          <a class="next-guide" href="./guides.html" data-hidden-until-complete hidden>200 Data</a>
+        </div>
+        <div class="drawer-section" data-before-complete>
+          <span class="sidebar-label">Current path</span>
+          <span>Finish through 160 Debugging to continue.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Wireframe draft only</span>
+    <span>Mobile shell keeps badge, API, and guide navigation visible</span>
+  </footer>
+</body>
+</html>

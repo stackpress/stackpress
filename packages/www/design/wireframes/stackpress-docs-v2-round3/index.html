@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs V2 Round 3 - Home</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="mark"></span><span>Stackpress</span></a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html">Home</a>
+      <a href="./guides.html">Guides</a>
+      <a href="./api.html">API</a>
+    </nav>
+    <a class="api-link" href="./api.html">API reference</a>
+    <div class="badge-wrap">
+      <button class="badge" type="button" data-badge-toggle aria-label="Guide progress">
+        <svg class="fa-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg>
+        <strong data-progress-count>0 of 8</strong>
+      </button>
+      <div class="popover" data-badge-popover hidden>
+        <p class="eyebrow">Guide progress</p>
+        <ul data-progress-list></ul>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="home-title">
+      <div>
+        <p class="eyebrow">Stackpress guides</p>
+        <h1 id="home-title">Start small, build the first working Stackpress app.</h1>
+        <p class="lead">The first screen teaches the reader that Stackpress starts with a clear runtime path: orientation, a small app, plugins, pages, views, and debugging.</p>
+        <div class="actions">
+          <a class="button primary" href="./guide-detail.html">Getting Started</a>
+          <a class="button" href="./guides.html">View guides</a>
+        </div>
+      </div>
+      <aside class="intro-panel">
+        <p class="eyebrow">First pass</p>
+        <h2>000 and 100 are the visible docs.</h2>
+        <p>Keep the first visit small enough that a junior developer can decide what to read next without seeing the full framework map.</p>
+      </aside>
+    </section>
+
+    <section class="guide-map" aria-labelledby="map-title">
+      <div class="section">
+        <p class="eyebrow">Guide map</p>
+        <h2 id="map-title">A short path before broad discovery.</h2>
+        <p data-before-160>After `160 Debugging`, the next group can appear and the shell can become denser.</p>
+        <p data-after-160 hidden>The starter path is complete, so the next guide group appears and the shell becomes denser.</p>
+      </div>
+      <div class="guide-grid">
+        <a class="guide-card" href="./guides.html"><span class="number">000</span><h3>Orientation</h3><p>Course path, framework framing, and first app setup.</p></a>
+        <a class="guide-card" href="./guides.html"><span class="number">100</span><h3>Develop</h3><p>Plugins, pages, request/response, views, hooks, and debugging.</p></a>
+        <a class="guide-card" href="./completed.html" data-after-160 hidden><span class="number">200</span><h3>Data</h3><p>The next group is introduced only after the starter path is complete.</p></a>
+      </div>
+    </section>
+  </main>
+
+  <aside class="simulator" aria-label="Review-only simulator">
+    <p class="label">Review-only simulator</p>
+    <button type="button" data-sim-complete>Simulate finished 160</button>
+    <button type="button" data-sim-reset>Reset first visit</button>
+  </aside>
+
+  <footer class="footer">
+    <span>Wireframe draft only</span>
+    <span>Round 3 final structural candidate</span>
+  </footer>
+</body>
+</html>

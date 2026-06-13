@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stackpress Docs Creative V2 - Home</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><img src="./assets/logo.png" alt="Stackpress" /></a>
+    <nav class="topnav" aria-label="Primary"><a href="./index.html" aria-current="page">Home</a><a href="./guides.html">Guides</a><a href="./api.html">API</a></nav>
+    <a class="api-link" href="./api.html">API reference</a>
+    <button class="theme-switch" type="button" data-theme-toggle aria-label="Toggle theme" aria-pressed="false"><span>☀</span><span>☾</span></button>
+    <div class="badge-wrap"><button class="badge" type="button" data-badge-toggle aria-label="Guide progress"><svg class="fa-icon" viewBox="0 0 512 512" aria-hidden="true"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg><strong data-progress-count>Visitor</strong></button><div class="popover" data-badge-popover hidden><p class="eyebrow">Guide progress</p><strong class="badge-name" data-badge-label>Visitor</strong><p>Current path: <span data-current-path>100 Develop</span></p><ul data-progress-list></ul></div></div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="home-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Stackpress guides</p>
+        <span class="badge-name" data-badge-label>Visitor</span>
+        <h1 id="home-title">Start small, build the first working Stackpress app.</h1>
+        <p class="lead">A focused docs entry for junior and intermediate developers: first understand the runtime, then follow plugins, pages, views, and debugging.</p>
+        <div class="actions"><a class="button primary" href="./guide-detail.html">Getting Started</a><a class="button secondary" href="./guides.html">View guides</a></div>
+      </div>
+      <aside class="intro-panel">
+        <p class="eyebrow">First pass</p>
+        <h2>000 and 100 are visible on the first visit.</h2>
+        <p>Early pages stay calm and small. The site behaves like Stackpress only has the starter path until the reader finishes it.</p>
+        <div class="mini-terminal" aria-label="Command preview"><header><span></span><span></span><span></span></header><pre><code>npx github:stackpress/stackpress create
+yarn dev</code></pre></div>
+      </aside>
+    </section>
+
+    <section class="guide-map" aria-labelledby="map-title">
+      <div class="section">
+        <p class="eyebrow">Guide map</p>
+        <h2 id="map-title">A short path before broad discovery.</h2>
+        <p data-before-160>After enough engagement with the starter path, the next guide group appears and the shell becomes a little denser.</p>
+        <p data-after-160 hidden>The starter path is complete, so the next guide group appears as a normal continuation.</p>
+      </div>
+      <div class="guide-grid">
+        <a class="guide-card" href="./level-legend.html" data-unlock-level="8" hidden><span class="number">800</span><h3>AI</h3><p>Agent workflows, MCP integration, and advanced automation.</p></a>
+        <a class="guide-card" href="./level-architect.html" data-unlock-level="7" hidden><span class="number">700</span><h3>Studio</h3><p>Schema exploration, relations, and source-backed workbenches.</p></a>
+        <a class="guide-card" href="./level-senior.html" data-unlock-level="6" hidden><span class="number">600</span><h3>Built-ins</h3><p>Auth, sessions, CSRF, roles, OAuth, and APIs.</p></a>
+        <a class="guide-card" href="./level-devops.html" data-unlock-level="5" hidden><span class="number">500</span><h3>Structure</h3><p>Config splitting, public assets, and deployment layout.</p></a>
+        <a class="guide-card" href="./level-builder.html" data-unlock-level="4" hidden><span class="number">400</span><h3>Build</h3><p>Build output, deployment checks, and app packaging.</p></a>
+        <a class="guide-card" href="./level-backend.html" data-unlock-level="3" hidden><span class="number">300</span><h3>Idea</h3><p>Modeling, generated code, and source declarations.</p></a>
+        <a class="guide-card" href="./completed.html" data-unlock-level="2" hidden><span class="number">200</span><h3>Data</h3><p>Schema, stores, migrations, seeds, and query shape.</p></a>
+        <a class="guide-card" href="./guides.html" data-unlock-level="1"><span class="number">100</span><h3>Develop</h3><p>Plugins, pages, request/response, views, hooks, and debugging.</p></a>
+        <a class="guide-card" href="./guides.html" data-unlock-level="0"><span class="number">000</span><h3>Orientation</h3><p>Course path, framework framing, and first app setup.</p></a>
+      </div>
+    </section>
+
+    <section class="era-surface era-300" data-era-level="3" hidden aria-label="300 era preview">
+      <div class="era-tabs"><span class="is-selected">Guides</span><span>Scaffolding</span><span>Classes</span><span>CLI</span></div>
+      <div class="era-grid">
+        <div class="era-panel"><h3>Idea model</h3><p>Rails-guide style explanations with Bootstrap-era panels and visible section boxes.</p></div>
+        <div class="era-panel"><h3>Generated output</h3><p>Schema, SQL, and views appear as separate browsable buckets.</p></div>
+      </div>
+    </section>
+    <section class="era-surface era-400" data-era-level="4" hidden aria-label="400 era preview">
+      <div class="era-modern-hero"><div><span>Quickstart</span><h3>Build and deploy path</h3><p>Astro/Stripe-style docs surfaces with cleaner cards, code nearby, and contextual next steps.</p></div><pre><code>yarn build
+yarn dev --b config/build</code></pre></div>
+      <div class="era-grid"><div class="era-panel">Framework guides</div><div class="era-panel">Deployment steps</div><div class="era-panel">Reference lookup</div></div>
+    </section>
+    <section class="era-surface era-500" data-era-level="5" hidden aria-label="500 era preview">
+      <div class="era-pipeline"><span>Source</span><span>Config</span><span>Build</span><span>Deploy</span></div>
+      <div class="era-status"><strong>Project structure check</strong><span>config/client</span><span>plugins/pages</span><span>public/assets</span></div>
+    </section>
+    <section class="era-surface era-600" data-era-level="6" hidden aria-label="600 era preview">
+      <div class="era-reference-bar"><span>v6 docs</span><span>Auth</span><span>CSRF</span><span>OAuth</span><span>API</span></div>
+      <div class="era-reference-grid"><aside><strong>Built-ins</strong><a>Session</a><a>Roles</a><a>Tokens</a><a>Routes</a></aside><div><h3>Dense reference mode</h3><p>Power-user docs move toward Kubernetes/Terraform density: nested nav, version affordances, and compact reference summaries.</p></div></div>
+    </section>
+    <section class="era-surface era-700" data-era-level="7" hidden aria-label="700 era preview">
+      <div class="era-workbench">
+        <div class="era-diagram"><span>Schema</span><span>Fields</span><span>Relations</span><span>Studio</span></div>
+        <div class="era-inspector"><strong>Source-backed workbench</strong><p>Stripe/Cloudflare-style system surfaces: diagram-ready cards, inspector panels, and composed workflows.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="simulator" aria-label="Review-only simulator"><p class="label">Review-only simulator</p><button type="button" data-sim-complete>Simulate Junior reader</button><button type="button" data-sim-reset>Reset Visitor reader</button></aside>
+  <footer class="footer"><span>Creative draft only</span><span>Visual direction review, not production implementation</span></footer>
+</body>
+</html>
