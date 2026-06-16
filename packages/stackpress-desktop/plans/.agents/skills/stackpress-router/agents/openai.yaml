@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stackpress Router"
+  short_description: "Route Stackpress tasks to the right skill."
+  default_prompt: "Use $stackpress-router to choose the right Stackpress skill for this task."
+
+policy:
+  allow_implicit_invocation: true

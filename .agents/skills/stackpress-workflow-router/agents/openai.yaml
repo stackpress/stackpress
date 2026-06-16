@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stackpress Workflow Router"
+  short_description: "Coordinate multi-plugin workflows."
+  default_prompt: "Use $stackpress-workflow-router to coordinate developing multiple Stackpress plugins at the same time."
+
+policy:
+  allow_implicit_invocation: true

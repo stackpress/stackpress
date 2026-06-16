@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stackpress App Verification"
+  short_description: "Verify Stackpress workflow phase evidence."
+  default_prompt: "Use $stackpress-app-verification to verify whether this Stackpress app phase is complete."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stackpress Plugin Views"
+  short_description: "Implement handwritten Stackpress plugin pages."
+  default_prompt: "Use $stackpress-plugin-views to implement or revise this Stackpress plugin page view and its route/view pairing."
+
+policy:
+  allow_implicit_invocation: true
