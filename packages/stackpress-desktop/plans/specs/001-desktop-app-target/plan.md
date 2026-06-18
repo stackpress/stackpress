@@ -113,6 +113,16 @@ groups, and current-platform packaging.
 Phase 0 and Phase 1 artifacts preserve the gate decisions. No constitution
 violations are introduced by the data model, contracts, or quickstart.
 
+### Post-Implementation Recheck
+
+Phase 7 evidence preserves the constitution gates: package tests cover config,
+route filtering, manifest output, menu/plugin behavior, external navigation,
+local data paths, packaging failures, and user-facing error messages; the blog
+fixture has generated output, pushed local data, desktop build output, and
+current-platform package output under `.build/releases`; and documentation now
+records the desktop commands, route rules, menu contribution model, security
+defaults, packaging limits, and troubleshooting path.
+
 ## Project Structure
 
 ### Documentation (this feature)

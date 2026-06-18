@@ -271,6 +271,16 @@ intended app-defined behavior.
   broader operating-mode, updater, signing, notarization, or multi-platform
   packaging work.
 
+### Implementation Evidence Recheck
+
+The completed Phase 7 evidence remains aligned with the constitution:
+`stackpress-desktop` tests cover contracts, runtime guards, menu/plugin
+behavior, security-sensitive navigation, desktop local data paths, packaging,
+and clear error messages; the blog fixture has generated client/server output,
+local database preparation, desktop-ready build output, and current-platform
+package output; and docs record the app-author workflow and first-milestone
+limits.
+
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes

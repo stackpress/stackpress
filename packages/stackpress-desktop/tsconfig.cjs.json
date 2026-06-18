@@ -1,0 +1,8 @@
+{
+  "extends": "@stackpress/lib/tsconfig/cjs",
+  "compilerOptions": {
+    "outDir": "cjs/"
+  },
+  "include": [ "src/**/*.ts" ],
+  "exclude": [ "esm", "cjs", "assets.d.ts", "node_modules", "tests" ]
+}

@@ -1,0 +1,82 @@
+//modules
+import { action } from '@stackpress/ingest/Server';
+
+//client
+import { normalizeDesktopConfig } from '../config.js';
+import { collectDesktopRoutes } from '../routeRules.js';
+import { writeDesktopBuildOutput } from '../scripts/build.js';
+import type {
+  DesktopBuildOutput,
+  DesktopConfig,
+  DesktopRouteRecord,
+  NormalizedDesktopConfig
+} from '../types.js';
+
+//Terminal shape used by the build action when the optional terminal plugin is
+// registered by the running Stackpress app.
+type DesktopBuildTerminal = {
+  verbose?: boolean;
+  control?: {
+    system(message: string): unknown;
+    success(message: string): unknown;
+  };
+};
+
+//Build output options let tests and event handlers control cwd, route metadata,
+// and whether the normal Stackpress build lifecycle should run.
+export type CreateDesktopBuildOutputOptions = {
+  cwd?: string;
+  registeredRoutes?: DesktopRouteRecord[];
+  runStackpressBuild?: () => Promise<unknown>;
+};
+
+/**
+ * Run the Stackpress build lifecycle and write desktop build artifacts.
+ */
+export async function createDesktopBuildOutput(
+  config: NormalizedDesktopConfig,
+  options: CreateDesktopBuildOutputOptions = {}
+): Promise<DesktopBuildOutput> {
+  //run the app build first so generated desktop artifacts point at fresh app
+  // output.
+  await options.runStackpressBuild?.();
+
+  //then write the desktop manifest and generated Electron entry files
+  return await writeDesktopBuildOutput(config, {
+    cwd: options.cwd,
+    registeredRoutes: options.registeredRoutes
+  });
+}
+
+/**
+ * Handle the desktop:build terminal event.
+ */
+export default action(async function DesktopBuild({ res, ctx }) {
+  const terminal = ctx.plugin<DesktopBuildTerminal>('terminal');
+
+  //read desktop config from the Stackpress config tree and normalize it before
+  // writing build artifacts.
+  const config = normalizeDesktopConfig(
+    ctx.config.path<DesktopConfig>('desktop', {})
+  );
+  const registeredRoutes = collectDesktopRoutes(ctx);
+
+  //verbose mode mirrors the existing terminal plugin convention
+  terminal?.verbose && terminal.control?.system(
+    'Running Stackpress build lifecycle...'
+  );
+
+  //create the output after running the normal build lifecycle
+  const output = await createDesktopBuildOutput(config, {
+    cwd: ctx.loader.cwd,
+    registeredRoutes,
+    runStackpressBuild: async () => await ctx.resolve('build')
+  });
+
+  //report output location and store the build payload on the response
+  terminal?.verbose && terminal.control?.success(
+    `Desktop build output written to ${output.manifestPath}`
+  );
+  res.data.set('desktop', output);
+  res.statusCode(200);
+});
