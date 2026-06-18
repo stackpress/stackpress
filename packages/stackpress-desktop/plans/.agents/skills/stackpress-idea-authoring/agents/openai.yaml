@@ -1,7 +1,0 @@
-interface:
-  display_name: "Stackpress Idea Authoring"
-  short_description: "Draft and refine Stackpress schema.idea."
-  default_prompt: "Use $stackpress-idea-authoring to draft or refine this Stackpress schema.idea."
-
-policy:
-  allow_implicit_invocation: true

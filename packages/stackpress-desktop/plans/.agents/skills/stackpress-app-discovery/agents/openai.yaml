@@ -1,7 +1,0 @@
-interface:
-  display_name: "Stackpress App Discovery"
-  short_description: "Clarify app requirements before build work."
-  default_prompt: "Use $stackpress-app-discovery to turn this product request into a buildable Stackpress app brief."
-
-policy:
-  allow_implicit_invocation: true
