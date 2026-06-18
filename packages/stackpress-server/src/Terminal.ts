@@ -9,6 +9,8 @@ export default class StackpressTerminal extends Terminal {
   public readonly server: Server<any, any, any>;
   //whether to show output
   public readonly verbose: boolean;
+  //whether to bypass destructive safety checks
+  public readonly force: boolean;
   //the config pathname
   public readonly config: string|null;
 
@@ -35,6 +37,10 @@ export default class StackpressTerminal extends Terminal {
     this.server = server;
     //set flags
     this.verbose = this.expect<boolean>([ 'verbose', 'v' ], false);
+    //handle both the parser-based flag value and bare boolean CLI usage.
+    this.force = args.includes('--force')
+      || args.includes('-f')
+      || this.expect<boolean>([ 'force', 'f' ], false);
     this.config = this.expect<string|null>([ 'bootstrap', 'b' ], null);
     //register terminal plugin
     this.server.register('terminal', this);
