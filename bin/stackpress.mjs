@@ -14,6 +14,7 @@ import {
 } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 // supported skill installer shortcuts and their default homes
@@ -128,7 +129,7 @@ function parseArgs(args) {
   const [command, ...rest] = args;
 
   if (!command) {
-    throw new Error('Missing command. Usage: stackpress <skills|create>');
+    throw new Error('Missing command. Usage: stackpress <event|skills|create>');
   }
 
   if (command === 'create') {
@@ -139,7 +140,17 @@ function parseArgs(args) {
     return parseSkillsArgs(rest);
   }
 
-  throw new Error(`Unknown command "${command}". Usage: stackpress <skills|create>`);
+  return parseRuntimeArgs(args);
+}
+
+/**
+ * Treats every non-installer command as a Stackpress runtime event.
+ */
+function parseRuntimeArgs(args) {
+  return {
+    command: 'runtime',
+    args
+  };
 }
 
 /**
@@ -284,6 +295,11 @@ async function main() {
 
   if (options.command === 'create') {
     await runCreateCommand(root, options);
+    return;
+  }
+
+  if (options.command === 'runtime') {
+    await runRuntimeCommand(root, options);
     return;
   }
 
@@ -451,6 +467,68 @@ async function runSkillsCommand(root, options) {
 }
 
 /**
+ * Returns the executable used to run the TypeScript Stackpress runtime CLI.
+ */
+async function resolveRuntimeCommand(root) {
+  const runtimeBin = path.join(root, 'packages', 'stackpress-server', 'bin.ts');
+
+  if (!await safeStat(runtimeBin)) {
+    throw new Error(
+      'This lightweight Stackpress executable only bundles the create and '
+      + 'skills commands. Run framework events from an installed Stackpress '
+      + 'project, or install this monorepo before using runtime commands.'
+    );
+  }
+
+  const extension = process.platform === 'win32' ? '.cmd' : '';
+  const localTsx = path.join(root, 'node_modules', '.bin', `tsx${extension}`);
+  const runner = await safeStat(localTsx) ? localTsx : `tsx${extension}`;
+
+  return {
+    args: [runtimeBin],
+    runner
+  };
+}
+
+/**
+ * Delegates normal Stackpress events to the framework runtime CLI.
+ */
+async function runRuntimeCommand(root, options) {
+  const command = await resolveRuntimeCommand(root);
+
+  return await new Promise((resolve, reject) => {
+    const child = spawn(command.runner, [...command.args, ...options.args], {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: 'inherit'
+    });
+
+    child.on('error', (error) => {
+      if (error?.code === 'ENOENT') {
+        reject(new Error(
+          'Unable to run Stackpress runtime commands because tsx was not '
+          + 'found. Run yarn install from the repository root, then try again.'
+        ));
+        return;
+      }
+
+      reject(error);
+    });
+
+    child.on('exit', (code, signal) => {
+      if (signal) {
+        process.kill(process.pid, signal);
+        return;
+      }
+
+      process.exitCode = code ?? 1;
+      resolve();
+    });
+  });
+}
+
+
+/**
  * Reads file metadata and treats missing files as undefined.
  */
 async function safeStat(file) {
@@ -471,10 +549,13 @@ async function safeStat(file) {
 function usage() {
   return [
     'Usage:',
+    '  stackpress <event> [options]',
     '  stackpress create [--dry-run]',
     '  stackpress skills --target <codex|claude|opencode|path> [--force] [--dry-run]',
     '',
     'Examples:',
+    '  stackpress develop --b config/develop -v',
+    '  stackpress serve --b config/preview -v',
     '  stackpress create',
     '  stackpress skills --target codex',
     '  stackpress skills --target claude',
@@ -499,6 +580,7 @@ export {
   copySkills,
   createProject,
   parseArgs,
+  resolveRuntimeCommand,
   resolveTargetDirectory
 };
 
