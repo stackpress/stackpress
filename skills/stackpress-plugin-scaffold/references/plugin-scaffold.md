@@ -14,6 +14,7 @@ support the `stackpress-plugin-scaffold` skill.
    - `components/` is for reusable React components and layouts
    - `events/` is for server event handlers
    - `pages/` is for server route handlers
+   - `tests/` is for tests owned by this plugin
    - `transform/` is for files used to generate code to the client library
      based on models defined in the project's main idea file, usually
      `schema.idea` in the project root
@@ -36,6 +37,7 @@ plugins/
     components/
     events/
     pages/
+    tests/
     transform/
     views/
     client.ts
@@ -341,6 +343,7 @@ Before scaffolding, answer these:
  - Does it need generated client output?
  - Does it need config-driven behavior?
  - Does it need routes, event handlers, or both?
+ - Does it need plugin-local tests under `plugins/<plugin-name>/tests/`?
 
 If the answer to one of these is unclear, clarify it before creating more than
 `plugin.ts`.
@@ -356,6 +359,8 @@ Avoid these mistakes:
  - editing `package.json` before the plugin files exist
  - forgetting to register the plugin path in `package.json`
  - forgetting that `plugin.ts` is the only required file
+ - putting plugin tests in a separate root-level `tests/` folder instead of
+   the owning plugin's `tests/` folder
 
 ## Minimal Plugin
 

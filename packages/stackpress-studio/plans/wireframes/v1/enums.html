@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframe - Enums</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="mark"></span><span>Stackpress Studio</span><span class="file-pill">schema.idea</span></div>
+      <div class="top-actions"><span class="status-pill">Enum references valid</span><button class="button">Save</button></div>
+    </header>
+    <nav class="rail" aria-label="Primary">
+      <a href="index.html">Models</a>
+      <a href="fieldsets.html">Types</a>
+      <a class="active" href="enums.html">Enums</a>
+      <a href="source.html">Source</a>
+      <a href="references.html">Refs</a>
+    </nav>
+    <aside class="explorer">
+      <div class="explorer-header"><p class="eyebrow">Enums</p><h2>Option Sets</h2></div>
+      <div class="explorer-list">
+        <a class="tree-item active" href="#"><span class="dot"></span><span>ArticleStatus</span><small>3</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>Role</span><small>4</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>Visibility</span><small>2</small></a>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="content-header">
+        <div><p class="eyebrow">Enums</p><h1>Enum Workbench</h1></div>
+        <button class="button">New Enum</button>
+      </div>
+      <section class="canvas grid two">
+        <section class="panel">
+          <div class="panel-header"><h2>ArticleStatus Options</h2><button class="button">Add Option</button></div>
+          <table class="table">
+            <thead><tr><th>Action</th><th>Key</th><th>Value</th><th>Used By</th><th>Default</th></tr></thead>
+            <tbody>
+              <tr class="selected" data-select-row><td><span class="mini">E</span></td><td>DRAFT</td><td>draft</td><td>Article.status</td><td>Yes</td></tr>
+              <tr data-select-row><td><span class="mini">E</span></td><td>REVIEW</td><td>review</td><td>Article.status</td><td>No</td></tr>
+              <tr data-select-row><td><span class="mini">E</span></td><td>PUBLISHED</td><td>published</td><td>Article.status</td><td>No</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <section class="panel">
+          <div class="panel-header"><h2>Usage Summary</h2></div>
+          <div class="panel-body field-grid">
+            <div class="callout">Enum-backed fields show options in the field inspector and constrain default values to the enum option list.</div>
+            <div class="chips"><span class="chip">Article.status</span><span class="chip">Filter.status</span></div>
+          </div>
+        </section>
+      </section>
+    </main>
+    <aside class="inspector">
+      <div class="inspector-header"><p class="eyebrow">Inspector</p><h2>DRAFT</h2></div>
+      <div class="inspector-section field-grid">
+        <div class="field"><label>Key</label><div class="input">DRAFT</div></div>
+        <div class="field"><label>Value</label><div class="input">draft</div></div>
+      </div>
+    </aside>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

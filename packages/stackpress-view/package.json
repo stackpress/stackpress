@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-view",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "license": "MIT",
   "description": "View library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -223,13 +223,13 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "frui": "0.2.8",
+    "frui": "0.2.9",
     "moment": "2.30.1",
     "r22n": "1.0.10",
     "react-toastify": "11.0.5",
-    "reactus": "0.10.4",
-    "stackpress-language": "0.10.4",
-    "stackpress-schema": "0.10.4",
+    "reactus": "0.10.5",
+    "stackpress-language": "0.10.5",
+    "stackpress-schema": "0.10.5",
     "universal-cookie": "8.0.1"
   },
   "devDependencies": {

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframes v2 - Models</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="studio-app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span><span>Stackpress Studio</span></div>
+      <div class="top-actions"><button class="button">Reload</button><button class="button primary">Save Changes</button></div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="side-head">
+        <p class="side-title">Workspace</p>
+        <h2>Idea Files</h2>
+      </div>
+      <div class="side-section">
+        <a class="side-link active" href="#" data-action="set-active-file" data-file-link data-file="schema.idea"><span class="dot"></span><span>schema.idea</span><small>main</small></a>
+        <a class="side-link" href="#" data-action="set-active-file" data-file-link data-file="ideas/blog.idea"><span class="dot"></span><span>ideas/blog.idea</span><small>use</small></a>
+        <a class="side-link" href="#" data-action="set-active-file" data-file-link data-file="ideas/shared.idea"><span class="dot"></span><span>ideas/shared.idea</span><small>use</small></a>
+        <button class="button side-action" data-action="open-new-idea-file">+ Add File</button>
+      </div>
+      <div class="side-section">
+        <p class="side-title">Studio</p>
+        <a class="side-link active" href="index.html" data-view="models"><span class="dot"></span><span>Models</span><small data-count="models">2</small></a>
+        <a class="side-link" href="fieldsets.html" data-view="fieldsets"><span class="dot"></span><span>Fieldsets</span><small data-count="fieldsets">0</small></a>
+        <a class="side-link" href="enums.html" data-view="enums"><span class="dot"></span><span>Enums</span><small data-count="enums">1</small></a>
+        <a class="side-link" href="source.html" data-view="source"><span class="dot"></span><span>Source</span><small data-count="source">3</small></a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="main-head">
+        <div><p class="eyebrow">schema.idea</p><h1>Models</h1></div>
+        <div class="top-actions"><button class="button" data-action="open-add-schema">+ Add Model</button></div>
+      </div>
+      <div class="toolbar">
+        <div class="searchbox">Search models, groups, relations</div>
+        <div class="top-actions"><span class="pill">Idea files visible</span><span class="pill">Relations visible</span></div>
+      </div>
+      <div class="content">
+        <section class="panel">
+          <div class="panel-head"><h2>Model Index</h2></div>
+          <div class="table-wrap">
+            <table class="table index-table">
+              <thead><tr><th>Model</th><th>Description</th><th>Relations</th></tr></thead>
+              <tbody>
+                <tr class="selected" data-action="open-model">
+                  <td><span class="resource-name clickable"><strong>Article</strong><small>article</small></span></td>
+                  <td>Manages Articles</td>
+                  <td><span class="relation-chip">1:1 profile</span></td>
+                </tr>
+                <tr>
+                  <td><span class="resource-name clickable"><strong><i class="fa-solid fa-lock lock-icon" aria-hidden="true"></i>Application</strong><small>app</small></span></td>
+                  <td>Locked system application</td>
+                  <td><span class="relation-chip">1:N profile</span> <span class="relation-chip">1:N scope</span></td>
+                </tr>
+                <tr>
+                  <td><span class="resource-name clickable"><strong>Comment</strong><small>comment</small></span></td>
+                  <td>Manages comments</td>
+                  <td><span class="relation-chip">N:1 article</span></td>
+                </tr>
+                <tr>
+                  <td><span class="resource-name clickable"><strong>File</strong><small>file</small></span></td>
+                  <td>Manages uploads</td>
+                  <td><span class="relation-chip">N:1 article</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="drawer hidden" id="studio-drawer" aria-hidden="true">
+      <header class="drawer-head">
+        <button class="icon-button" id="drawer-back" data-action="panel-back" aria-label="Close panel">‹</button>
+        <div class="drawer-title"><h2 id="drawer-title">Update Article Schema</h2><small id="drawer-subtitle">Editable model from schema.idea</small></div>
+      </header>
+      <nav class="drawer-tabs">
+        <button class="drawer-tab active" data-tab="content">Content</button>
+        <button class="drawer-tab" data-tab="fields">Fields</button>
+        <button class="drawer-tab" data-tab="relations">Relations</button>
+      </nav>
+      <section class="drawer-body" id="drawer-body">
+        <div class="field-grid">
+          <div class="field"><label>Singular Name</label><div class="input">Article</div></div>
+          <div class="field"><label>Plural Name</label><div class="input">Articles</div></div>
+          <div class="field"><label>Keyword</label><div class="input">article</div></div>
+          <div class="field icon-field">
+            <label>Icon</label>
+            <button class="icon-input" data-action="open-icon-picker"><span>fas fa-edit</span><span class="icon-preview-tile"><i class="fas fa-edit"></i></span></button>
+          </div>
+          <div class="field"><label>Description</label><div class="textarea">Manages Articles</div></div>
+          <div class="field"><label>Display</label><div class="input">{{article_name}}</div></div>
+          <div class="field"><label>Query</label><div class="textarea">id title detail tags active created updated</div></div>
+        </div>
+      </section>
+      <footer class="drawer-foot" id="drawer-foot">
+        <div class="footer-actions"><button class="button primary">Publish</button><button class="button">Copy</button><button class="button danger">Remove</button></div>
+      </footer>
+    </aside>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

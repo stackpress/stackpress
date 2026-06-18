@@ -1,5 +1,14 @@
 {
+  "name": "@stackpress/repository",
+  "version": "0.10.5",
   "private": true,
+  "bin": {
+    "stackpress": "./bin/stackpress.mjs"
+  },
+  "files": [
+    "bin",
+    "skills"
+  ],
   "workspaces": [
     "templates/*",
     "packages/*"
@@ -26,6 +35,7 @@
     "store": "yarn --cwd templates/store",
     "website": "yarn --cwd templates/website",
     "test": "yarn test:core",
+    "test:skills": "node --test tests/skills-installer.test.mjs",
     "test:core": "yarn test:server && yarn test:schema && yarn test:sql",
     "test:server": "yarn server test",
     "test:schema": "yarn schema test",

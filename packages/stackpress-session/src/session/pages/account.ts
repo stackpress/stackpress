@@ -26,7 +26,7 @@ export async function loadAccountProfile(
     'profile-detail',
     { id }
   );
-  //if there's an erorr
+  //if there's an error
   if (profile.code !== 200 || !profile.results) {
     //return profile response
     return profile as Partial<StatusResponse<AccountProfile>>;

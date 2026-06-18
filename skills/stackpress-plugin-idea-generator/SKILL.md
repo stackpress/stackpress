@@ -58,13 +58,50 @@ transform pipeline.
 If the feature is not clearly repeated per model or clearly derived from schema
 metadata, route back out before implementing generation logic.
 
-## Standard Idea Hook
+## Required Plugin Registration
 
-Use the standard `idea` hook to attach the plugin transform path into the
-schema plugin map.
+Before a custom generator can run, the plugin entry file must register the
+plugin's `transform/` folder during the `idea` lifecycle. Add this to the
+plugin's `plugin.ts` or `plugin.js` entrypoint.
 
-The scaffold skill already covers the plugin-level hook shape. Use it for the
-registration side:
+Typical registration shape:
+
+```ts
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { CLIProps } from 'stackpress/lib';
+import type { Transformer } from 'stackpress/lib';
+import type { Server } from 'stackpress/server';
+
+export default function plugin(ctx: Server) {
+  ctx.on('idea', async ({ req }) => {
+    const transformer = req.data<Transformer<CLIProps>>('transformer');
+    const schema = await transformer.schema();
+
+    if (!schema.plugin) {
+      schema.plugin = {};
+    }
+
+    const dirname = typeof __dirname === 'undefined'
+      //@ts-ignore - The import.meta only allowed in ESM
+      ? path.dirname(fileURLToPath(import.meta.url))
+      : __dirname;
+
+    schema.plugin[`${dirname}/transform`] = {};
+  });
+}
+```
+
+The important line is:
+
+```ts
+schema.plugin[`${dirname}/transform`] = {};
+```
+
+Without that schema plugin entry, Stackpress will not include the custom
+generator in the transformation pipeline, even if `transform/index.ts` exists.
+
+The scaffold skill also covers the plugin-level hook shape:
 
 - `../stackpress-plugin-scaffold/references/plugin-scaffold.md`
 
@@ -195,6 +232,8 @@ Prefer the smallest checks that prove the generator is real:
 - use generation for one-off handwritten behavior that should stay in runtime or
   route/view code
 - overexplain the `idea` hook while underbuilding `transform/index.ts`
+- create `transform/index.ts` but forget to register `${dirname}/transform` in
+  `plugin.ts` or `plugin.js`
 - generate files that runtime cannot import later
 - forget to patch generated exports when new entrypoints are added
 - assume generated output is automatically used by runtime

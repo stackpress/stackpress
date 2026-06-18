@@ -180,8 +180,6 @@ using that style consistently.
 - do not mix several conflicting utility idioms in the same app without reason
 - do not ignore the existing shell and layout class patterns used by nearby
   Stackpress views
-- do not assume utility classes alone solve `LayoutPanel` scrolling or page
-  shell issues when the problem is really page structure or missing `Head`
 
 ## Verification
 
@@ -191,9 +189,3 @@ When view changes depend heavily on utility classes:
 - do not rely only on reading the TSX
 - check that layout, spacing, and visual hierarchy behave as intended in the
   actual browser output
-
-When the page uses `LayoutPanel`, also verify:
-
-- the inner page container owns scrolling when scrolling is expected
-- shared stylesheet links are present so the page does not fall into a
-  flash-of-unstyled-content or broken-shell state

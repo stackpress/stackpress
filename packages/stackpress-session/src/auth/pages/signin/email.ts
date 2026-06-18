@@ -152,14 +152,46 @@ export async function OTPSignin(
   const port = ctx.config.path('server.port', 3000);
   const host = ctx.config.path('host', `http://localhost:${port}`);
   const brand = ctx.config.path('brand.name', 'Stackpress');
+  //rotate the consumed for passwordless email so it immediately 
+  // invalidates older otp and magic-link challenges
+  const rotated = await ctx.resolve<AuthExtended>(
+    'auth-update',
+    { id: current.id, consumed: new Date() },
+    res
+  );
+  //if the rotation failed, stop before building a stale challenge
+  if (rotated.code !== 200) {
+    res.fromStatusResponse(rotated);
+    return;
+  }
+  //reload the auth row so the persisted consumed timestamp becomes the
+  // single source of truth for the challenge we are about to send
+  const refreshed = await ctx.resolve<AuthExtended[]>('auth-search', {
+    columns: [ '*', 'profile.*' ],
+    eq: { id: current.id }
+  });
+  //if the reload failed, stop before sending a challenge we cannot verify
+  if (refreshed.code !== 200) {
+    res.fromStatusResponse(refreshed);
+    return;
+  }
+  //use the reloaded auth row because it carries the persisted consumed
+  // value that now represents the latest valid passwordless issuance
+  const latest = refreshed.results?.[0];
+  //if the auth row disappeared between rotation and reload, fail closed
+  if (!latest) {
+    res.setError('Invalid Parameters', { email: 'Account not found' });
+    return;
+  }
   //generate code
   const code = Math.floor(Math.random() * 1000000)
     .toString()
     .padStart(6, '0');
-  //bind the otp code to the consumed timestamp
-  const challenge = hash(current.consumed.toString() + code);
+  //bind the otp code to the freshly persisted consumed timestamp so only
+  // the newest email can satisfy the follow-up otp check
+  const challenge = hash(latest.consumed.toString() + code);
   //build the challenge link
-  const link = `${base}/signin/otp/${encodeURIComponent(current.id)}/${
+  const link = `${base}/signin/otp/${encodeURIComponent(latest.id)}/${
     encodeURIComponent(challenge)
   }?redirect_uri=${encodeURIComponent(redirect)}`;
   //get email config
@@ -171,7 +203,7 @@ export async function OTPSignin(
     brand,
     email,
     link: `${host}${link}`,
-    name: current.profile?.name,
+    name: latest.profile?.name,
     pin: code
   });
   //if no name or email address given
@@ -246,12 +278,43 @@ export async function MagicLinkSignin(
   const port = ctx.config.path('server.port', 3000);
   const host = ctx.config.path('host', `http://localhost:${port}`);
   const brand = ctx.config.path('brand.name', 'Stackpress');
-  //create challenge
-  const challenge = hash(current.consumed.toString());
+  //rotate the consumed for passwordless email so it immediately 
+  // invalidates older otp and magic-link challenges
+  const rotated = await ctx.resolve<AuthExtended>(
+    'auth-update',
+    { id: current.id, consumed: new Date() },
+    res
+  );
+  //if the rotation failed, stop before building a stale challenge
+  if (rotated.code !== 200) {
+    res.fromStatusResponse(rotated);
+    return;
+  }
+  //reload the auth row so the persisted consumed timestamp becomes the
+  // single source of truth for the challenge we are about to send
+  const refreshed = await ctx.resolve<AuthExtended[]>('auth-search', {
+    columns: [ '*', 'profile.*' ],
+    eq: { id: current.id }
+  });
+  //if the reload failed, stop before sending a challenge we cannot verify
+  if (refreshed.code !== 200) {
+    res.fromStatusResponse(refreshed);
+    return;
+  }
+  //use the reloaded auth row because it carries the persisted consumed
+  // value that now represents the latest valid passwordless issuance
+  const latest = refreshed.results?.[0];
+  //if the auth row disappeared between rotation and reload, fail closed
+  if (!latest) {
+    res.setError('Invalid Parameters', { email: 'Account not found' });
+    return;
+  }
+  //create the challenge from the persisted consumed timestamp so only
+  // the newest magic link can pass the follow-up verifier
+  const challenge = hash(latest.consumed.toString());
   //build the link
-  const link = `${base}/signin/link/${encodeURIComponent(current.id)}/${
-    encodeURIComponent(challenge)
-  }?redirect_uri=${encodeURIComponent(redirect)}`;
+  const link = `${base}/signin/link/${encodeURIComponent(latest.id)}/${
+    encodeURIComponent(challenge)}?redirect_uri=${encodeURIComponent(redirect)}`;
   //get email config
   const config = ctx.config<EmailConfig>('email');
   //if no config, do nothing.
@@ -261,7 +324,7 @@ export async function MagicLinkSignin(
     brand,
     email,
     link: `${host}${link}`,
-    name: current.profile?.name
+    name: latest.profile?.name
   });
   //if no name or email address given
   if (!auth.email?.address || !auth.email.name) {

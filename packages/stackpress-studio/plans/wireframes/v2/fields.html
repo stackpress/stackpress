@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframes v2 - Fields</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span><span>Stackpress Studio</span><span class="pill">schema.idea</span></div>
+      <div class="top-actions"><button class="button">Reload</button><button class="button primary">Save Changes</button></div>
+    </header>
+    <aside class="sidebar">
+      <div class="side-head"><p class="side-title">Workspace</p><h2>Idea Files</h2></div>
+      <div class="side-section"><a class="side-link active" href="index.html"><span class="dot"></span><span>schema.idea</span><small>main</small></a><a class="side-link" href="#"><span class="dot"></span><span>ideas/blog.idea</span><small>use</small></a></div>
+      <div class="side-section"><p class="side-title">Studio</p><a class="side-link active" href="index.html"><span class="dot"></span><span>Models</span><small>7</small></a><a class="side-link" href="fieldsets.html"><span class="dot"></span><span>Fieldsets</span><small>4</small></a><a class="side-link" href="enums.html"><span class="dot"></span><span>Enums</span><small>3</small></a><a class="side-link" href="source.html"><span class="dot"></span><span>Source</span><small>5</small></a></div>
+    </aside>
+    <main class="main">
+      <div class="main-head"><div><p class="eyebrow">Models</p><h1>Article</h1></div><div class="top-actions"><a class="button" href="index.html">Content</a><a class="button primary" href="fields.html">Fields</a><a class="button" href="relations.html">Relations</a></div></div>
+      <div class="toolbar"><div class="searchbox">Fields are idea columns</div><div class="top-actions"><span class="pill">Drag rows to reorder</span><span class="pill">Field editor opens as nested drawer</span></div></div>
+      <div class="content">
+        <section class="panel">
+          <div class="panel-head"><h2>Article Field Rows</h2><a class="button" href="add-field.html">Add Field</a></div>
+          <div class="field-table">
+            <a class="field-row active" href="field-editor.html">
+              <span class="mini">=</span>
+              <span class="resource-name"><strong>Title</strong><small>article_title</small></span>
+              <span class="format-stack"><small>Field text</small><small>List none</small><small>Detail none</small></span>
+              <span><span class="index-chip">Searchable</span></span>
+              <span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span>
+            </a>
+            <a class="field-row" href="field-editor.html">
+              <span class="mini">=</span>
+              <span class="resource-name"><strong>Detail</strong><small>article_detail</small></span>
+              <span class="format-stack"><small>Field wysiwyg</small><small>List hide</small><small>Detail none</small></span>
+              <span></span>
+              <span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span>
+            </a>
+            <a class="field-row" href="field-editor.html">
+              <span class="mini">=</span>
+              <span class="resource-name"><strong>Address</strong><small>article_address</small></span>
+              <span class="format-stack"><small>Field fieldset</small><small>List hide</small><small>Detail table</small></span>
+              <span></span>
+              <span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span>
+            </a>
+            <a class="field-row" href="field-editor.html">
+              <span class="mini">=</span>
+              <span class="resource-name"><strong>Active</strong><small>article_active</small></span>
+              <span class="format-stack"><small>Field active</small><small>List hide</small><small>Detail hide</small></span>
+              <span><span class="index-chip">Filterable</span> <span class="index-chip">Sortable</span></span>
+              <span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+    <aside class="drawer">
+      <header class="drawer-head"><a class="icon-button" href="index.html">‹</a><div class="drawer-title"><h2>Update Article Schema</h2><small>Fields tab</small></div><span class="pill">Editable</span></header>
+      <nav class="drawer-tabs"><a class="drawer-tab" href="index.html">Content</a><a class="drawer-tab active" href="fields.html">Fields</a><a class="drawer-tab" href="relations.html">Relations</a></nav>
+      <section class="drawer-body">
+        <div class="drawer-subhead"><h3>Fields</h3><a class="button" href="add-field.html">Add Field</a></div>
+        <div class="field-table">
+          <a class="field-row active" href="field-editor.html"><span class="mini">=</span><span class="resource-name"><strong>Title</strong><small>article_title</small></span><span class="format-stack"><small>Field text</small><small>List none</small><small>Detail none</small></span><span><span class="index-chip">Searchable</span></span><span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span></a>
+          <a class="field-row" href="field-editor.html"><span class="mini">=</span><span class="resource-name"><strong>Detail</strong><small>article_detail</small></span><span class="format-stack"><small>Field wysiwyg</small><small>List hide</small><small>Detail none</small></span><span></span><span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span></a>
+          <a class="field-row" href="field-editor.html"><span class="mini">=</span><span class="resource-name"><strong>Tags</strong><small>article_tags</small></span><span class="format-stack"><small>Field taglist</small><small>List taglist</small><small>Detail taglist</small></span><span></span><span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span></a>
+        </div>
+        <p class="callout">The drawer is the primary workspace. The main table remains visible for context, but edits happen in this task area.</p>
+      </section>
+      <footer class="drawer-foot"><div class="footer-actions"><button class="button primary">Publish</button><button class="button">Copy</button><button class="button danger">Remove</button></div></footer>
+    </aside>
+  </div>
+</body>
+</html>

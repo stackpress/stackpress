@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-admin",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "license": "MIT",
   "description": "Admin library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -114,7 +114,7 @@
   },
   "dependencies": {
     "papaparse": "5.5.3",
-    "stackpress-session": "0.10.4"
+    "stackpress-session": "0.10.5"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

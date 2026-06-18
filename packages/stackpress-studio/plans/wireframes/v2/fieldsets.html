@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframes v2 - Fieldsets</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar"><div class="brand"><span class="brand-mark"></span><span>Stackpress Studio</span><span class="pill">schema.idea</span></div><div class="top-actions"><button class="button">Reload</button><button class="button primary">Save Changes</button></div></header>
+    <aside class="sidebar"><div class="side-head"><p class="side-title">Studio</p><h2>Type Resources</h2></div><div class="side-section"><a class="side-link" href="index.html"><span class="dot"></span><span>Models</span><small>7</small></a><a class="side-link active" href="fieldsets.html"><span class="dot"></span><span>Fieldsets</span><small>4</small></a><a class="side-link" href="enums.html"><span class="dot"></span><span>Enums</span><small>3</small></a><a class="side-link" href="source.html"><span class="dot"></span><span>Source</span><small>5</small></a></div></aside>
+    <main class="main">
+      <div class="main-head"><div><p class="eyebrow">Types in idea</p><h1>Fieldsets</h1></div><button class="button">Add Fieldset</button></div>
+      <div class="toolbar"><div class="searchbox">Same field editor, no database-only model controls</div><span class="pill">No searchable/filterable/sortable</span></div>
+      <div class="content"><section class="panel"><div class="panel-head"><h2>Fieldset Index</h2></div><table class="table"><thead><tr><th>Fieldset</th><th>Fields</th><th>Used By</th><th>File</th></tr></thead><tbody><tr class="selected"><td><span class="resource-name"><strong>Address</strong><small>address</small></span></td><td>street, city, region</td><td>Article.article_address</td><td>ideas/shared.idea</td></tr><tr><td><span class="resource-name"><strong>SEO</strong><small>seo</small></span></td><td>title, description, image</td><td>Article, Page</td><td>ideas/shared.idea</td></tr></tbody></table></section></div>
+    </main>
+    <aside class="drawer">
+      <header class="drawer-head"><a class="icon-button" href="#">‹</a><div class="drawer-title"><h2>Update Address Type</h2><small>Fieldset editor</small></div><span class="pill">Editable</span></header>
+      <nav class="drawer-tabs"><a class="drawer-tab active" href="fieldsets.html">Content</a><a class="drawer-tab" href="fieldsets.html">Fields</a></nav>
+      <section class="drawer-body">
+        <div class="field-grid"><div class="field"><label>Name</label><div class="input">Address</div></div><div class="field"><label>Keyword</label><div class="input">address</div></div><div class="field"><label>Description</label><div class="textarea">Reusable address field group.</div></div></div>
+        <p class="section-label">Fields</p>
+        <div class="field-table"><a class="field-row active" href="field-editor.html"><span class="mini">=</span><span class="resource-name"><strong>Street</strong><small>address_street</small></span><span class="format-stack"><small>Field text</small><small>List none</small><small>Detail none</small></span><span class="disabled">No DB index controls</span><span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span></a></div>
+        <p class="callout">Fieldsets share field/type/validation/format editing, but hide model-only store behaviors.</p>
+      </section>
+      <footer class="drawer-foot"><div class="footer-actions"><button class="button primary">Publish</button><button class="button">Copy</button><button class="button danger">Remove</button></div></footer>
+    </aside>
+  </div>
+</body>
+</html>

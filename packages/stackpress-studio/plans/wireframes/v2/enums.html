@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframes v2 - Enums</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar"><div class="brand"><span class="brand-mark"></span><span>Stackpress Studio</span><span class="pill">schema.idea</span></div><div class="top-actions"><button class="button">Reload</button><button class="button primary">Save Changes</button></div></header>
+    <aside class="sidebar"><div class="side-head"><p class="side-title">Studio</p><h2>Enums</h2></div><div class="side-section"><a class="side-link" href="index.html"><span class="dot"></span><span>Models</span><small>7</small></a><a class="side-link" href="fieldsets.html"><span class="dot"></span><span>Fieldsets</span><small>4</small></a><a class="side-link active" href="enums.html"><span class="dot"></span><span>Enums</span><small>3</small></a><a class="side-link" href="source.html"><span class="dot"></span><span>Source</span><small>5</small></a></div></aside>
+    <main class="main">
+      <div class="main-head"><div><p class="eyebrow">Enum resources</p><h1>Enums</h1></div><button class="button">Add Enum</button></div>
+      <div class="toolbar"><div class="searchbox">Enums can be referenced by model and fieldset fields</div><span class="pill">Importable file aware</span></div>
+      <div class="content"><section class="panel"><div class="panel-head"><h2>Enum Index</h2></div><table class="table"><thead><tr><th>Enum</th><th>Options</th><th>Used By</th><th>File</th></tr></thead><tbody><tr class="selected"><td><span class="resource-name"><strong>ArticleStatus</strong><small>article_status</small></span></td><td>draft, review, published, archived</td><td>Article.status</td><td>ideas/blog.idea</td></tr></tbody></table></section></div>
+    </main>
+    <aside class="drawer">
+      <header class="drawer-head"><a class="icon-button" href="#">‹</a><div class="drawer-title"><h2>Update ArticleStatus Enum</h2><small>Used as a field type option</small></div><span class="pill">Editable</span></header>
+      <nav class="drawer-tabs"><a class="drawer-tab active" href="enums.html">Options</a><a class="drawer-tab" href="source.html">Source</a></nav>
+      <section class="drawer-body">
+        <div class="drawer-subhead"><h3>Options</h3><button class="button">Add Option</button></div>
+        <div class="field-table">
+          <div class="enum-row active"><span class="mini">=</span><span class="resource-name"><strong>Draft</strong><small>draft</small></span><span class="input">Not visible publicly</span><span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span></div>
+          <div class="enum-row"><span class="mini">=</span><span class="resource-name"><strong>Review</strong><small>review</small></span><span class="input">Waiting for editor</span><span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span></div>
+          <div class="enum-row"><span class="mini">=</span><span class="resource-name"><strong>Published</strong><small>published</small></span><span class="input">Visible publicly</span><span class="row-actions"><span class="mini">C</span><span class="mini">X</span></span></div>
+        </div>
+        <p class="callout">Enums get the same drawer pattern, but the editor is option management rather than field metadata.</p>
+      </section>
+      <footer class="drawer-foot"><div class="footer-actions"><button class="button primary">Publish</button><button class="button">Copy</button><button class="button danger">Remove</button></div></footer>
+    </aside>
+  </div>
+</body>
+</html>

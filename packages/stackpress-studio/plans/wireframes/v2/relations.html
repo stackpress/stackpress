@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframes v2 - Relations</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar"><div class="brand"><span class="brand-mark"></span><span>Stackpress Studio</span><span class="pill">schema.idea</span></div><div class="top-actions"><button class="button">Reload</button><button class="button primary">Save Changes</button></div></header>
+    <aside class="sidebar"><div class="side-head"><p class="side-title">Workspace</p><h2>Idea Files</h2></div><div class="side-section"><a class="side-link active" href="index.html"><span class="dot"></span><span>schema.idea</span><small>main</small></a><a class="side-link" href="#"><span class="dot"></span><span>ideas/blog.idea</span><small>use</small></a></div><div class="side-section"><p class="side-title">Studio</p><a class="side-link active" href="index.html"><span class="dot"></span><span>Models</span><small>7</small></a><a class="side-link" href="fieldsets.html"><span class="dot"></span><span>Fieldsets</span><small>4</small></a><a class="side-link" href="enums.html"><span class="dot"></span><span>Enums</span><small>3</small></a></div></aside>
+    <main class="main">
+      <div class="main-head"><div><p class="eyebrow">Article</p><h1>Relations</h1></div><div class="top-actions"><a class="button" href="index.html">Content</a><a class="button" href="fields.html">Fields</a><a class="button primary" href="relations.html">Relations</a></div></div>
+      <div class="toolbar"><div class="searchbox">Use Cradle density, but Stackpress idea relation semantics</div></div>
+      <div class="content"><section class="panel"><div class="panel-head"><h2>Relation Summary</h2></div><table class="table"><thead><tr><th>Source</th><th>Mapping</th><th>Target</th><th>Idea File</th></tr></thead><tbody><tr class="selected"><td>Article</td><td>@relation(local: profile_id, foreign: id)</td><td>Profile</td><td>schema.idea</td></tr></tbody></table></section></div>
+    </main>
+    <aside class="drawer">
+      <header class="drawer-head"><a class="icon-button" href="index.html">‹</a><div class="drawer-title"><h2>Update Article Schema</h2><small>Relations tab</small></div><span class="pill">Editable</span></header>
+      <nav class="drawer-tabs"><a class="drawer-tab" href="index.html">Content</a><a class="drawer-tab" href="fields.html">Fields</a><a class="drawer-tab active" href="relations.html">Relations</a></nav>
+      <section class="drawer-body">
+        <div class="drawer-subhead"><h3>Relation Rows</h3><button class="button">Add Relation</button></div>
+        <div class="relation-row active"><strong>Article</strong><span>→</span><div class="select">@relation</div><span>→</span><div class="input">Profile.profile_id = Article.id</div><span class="mini">X</span></div>
+        <div class="relation-row"><strong>Article</strong><span>→</span><div class="select">@relation</div><span>→</span><div class="input">Category.category_id = Article.id</div><span class="mini">X</span></div>
+        <p class="callout">Cradle's cardinality select is a reference for compact editing only. Studio should surface idea relation args and validation instead.</p>
+      </section>
+      <footer class="drawer-foot"><div class="footer-actions"><button class="button primary">Publish</button><button class="button">Copy</button><button class="button danger">Remove</button></div></footer>
+    </aside>
+  </div>
+</body>
+</html>

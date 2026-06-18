@@ -57,7 +57,7 @@ export function UsernameSigninForm() {
       <hr />
       <a
         className="auth-email-footer-link"
-        href="/auth/signin"
+        href={`${config.path('auth.base', '/auth')}/signin`}
       >
         {_('Choose a different sign-in method')}
       </a>

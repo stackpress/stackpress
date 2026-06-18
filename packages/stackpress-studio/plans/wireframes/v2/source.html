@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframes v2 - Source</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar"><div class="brand"><span class="brand-mark"></span><span>Stackpress Studio</span><span class="pill">schema.idea</span></div><div class="top-actions"><button class="button">Reload</button><button class="button primary">Save Changes</button></div></header>
+    <aside class="sidebar"><div class="side-head"><p class="side-title">Files</p><h2>Idea Graph</h2></div><div class="side-section"><a class="side-link active" href="source.html"><span class="dot"></span><span>schema.idea</span><small>main</small></a><a class="side-link" href="#"><span class="dot"></span><span>ideas/blog.idea</span><small>use</small></a><a class="side-link" href="#"><span class="dot"></span><span>ideas/shared.idea</span><small>use</small></a></div><div class="side-section"><a class="side-link" href="index.html"><span class="dot"></span><span>Models</span><small>7</small></a><a class="side-link" href="fieldsets.html"><span class="dot"></span><span>Fieldsets</span><small>4</small></a><a class="side-link" href="enums.html"><span class="dot"></span><span>Enums</span><small>3</small></a></div></aside>
+    <main class="main">
+      <div class="main-head"><div><p class="eyebrow">Canonical artifact</p><h1>Source</h1></div><div class="top-actions"><button class="button">New Idea File</button><button class="button">Import Into Main</button></div></div>
+      <div class="toolbar"><div class="searchbox">Visual edits become source patches; source remains canonical</div><span class="pill">3 imports resolved</span></div>
+      <div class="content"><section class="panel"><div class="panel-head"><h2>schema.idea</h2><span class="pill">main file</span></div><pre class="source-box">use "ideas/blog.idea"
+use "ideas/shared.idea"
+
+model Article {
+  title String
+    @label("Title")
+    @searchable
+
+  detail Text
+    @field.wysiwyg
+}</pre></section></div>
+    </main>
+    <aside class="drawer">
+      <header class="drawer-head"><a class="icon-button" href="#">‹</a><div class="drawer-title"><h2>Source Diagnostics</h2><small>Schema graph health</small></div><span class="pill">Clean</span></header>
+      <nav class="drawer-tabs"><a class="drawer-tab active" href="source.html">Diagnostics</a><a class="drawer-tab" href="index.html">Visual</a></nav>
+      <section class="drawer-body"><p class="callout">If an imported file has syntax Studio cannot transform visually, this drawer should explain which visual actions are blocked and keep source editing available.</p><p class="section-label">Import Actions</p><button class="button">Create importable idea file</button><button class="button">Add use statement to main</button></section>
+      <footer class="drawer-foot"><div class="footer-actions"><button class="button primary">Save Source</button></div></footer>
+    </aside>
+  </div>
+</body>
+</html>

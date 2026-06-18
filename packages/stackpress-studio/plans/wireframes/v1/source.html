@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframe - Source</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="mark"></span><span>Stackpress Studio</span><span class="file-pill">schema.idea</span></div>
+      <div class="top-actions"><span class="status-pill">Dirty</span><button class="button">Parse</button><button class="button">Save</button></div>
+    </header>
+    <nav class="rail" aria-label="Primary">
+      <a href="index.html">Models</a>
+      <a href="fieldsets.html">Types</a>
+      <a href="enums.html">Enums</a>
+      <a class="active" href="source.html">Source</a>
+      <a href="references.html">Refs</a>
+    </nav>
+    <aside class="explorer">
+      <div class="explorer-header"><p class="eyebrow">Files</p><h2>Source Graph</h2></div>
+      <div class="explorer-list">
+        <a class="tree-item active" href="#"><span class="dot"></span><span>schema.idea</span><small>dirty</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>ideas/content.idea</span><small>ok</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>ideas/shared.idea</span><small>ok</small></a>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="content-header"><div><p class="eyebrow">Source</p><h1>schema.idea</h1></div><button class="button">New Import File</button></div>
+      <section class="canvas">
+        <div class="panel">
+          <div class="panel-header"><h2>Canonical Source</h2><div class="chips"><span class="chip">visual edits patch source</span><span class="chip">unknown syntax preserved</span></div></div>
+          <pre class="codebox">use "ideas/content.idea"
+
+enum ArticleStatus {
+  DRAFT "draft"
+  REVIEW "review"
+  PUBLISHED "published"
+}
+
+type Address {
+  street String @label("Street") @required
+  city String @label("City") @required
+}
+
+model Article @labels("Article", "Articles") @display("{{title}}") {
+  id String @id
+  title String @label("Title") @searchable @sortable
+  body Text @label("Body") @field.markdown
+  status ArticleStatus @default("draft")
+}</pre>
+        </div>
+      </section>
+    </main>
+    <aside class="inspector">
+      <div class="inspector-header"><p class="eyebrow">Diagnostics</p><h2>2 warnings</h2></div>
+      <div class="inspector-section"><p class="callout">Line 14: field uses model-only searchable attribute. Valid for model Article.</p></div>
+      <div class="inspector-section"><p class="callout">Line 16: enum default must match one ArticleStatus option.</p></div>
+    </aside>
+  </div>
+</body>
+</html>

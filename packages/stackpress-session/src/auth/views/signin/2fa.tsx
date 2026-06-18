@@ -1,7 +1,7 @@
 //modules
 import { useLanguage } from 'r22n';
 import Button from 'frui/Button';
-import type { AuthConfigProps } from '../../types';
+import type { AuthConfigProps } from '../../types.js';
 import {
   LayoutBlank,
   ServerPageProps,

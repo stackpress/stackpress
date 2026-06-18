@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stackpress Studio Wireframe - Cradle References</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="mark"></span><span>Stackpress Studio</span><span class="file-pill">Cradle reference board</span></div>
+      <div class="top-actions"><a class="button" href="index.html">Back To Models</a></div>
+    </header>
+    <nav class="rail" aria-label="Primary">
+      <a href="index.html">Models</a>
+      <a href="fieldsets.html">Types</a>
+      <a href="enums.html">Enums</a>
+      <a href="source.html">Source</a>
+      <a class="active" href="references.html">Refs</a>
+    </nav>
+    <aside class="explorer">
+      <div class="explorer-header"><p class="eyebrow">Reference</p><h2>Cradle Patterns</h2></div>
+      <div class="explorer-list">
+        <a class="tree-item active" href="#"><span class="dot"></span><span>Schema list</span><small>table</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>Schema form</span><small>form</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>Field modal</span><small>inspector</small></a>
+        <a class="tree-item" href="#"><span class="dot"></span><span>Relations</span><small>row</small></a>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="content-header"><div><p class="eyebrow">Wireframe Reference</p><h1>Cradle Screens Used As Structural Input</h1></div></div>
+      <section class="canvas">
+        <div class="reference-grid">
+          <figure class="reference-card"><img src="../../cradle/2.1.B.png" alt="Cradle schema list"><figcaption>Schema list: dense table, relation summary, create action.</figcaption></figure>
+          <figure class="reference-card"><img src="../../cradle/2.1.C.png" alt="Cradle schema form"><figcaption>Schema form: metadata first, field table second, relations below.</figcaption></figure>
+          <figure class="reference-card"><img src="../../cradle/2.1.2.B.png" alt="Cradle field modal"><figcaption>Field modal: type, attributes, validations as repeatable rows.</figcaption></figure>
+          <figure class="reference-card"><img src="../../cradle/2.1.6.C.png" alt="Cradle field table"><figcaption>Field table: inline actions and scan-friendly field metadata.</figcaption></figure>
+          <figure class="reference-card"><img src="../../cradle/2.1.7.A.png" alt="Cradle relations"><figcaption>Relation row: compact cardinality and target editor.</figcaption></figure>
+          <figure class="reference-card"><img src="../../cradle/2.1.6.A.png" alt="Cradle field recipes"><figcaption>Field recipes: presets for status, dates, active, created, updated.</figcaption></figure>
+        </div>
+      </section>
+    </main>
+    <aside class="inspector">
+      <div class="inspector-header"><p class="eyebrow">Design Translation</p><h2>From Popup To Panel</h2></div>
+      <div class="inspector-section"><p class="callout">Cradle's popup dialogs become persistent inspectors so the SPA can support fast editing without context loss.</p></div>
+    </aside>
+  </div>
+</body>
+</html>

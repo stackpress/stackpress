@@ -191,21 +191,6 @@ Choose `LayoutPanel` when:
 - the standard theme and notifier behavior should come from the normal panel
   shell
 
-## `LayoutPanel` Scroll Rule
-
-`LayoutPanel` is a shell, not the page's scroll fix.
-
-- the panel shell commonly uses hidden overflow at the layout level
-- when the page should scroll, the inner page container must usually own the
-  scroll region
-- do not assume `min-h-full` alone is enough to make a page scroll inside the
-  panel shell
-- prefer an intentional full-height inner container when nearby Stackpress
-  views already use that pattern
-
-If a page inside `LayoutPanel` cannot scroll, inspect the inner page container
-before changing the framework shell or global CSS.
-
 ## `Head` Rules
 
 Use `Head` for page-level `<head>` markup such as:
@@ -222,16 +207,6 @@ If metadata depends on the main results payload, read it from `props.response`.
 
 If the page depends on shared CSS such as `/styles/global.css`, `Head` is
 usually required in practice even if the metadata itself is minimal.
-
-Missing or incomplete `Head` output can surface as:
-
-- missing shared CSS
-- flash-of-unstyled-content behavior
-- blank or broken-looking pages after hydration when the page shell depends on
-  linked styles
-
-Treat examples in this skill as illustrative page-contract patterns, not
-literal route names or required page modules.
 
 ## Browser-Safe Rule
 
@@ -251,8 +226,6 @@ Prefer the smallest checks that prove the page is real:
 - open the route through the app and confirm the page renders
 - confirm `Head` metadata or layout choice when that was the requested change
 - confirm that required shared styles are actually present on the page
-- confirm that the intended scroll owner can actually scroll when using
-  `LayoutPanel`
 
 ## Common Mistakes
 
@@ -262,10 +235,6 @@ Prefer the smallest checks that prove the page is real:
   boundary exists
 - forgetting `setViewProps(req, res, ctx)` on rendered HTML pages
 - omitting `Head` on pages that rely on shared styles or favicon/meta behavior
-- assuming `LayoutPanel` itself should scroll instead of the inner page
-  container
-- treating a missing stylesheet link as a generic rendering bug instead of a
-  page-contract failure
 - using the wrong prop type or wrong prop passing shape for `LayoutPanel` or
   `LayoutBlank`
 - importing server-only code into `views/*.tsx`
