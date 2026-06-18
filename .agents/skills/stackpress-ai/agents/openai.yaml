@@ -1,7 +1,0 @@
-interface:
-  display_name: "Stackpress AI"
-  short_description: "Alias for the Stackpress router."
-  default_prompt: "Use $stackpress-ai to route this Stackpress task to the right specialist skill."
-
-policy:
-  allow_implicit_invocation: true

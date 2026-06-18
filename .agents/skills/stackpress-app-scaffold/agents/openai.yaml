@@ -1,7 +1,0 @@
-interface:
-  display_name: "Stackpress App Scaffold"
-  short_description: "Scaffold a baseline Stackpress app."
-  default_prompt: "Use $stackpress-app-scaffold to create the baseline Stackpress app files in this empty folder."
-
-policy:
-  allow_implicit_invocation: true
