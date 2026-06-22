@@ -14,15 +14,17 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn build:core && yarn build:util && yarn build:view && yarn build:main",
+    "build": "yarn build:core && yarn build:util && yarn build:view && yarn build:main && yarn build:desktop",
     "build:core": "yarn server build && yarn schema build && yarn sql build",
     "build:main": "yarn api build && yarn stackpress build",
     "build:util": "yarn csrf build && yarn language build && yarn email build && yarn ai build",
+    "build:desktop": "yarn desktop build",
     "ai": "yarn --cwd packages/stackpress-ai",
     "build:view": "yarn view build && yarn session build && yarn admin build",
     "admin": "yarn --cwd packages/stackpress-admin",
     "api": "yarn --cwd packages/stackpress-api",
     "csrf": "yarn --cwd packages/stackpress-csrf",
+    "desktop": "yarn --cwd packages/stackpress-desktop",
     "email": "yarn --cwd packages/stackpress-email",
     "language": "yarn --cwd packages/stackpress-language",
     "schema": "yarn --cwd packages/stackpress-schema",

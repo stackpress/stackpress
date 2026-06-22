@@ -18,12 +18,18 @@ import {
   copySkills,
   createProject,
   parseArgs,
+  resolveRuntimeCommand,
   resolveTargetDirectory
 } from '../bin/stackpress.mjs';
 
 const execFileAsync = promisify(execFile);
+const nodeBinDirectory = path.dirname(process.execPath);
+const executableTestEnv = {
+  ...process.env,
+  PATH: `${nodeBinDirectory}${path.delimiter}${process.env.PATH ?? ''}`
+};
 
-test('parseArgs handles skills and create commands', () => {
+test('parseArgs handles installer commands and forwards runtime commands', () => {
   assert.deepEqual(parseArgs(['skills', '--target', 'codex']), {
     command: 'skills',
     dryRun: false,
@@ -46,10 +52,43 @@ test('parseArgs handles skills and create commands', () => {
     dryRun: true
   });
 
-  assert.throws(
-    () => parseArgs(['plugins', '--target', 'codex']),
-    /Unknown command/
-  );
+  assert.deepEqual(parseArgs(['develop', '--b', 'config/develop', '-v']), {
+    command: 'runtime',
+    args: ['develop', '--b', 'config/develop', '-v']
+  });
+});
+
+test('resolveRuntimeCommand uses the local framework CLI when available', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'stackpress-runtime-'));
+  const runtimeBin = path.join(root, 'packages', 'stackpress-server', 'bin.ts');
+  const tsxBin = path.join(root, 'node_modules', '.bin', 'tsx');
+
+  await mkdir(path.dirname(runtimeBin), { recursive: true });
+  await mkdir(path.dirname(tsxBin), { recursive: true });
+  await writeFile(runtimeBin, '#!/usr/bin/env tsx\n');
+  await writeFile(tsxBin, '#!/usr/bin/env node\n');
+
+  try {
+    assert.deepEqual(await resolveRuntimeCommand(root), {
+      args: [runtimeBin],
+      runner: tsxBin
+    });
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
+
+test('resolveRuntimeCommand rejects lightweight installs without the runtime CLI', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'stackpress-runtime-'));
+
+  try {
+    await assert.rejects(
+      resolveRuntimeCommand(root),
+      /only bundles the create and skills commands/
+    );
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
 });
 
 test('resolveTargetDirectory maps known targets and treats other targets as paths', () => {
@@ -381,7 +420,10 @@ test('createProject rejects malformed package files before copying', async () =>
   await writeFile(path.join(source, 'package.json'), '{');
 
   try {
-    await assert.rejects(createProject({ source, target }), /Unexpected/);
+    await assert.rejects(
+      createProject({ source, target }),
+      /Expected|Unexpected/
+    );
     await assert.rejects(readFile(path.join(target, 'package.json'), 'utf8'));
   } finally {
     await rm(root, { force: true, recursive: true });
@@ -443,7 +485,7 @@ test('the executable runs when invoked through a package manager symlink', async
       '--target',
       path.join(root, 'target'),
       '--dry-run'
-    ]);
+    ], { env: executableTestEnv });
 
     assert.match(stdout, /Installing Stackpress skills/);
     assert.match(stdout, /Mode: dry run/);
@@ -465,7 +507,8 @@ test('the executable can dry-run create through a package manager symlink', asyn
     await symlink(bin, link);
 
     const { stdout } = await execFileAsync(link, ['create', '--dry-run'], {
-      cwd: target
+      cwd: target,
+      env: executableTestEnv
     });
 
     assert.match(stdout, /Creating Stackpress project/);
