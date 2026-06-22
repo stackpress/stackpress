@@ -33,7 +33,10 @@ function createDesktopPlugin(): DesktopPlugin {
     ipcMain: undefined,
     nativeImage: undefined,
     config: {},
-    menu: new MenuRegistry({ updatePlaceholder: true })
+    menu: new MenuRegistry({
+      nativeEditMenu: true,
+      updatePlaceholder: true
+    })
   };
 }
 

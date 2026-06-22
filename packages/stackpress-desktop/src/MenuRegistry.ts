@@ -14,6 +14,7 @@ type StoredContribution = {
 //Menu registry options let the desktop plugin seed framework-owned items while
 // still using the same registry path as application contributions.
 export type MenuRegistryOptions = {
+  nativeEditMenu?: boolean;
   updatePlaceholder?: boolean;
 };
 
@@ -38,6 +39,29 @@ const MENU_LABELS: Record<string, string> = {
   window: 'Window',
   help: 'Help'
 };
+
+//Native edit roles keep standard text editing accelerators available when the
+// desktop shell installs an app-defined menu instead of Electron's default.
+const NATIVE_EDIT_MENU_ITEMS: DesktopMenuContribution[] = [
+  { id: 'desktop:edit-undo', menu: 'edit', role: 'undo', priority: 10 },
+  { id: 'desktop:edit-redo', menu: 'edit', role: 'redo', priority: 20 },
+  { id: 'desktop:edit-cut', menu: 'edit', role: 'cut', priority: 30 },
+  { id: 'desktop:edit-copy', menu: 'edit', role: 'copy', priority: 40 },
+  { id: 'desktop:edit-paste', menu: 'edit', role: 'paste', priority: 50 },
+  {
+    id: 'desktop:edit-paste-and-match-style',
+    menu: 'edit',
+    role: 'pasteAndMatchStyle',
+    priority: 60
+  },
+  { id: 'desktop:edit-delete', menu: 'edit', role: 'delete', priority: 70 },
+  {
+    id: 'desktop:edit-select-all',
+    menu: 'edit',
+    role: 'selectAll',
+    priority: 80
+  }
+];
 
 /**
  * Collect desktop menu contributions and compile them into Electron-ready
@@ -65,6 +89,14 @@ export default class MenuRegistry {
    */
   public constructor(options: MenuRegistryOptions = {}) {
     this.options = options;
+
+    //if requested, seed the native edit roles before app code contributes so
+    // copy/paste shortcuts survive custom application menus.
+    if (options.nativeEditMenu) {
+      for (const item of NATIVE_EDIT_MENU_ITEMS) {
+        this.add(item);
+      }
+    }
 
     //if requested, seed the update placeholder before app code contributes
     // menu items so normal priority sorting can place it later.
