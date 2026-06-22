@@ -2,6 +2,7 @@
 import os from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 //client
 import { resolveDesktopPath } from '../runtime.js';
@@ -29,10 +30,30 @@ export type PackageDesktopOutputOptions = {
   builder?: ElectronBuilder;
 };
 
+//Generated client packages can come from app config metadata or generic
+// package discovery when the config is not importable.
+type DesktopGeneratedClientPackage = {
+  from: string;
+  packageName: string;
+  to: string;
+};
+
 //Dynamic electron-builder import result shape.
 type ElectronBuilderModule = {
   build?: ElectronBuilder;
 };
+
+//Imported desktop config module shape used for packaging metadata discovery.
+type DesktopConfigModule = {
+  config?: unknown;
+};
+
+/**
+ * Return true when a value is a plain record.
+ */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 /**
  * Find the installed Electron package version from cwd or an ancestor folder.
@@ -103,6 +124,140 @@ function createDesktopPackageFailure(outputPath: string, message: string) {
 }
 
 /**
+ * Resolve the package-relative node_modules destination for a package name.
+ */
+function getNodeModuleDestination(packageName: string) {
+  return `node_modules/${packageName}`;
+}
+
+/**
+ * Create a generated client package descriptor when its folder exists.
+ */
+function createGeneratedClientPackage(
+  packageName: string,
+  buildPath: string
+): DesktopGeneratedClientPackage | undefined {
+  if (!fs.existsSync(buildPath)) {
+    return undefined;
+  }
+  return {
+    from: buildPath,
+    packageName,
+    to: getNodeModuleDestination(packageName)
+  };
+}
+
+/**
+ * Read generated client metadata from compiled desktop config output.
+ */
+async function getGeneratedClientFromDesktopConfig(
+  cwd: string,
+  buildDirectory: string
+) {
+  const configPath = path.join(
+    resolveDesktopPath(cwd, buildDirectory),
+    'app',
+    'config',
+    'desktop.js'
+  );
+  if (!fs.existsSync(configPath)) {
+    return undefined;
+  }
+
+  //import the compiled config with cwd aligned to the app so process.cwd()
+  // based config values resolve exactly as they did during build.
+  const previousCwd = process.cwd();
+  try {
+    if (previousCwd !== cwd) {
+      process.chdir(cwd);
+    }
+    const stat = fs.statSync(configPath);
+    const module = await import(
+      `${pathToFileURL(configPath).href}?mtime=${stat.mtimeMs}`
+    ) as DesktopConfigModule;
+    const config = isRecord(module.config) ? module.config : undefined;
+    const client = isRecord(config?.client) ? config.client : undefined;
+    const packageName = typeof client?.package === 'string'
+      ? client.package
+      : undefined;
+    if (!packageName) {
+      return undefined;
+    }
+
+    //prefer the package-relative node_modules folder when it exists so
+    // electron-builder paths stay stable even if imported config resolves cwd
+    // through a realpath alias such as /private/var.
+    const standardBuildPath = path.join(cwd, 'node_modules', packageName);
+    const buildPath = fs.existsSync(standardBuildPath)
+      ? standardBuildPath
+      : (
+        typeof client?.build === 'string'
+          ? client.build
+          : standardBuildPath
+      );
+    return createGeneratedClientPackage(packageName, buildPath);
+  } finally {
+    if (process.cwd() !== previousCwd) {
+      process.chdir(previousCwd);
+    }
+  }
+}
+
+/**
+ * Discover generated client packages by generic package naming convention.
+ */
+function getGeneratedClientPackagesFromNodeModules(cwd: string) {
+  const modules = path.join(cwd, 'node_modules');
+  if (!fs.existsSync(modules)) {
+    return [];
+  }
+
+  //top-level packages named *-client match the generated Stackpress client
+  // convention without baking in a template-specific name.
+  const packages: DesktopGeneratedClientPackage[] = [];
+  for (const entry of fs.readdirSync(modules, { withFileTypes: true })) {
+    if (entry.isDirectory() && entry.name.endsWith('-client')) {
+      const packagePath = path.join(modules, entry.name);
+      const client = createGeneratedClientPackage(entry.name, packagePath);
+      if (client) {
+        packages.push(client);
+      }
+    }
+
+    //scoped generated clients use the same package suffix under @scope.
+    if (entry.isDirectory() && entry.name.startsWith('@')) {
+      const scopePath = path.join(modules, entry.name);
+      for (const scoped of fs.readdirSync(scopePath, { withFileTypes: true })) {
+        if (!scoped.isDirectory() || !scoped.name.endsWith('-client')) {
+          continue;
+        }
+        const packageName = `${entry.name}/${scoped.name}`;
+        const packagePath = path.join(scopePath, scoped.name);
+        const client = createGeneratedClientPackage(packageName, packagePath);
+        if (client) {
+          packages.push(client);
+        }
+      }
+    }
+  }
+  return packages;
+}
+
+/**
+ * Resolve generated client package folders for electron-builder.
+ */
+async function getGeneratedClientPackages(cwd: string, buildDirectory: string) {
+  const fromConfig = await getGeneratedClientFromDesktopConfig(
+    cwd,
+    buildDirectory
+  );
+  if (fromConfig) {
+    return [ fromConfig ];
+  }
+  return getGeneratedClientPackagesFromNodeModules(cwd);
+}
+
+/**
  * Create the electron-builder file list for a self-hosted Stackpress app.
  */
 function createPackageFileList(
@@ -112,7 +267,8 @@ function createPackageFileList(
     preloadPath: string;
     manifestPath: string;
     buildDirectory: string;
-  }
+  },
+  clients: DesktopGeneratedClientPackage[]
 ) {
   return [
     'package.json',
@@ -139,11 +295,11 @@ function createPackageFileList(
       to: 'desktop'
     },
     {
-      from: resolveDesktopPath(cwd, 'config'),
+      from: resolveDesktopPath(cwd, path.join(paths.buildDirectory, 'app/config')),
       to: 'config'
     },
     {
-      from: resolveDesktopPath(cwd, 'plugins'),
+      from: resolveDesktopPath(cwd, path.join(paths.buildDirectory, 'app/plugins')),
       to: 'plugins'
     },
     {
@@ -155,10 +311,7 @@ function createPackageFileList(
       to: '.build/database',
       filter: [ '**/*', '!postmaster.pid' ]
     },
-    {
-      from: resolveDesktopPath(cwd, 'node_modules/blog-client'),
-      to: 'node_modules/blog-client'
-    }
+    ...clients.map(client => ({ from: client.from, to: client.to }))
   ];
 }
 
@@ -198,6 +351,7 @@ export async function packageDesktopOutput(
 
     //use injected builder in tests or import electron-builder in real runs
     const builder = options.builder || await importElectronBuilder();
+    const clients = await getGeneratedClientPackages(cwd, buildDirectory);
 
     //ask electron-builder for current-platform distributables so package
     // commands refresh installer artifacts as well as the unpacked app.
@@ -227,7 +381,7 @@ export async function packageDesktopOutput(
           preloadPath,
           manifestPath,
           buildDirectory
-        }),
+        }, clients),
         directories: {
           output: outputPath
         }

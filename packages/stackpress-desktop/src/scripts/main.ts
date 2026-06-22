@@ -12,6 +12,8 @@ export type ElectronMainSourceOptions = {
   url: string;
   preload?: string;
   menu?: DesktopCompiledMenuGroup[];
+  desktopEventEvents?: string[];
+  desktopEventToken?: string;
 };
 
 //Generated menu item model is serializable so it can be embedded directly in
@@ -71,6 +73,8 @@ export function createElectronMainSource(
 ) {
   //prepare serialized values before interpolating the generated source
   const menu = createMenuModel(options.menu);
+  const desktopEventEvents = options.desktopEventEvents || [];
+  const desktopEventToken = options.desktopEventToken || '';
   const externalNavigation = config.security.externalNavigation;
 
   //the returned source owns Electron window creation, menu dispatch, external
@@ -80,12 +84,29 @@ export function createElectronMainSource(
 const startUrl = ${JSON.stringify(options.url)};
 const preload = ${JSON.stringify(options.preload || null)};
 const menu = ${JSON.stringify(menu, null, 2)};
+const desktopEventEvents = ${JSON.stringify(desktopEventEvents, null, 2)};
+const desktopEventToken = ${JSON.stringify(desktopEventToken)};
+const desktopEventAllowlist = new Set(desktopEventEvents);
 const externalNavigation = ${JSON.stringify(externalNavigation)};
 
 function desktopEventUrl(event) {
   const url = new URL('/__stackpress_desktop_event', startUrl);
   url.searchParams.set('event', event);
   return url.toString();
+}
+
+function dispatchDesktopEvent(event) {
+  if (!desktopEventToken || !desktopEventAllowlist.has(event)) {
+    return;
+  }
+  fetch(desktopEventUrl(event), {
+    method: 'POST',
+    headers: {
+      'X-Stackpress-Desktop-Event-Token': desktopEventToken
+    }
+  }).catch(error => {
+    console.error('Desktop menu event failed:', error);
+  });
 }
 
 function isExternalNavigation(target) {
@@ -115,11 +136,7 @@ function toMenuItemTemplate(item) {
     submenu: item.submenu?.map(toMenuItemTemplate)
   };
   if (item.event) {
-    template.click = () => {
-      fetch(desktopEventUrl(item.event), { method: 'POST' }).catch(error => {
-        console.error('Desktop menu event failed:', error);
-      });
-    };
+    template.click = () => dispatchDesktopEvent(item.event);
   }
   return template;
 }

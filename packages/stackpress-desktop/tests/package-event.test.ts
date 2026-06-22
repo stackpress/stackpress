@@ -9,13 +9,52 @@ import packageEvent from '../src/events/package.js';
 import { writeDesktopBuildOutput } from '../src/scripts/build.js';
 import { packageDesktopOutput } from '../src/scripts/package.js';
 
+/**
+ * Create a package-mode app bootstrap and generated client package.
+ */
+async function writeDesktopPackageFixture(cwd: string, clientPackage: string) {
+  await fs.mkdir(path.join(cwd, 'config'), { recursive: true });
+  await fs.mkdir(path.join(cwd, 'plugins'), { recursive: true });
+  await fs.mkdir(path.join(cwd, 'public'), { recursive: true });
+  await fs.mkdir(path.join(cwd, '.build/database'), { recursive: true });
+  await fs.mkdir(path.join(cwd, 'node_modules', clientPackage), {
+    recursive: true
+  });
+  await fs.writeFile(
+    path.join(cwd, 'package.json'),
+    JSON.stringify({ type: 'module' })
+  );
+  await fs.writeFile(
+    path.join(cwd, 'node_modules', clientPackage, 'package.json'),
+    JSON.stringify({ name: clientPackage, type: 'module' })
+  );
+  await fs.writeFile(
+    path.join(cwd, 'config/desktop.ts'),
+    `import path from 'node:path';
+
+export const config = {
+  client: {
+    package: '${clientPackage}',
+    build: path.join(process.cwd(), 'node_modules', '${clientPackage}')
+  }
+};
+
+export default async function bootstrap() {
+  return {};
+}
+`
+  );
+}
+
 describe('desktop/events/package', () => {
   it('should expose a desktop:package action handler', () => {
     expect(packageEvent).to.be.a('function');
   });
 
-  it('should report current-platform artifact success', async () => {
+  it('should report current-platform artifact success', async function() {
+    this.timeout(10000);
     const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stackpress-desktop-'));
+    await writeDesktopPackageFixture(cwd, 'inventory-client');
     const config = normalizeDesktopConfig({
       app: { id: 'io.stackpress.blog', name: 'Blog', version: '1.0.0' }
     });
@@ -46,11 +85,11 @@ describe('desktop/events/package', () => {
           'uno.config.ts'
         ]);
         expect(files).to.deep.include({
-          from: path.join(cwd, 'config'),
+          from: path.join(cwd, '.build/desktop/app/config'),
           to: 'config'
         });
         expect(files).to.deep.include({
-          from: path.join(cwd, 'plugins'),
+          from: path.join(cwd, '.build/desktop/app/plugins'),
           to: 'plugins'
         });
         expect(files).to.deep.include({
@@ -63,6 +102,10 @@ describe('desktop/events/package', () => {
           filter: [ '**/*', '!postmaster.pid' ]
         });
         expect(files).to.deep.include({
+          from: path.join(cwd, 'node_modules/inventory-client'),
+          to: 'node_modules/inventory-client'
+        });
+        expect(files).to.not.deep.include({
           from: path.join(cwd, 'node_modules/blog-client'),
           to: 'node_modules/blog-client'
         });
@@ -83,6 +126,7 @@ describe('desktop/events/package', () => {
 
   it('should return actionable packaging failures', async () => {
     const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'stackpress-desktop-'));
+    await writeDesktopPackageFixture(cwd, 'inventory-client');
     const config = normalizeDesktopConfig({
       app: { id: 'io.stackpress.blog', name: 'Blog', version: '1.0.0' }
     });

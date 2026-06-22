@@ -71,6 +71,7 @@ describe('desktop/runtime', () => {
 
     const files = await writeDesktopRuntimeFiles(config, {
       url: 'http://127.0.0.1:49152/',
+      desktopEventToken: 'session-token',
       menu: [
         {
           menu: 'help',
@@ -92,6 +93,9 @@ describe('desktop/runtime', () => {
     expect(main).to.include(files.preloadPath);
     expect(main).to.include('Menu.setApplicationMenu');
     expect(main).to.include('__stackpress_desktop_event');
+    expect(main).to.include('session-token');
+    expect(main).to.include('X-Stackpress-Desktop-Event-Token');
+    expect(main).to.include('desktopEventAllowlist');
     expect(main).to.include('blog:desktop-latest');
     expect(preload).to.include('stackpressDesktop');
     await fs.rm(cwd, { recursive: true, force: true });

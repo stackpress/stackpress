@@ -46,6 +46,24 @@ describe('desktop/plugin', () => {
     expect(help?.items.map(item => item.id)).to.include('blog:latest');
   });
 
+  it('should keep native edit roles when app menus are contributed', async () => {
+    const app = server();
+    desktopPlugin(app);
+
+    await app.resolve('listen');
+    await app.resolve('desktop:menu', {
+      id: 'blog:latest',
+      menu: 'help',
+      label: 'Latest Posts',
+      event: 'blog:desktop-latest'
+    });
+
+    const registry = app.plugin<DesktopPlugin>('desktop').menu as MenuRegistry;
+    const edit = registry.compile().find(group => group.menu === 'edit');
+
+    expect(edit?.items.map(item => item.role)).to.include('copy');
+  });
+
   it('should expose direct helpers for plugin-authored contributions', async () => {
     const app = server();
     desktopPlugin(app);

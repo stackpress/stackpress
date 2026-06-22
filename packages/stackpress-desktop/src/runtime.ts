@@ -6,6 +6,7 @@ import type {
   ServerResponse
 } from 'node:http';
 import { spawn } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -40,6 +41,8 @@ export type DesktopRuntimeServer = Pick<Server<any, any, any>, 'create'>
 //A started desktop runtime session owns the loopback HTTP service and its
 // teardown function.
 export type DesktopRuntimeSession = {
+  allowDesktopEvents: (events: Iterable<string>) => void;
+  desktopEventToken: string;
   host: string;
   port: number;
   url: string;
@@ -83,6 +86,21 @@ export type DesktopElectronLaunchOptions = {
   spawn?: DesktopElectronSpawn;
 };
 
+//Desktop event authorization is held by the runtime guard and updated when the
+// generated Electron menu source is written for the active session.
+type DesktopEventAuthorization = {
+  allowedEvents: Set<string>;
+  token: string;
+};
+
+//Runtime file generation can be exercised directly in tests or through a full
+// runtime session that carries the private desktop event token.
+type DesktopRuntimeFileSession = Pick<DesktopRuntimeSession, 'url'> & {
+  desktopEventEvents?: string[];
+  desktopEventToken?: string;
+  menu?: DesktopCompiledMenuGroup[];
+};
+
 type ElectronPackage = {
   default?: unknown;
 };
@@ -94,6 +112,36 @@ export type DesktopMenuDispatch = (event: string) => void | Promise<void>;
 //Private route used by generated Electron code to dispatch desktop menu events
 // into the local Stackpress runtime.
 export const DESKTOP_EVENT_ROUTE = '/__stackpress_desktop_event';
+
+//Private desktop event requests must prove they came from generated Electron
+// menu code for the current runtime session.
+export const DESKTOP_EVENT_TOKEN_HEADER = 'x-stackpress-desktop-event-token';
+
+/**
+ * Collect unique event names from compiled desktop menu groups.
+ */
+export function collectDesktopMenuEvents(groups: DesktopCompiledMenuGroup[]) {
+  const events = new Set<string>();
+
+  /**
+   * Walk a menu contribution tree and remember every event-backed item.
+   */
+  function collect(items: DesktopMenuContribution[]) {
+    for (const item of items) {
+      if (item.event) {
+        events.add(item.event);
+      }
+      if (item.submenu?.length) {
+        collect(item.submenu);
+      }
+    }
+  }
+
+  for (const group of groups) {
+    collect(group.items);
+  }
+  return [ ...events ];
+}
 
 /**
  * Decide whether a URL points outside the active desktop app origin.
@@ -229,9 +277,7 @@ export function isDesktopRouteAllowed(
  */
 export async function writeDesktopRuntimeFiles(
   config: NormalizedDesktopConfig,
-  runtime: Pick<DesktopRuntimeSession, 'url'> & {
-    menu?: DesktopCompiledMenuGroup[];
-  },
+  runtime: DesktopRuntimeFileSession,
   cwd = process.cwd()
 ): Promise<DesktopRuntimeFiles> {
   //resolve runtime entry targets from normalized build config
@@ -254,7 +300,10 @@ export async function writeDesktopRuntimeFiles(
     createElectronMainSource(config, {
       url: runtime.url,
       preload: preloadPath,
-      menu: runtime.menu
+      menu: runtime.menu,
+      desktopEventToken: runtime.desktopEventToken,
+      desktopEventEvents: runtime.desktopEventEvents
+        || collectDesktopMenuEvents(runtime.menu || [])
     })
   );
 
@@ -293,13 +342,20 @@ export async function resolveElectronPath(electronPath?: string) {
 export async function launchDesktopElectron(
   config: NormalizedDesktopConfig,
   runtime: Pick<DesktopRuntimeSession, 'url'> & {
+    allowDesktopEvents?: DesktopRuntimeSession['allowDesktopEvents'];
+    desktopEventToken?: string;
     menu?: DesktopCompiledMenuGroup[];
   },
   options: DesktopElectronLaunchOptions = {}
 ): Promise<DesktopElectronProcess> {
   //resolve filesystem and executable inputs before spawning Electron
   const cwd = options.cwd || process.cwd();
-  const files = await writeDesktopRuntimeFiles(config, runtime, cwd);
+  const desktopEventEvents = collectDesktopMenuEvents(runtime.menu || []);
+  runtime.allowDesktopEvents?.(desktopEventEvents);
+  const files = await writeDesktopRuntimeFiles(config, {
+    ...runtime,
+    desktopEventEvents
+  }, cwd);
   const electronPath = await resolveElectronPath(options.electronPath);
   const spawnElectron = options.spawn || spawn;
 
@@ -343,7 +399,8 @@ export function sendBlockedDesktopRoute(
 export function installDesktopRouteGuard(
   service: HttpServer,
   config: NormalizedDesktopConfig,
-  server?: DesktopRuntimeEventServer
+  server?: DesktopRuntimeEventServer,
+  authorization?: DesktopEventAuthorization
 ) {
   const canDispatchEvents = typeof server?.resolve === 'function';
 
@@ -367,7 +424,7 @@ export function installDesktopRouteGuard(
 
     //desktop menu dispatch uses a private route before normal route guards
     if (route === DESKTOP_EVENT_ROUTE) {
-      await sendDesktopEventResult(request, response, server);
+      await sendDesktopEventResult(request, response, server, authorization);
       return;
     }
 
@@ -391,12 +448,41 @@ export function installDesktopRouteGuard(
 export async function sendDesktopEventResult(
   request: IncomingMessage,
   response: ServerResponse,
-  server?: DesktopRuntimeEventServer
+  server?: DesktopRuntimeEventServer,
+  authorization?: DesktopEventAuthorization
 ) {
   //parse the event name from the private runtime route query string
   const url = new URL(request.url || '/', 'http://127.0.0.1');
   const event = url.searchParams.get('event');
+  const method = request.method || 'GET';
   response.setHeader('Content-Type', 'application/json');
+
+  //menu dispatch is intentionally not a navigable/readable route
+  if (method.toUpperCase() !== 'POST') {
+    response.statusCode = 405;
+    response.setHeader('Allow', 'POST');
+    response.end(JSON.stringify({
+      code: 405,
+      status: 'Method Not Allowed',
+      error: 'Desktop menu events require POST.'
+    }));
+    return;
+  }
+
+  //the per-session token keeps unrelated loopback web pages from invoking
+  // events even though they can reach the local server port.
+  const token = request.headers[DESKTOP_EVENT_TOKEN_HEADER];
+  const isAuthorized = typeof token === 'string'
+    && token === authorization?.token;
+  if (!isAuthorized) {
+    response.statusCode = 401;
+    response.end(JSON.stringify({
+      code: 401,
+      status: 'Unauthorized',
+      error: 'Desktop menu event authorization failed.'
+    }));
+    return;
+  }
 
   //event is required because the route is shared by all menu contributions
   if (!event) {
@@ -405,6 +491,18 @@ export async function sendDesktopEventResult(
       code: 400,
       status: 'Bad Request',
       error: 'Desktop menu event is required.'
+    }));
+    return;
+  }
+
+  //only events emitted by the generated Electron menu for this session are
+  // eligible for Stackpress dispatch.
+  if (!authorization.allowedEvents.has(event)) {
+    response.statusCode = 403;
+    response.end(JSON.stringify({
+      code: 403,
+      status: 'Forbidden',
+      error: 'Desktop menu event is not registered for this session.'
     }));
     return;
   }
@@ -451,7 +549,11 @@ export async function startDesktopRuntime(
 ): Promise<DesktopRuntimeSession> {
   //create the app service through the Stackpress server boundary
   const service = server.create() as HttpServer;
-  installDesktopRouteGuard(service, config, server);
+  const authorization: DesktopEventAuthorization = {
+    allowedEvents: new Set<string>(),
+    token: randomBytes(32).toString('base64url')
+  };
+  installDesktopRouteGuard(service, config, server, authorization);
   const host = config.server.host || '127.0.0.1';
   const requestedPort = config.server.port ?? 0;
 
@@ -471,6 +573,12 @@ export async function startDesktopRuntime(
   //return the runtime session and a close hook that handles already-closed
   // services cleanly.
   return {
+    allowDesktopEvents(events) {
+      for (const event of events) {
+        authorization.allowedEvents.add(event);
+      }
+    },
+    desktopEventToken: authorization.token,
     host,
     port,
     url: resolveDesktopUrl(config, port),

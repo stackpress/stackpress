@@ -53,6 +53,22 @@ describe('desktop/MenuRegistry', () => {
       .to.include({ enabled: false });
   });
 
+  it('should include native edit roles when requested', () => {
+    const registry = new MenuRegistry({ nativeEditMenu: true });
+    const editMenu = registry.compile().find(group => group.menu === 'edit');
+
+    expect(editMenu?.items.map(item => item.role)).to.deep.equal([
+      'undo',
+      'redo',
+      'cut',
+      'copy',
+      'paste',
+      'pasteAndMatchStyle',
+      'delete',
+      'selectAll'
+    ]);
+  });
+
   it('should preserve nested submenus with deterministic child ordering', () => {
     const registry = new MenuRegistry();
     registry.add({

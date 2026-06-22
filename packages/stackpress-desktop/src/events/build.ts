@@ -3,10 +3,16 @@ import { action } from '@stackpress/ingest/Server';
 
 //client
 import { normalizeDesktopConfig } from '../config.js';
+import MenuRegistry from '../MenuRegistry.js';
+import {
+  getDesktopPlugin,
+  markDesktopInitialized
+} from '../plugin.js';
 import { collectDesktopRoutes } from '../routeRules.js';
 import { writeDesktopBuildOutput } from '../scripts/build.js';
 import type {
   DesktopBuildOutput,
+  DesktopCompiledMenuGroup,
   DesktopConfig,
   DesktopRouteRecord,
   NormalizedDesktopConfig
@@ -26,6 +32,7 @@ type DesktopBuildTerminal = {
 // and whether the normal Stackpress build lifecycle should run.
 export type CreateDesktopBuildOutputOptions = {
   cwd?: string;
+  menu?: DesktopCompiledMenuGroup[];
   registeredRoutes?: DesktopRouteRecord[];
   runStackpressBuild?: () => Promise<unknown>;
 };
@@ -44,6 +51,7 @@ export async function createDesktopBuildOutput(
   //then write the desktop manifest and generated Electron entry files
   return await writeDesktopBuildOutput(config, {
     cwd: options.cwd,
+    menu: options.menu,
     registeredRoutes: options.registeredRoutes
   });
 }
@@ -53,12 +61,21 @@ export async function createDesktopBuildOutput(
  */
 export default action(async function DesktopBuild({ res, ctx }) {
   const terminal = ctx.plugin<DesktopBuildTerminal>('terminal');
+  const desktop = getDesktopPlugin(ctx);
 
-  //read desktop config from the Stackpress config tree and normalize it before
-  // writing build artifacts.
-  const config = normalizeDesktopConfig(
-    ctx.config.path<DesktopConfig>('desktop', {})
-  );
+  //load base config from the Stackpress config tree before contribution hooks
+  desktop.config = ctx.config.path<DesktopConfig>('desktop', {});
+  await ctx.resolve('desktop:config');
+
+  //normalize config after contribution hooks have applied all patches
+  const config = normalizeDesktopConfig(desktop.config);
+  desktop.config = config;
+
+  //collect menu contributions before packaged Electron source is generated
+  await ctx.resolve('desktop:menu');
+  const menu = desktop.menu instanceof MenuRegistry
+    ? desktop.menu.compile()
+    : [];
   const registeredRoutes = collectDesktopRoutes(ctx);
 
   //verbose mode mirrors the existing terminal plugin convention
@@ -69,9 +86,14 @@ export default action(async function DesktopBuild({ res, ctx }) {
   //create the output after running the normal build lifecycle
   const output = await createDesktopBuildOutput(config, {
     cwd: ctx.loader.cwd,
+    menu,
     registeredRoutes,
     runStackpressBuild: async () => await ctx.resolve('build')
   });
+
+  //after build artifacts are generated, late desktop contributions would desync
+  // packaged source from plugin state.
+  markDesktopInitialized(ctx);
 
   //report output location and store the build payload on the response
   terminal?.verbose && terminal.control?.success(
