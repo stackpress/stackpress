@@ -57,6 +57,20 @@ describe('sql/rename-plan/messages', () => {
     expect(planColumnRenames(from, to).renames).to.deep.equal([]);
   });
 
+  it('should flag foreign-key renames when only the local column changes', () => {
+    const from = Schema.make(makeRelationSchemaConfig('profileId'));
+    const to = Schema.make(makeRelationSchemaConfig('authorId'));
+
+    expect(planColumnRenames(from, to).renames).to.deep.equal([{
+      model: 'Article',
+      table: 'article',
+      from: 'profileId',
+      fromField: 'profile_id',
+      to: 'authorId',
+      toField: 'author_id'
+    }]);
+  });
+
   it('should format a clear ambiguity message for terminal output', () => {
     const message = formatAmbiguousRenameMessage([{
       model: 'Article',
@@ -385,6 +399,62 @@ function makeAmbiguousSchemaConfig(columnNames: string[]) {
             label: [ 'Summary' ]
           }
         }))
+      }
+    }
+  };
+}
+
+function makeRelationSchemaConfig(localColumnName: string) {
+  return {
+    model: {
+      Profile: {
+        name: 'Profile',
+        mutable: true,
+        attributes: {},
+        columns: [
+          {
+            name: 'id',
+            type: 'String',
+            required: true,
+            multiple: false,
+            attributes: {
+              id: true
+            }
+          },
+          {
+            name: 'articles',
+            type: 'Article',
+            required: false,
+            multiple: true,
+            attributes: {}
+          }
+        ]
+      },
+      Article: {
+        name: 'Article',
+        mutable: true,
+        attributes: {},
+        columns: [
+          {
+            name: localColumnName,
+            type: 'String',
+            required: false,
+            multiple: false,
+            attributes: {}
+          },
+          {
+            name: 'profile',
+            type: 'Profile',
+            required: false,
+            multiple: false,
+            attributes: {
+              relation: [{
+                local: localColumnName,
+                foreign: 'id'
+              }]
+            }
+          }
+        ]
       }
     }
   };
