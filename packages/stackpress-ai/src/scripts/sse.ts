@@ -6,13 +6,16 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import type Server from '@stackpress/ingest/Server';
 //client
 import type {
+  AuthContext,
   McpPlugin,
   McpServer,
   McpSseSession,
-  Promiser
+  Promiser,
+  ToolResolverServer
 } from '../types.js';
 import {
   readJsonBody,
+  resolveListAuth,
   sendText
 } from '../helpers.js';
 
@@ -63,6 +66,8 @@ export function shouldAttachSseToServer(ctx: Server) {
 export class McpSseServer {
   //this shutdown handle is exposed so the caller can stop the server cleanly
   public readonly shutdown: () => Promise<void>;
+  //this callback resolves one caller auth context from a raw request
+  protected _authResolver: (req: IncomingMessage) => Promise<AuthContext>;
   //this endpoint accepts the initial SSE connection request
   protected _endpoint: string;
   //this flag prevents the shutdown path from running more than once
@@ -87,6 +92,7 @@ export class McpSseServer {
    */
   public constructor(
     factory: McpPlugin,
+    authResolver: (req: IncomingMessage) => Promise<AuthContext>,
     host: string,
     port: number,
     endpoint: string,
@@ -94,6 +100,7 @@ export class McpSseServer {
     promiser: Promiser<void>
   ) {
     this._factory = factory;
+    this._authResolver = authResolver;
     this._host = host;
     this._port = port;
     this._endpoint = endpoint;
@@ -161,8 +168,8 @@ export class McpSseServer {
   /**
    * Resolve one MCP server instance from the registered factory.
    */
-  protected async _createServer(): Promise<McpServer> {
-    const server = await this._factory();
+  protected async _createServer(auth: AuthContext): Promise<McpServer> {
+    const server = await this._factory(auth);
 
     //if config produced no tools, fail loudly so the CLI does not hang
     if (!server) {
@@ -214,7 +221,7 @@ export class McpSseServer {
 
       //for GET on the SSE endpoint, start one long-lived event stream session
       if (req.method === 'GET' && url.pathname === this._endpoint) {
-        await this._handleSseConnection(res);
+        await this._handleSseConnection(req, res);
         return;
       }
 
@@ -240,14 +247,18 @@ export class McpSseServer {
   /**
    * Open one SSE session and register it in the live session map.
    */
-  protected async _handleSseConnection(res: ServerResponse) {
+  protected async _handleSseConnection(
+    req: IncomingMessage,
+    res: ServerResponse
+  ) {
+    const auth = await this._authResolver(req);
     //first build one MCP tool server from the registered factory
-    const server = await this._createServer();
+    const server = await this._createServer(auth);
 
     //then pair it with one SSE transport bound to the response stream
     const transport = new SSEServerTransport(this._messages, res);
     const sessionId = transport.sessionId;
-    this._sessions[sessionId] = { server, transport };
+    this._sessions[sessionId] = { auth, server, transport };
 
     //when the transport closes, remove its session from the lookup table
     transport.onclose = async () => {
@@ -271,11 +282,18 @@ export default async function sse(ctx: Server) {
 
   const factory = ctx.plugin<McpPlugin>('mcp');
   const { endpoint, host, messages, port } = resolveSseConfig(ctx);
+  //build one connection-level auth resolver so each SSE session binds to
+  // the bearer token presented on the initial event-stream request.
+  const authResolver = async (req: IncomingMessage) => resolveListAuth(
+    ctx as ToolResolverServer,
+    header(req, 'authorization') || undefined
+  );
 
   //then keep the event open until the underlying HTTP service closes
   return new Promise<void>(async (resolve, reject) => {
     const transport = new McpSseServer(
       factory,
+      authResolver,
       host,
       port,
       endpoint,
@@ -302,8 +320,13 @@ export function attachSseToServer(ctx: Server) {
 
   attachable[key] = true;
   const factory = ctx.plugin<McpPlugin>('mcp');
+  const authResolver = async (req: IncomingMessage) => resolveListAuth(
+    ctx as ToolResolverServer,
+    header(req, 'authorization') || undefined
+  );
   const transport = new McpSseServer(
     factory,
+    authResolver,
     host,
     port,
     endpoint,
@@ -340,4 +363,12 @@ export function attachSseToServer(ctx: Server) {
       return false;
     }
   });
+}
+
+/**
+ * Read one header value from a Node request, normalizing array values.
+ */
+function header(req: IncomingMessage, name: string) {
+  const value = req.headers[name.toLowerCase()];
+  return Array.isArray(value) ? value[0] : value ?? null;
 }

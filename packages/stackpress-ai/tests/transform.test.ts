@@ -5,32 +5,21 @@ import path from 'node:path';
 //modules
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import FileLoader from '@stackpress/lib/FileLoader';
-import { Transformer } from '@stackpress/idea-transformer';
-import { server as http } from '@stackpress/ingest/http';
 import { createProject } from 'stackpress-schema/transform/helpers';
 //client
 import generate from '../src/transform/index.js';
 
 /**
- * Build one transformer pointed at the real blog schema fixture.
+ * Load one persisted blog schema revision so the test exercises real template
+ * metadata without paying the full transformer parse cost on every run.
  */
-async function makeBlogSchema() {
-  //point the transformer at the real blog schema so the test exercises the
-  // same model metadata the template uses in practice.
-  const cwd = process.cwd();
-  const idea = path.resolve(
+function loadBlogSchema() {
+  const revision = path.resolve(
     path.dirname(new URL(import.meta.url).pathname),
-    '../../../templates/blog/schema.idea'
+    '../../../templates/blog/.build/revisions/1781761934981.json'
   );
-  const server = http({ cwd });
-  const loader = new FileLoader(server.loader.fs, server.loader.cwd);
-  const transformer = new Transformer(idea, loader);
 
-  return {
-    schema: await transformer.schema(),
-    transformer
-  };
+  return JSON.parse(fs.readFileSync(revision, 'utf-8')) as Record<string, unknown>;
 }
 
 describe('ai/transform', () => {
@@ -44,7 +33,7 @@ describe('ai/transform', () => {
     );
     const project = await createProject(tmpdir);
     const directory = project.createDirectory(tmpdir);
-    const { schema, transformer } = await makeBlogSchema();
+    const schema = loadBlogSchema();
 
     await generate({
       config: {},
@@ -53,7 +42,7 @@ describe('ai/transform', () => {
       project,
       schema,
       terminal: {} as never,
-      transformer
+      transformer: {} as never
     });
 
     //inspect the generated registry surface the runtime depends on.
