@@ -7,13 +7,17 @@
     "./plugins/app/plugin",
     "./plugins/store/plugin",
     "stackpress",
-    "stackpress-ai"
+    "stackpress-ai",
+    "stackpress-desktop"
   ],
   "scripts": {
     "build": "stackpress build --b config/build -v",
     "dev": "yarn dev:clean && yarn dev:start",
     "dev:clean": "rm -rf node_modules/.vite",
     "dev:start": "dotenv -e .env -- stackpress develop --b config/develop -v",
+    "desktop:build": "stackpress desktop:build --b config/desktop -v",
+    "desktop:dev": "stackpress desktop:dev --b config/desktop -v",
+    "desktop:package": "stackpress desktop:package --b config/desktop -v",
     "emit": "dotenv -e .env -- stackpress emit",
     "generate": "stackpress generate --b config/develop -v",
     "generate:client": "stackpress generate --b config/client -v",
@@ -30,7 +34,9 @@
     "@stackpress/inquire-pglite": "0.10.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "stackpress": "0.10.5"
+    "stackpress": "0.10.5",
+    "stackpress-ai": "0.10.5",
+    "stackpress-desktop": "0.10.5"    
   },
   "devDependencies": {
     "@types/node": "25.3.5",
