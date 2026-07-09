@@ -133,26 +133,6 @@
       "require": "./cjs/view/index.js",
       "import": "./esm/view/index.js"
     },
-    "./desktop/plugin": {
-      "require": "./cjs/desktop/plugin.js",
-      "import": "./esm/desktop/plugin.js"
-    },
-    "./desktop/events": {
-      "require": "./cjs/desktop/events.js",
-      "import": "./esm/desktop/events.js"
-    },
-    "./desktop/scripts": {
-      "require": "./cjs/desktop/scripts.js",
-      "import": "./esm/desktop/scripts.js"
-    },
-    "./desktop/types": {
-      "require": "./cjs/desktop/types.js",
-      "import": "./esm/desktop/types.js"
-    },
-    "./desktop": {
-      "require": "./cjs/desktop/index.js",
-      "import": "./esm/desktop/index.js"
-    },
     "./plugin": {
       "require": "./cjs/plugin.js",
       "import": "./esm/plugin.js"
@@ -240,21 +220,6 @@
       "view": [
         "./cjs/view/index.d.ts"
       ],
-      "desktop/plugin": [
-        "./cjs/desktop/plugin.d.ts"
-      ],
-      "desktop/events": [
-        "./cjs/desktop/events.d.ts"
-      ],
-      "desktop/scripts": [
-        "./cjs/desktop/scripts.d.ts"
-      ],
-      "desktop/types": [
-        "./cjs/desktop/types.d.ts"
-      ],
-      "desktop": [
-        "./cjs/desktop/index.d.ts"
-      ],
       "lib/types": [
         "./cjs/lib/types.d.ts"
       ],
@@ -302,7 +267,6 @@
   "dependencies": {
     "stackpress-admin": "0.10.5",
     "stackpress-api": "0.10.5",
-    "stackpress-desktop": "0.10.5",
     "stackpress-email": "0.10.5"
   },
   "devDependencies": {
