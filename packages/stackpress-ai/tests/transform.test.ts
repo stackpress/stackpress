@@ -2,7 +2,9 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 //modules
+import { parse } from '@stackpress/idea-parser';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { createProject } from 'stackpress-schema/transform/helpers';
@@ -10,16 +12,28 @@ import { createProject } from 'stackpress-schema/transform/helpers';
 import generate from '../src/transform/index.js';
 
 /**
- * Load one persisted blog schema revision so the test exercises real template
- * metadata without paying the full transformer parse cost on every run.
+ * Cache the parsed blog schema so the suite stays aligned with the live
+ * template without reparsing the idea file for every call.
+ */
+let blogSchema: Record<string, unknown> | null = null;
+
+/**
+ * Load the current blog template schema from schema.idea.
  */
 function loadBlogSchema() {
-  const revision = path.resolve(
-    path.dirname(new URL(import.meta.url).pathname),
-    '../../../templates/blog/.build/revisions/1781761934981.json'
-  );
+  if (blogSchema) {
+    return blogSchema;
+  }
 
-  return JSON.parse(fs.readFileSync(revision, 'utf-8')) as Record<string, unknown>;
+  const tests = path.dirname(fileURLToPath(import.meta.url));
+  const idea = path.resolve(
+    tests,
+    '../../../templates/blog/schema.idea'
+  );
+  const source = fs.readFileSync(idea, 'utf-8');
+
+  blogSchema = parse(source) as Record<string, unknown>;
+  return blogSchema;
 }
 
 describe('ai/transform', () => {
