@@ -344,7 +344,7 @@ CONSTRUCTOR:
   this._seed = seed;
 <%/?:seed%>
 <%#?:fieldset%>
-  this._fieldset = new <%fieldset%>(<%#?:seed%>seed<%/seed%>);
+  this._fieldset = new <%fieldset%>(<%#?:seed%>seed<%/?:seed%>);
 <%/?:fieldset%>
 this.shape = <%shape%>;`,
 
