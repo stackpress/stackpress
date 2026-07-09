@@ -2,35 +2,38 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 //modules
+import { parse } from '@stackpress/idea-parser';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import FileLoader from '@stackpress/lib/FileLoader';
-import { Transformer } from '@stackpress/idea-transformer';
-import { server as http } from '@stackpress/ingest/http';
 import { createProject } from 'stackpress-schema/transform/helpers';
 //client
 import generate from '../src/transform/index.js';
 
 /**
- * Build one transformer pointed at the real blog schema fixture.
+ * Cache the parsed blog schema so the suite stays aligned with the live
+ * template without reparsing the idea file for every call.
  */
-async function makeBlogSchema() {
-  //point the transformer at the real blog schema so the test exercises the
-  // same model metadata the template uses in practice.
-  const cwd = process.cwd();
+let blogSchema: Record<string, unknown> | null = null;
+
+/**
+ * Load the current blog template schema from schema.idea.
+ */
+function loadBlogSchema() {
+  if (blogSchema) {
+    return blogSchema;
+  }
+
+  const tests = path.dirname(fileURLToPath(import.meta.url));
   const idea = path.resolve(
-    path.dirname(new URL(import.meta.url).pathname),
+    tests,
     '../../../templates/blog/schema.idea'
   );
-  const server = http({ cwd });
-  const loader = new FileLoader(server.loader.fs, server.loader.cwd);
-  const transformer = new Transformer(idea, loader);
+  const source = fs.readFileSync(idea, 'utf-8');
 
-  return {
-    schema: await transformer.schema(),
-    transformer
-  };
+  blogSchema = parse(source) as Record<string, unknown>;
+  return blogSchema;
 }
 
 describe('ai/transform', () => {
@@ -44,7 +47,7 @@ describe('ai/transform', () => {
     );
     const project = await createProject(tmpdir);
     const directory = project.createDirectory(tmpdir);
-    const { schema, transformer } = await makeBlogSchema();
+    const schema = loadBlogSchema();
 
     await generate({
       config: {},
@@ -53,7 +56,7 @@ describe('ai/transform', () => {
       project,
       schema,
       terminal: {} as never,
-      transformer
+      transformer: {} as never
     });
 
     //inspect the generated registry surface the runtime depends on.

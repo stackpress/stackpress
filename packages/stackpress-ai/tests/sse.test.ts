@@ -14,6 +14,7 @@ import {
   expectJson,
   MockResponse
 } from './helpers.js';
+import type { AuthContext } from '../src/types.js';
 
 type MessageResponse = {
   jsonrpc: '2.0';
@@ -47,6 +48,7 @@ type TestTransport = {
 //this narrowed session map lets the subclass update protected state without
 // leaning on any-casts.
 type SessionStore = Record<string, {
+  auth: AuthContext,
   server: { close: () => Promise<void> },
   transport: TestTransport
 }>;
@@ -75,9 +77,13 @@ class TestSseServer extends McpSseServer {
   /**
    * Create one fake SSE session and immediately write a handshake response.
    */
-  protected override async _handleSseConnection(res: ServerResponse) {
+  protected override async _handleSseConnection(
+    req: IncomingMessage,
+    res: ServerResponse
+  ) {
     this.created++;
     const sessionId = `sse-${this.created}`;
+    const auth = await this._authResolver(req);
     const server = {
       close: async () => undefined
     };
@@ -108,16 +114,21 @@ class TestSseServer extends McpSseServer {
       }
     };
 
-    sessions[sessionId] = { server, transport };
+    sessions[sessionId] = { auth, server, transport };
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/event-stream');
     res.end(`event: endpoint\ndata: ${JSON.stringify({ sessionId })}\n\n`);
   }
 }
 
-function makeServer() {
+function makeServer(
+  authResolver: (req: IncomingMessage) => Promise<AuthContext> = async () => {
+    return { kind: 'public' };
+  }
+) {
   return new TestSseServer(
     async () => null,
+    authResolver,
     '127.0.0.1',
     17759,
     '/sse',
@@ -137,7 +148,8 @@ type ConfigStub = {
     path<T>(key: string, fallback?: T): T
   },
   on?: (event: string, listener: Function) => void,
-  plugin?: <T = unknown>(name: string) => T
+  plugin?: <T = unknown>(name: string) => T,
+  listener?: () => Function | undefined
 };
 
 /**
@@ -158,7 +170,10 @@ function makeCtx(config: Record<string, unknown> = {}) {
 /**
  * Create one minimal attached-server stub that captures the request listener.
  */
-function makeAttachCtx(config: Record<string, unknown> = {}) {
+function makeAttachCtx(
+  config: Record<string, unknown> = {},
+  pluginFactory?: <T = unknown>(name: string) => T
+) {
   let listener: Function | undefined;
   const ctx: ConfigStub & {
     listener: () => Function | undefined
@@ -173,7 +188,10 @@ function makeAttachCtx(config: Record<string, unknown> = {}) {
         listener = callback;
       }
     },
-    plugin<T = unknown>() {
+    plugin<T = unknown>(name: string) {
+      if (pluginFactory) {
+        return pluginFactory<T>(name);
+      }
       return (async () => null) as T;
     },
     listener() {
@@ -313,6 +331,81 @@ describe('ai/sse', () => {
 
     expect(resolved.host).to.equal('10.0.0.5');
     expect(resolved.port).to.equal(18888);
+  });
+
+  it('should bind bearer auth from the initial sse connection', async () => {
+    const auth = {
+      kind: 'app',
+      token: { token: 'app-1:secret-1', id: 'app-1', secret: 'secret-1' },
+      application: { id: 'app-1', scopes: [ 'articles.read' ], secret: 'secret-1' }
+    } satisfies AuthContext;
+    const calls: AuthContext[] = [];
+    const ctx = makeAttachCtx(
+      {
+        mcp: {},
+        'mcp.sse.route': '/sse',
+        'mcp.messages': '/messages'
+      },
+      name => {
+        if (name !== 'mcp') {
+          return null as never;
+        }
+        return (async (resolved?: AuthContext) => {
+          calls.push(resolved || { kind: 'public' });
+          return {
+            connect: async () => undefined
+          };
+        }) as never;
+      }
+    );
+    const applicationCtx = {
+      config: {
+        path<T>(key: string, fallback?: T) {
+          const config = {
+            mcp: {},
+            'mcp.sse.route': '/sse',
+            'mcp.messages': '/messages'
+          } as Record<string, unknown>;
+          return (key in config ? config[key] : fallback) as T;
+        },
+        has() {
+          return true;
+        }
+      },
+      resolve<T = unknown>(event: string) {
+        if (event === 'application-detail') {
+          return Promise.resolve({ results: auth.application as T });
+        }
+        return Promise.resolve(null);
+      }
+    };
+
+    attachSseToServer(Object.assign(ctx, applicationCtx) as never);
+    const requestListener = ctx.listener();
+    expect(requestListener).to.be.a('function');
+
+    await requestListener!({
+      req: {
+        data() {
+          return null;
+        },
+        resource: makeAttachedRequest({
+          method: 'GET',
+          url: '/sse',
+          headers: {
+            host: 'localhost',
+            authorization: 'Bearer app-1:secret-1'
+          }
+        })
+      },
+      res: {
+        resource: makeAttachedResponse(),
+        stop() {}
+      }
+    });
+
+    expect(calls).to.have.length(1);
+    expect(calls[0]).to.deep.equal(auth);
   });
 
   it('should stop and abort the queue after an attached message request is handled', async () => {

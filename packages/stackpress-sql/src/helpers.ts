@@ -482,7 +482,8 @@ function getColumnSignature(build: CreateBuild, field: string): ColumnSignature 
     //change because the field name changed.
     unique: getKeyCountForField(build.unique, field),
     keys: getKeyCountForField(build.keys, field),
-    //foreign key shape also matters because it changes referential behavior
+    //foreign key shape also matters, but the local field name itself should
+    //not block rename detection.
     foreign: getForeignForField(build.foreign, field)
   };
 }
