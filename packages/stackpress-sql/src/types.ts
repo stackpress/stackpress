@@ -4,6 +4,7 @@ import type { Request, Response, Server } from '@stackpress/ingest';
 import type { Field, FlatValue } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 import type Create from '@stackpress/inquire/Create';
+import type Alter from '@stackpress/inquire/Alter';
 //stackpress-schema
 import type { 
   DefinitionInterfaceMap, 
@@ -13,7 +14,6 @@ import type SchemaInterface from 'stackpress-schema/SchemaInterface';
 //stackpress-sql
 import type StoreInterface from './interface/StoreInterface.js';
 import type ActionsInterface from './interface/ActionsInterface.js';
-import { makeCreateQuery } from './transform/helpers.js';
 
 export type ValueScalar = string | number | boolean | null;
 export type ValuePrimitive = ValueScalar | Date | Record<string, any>;
@@ -316,84 +316,25 @@ export type ClientPlugin<
   F extends Record<string, ClientFieldset> = Record<string, ClientFieldset>
 > = (nullable?: boolean) => Promise<Client<M, F>>;
 
-// Describes one foreign-key relation from a built create-table definition.
-export type ForeignBuild = {
-  //the referenced table name
-  table?: string,
-  //the referenced column name on that table
-  foreign?: string,
-  //the local column that owns the relation
-  local?: string,
-  //the on-delete action generated for the constraint
-  delete?: string,
-  //the on-update action generated for the constraint
-  update?: string
+export type DestructiveAlterBuild = ReturnType<Alter['build']>;
+
+//removed alter members reported by Inquire
+export type DestructiveAlterChanges = {
+  fields: DestructiveAlterBuild['fields']['remove'],
+  primary: DestructiveAlterBuild['primary']['remove'],
+  unique: DestructiveAlterBuild['unique']['remove'],
+  keys: DestructiveAlterBuild['keys']['remove'],
+  foreign: DestructiveAlterBuild['foreign']['remove']
 };
 
-// Captures the foreign-key semantics that still matter after a local rename.
-export type ForeignSignature = {
-  //the referenced table name
+//one table with destructive alter changes
+export type DestructiveAlterChangeSet = {
   table: string,
-  //the referenced column name on that table
-  foreign: string,
-  //the on-delete action generated for the constraint
-  delete: string,
-  //the on-update action generated for the constraint
-  update: string
+  changes: DestructiveAlterChanges
 };
 
-// Captures the SQL create-table shape produced by `makeCreateQuery().build()`.
-export type CreateBuild = ReturnType<ReturnType<typeof makeCreateQuery>['build']>;
-
-// Records one safe one-to-one rename that should preserve live column data.
-export type RenamePlan = {
-  //the model display name shown to the developer
-  model: string,
-  //the SQL table name used during migration
-  table: string,
-  //the old column display name from the schema
-  from: string,
-  //the old built field key used in SQL generation
-  fromField: string,
-  //the new column display name from the schema
-  to: string,
-  //the new built field key used in SQL generation
-  toField: string
-};
-
-// Records one ambiguous rename group that Stackpress should not guess through.
-export type RenameAmbiguity = {
-  //the model display name shown to the developer
-  model: string,
-  //the SQL table name used during migration
-  table: string,
-  //the removed SQL field keys that could not be matched safely
-  fromFields: string[],
-  //the added SQL field keys that could not be matched safely
-  toFields: string[]
-};
-
-// Captures the rename planning output shared by push and migrate flows.
-export type RenamePlanResult = {
-  //the safe one-to-one renames Stackpress can execute automatically
-  renames: RenamePlan[],
-  //the ambiguous rename groups that must fail safe by default
-  ambiguous: RenameAmbiguity[]
-};
-
-// Backward-compatible alias for older rename-risk wording.
-export type RenameRisk = RenamePlan;
-
-// Summarizes the SQL-relevant parts of a field so two columns can be compared.
-export type ColumnSignature = {
-  //the normalized base column definition
-  field: Field,
-  //whether the field participates in the primary key
-  primary: boolean,
-  //how many unique constraints include this field
-  unique: number,
-  //how many non-unique indexes include this field
-  keys: number,
-  //the normalized foreign-key relations attached to this field
-  foreign: ForeignSignature[]
+//all destructive changes in a schema diff
+export type DestructiveSchemaChanges = {
+  alters: DestructiveAlterChangeSet[],
+  drops: string[]
 };

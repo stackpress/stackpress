@@ -31,10 +31,9 @@ Runs the client-oriented generation pass and can write readable TypeScript into 
 
 Creates or updates the local database structure from the generated schema state.
 
-If a schema change is a clear one-to-one field rename, Stackpress preserves the
-existing data by issuing a column rename. For example, renaming `summary` to
-`seoSummary` updates the column name instead of dropping the old values and
-recreating the column.
+If a schema change removes fields, keys, constraints, or whole tables,
+Stackpress blocks the destructive diff by default so data is not silently lost.
+Use `--force` only when you intentionally want to accept that data-loss risk.
 
 ### `stackpress populate --b config -v`
 

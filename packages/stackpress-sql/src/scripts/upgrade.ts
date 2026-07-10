@@ -8,11 +8,12 @@ import Terminal from 'stackpress-server/Terminal';
 import type { ClientConfig } from 'stackpress-schema/types';
 import Revisions from 'stackpress-schema/Revisions';
 //stackpress-sql
+import type { DestructiveSchemaChanges } from '../types.js';
 import {
-  formatAmbiguousRenameMessage,
-  makeRenameQueries,
-  planColumnRenames,
-  rewriteCreateQueryWithRenames
+  formatDestructiveSchemaMessage,
+  getDestructiveAlterChanges,
+  hasDestructiveAlterChanges,
+  hasDestructiveSchemaChanges
 } from '../helpers.js';
 import { makeCreateQuery } from '../transform/helpers';
 
@@ -41,29 +42,19 @@ export default async function upgrade(
     );
     return;
   }
-  //plan safe one-to-one renames before the generic diff decides to drop data.
-  const plan = planColumnRenames(from.schema, to.schema);
   const forced = Boolean((terminal as Terminal & { force?: boolean })?.force);
-  if (plan.ambiguous.length > 0 && !forced) {
-    const message = formatAmbiguousRenameMessage(plan.ambiguous);
-    terminal?.control.error(message);
-    throw new Error(message);
-  }
   //create a registry from the history
-  const previous = Array.from(from.schema.models.values()).map(model =>
-    rewriteCreateQueryWithRenames(
-      makeCreateQuery(model),
-      forced ? [] : plan.renames
-    )
+  const previous = Array.from(from.schema.models.values()).map(
+    model => makeCreateQuery(model)
   );
   //create a registry from the new generated schema
   const current = Array.from(to.schema.models.values()).map(
     model => makeCreateQuery(model)
   );
   //this is where we are going to store all the queries
-  const queries: QueryObject[] = forced
-    ? []
-    : makeRenameQueries(database, plan.renames);
+  const queries: QueryObject[] = [];
+  //collect destructive changes before failing
+  const destructive: DestructiveSchemaChanges = { alters: [], drops: [] };
   //loop through all 'current' the models
   for (const schema of current) {
     const name = schema.build().table;
@@ -78,10 +69,19 @@ export default async function upgrade(
     }
     //the model was there before...
     try {
+      const alter = database.diff(before, schema);
+      const changes = getDestructiveAlterChanges(alter.build());
+      //save destructive alters for one complete warning
+      if (!forced && hasDestructiveAlterChanges(changes)) {
+        destructive.alters.push({ table: name, changes });
+        continue;
+      }
       //this could error if there were no differences found.
       //push all the alter statements
-      queries.push(...database.diff(before, schema).query());
-    } catch(e) {}
+      queries.push(...alter.query());
+    } catch {
+      //this could error if there were no differences found.
+    }
   }
   //loop through all 'previous' the models
   for (const schema of previous) {
@@ -89,10 +89,21 @@ export default async function upgrade(
     const after = current.find(to => to.build().table === name);
     //if the model is not there now
     if (!after) {
+      //save dropped tables for the same warning
+      if (!forced) {
+        destructive.drops.push(name);
+        continue;
+      }
       //we need to drop this table
       queries.push(database.dialect.drop(name));
       continue;
     }
+  }
+  //block once all destructive changes are known
+  if (!forced && hasDestructiveSchemaChanges(destructive)) {
+    const message = formatDestructiveSchemaMessage(destructive);
+    terminal?.control.error(message);
+    throw new Error(message);
   }
   //if there are queries to be made...
   if (queries.length) {

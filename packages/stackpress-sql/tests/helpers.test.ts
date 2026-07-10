@@ -1,8 +1,6 @@
 //tests
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-//stackpress-schema
-import Schema from 'stackpress-schema/Schema';
 //src
 import {
   toSqlString,
@@ -11,8 +9,11 @@ import {
   toSqlInteger,
   toSqlFloat,
   flatten,
+  formatDestructiveSchemaMessage,
   getAlias,
-  planColumnRenames,
+  getDestructiveAlterChanges,
+  hasDestructiveAlterChanges,
+  hasDestructiveSchemaChanges,
   storePathToAlias,
   storeSelectorToSqlSelector
 } from '../src/helpers.js';
@@ -165,183 +166,66 @@ describe('sql/helpers', () => {
   });
 });
 
-describe('sql/rename-plan', () => {
-  it('should plan a one-to-one rename for same-shape fields', () => {
-    const from = Schema.make(makeArticleSchema([
-      makeColumn('summary')
-    ]));
-    const to = Schema.make(makeArticleSchema([
-      makeColumn('seoSummary')
-    ]));
+describe('sql/destructive-guard', () => {
+  it('should collect removed alter members and detect destructive changes', () => {
+    const build = {
+      fields: { remove: [ 'summary' ] },
+      primary: { remove: [] },
+      unique: { remove: [ 'article_slug_unique' ] },
+      keys: { remove: [ 'article_summary_search' ] },
+      foreign: { remove: [ 'article_author_id_foreign' ] }
+    } as any;
 
-    //Treat a simple same-shape remove/add pair as a rename plan.
-    expect(planColumnRenames(from, to)).to.deep.equal({
-      ambiguous: [],
-      renames: [{
-        model: 'Article',
-        table: 'article',
-        from: 'summary',
-        fromField: 'summary',
-        to: 'seoSummary',
-        toField: 'seo_summary'
-      }]
+    const changes = getDestructiveAlterChanges(build);
+
+    expect(changes).to.deep.equal({
+      fields: [ 'summary' ],
+      primary: [],
+      unique: [ 'article_slug_unique' ],
+      keys: [ 'article_summary_search' ],
+      foreign: [ 'article_author_id_foreign' ]
     });
+    expect(hasDestructiveAlterChanges(changes)).to.equal(true);
   });
 
-  it('should preserve rename matches for unique and indexable fields', () => {
-    const from = Schema.make(makeArticleSchema([
-      makeColumn('summary', {
-        attributes: { unique: true, searchable: true }
-      })
-    ]));
-    const to = Schema.make(makeArticleSchema([
-      makeColumn('seoSummary', {
-        attributes: { unique: true, searchable: true }
-      })
-    ]));
+  it('should format an aggregate destructive warning message', () => {
+    const changes = {
+      alters: [
+        {
+          table: 'article',
+          changes: {
+            fields: [ 'summary', 'published' ],
+            primary: [],
+            unique: [],
+            keys: [],
+            foreign: [ 'article_author_id_foreign' ]
+          }
+        }
+      ],
+      drops: [ 'comment' ]
+    };
+    const message = formatDestructiveSchemaMessage(changes);
 
-    //Ignore generated index names so role-equivalent fields still rename cleanly.
-    expect(planColumnRenames(from, to).renames).to.deep.equal([{
-      model: 'Article',
-      table: 'article',
-      from: 'summary',
-      fromField: 'summary',
-      to: 'seoSummary',
-      toField: 'seo_summary'
-    }]);
+    expect(hasDestructiveSchemaChanges(changes)).to.equal(true);
+    expect(message).to.include('Destructive schema changes detected.');
+    expect(message).to.include('Table "article":');
+    expect(message).to.include('Removed fields: summary, published');
+    expect(message).to.include('Removed foreign keys: article_author_id_foreign');
+    expect(message).to.include('Dropped tables: comment');
+    expect(message).to.include('these destructive changes');
   });
 
-  it('should preserve rename matches for foreign-key columns', () => {
-    const from = Schema.make(makeRelationSchema('basicId'));
-    const to = Schema.make(makeRelationSchema('primaryBasicId'));
-
-    //Match the foreign-key column by semantics even though the local key name changes.
-    expect(planColumnRenames(from, to).renames).to.deep.equal([{
-      model: 'KitchenSink',
-      table: 'kitchen_sink',
-      from: 'basicId',
-      fromField: 'basic_id',
-      to: 'primaryBasicId',
-      toField: 'primary_basic_id'
-    }]);
-  });
-
-  it('should fail safe when multiple same-shape rename candidates exist', () => {
-    const from = Schema.make(makeArticleSchema([
-      makeColumn('summary'),
-      makeColumn('teaser')
-    ]));
-    const to = Schema.make(makeArticleSchema([
-      makeColumn('seoSummary'),
-      makeColumn('seoTeaser')
-    ]));
-
-    const plan = planColumnRenames(from, to);
-
-    //Refuse to guess when more than one new field could explain the same removal set.
-    expect(plan.renames).to.deep.equal([]);
-    expect(plan.ambiguous).to.have.length(1);
-    expect(plan.ambiguous[0]).to.include({
-      model: 'Article',
-      table: 'article'
-    });
-    expect(plan.ambiguous[0].fromFields).to.deep.equal([
-      'summary',
-      'teaser'
-    ]);
-    expect(plan.ambiguous[0].toFields).to.deep.equal([
-      'seo_summary',
-      'seo_teaser'
-    ]);
+  it('should treat empty removals as safe', () => {
+    expect(hasDestructiveAlterChanges({
+      fields: [],
+      primary: [],
+      unique: [],
+      keys: [],
+      foreign: []
+    })).to.equal(false);
+    expect(hasDestructiveSchemaChanges({
+      alters: [],
+      drops: []
+    })).to.equal(false);
   });
 });
-
-/**
- * Builds one article-model schema around the supplied columns.
- */
-function makeArticleSchema(columns: Array<Record<string, any>>) {
-  return {
-    model: {
-      Article: {
-        name: 'Article',
-        mutable: true,
-        attributes: {},
-        columns
-      }
-    }
-  };
-}
-
-/**
- * Builds one schema column with optional attribute overrides.
- */
-function makeColumn(
-  name: string,
-  options: {
-    attributes?: Record<string, unknown>,
-    required?: boolean,
-    type?: string
-  } = {}
-) {
-  return {
-    name,
-    type: options.type || 'String',
-    required: options.required ?? false,
-    multiple: false,
-    attributes: options.attributes || {}
-  };
-}
-
-/**
- * Builds a relation-backed schema that exposes a foreign-key storage column.
- */
-function makeRelationSchema(keyName: string) {
-  return {
-    model: {
-      BasicModel: {
-        name: 'BasicModel',
-        mutable: false,
-        attributes: {},
-        columns: [
-          {
-            name: 'id',
-            type: 'String',
-            attributes: { id: true },
-            required: true,
-            multiple: false
-          },
-          {
-            name: 'sink',
-            type: 'KitchenSink',
-            attributes: {},
-            required: true,
-            multiple: true
-          }
-        ]
-      },
-      KitchenSink: {
-        name: 'KitchenSink',
-        mutable: false,
-        attributes: {},
-        columns: [
-          {
-            name: keyName,
-            type: 'String',
-            attributes: { id: true },
-            required: true,
-            multiple: false
-          },
-          {
-            name: 'basic',
-            type: 'BasicModel',
-            attributes: {
-              relation: [ { local: keyName, foreign: 'id' } ]
-            },
-            required: true,
-            multiple: false
-          }
-        ]
-      }
-    }
-  };
-}
