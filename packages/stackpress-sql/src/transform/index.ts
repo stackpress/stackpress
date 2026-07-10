@@ -6,6 +6,7 @@ import type { ClientPluginProps } from 'stackpress-schema/types';
 import type Model from 'stackpress-schema/Model';
 import Schema from 'stackpress-schema/Schema';
 import { loadProjectFile } from 'stackpress-schema/transform/helpers';
+import { generateSqlModelTests } from 'stackpress-schema/transform/tests/aggregate.js';
 //stackpress-sql
 import generateActions from './actions/index.js';
 import generateEvents from './events/index.js';
@@ -33,6 +34,7 @@ export default async function generate(props: ClientPluginProps) {
 
   for (const model of schema.models.values()) {
     generateModel(directory, model);
+    generateSqlModelTests(directory, model);
   }
 
   //------------------------------------------------------------------//
