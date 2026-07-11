@@ -27,4 +27,9 @@ This file defines shared Agent Workspace terminology. Add project-specific terms
 
 ## Project Terms
 
-Add project-specific agent terminology below this heading.
+- **Generator**: an Idea code generator implemented by a Stackpress package,
+  usually under its `src/transform/` folder, that participates in the Idea
+  transformation lifecycle and emits or revises generated client artifacts.
+  In Stackpress discussions, "generator" does not mean a generated runtime
+  function that registers test suites unless that meaning is explicitly
+  qualified.
