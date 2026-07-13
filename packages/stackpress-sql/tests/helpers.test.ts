@@ -1,6 +1,9 @@
 //tests
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
+//modules
+import { Create, Engine, Mysql, Pgsql, Sqlite } from '@stackpress/inquire';
+import PGLiteConnection from '@stackpress/inquire-pglite/Connection';
 //src
 import {
   toSqlString,
@@ -9,15 +12,19 @@ import {
   toSqlInteger,
   toSqlFloat,
   flatten,
-  formatDestructiveSchemaMessage,
   getAlias,
-  getDestructiveAlterChanges,
-  hasDestructiveAlterChanges,
-  hasDestructiveSchemaChanges,
   storePathToAlias,
   storeSelectorToSqlSelector
 } from '../src/helpers.js';
 import type { StorePath, StoreSelector } from '../src/types.js';
+import {
+  formatDestructiveSchemaMessage,
+  getDestructiveAlterChanges,
+  hasDestructiveAlterChanges,
+  hasDestructiveSchemaChanges,
+  inspectSchemaChanges
+} from '../src/scripts/helpers.js';
+
 
 describe('sql/helpers', () => {
   it('should coerce values into SQL-safe primitives', () => {
@@ -228,4 +235,170 @@ describe('sql/destructive-guard', () => {
       drops: []
     })).to.equal(false);
   });
+
+  it('should detect destructive removals from real builder diffs', () => {
+    for (const [ name, engine ] of makeIntegrationCases()) {
+      const before = makeArticleSchema(engine);
+      const after = makeArticleSchema(engine, {
+        includeForeign: false,
+        includeIndexes: false,
+        includePrimary: false,
+        removeSummary: true
+      });
+
+      const inspected = inspectSchemaChanges(engine, [ before ], [ after ]);
+
+      expect(
+        inspected.destructive,
+        `Expected ${name} destructive diff to be collected before execution.`
+      ).to.deep.equal({
+        alters: [
+          {
+            table: 'article',
+            changes: {
+              fields: [ 'summary' ],
+              primary: [ 'id' ],
+              unique: [ 'article_summary_unique' ],
+              keys: [ 'article_summary_index' ],
+              foreign: [ 'article_author_id_foreign' ]
+            }
+          }
+        ],
+        drops: []
+      });
+      expect(
+        inspected.queries,
+        `Expected ${name} destructive diff to block generated queries until forced.`
+      ).to.deep.equal([]);
+    }
+  });
+
+  it('should emit real alter SQL from builder diffs when force is enabled', () => {
+    for (const [ name, engine ] of makeIntegrationCases()) {
+      const before = makeArticleSchema(engine);
+      const after = makeArticleSchema(engine, {
+        includeForeign: false,
+        includeIndexes: false,
+        includePrimary: false,
+        removeSummary: true
+      });
+
+      const inspected = inspectSchemaChanges(engine, [ before ], [ after ], true);
+      const queries = inspected.queries.map(query => query.query);
+
+      expect(
+        inspected.destructive,
+        `Expected ${name} forced diff to skip destructive warnings.`
+      ).to.deep.equal({ alters: [], drops: [] });
+      expect(
+        queries.length,
+        `Expected ${name} forced diff to emit at least one alter query.`
+      ).to.be.greaterThan(0);
+      expect(
+        queries.some(query => query.includes('summary')),
+        `Expected ${name} forced diff to include the removed field in emitted SQL.`
+      ).to.equal(true);
+    }
+  });
+
+  it('should treat real no-op diffs as safe across builder dialects', () => {
+    for (const [ name, engine ] of makeIntegrationCases()) {
+      const before = makeArticleSchema(engine, {
+        includeForeign: false,
+        includeIndexes: false
+      });
+      const after = makeArticleSchema(engine, {
+        includeForeign: false,
+        includeIndexes: false
+      });
+
+      const inspected = inspectSchemaChanges(engine, [ before ], [ after ]);
+
+      expect(
+        inspected,
+        `Expected ${name} no-op diff to stay empty.`
+      ).to.deep.equal({
+        queries: [],
+        destructive: {
+          alters: [],
+          drops: []
+        }
+      });
+    }
+  });
 });
+
+function makeIntegrationCases() {
+  return [
+    [ 'pgsql', makeEngine(Pgsql) ],
+    [ 'mysql', makeEngine(Mysql) ],
+    [ 'sqlite', makeEngine(Sqlite) ],
+    [ 'pglite', makePgliteEngine() ]
+  ] as const;
+}
+
+function makeEngine(dialect: typeof Pgsql) {
+  return new Engine({
+    dialect,
+    lastId: undefined,
+    before: async() => undefined,
+    format: request => request,
+    async query() {
+      return [];
+    },
+    async resource() {
+      return null;
+    },
+    async transaction(callback) {
+      return await callback(this as any);
+    }
+  });
+}
+
+function makePgliteEngine() {
+  return new Engine(new PGLiteConnection({
+    async exec() {
+      return [{ rows: [] }];
+    },
+    async query() {
+      return { rows: [] };
+    }
+  } as any));
+}
+
+function makeArticleSchema(
+  engine: Engine,
+  options: {
+    includeForeign?: boolean,
+    includeIndexes?: boolean,
+    includePrimary?: boolean,
+    removeSummary?: boolean
+  } = {}
+) {
+  const schema = new Create('article', engine)
+    .addField('id', { type: 'INTEGER' });
+
+  if (options.includePrimary !== false) {
+    schema.addPrimaryKey('id');
+  }
+
+  if (!options.removeSummary) {
+    schema.addField('summary', { type: 'TEXT', nullable: true });
+  }
+
+  if (options.includeIndexes !== false) {
+    schema
+      .addUniqueKey('article_summary_unique', 'summary')
+      .addKey('article_summary_index', 'summary');
+  }
+
+  if (options.includeForeign !== false) {
+    schema.addForeignKey('article_author_id_foreign', {
+      local: 'author_id',
+      foreign: 'id',
+      table: 'author'
+    });
+  }
+
+  return schema;
+}

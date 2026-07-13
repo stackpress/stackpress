@@ -1,7 +1,7 @@
 //modules
 import type { SchemaConfig } from '@stackpress/idea-parser';
 import type { Request, Response, Server } from '@stackpress/ingest';
-import type { Field, FlatValue } from '@stackpress/inquire/types';
+import type { FlatValue } from '@stackpress/inquire/types';
 import type Engine from '@stackpress/inquire/Engine';
 import type Create from '@stackpress/inquire/Create';
 import type Alter from '@stackpress/inquire/Alter';

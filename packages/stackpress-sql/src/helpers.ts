@@ -1,10 +1,7 @@
 //modules
-import type Alter from '@stackpress/inquire/Alter';
 import { isObject } from '@stackpress/lib/Nest';
 //stackpress/sql
 import type {
-  DestructiveSchemaChanges,
-  DestructiveAlterChanges,
   StorePath,
   StoreSelector
 } from './types.js';
@@ -239,68 +236,3 @@ export function storeSelectorToSqlSelector(selector: StoreSelector, q = '"') {
     //address_location
     : `${q}${column}${q}`;
 };
-
-export function getDestructiveAlterChanges(build: ReturnType<Alter['build']>) {
-  //collect only removed schema pieces
-  return {
-    fields: build.fields.remove,
-    primary: build.primary.remove,
-    unique: build.unique.remove,
-    keys: build.keys.remove,
-    foreign: build.foreign.remove
-  } satisfies DestructiveAlterChanges;
-}
-
-export function hasDestructiveAlterChanges(changes: DestructiveAlterChanges) {
-  //true when any alter category removes data
-  return Object.values(changes).some(values => values.length > 0);
-}
-
-export function hasDestructiveSchemaChanges(
-  changes: DestructiveSchemaChanges
-) {
-  //true when any table alter or drop is destructive
-  return changes.alters.length > 0 || changes.drops.length > 0;
-}
-
-export function formatDestructiveSchemaMessage(
-  changes: DestructiveSchemaChanges
-) {
-  //start with the high-level refusal reason
-  const lines = [
-    'Destructive schema changes detected.',
-    'Stackpress refused to apply this diff because it removes existing schema pieces and may drop data.'
-  ];
-
-  //list each destructive table diff
-  for (const alter of changes.alters) {
-    lines.push('', `Table "${alter.table}":`);
-    if (alter.changes.fields.length > 0) {
-      lines.push(`- Removed fields: ${alter.changes.fields.join(', ')}`);
-    }
-    if (alter.changes.primary.length > 0) {
-      lines.push(`- Removed primary keys: ${alter.changes.primary.join(', ')}`);
-    }
-    if (alter.changes.unique.length > 0) {
-      lines.push(`- Removed unique keys: ${alter.changes.unique.join(', ')}`);
-    }
-    if (alter.changes.keys.length > 0) {
-      lines.push(`- Removed indexes: ${alter.changes.keys.join(', ')}`);
-    }
-    if (alter.changes.foreign.length > 0) {
-      lines.push(`- Removed foreign keys: ${alter.changes.foreign.join(', ')}`);
-    }
-  }
-
-  //include dropped tables after altered tables
-  if (changes.drops.length > 0) {
-    lines.push('', `Dropped tables: ${changes.drops.join(', ')}`);
-  }
-
-  //end with the override instruction
-  lines.push(
-    '',
-    'Re-run with `--force` only if you intentionally want to accept these destructive changes.'
-  );
-  return lines.join('\n');
-}
