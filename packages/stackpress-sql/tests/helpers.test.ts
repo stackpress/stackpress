@@ -1,8 +1,9 @@
 //tests
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-//stackpress-schema
-import Schema from 'stackpress-schema/Schema';
+//modules
+import { Create, Engine, Mysql, Pgsql, Sqlite } from '@stackpress/inquire';
+import PGLiteConnection from '@stackpress/inquire-pglite/Connection';
 //src
 import {
   toSqlString,
@@ -12,11 +13,18 @@ import {
   toSqlFloat,
   flatten,
   getAlias,
-  planColumnRenames,
   storePathToAlias,
   storeSelectorToSqlSelector
 } from '../src/helpers.js';
 import type { StorePath, StoreSelector } from '../src/types.js';
+import {
+  formatDestructiveSchemaMessage,
+  getDestructiveAlterChanges,
+  hasDestructiveAlterChanges,
+  hasDestructiveSchemaChanges,
+  inspectSchemaChanges
+} from '../src/scripts/helpers.js';
+
 
 describe('sql/helpers', () => {
   it('should coerce values into SQL-safe primitives', () => {
@@ -165,183 +173,232 @@ describe('sql/helpers', () => {
   });
 });
 
-describe('sql/rename-plan', () => {
-  it('should plan a one-to-one rename for same-shape fields', () => {
-    const from = Schema.make(makeArticleSchema([
-      makeColumn('summary')
-    ]));
-    const to = Schema.make(makeArticleSchema([
-      makeColumn('seoSummary')
-    ]));
+describe('sql/destructive-guard', () => {
+  it('should collect removed alter members and detect destructive changes', () => {
+    const build = {
+      fields: { remove: [ 'summary' ] },
+      primary: { remove: [] },
+      unique: { remove: [ 'article_slug_unique' ] },
+      keys: { remove: [ 'article_summary_search' ] },
+      foreign: { remove: [ 'article_author_id_foreign' ] }
+    } as any;
 
-    //Treat a simple same-shape remove/add pair as a rename plan.
-    expect(planColumnRenames(from, to)).to.deep.equal({
-      ambiguous: [],
-      renames: [{
-        model: 'Article',
-        table: 'article',
-        from: 'summary',
-        fromField: 'summary',
-        to: 'seoSummary',
-        toField: 'seo_summary'
-      }]
+    const changes = getDestructiveAlterChanges(build);
+
+    expect(changes).to.deep.equal({
+      fields: [ 'summary' ],
+      primary: [],
+      unique: [ 'article_slug_unique' ],
+      keys: [ 'article_summary_search' ],
+      foreign: [ 'article_author_id_foreign' ]
     });
+    expect(hasDestructiveAlterChanges(changes)).to.equal(true);
   });
 
-  it('should preserve rename matches for unique and indexable fields', () => {
-    const from = Schema.make(makeArticleSchema([
-      makeColumn('summary', {
-        attributes: { unique: true, searchable: true }
-      })
-    ]));
-    const to = Schema.make(makeArticleSchema([
-      makeColumn('seoSummary', {
-        attributes: { unique: true, searchable: true }
-      })
-    ]));
+  it('should format an aggregate destructive warning message', () => {
+    const changes = {
+      alters: [
+        {
+          table: 'article',
+          changes: {
+            fields: [ 'summary', 'published' ],
+            primary: [],
+            unique: [],
+            keys: [],
+            foreign: [ 'article_author_id_foreign' ]
+          }
+        }
+      ],
+      drops: [ 'comment' ]
+    };
+    const message = formatDestructiveSchemaMessage(changes);
 
-    //Ignore generated index names so role-equivalent fields still rename cleanly.
-    expect(planColumnRenames(from, to).renames).to.deep.equal([{
-      model: 'Article',
-      table: 'article',
-      from: 'summary',
-      fromField: 'summary',
-      to: 'seoSummary',
-      toField: 'seo_summary'
-    }]);
+    expect(hasDestructiveSchemaChanges(changes)).to.equal(true);
+    expect(message).to.include('Destructive schema changes detected.');
+    expect(message).to.include('Table "article":');
+    expect(message).to.include('Removed fields: summary, published');
+    expect(message).to.include('Removed foreign keys: article_author_id_foreign');
+    expect(message).to.include('Dropped tables: comment');
+    expect(message).to.include('these destructive changes');
   });
 
-  it('should preserve rename matches for foreign-key columns', () => {
-    const from = Schema.make(makeRelationSchema('basicId'));
-    const to = Schema.make(makeRelationSchema('primaryBasicId'));
-
-    //Match the foreign-key column by semantics even though the local key name changes.
-    expect(planColumnRenames(from, to).renames).to.deep.equal([{
-      model: 'KitchenSink',
-      table: 'kitchen_sink',
-      from: 'basicId',
-      fromField: 'basic_id',
-      to: 'primaryBasicId',
-      toField: 'primary_basic_id'
-    }]);
+  it('should treat empty removals as safe', () => {
+    expect(hasDestructiveAlterChanges({
+      fields: [],
+      primary: [],
+      unique: [],
+      keys: [],
+      foreign: []
+    })).to.equal(false);
+    expect(hasDestructiveSchemaChanges({
+      alters: [],
+      drops: []
+    })).to.equal(false);
   });
 
-  it('should fail safe when multiple same-shape rename candidates exist', () => {
-    const from = Schema.make(makeArticleSchema([
-      makeColumn('summary'),
-      makeColumn('teaser')
-    ]));
-    const to = Schema.make(makeArticleSchema([
-      makeColumn('seoSummary'),
-      makeColumn('seoTeaser')
-    ]));
+  it('should detect destructive removals from real builder diffs', () => {
+    for (const [ name, engine ] of makeIntegrationCases()) {
+      const before = makeArticleSchema(engine);
+      const after = makeArticleSchema(engine, {
+        includeForeign: false,
+        includeIndexes: false,
+        includePrimary: false,
+        removeSummary: true
+      });
 
-    const plan = planColumnRenames(from, to);
+      const inspected = inspectSchemaChanges(engine, [ before ], [ after ]);
 
-    //Refuse to guess when more than one new field could explain the same removal set.
-    expect(plan.renames).to.deep.equal([]);
-    expect(plan.ambiguous).to.have.length(1);
-    expect(plan.ambiguous[0]).to.include({
-      model: 'Article',
-      table: 'article'
-    });
-    expect(plan.ambiguous[0].fromFields).to.deep.equal([
-      'summary',
-      'teaser'
-    ]);
-    expect(plan.ambiguous[0].toFields).to.deep.equal([
-      'seo_summary',
-      'seo_teaser'
-    ]);
+      expect(
+        inspected.destructive,
+        `Expected ${name} destructive diff to be collected before execution.`
+      ).to.deep.equal({
+        alters: [
+          {
+            table: 'article',
+            changes: {
+              fields: [ 'summary' ],
+              primary: [ 'id' ],
+              unique: [ 'article_summary_unique' ],
+              keys: [ 'article_summary_index' ],
+              foreign: [ 'article_author_id_foreign' ]
+            }
+          }
+        ],
+        drops: []
+      });
+      expect(
+        inspected.queries,
+        `Expected ${name} destructive diff to block generated queries until forced.`
+      ).to.deep.equal([]);
+    }
+  });
+
+  it('should emit real alter SQL from builder diffs when force is enabled', () => {
+    for (const [ name, engine ] of makeIntegrationCases()) {
+      const before = makeArticleSchema(engine);
+      const after = makeArticleSchema(engine, {
+        includeForeign: false,
+        includeIndexes: false,
+        includePrimary: false,
+        removeSummary: true
+      });
+
+      const inspected = inspectSchemaChanges(engine, [ before ], [ after ], true);
+      const queries = inspected.queries.map(query => query.query);
+
+      expect(
+        inspected.destructive,
+        `Expected ${name} forced diff to skip destructive warnings.`
+      ).to.deep.equal({ alters: [], drops: [] });
+      expect(
+        queries.length,
+        `Expected ${name} forced diff to emit at least one alter query.`
+      ).to.be.greaterThan(0);
+      expect(
+        queries.some(query => query.includes('summary')),
+        `Expected ${name} forced diff to include the removed field in emitted SQL.`
+      ).to.equal(true);
+    }
+  });
+
+  it('should treat real no-op diffs as safe across builder dialects', () => {
+    for (const [ name, engine ] of makeIntegrationCases()) {
+      const before = makeArticleSchema(engine, {
+        includeForeign: false,
+        includeIndexes: false
+      });
+      const after = makeArticleSchema(engine, {
+        includeForeign: false,
+        includeIndexes: false
+      });
+
+      const inspected = inspectSchemaChanges(engine, [ before ], [ after ]);
+
+      expect(
+        inspected,
+        `Expected ${name} no-op diff to stay empty.`
+      ).to.deep.equal({
+        queries: [],
+        destructive: {
+          alters: [],
+          drops: []
+        }
+      });
+    }
   });
 });
 
-/**
- * Builds one article-model schema around the supplied columns.
- */
-function makeArticleSchema(columns: Array<Record<string, any>>) {
-  return {
-    model: {
-      Article: {
-        name: 'Article',
-        mutable: true,
-        attributes: {},
-        columns
-      }
-    }
-  };
+function makeIntegrationCases() {
+  return [
+    [ 'pgsql', makeEngine(Pgsql) ],
+    [ 'mysql', makeEngine(Mysql) ],
+    [ 'sqlite', makeEngine(Sqlite) ],
+    [ 'pglite', makePgliteEngine() ]
+  ] as const;
 }
 
-/**
- * Builds one schema column with optional attribute overrides.
- */
-function makeColumn(
-  name: string,
+function makeEngine(dialect: typeof Pgsql) {
+  return new Engine({
+    dialect,
+    lastId: undefined,
+    before: async() => undefined,
+    format: request => request,
+    async query() {
+      return [];
+    },
+    async resource() {
+      return null;
+    },
+    async transaction(callback) {
+      return await callback(this as any);
+    }
+  });
+}
+
+function makePgliteEngine() {
+  return new Engine(new PGLiteConnection({
+    async exec() {
+      return [{ rows: [] }];
+    },
+    async query() {
+      return { rows: [] };
+    }
+  } as any));
+}
+
+function makeArticleSchema(
+  engine: Engine,
   options: {
-    attributes?: Record<string, unknown>,
-    required?: boolean,
-    type?: string
+    includeForeign?: boolean,
+    includeIndexes?: boolean,
+    includePrimary?: boolean,
+    removeSummary?: boolean
   } = {}
 ) {
-  return {
-    name,
-    type: options.type || 'String',
-    required: options.required ?? false,
-    multiple: false,
-    attributes: options.attributes || {}
-  };
-}
+  const schema = new Create('article', engine)
+    .addField('id', { type: 'INTEGER' });
 
-/**
- * Builds a relation-backed schema that exposes a foreign-key storage column.
- */
-function makeRelationSchema(keyName: string) {
-  return {
-    model: {
-      BasicModel: {
-        name: 'BasicModel',
-        mutable: false,
-        attributes: {},
-        columns: [
-          {
-            name: 'id',
-            type: 'String',
-            attributes: { id: true },
-            required: true,
-            multiple: false
-          },
-          {
-            name: 'sink',
-            type: 'KitchenSink',
-            attributes: {},
-            required: true,
-            multiple: true
-          }
-        ]
-      },
-      KitchenSink: {
-        name: 'KitchenSink',
-        mutable: false,
-        attributes: {},
-        columns: [
-          {
-            name: keyName,
-            type: 'String',
-            attributes: { id: true },
-            required: true,
-            multiple: false
-          },
-          {
-            name: 'basic',
-            type: 'BasicModel',
-            attributes: {
-              relation: [ { local: keyName, foreign: 'id' } ]
-            },
-            required: true,
-            multiple: false
-          }
-        ]
-      }
-    }
-  };
+  if (options.includePrimary !== false) {
+    schema.addPrimaryKey('id');
+  }
+
+  if (!options.removeSummary) {
+    schema.addField('summary', { type: 'TEXT', nullable: true });
+  }
+
+  if (options.includeIndexes !== false) {
+    schema
+      .addUniqueKey('article_summary_unique', 'summary')
+      .addKey('article_summary_index', 'summary');
+  }
+
+  if (options.includeForeign !== false) {
+    schema.addForeignKey('article_author_id_foreign', {
+      local: 'author_id',
+      foreign: 'id',
+      table: 'author'
+    });
+  }
+
+  return schema;
 }
