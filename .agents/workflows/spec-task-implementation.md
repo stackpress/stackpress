@@ -38,6 +38,19 @@ Do not invent additional status values unless the user asks for them. When work 
 
 ## 1. Propose Implementation Plan
 
+Separate validation from acceptance when writing a sprint or task:
+
+- **Validation** is technical evidence produced by tests, builds, type checks,
+  linting, imports, package inspection, automated browser checks, or other
+  machine-verifiable checks.
+- **Acceptance** is an output a human can visually or experientially review
+  without reviewing source code or interpreting automated test results. Examples
+  include a rendered interface, readable document, screenshot, recording,
+  visible command behavior, or other directly inspectable result.
+- If a task has no meaningful human-reviewable output, record
+  `Acceptance: not applicable` with a short reason. Do not relabel validation as
+  acceptance merely to give every task an acceptance criterion.
+
 1. Confirm the spec is Frozen or that the user wants an early implementation plan.
 2. Create `.agents/specs/<spec-id>/tasks/` if it is absent.
 3. Create or update `.agents/specs/<spec-id>/tasks/sprint.md`.
@@ -51,7 +64,8 @@ Use this planning rubric to design the sequence. Omit, merge, or rename layers t
 1. Determine or create a reusable foundation layer.
    - Examples: templating, state management, resources, assets, icons, shared utilities, data contracts, interfaces, model types, or configuration.
    - Verification: unit tests where applicable.
-   - Acceptance: code review, or explicit user abstention from review.
+   - Acceptance: a human-reviewable sample or document when one exists;
+     otherwise, not applicable with a reason.
 2. Determine or create a temporary placeholder layer.
    - Examples: text examples, sample images, sample code, fixtures, fake endpoints, mocked providers, test doubles, or scaffold data.
    - Verification: none unless placeholders affect runtime behavior, tests, or user-visible outputs.

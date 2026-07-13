@@ -49,6 +49,10 @@ The aggregate Stackpress plugin registers server, schema, language, CSRF, SQL,
 view, session, API, and admin in explicit order. AI and desktop are optional
 packages loaded separately when configured.
 
+Default aggregate inclusion is reserved for commonly used capabilities that can
+apply across most web, mobile, and desktop cases. Explicit web-only, mobile-only,
+desktop-only, and AI cases remain optional and outside the default aggregate.
+
 Current order matters where:
 
 - schema registers the generated-client loader;
@@ -57,8 +61,9 @@ Current order matters where:
 - schema establishes generated files later transforms expand or replace;
 - access surfaces expect operational events to exist before calls arrive.
 
-Treat this as current checkout behavior. Do not promise permanent ordering until
-a public compatibility policy defines it.
+The current plugin and transform ordering is intentional contributor behavior and
+must be preserved. Stackpress has no independent transform dependency or
+ordering API, so verify order-sensitive changes against actual composition.
 
 ## Event Capability Bus
 

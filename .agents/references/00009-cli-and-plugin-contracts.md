@@ -27,6 +27,12 @@ Other root commands delegate to `packages/stackpress-server/bin.ts` when that
 monorepo payload exists. A packed lightweight executable cannot run runtime
 events alone and directs callers to an installed project.
 
+For installed framework packages, `packages/stackpress-server/bin.ts` owns the
+runtime `stackpress` executable. The aggregate `packages/stackpress` package
+receives that executable through its dependency on `stackpress-server`; it
+should not declare a second `bin` unless it intentionally adds and verifies a
+real forwarding entrypoint.
+
 ## Runtime Command Model
 The terminal parses the command, registers itself as plugin `terminal`,
 bootstraps plugins, resolves `config`, `listen`, and `route`, then emits the
@@ -98,8 +104,9 @@ Order matters because listeners share ordered lifecycle events:
 - admin loads generated model routes during `route`;
 - schema, SQL, view, admin, and optional AI append transforms on `idea`.
 
-This is compatibility-sensitive checkout behavior, not a versioned plugin
-dependency protocol.
+This order is intentional contributor behavior and compatibility-sensitive. It
+is not backed by an independent plugin/transform dependency protocol, so changes
+must preserve and verify the actual aggregate order.
 
 ## Package Plugin Pattern
 A plugin is a callable receiving the Ingest `Server`. Registration should be
@@ -141,3 +148,7 @@ Anchors: root `bin/stackpress.mjs`; server terminal/bin/events/scripts/plugin;
 aggregate `packages/stackpress/src/plugin.ts`; package plugins; schema/view/SQL/
 AI/desktop event and script entrypoints; template scripts. Source-observed
 behavior is authority; existing CLI/plugin docs are coverage benchmarks.
+
+Load [Contributor Source Patterns](00018-contributor-source-patterns.md) when a
+command or plugin change needs exact source placement, generator ownership,
+aggregate inclusion criteria, or the package verification target.

@@ -47,7 +47,8 @@ Do not merge those authorities into one version claim.
 ## Current Safety Signals
 
 - nullable generated-client loading allows pre-generation bootstrap paths;
-- generation prunes stale schema files and avoids some duplicate exports;
+- schema generation prunes stale schema/model/column files and generation avoids
+  some duplicate exports;
 - generated packages declare granular exports and generated tests;
 - revisions preserve changed schema snapshots;
 - clear field renames can preserve database columns;
@@ -57,6 +58,16 @@ Do not merge those authorities into one version claim.
   contracts.
 
 These checks do not form a universal compatibility handshake.
+
+## Current Exceptions And Enforcement Gaps
+
+- Per-generator rename/removal cleanup is not universally enforced outside
+  stackpress-schema; purge and clean regeneration are allowed recovery paths.
+- `packages/stackpress-sql/src/helpers.ts` is a maintainer-declared current
+  violation pending separate repair and must not be copied as canonical design.
+- Every changed package should pass tests above 90% coverage for new work, but
+  current package coverage and root orchestration do not yet enforce that target.
+- Root `yarn test` currently exercises server, schema, and SQL only.
 
 ## Missing Current Guarantees
 
@@ -89,7 +100,8 @@ Do not claim the framework currently provides:
 Choose checks according to the affected contract:
 
 - clean and repeat generation;
-- stale-file, rename, and removal behavior;
+- promised stale-file, rename, and removal behavior, or clean regeneration where
+  the generator does not promise cleanup;
 - generated package compile/import;
 - package tarball and exports;
 - supported adapter/connector combinations;
@@ -97,6 +109,7 @@ Choose checks according to the affected contract:
 - authorization/error behavior across affected surfaces;
 - scaffold and skill acceptance against current package APIs;
 - template or end-to-end flow when shared behavior changes.
+- owning package tests passing above 90% coverage for new contributions.
 
 Use "architectural," "implemented," "tested," "demonstrated," and "supported"
 precisely. Do not upgrade an example or export into a support promise.

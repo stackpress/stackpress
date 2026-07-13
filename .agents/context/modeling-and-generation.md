@@ -41,6 +41,11 @@ runtime consumer, fallback, and compatibility boundary.
 
 The generated client is executable application state, not passive types.
 
+Generation is distinct from package compilation and Reactus application build.
+Package compilation emits framework CJS/ESM code; Idea generation uses installed
+transforms to emit application-specific client state; Reactus build later
+produces view and deployment artifacts.
+
 ## Transform Ownership
 
 Schema, SQL, view, admin, and AI each own transforms because each package knows
@@ -49,11 +54,16 @@ shared files such as the generated index and package manifest.
 
 Consequences:
 
-- transform order matters;
+- transform order is intentional and must be preserved;
 - transforms must be repeatable and avoid duplicate entries;
-- renamed/removed declarations must not leave stale files;
 - generator and runtime changes should be made and reviewed together;
 - generated output must compile and remain importable through declared exports.
+
+Stackpress-schema owns explicit pruning for stale generated schema/model/column
+files. Equivalent rename/removal cleanup is not a universal guarantee of SQL,
+view, admin, AI, or future transforms. Developers may purge the generated client
+and regenerate from a clean output. Document and test cleanup only where the
+owning generator promises it.
 
 Do not use generated files as the durable implementation owner.
 
@@ -98,7 +108,8 @@ For model or generator changes, check:
 1. Idea parse/compile and normalized semantics;
 2. clean generation;
 3. repeat-generation stability;
-4. rename/removal and stale-file behavior;
+4. promised rename/removal cleanup, or clean-output regeneration when cleanup is
+   not part of the owning transform contract;
 5. generated package exports and compilation;
 6. runtime loading and lifecycle registration;
 7. rendered behavior for UI changes;
