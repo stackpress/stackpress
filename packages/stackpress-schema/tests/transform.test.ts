@@ -10,6 +10,8 @@ import { expect } from 'chai';
 //stackpress-schema
 import Schema from '../src/Schema.js';
 import { pruneGeneratedSchemaFiles } from '../src/transform/helpers.js';
+import generatePackage from '../src/transform/package.js';
+import generateSchemaTests from '../src/transform/tests/schema.js';
 import {
   generateModelTests,
   generateTests
@@ -76,14 +78,14 @@ describe('schema/transform/tests', () => {
     });
     const directory = project.createDirectory('/client');
     const modelNames = [
-      'Application',
-      'Article',
-      'Auth',
-      'Catalog',
-      'Category',
-      'Comment',
+      'Session',
       'Profile',
-      'Session'
+      'Comment',
+      'Category',
+      'Catalog',
+      'Auth',
+      'Article',
+      'Application'
     ];
     const schema = Schema.make({
       model: Object.fromEntries(modelNames.map(name => [
@@ -151,6 +153,9 @@ describe('schema/transform/tests', () => {
       /import runAllProfileTests from ['"]\.\/Profile\/tests\.js['"];/
     );
     expect(clientSource).to.contain('runAllProfileTests(engine);');
+    expect(clientSource.indexOf('runAllApplicationTests')).to.be.lessThan(
+      clientSource.indexOf('runAllSessionTests')
+    );
     //Every blog model should expose and invoke its model runner.
     for (const name of modelNames) {
       expect(clientSource).to.contain(`runAll${name}Tests`);
@@ -158,6 +163,117 @@ describe('schema/transform/tests', () => {
     }
     expect(clientSource).to.contain(
       'export default function runAllTests'
+    );
+  });
+
+  it('should generate a deterministic empty root test aggregator', () => {
+    const project = new Project({
+      useInMemoryFileSystem: true,
+      manipulationSettings: {
+        indentationText: IndentationText.TwoSpaces
+      }
+    });
+    const directory = project.createDirectory('/client');
+    const schema = Schema.make({ model: {} });
+
+    generateTests(directory, schema);
+    generateTests(directory, schema);
+
+    const source = project
+      .getSourceFileOrThrow('/client/tests.ts')
+      .getFullText();
+
+    expect(source.match(/^import /gm) || []).to.have.length(0);
+    expect(source).to.contain('export default function runAllTests');
+  });
+
+  it('should expose root and model test aggregators from the client package', async () => {
+    const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'stackpress-package-'));
+    const project = new Project();
+
+    try {
+      await fsp.writeFile(path.join(root, 'package.json'), '{}');
+      const directory = project.addDirectoryAtPath(root);
+      const schema = Schema.make({
+        model: {
+          Profile: {
+            name: 'Profile',
+            mutable: true,
+            attributes: {},
+            columns: []
+          }
+        }
+      });
+
+      generatePackage(directory, schema, 'blog-client');
+
+      const packageJson = JSON.parse(
+        await fsp.readFile(path.join(root, 'package.json'), 'utf8')
+      );
+      expect(packageJson.exports['./tests']).to.equal('./tests.js');
+      expect(packageJson.exports['./Profile/tests']).to.equal(
+        './Profile/tests.js'
+      );
+      expect(packageJson.typesVersions['*'].tests).to.deep.equal([
+        './tests.d.ts'
+      ]);
+      expect(packageJson.typesVersions['*']['./Profile/tests']).to.deep.equal([
+        './Profile/tests.d.ts'
+      ]);
+    } finally {
+      await fsp.rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it('should generate runtime schema and column assertions', () => {
+    const project = new Project({
+      useInMemoryFileSystem: true,
+      manipulationSettings: {
+        indentationText: IndentationText.TwoSpaces
+      }
+    });
+    const directory = project.createDirectory('/client');
+    const schema = Schema.make({
+      model: {
+        Profile: {
+          name: 'Profile',
+          mutable: true,
+          attributes: {},
+          columns: [
+            {
+              name: 'id',
+              type: 'String',
+              required: true,
+              multiple: false,
+              attributes: { id: true }
+            },
+            {
+              name: 'tags',
+              type: 'String',
+              required: false,
+              multiple: true,
+              attributes: {}
+            }
+          ]
+        }
+      }
+    });
+    const model = Array.from(schema.models.values())[0];
+
+    generateSchemaTests(directory, model);
+
+    const schemaSource = project
+      .getSourceFileOrThrow('/client/Profile/tests/ProfileSchema.test.ts')
+      .getFullText();
+    const columnSource = project
+      .getSourceFileOrThrow('/client/Profile/tests/columns/TagsColumn.test.ts')
+      .getFullText();
+    expect(schemaSource).to.not.contain('async () => {}');
+    expect(schemaSource).to.contain('schema.serialize');
+    expect(schemaSource).to.contain('schema.unserialize');
+    expect(columnSource).to.not.contain('engine: Engine');
+    expect(columnSource).to.match(
+      /expect\(column\.assert\(\[['"]foo['"], ['"]bar['"]\]\)\)\.to\.be\.null/
     );
   });
 });

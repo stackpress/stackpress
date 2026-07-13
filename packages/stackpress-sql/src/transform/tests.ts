@@ -77,3 +77,4 @@ export function generateModelTests(directory: Directory, model: Model) {
     ].join('\n'));
   }
 };
+

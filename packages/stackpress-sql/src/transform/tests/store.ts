@@ -80,6 +80,24 @@ export default function generate(directory: Directory, model: Model) {
     parameters: [{ name: 'engine', type: 'Engine' }],
     statements: renderCode(TEMPLATE.DESCRIBE, {
       model: model.name.toClassName(),
+      table: model.name.toTableName(),
+      columns: model.columns.filter(column => !column.type.model).map(column => ({
+        column: column.name.toString(),
+        snake: column.name.snakeCase,
+        value: column.type.multiple
+          ? "['sample']"
+          : column.type.name === 'Boolean'
+          ? 'true'
+          : [ 'Number', 'Float', 'Integer' ].includes(column.type.name)
+          ? '123'
+          : [ 'Date', 'Time', 'Datetime' ].includes(column.type.name)
+          ? "new Date('2024-01-01T00:00:00.000Z')"
+          : [ 'Object', 'Json', 'Hash' ].includes(column.type.name)
+          ? "{ sample: 'value' }"
+          : column.type.enum
+          ? JSON.stringify(Object.values(column.type.enum)[0])
+          : "'sample'"
+      })).toArray()
     })
   });
 };
@@ -88,13 +106,32 @@ export const TEMPLATE = {
 
 DESCRIBE:
 `describe('<%model%> Store', async () => {
-  it('should make count query', async () => {});
-  it('should make alter query', async () => {});
-  it('should make delete query', async () => {});
-  it('should make insert query', async () => {});
-  it('should make select query', async () => {});
-  it('should make update query', async () => {});
-  it('should make where clause', async () => {});
+  it('should expose its generated table', async () => {
+    const store = new <%model%>Store();
+    expect(store.table).to.equal('<%table%>');
+  });
+  it('should convert generated column values for SQL', async () => {
+    const store = new <%model%>Store();
+    expect(store.toSqlValue('__unknown__', 'sample')).to.equal('sample');
+    <%#@:columns%>
+      expect(store.toSqlValue('<%column%>', <%value%>)).to.not.be.undefined;
+    <%/@:columns%>
+  });
+  it('should scalarize and unscalarize generated columns', async () => {
+    const store = new <%model%>Store();
+    const scalarized = store.scalarize({
+      <%#@:columns%>
+        <%column%>: <%value%>,
+      <%/@:columns%>
+    });
+    <%#@:columns%>
+      expect(scalarized).to.have.property('<%snake%>');
+    <%/@:columns%>
+    const actual = store.unscalarize(scalarized);
+    <%#@:columns%>
+      expect(actual).to.have.property('<%column%>');
+    <%/@:columns%>
+  });
 });`,
 
 };
