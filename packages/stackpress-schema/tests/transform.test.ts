@@ -11,10 +11,9 @@ import { expect } from 'chai';
 import Schema from '../src/Schema.js';
 import { pruneGeneratedSchemaFiles } from '../src/transform/helpers.js';
 import {
-  generateSchemaModelTests,
-  generateSqlModelTests,
-  generateTestsIndex
-} from '../src/transform/tests/aggregate.js';
+  generateModelTests,
+  generateTests
+} from '../src/transform/tests.js';
 
 describe('schema/transform/helpers', () => {
   it('should remove stale generated files left behind by renamed fields', async () => {
@@ -67,7 +66,7 @@ describe('schema/transform/helpers', () => {
   });
 });
 
-describe('schema/transform/tests/aggregate', () => {
+describe('schema/transform/tests', () => {
   it('should generate shared model and client test aggregators', async () => {
     const project = new Project({
       useInMemoryFileSystem: true,
@@ -76,10 +75,21 @@ describe('schema/transform/tests/aggregate', () => {
       }
     });
     const directory = project.createDirectory('/client');
+    const modelNames = [
+      'Application',
+      'Article',
+      'Auth',
+      'Catalog',
+      'Category',
+      'Comment',
+      'Profile',
+      'Session'
+    ];
     const schema = Schema.make({
-      model: {
-        Profile: {
-          name: 'Profile',
+      model: Object.fromEntries(modelNames.map(name => [
+        name,
+        {
+          name,
           mutable: true,
           attributes: {},
           columns: [
@@ -90,27 +100,29 @@ describe('schema/transform/tests/aggregate', () => {
               multiple: false,
               attributes: { id: true }
             },
-            {
+            ...(name === 'Profile' ? [{
               name: 'name',
               type: 'String',
               required: true,
               multiple: false,
               attributes: {}
-            }
+            }] : [])
           ]
         }
-      }
+      ]))
     });
-    const model = Array.from(schema.models.values())[0];
+    const models = Array.from(schema.models.values());
+    const model = models.find(
+      model => model.name.toClassName() === 'Profile'
+    )!;
 
-    //Generate the same files twice to prove this path is idempotent when
-    //schema and sql both contribute to one tests.ts file incrementally.
-    generateSchemaModelTests(directory, model);
-    generateSqlModelTests(directory, model);
-    generateSchemaModelTests(directory, model);
-    generateSqlModelTests(directory, model);
-    generateTestsIndex(directory, [ model ]);
-    generateTestsIndex(directory, [ model ]);
+    //Generate the same files twice to prove schema aggregation is idempotent.
+    for (let pass = 0; pass < 2; pass++) {
+      for (const model of models) {
+        generateModelTests(directory, model);
+      }
+      generateTests(directory, schema);
+    }
 
     const modelSource = project
       .getSourceFileOrThrow('/client/Profile/tests.ts')
@@ -118,41 +130,35 @@ describe('schema/transform/tests/aggregate', () => {
     const clientSource = project
       .getSourceFileOrThrow('/client/tests.ts')
       .getFullText();
-    const sqlRunner = modelSource.slice(
-      modelSource.indexOf('export function runSqlTests')
-    );
-
     //The model entrypoint should import every generated test module once.
     expect(modelSource.match(/import IdColumnTests/g) || []).to.have.length(1);
     expect(modelSource.match(/import NameColumnTests/g) || []).to.have.length(1);
     expect(modelSource).to.match(
       /import ProfileSchemaTests from ['"]\.\/tests\/ProfileSchema\.test\.js['"];/
     );
-    expect(modelSource).to.match(
-      /import ProfileStoreTests from ['"]\.\/tests\/ProfileStore\.test\.js['"];/
-    );
-    expect(modelSource).to.match(
-      /import ProfileActionTests from ['"]\.\/tests\/ProfileActions\.test\.js['"];/
-    );
-    expect(modelSource).to.match(
-      /import ProfileEventsTests from ['"]\.\/tests\/events\.test\.js['"];/
-    );
 
-    //Schema owns schema and column runners; sql owns store/action/event runners.
-    expect(modelSource).to.contain('runSchemaTests(engine);');
-    expect(modelSource).to.contain('runSqlTests(engine);');
-    expect(sqlRunner).to.contain('ProfileStoreTests');
-    expect(sqlRunner).to.contain('ProfileActionTests');
-    expect(sqlRunner).to.contain('ProfileEventsTests');
-    expect(sqlRunner).to.not.contain('IdColumnTests');
-    expect(sqlRunner).to.not.contain('NameColumnTests');
+    //The model entrypoint should expose one runner for all schema tests.
+    expect(modelSource).to.contain(
+      'export default function runAllProfileTests'
+    );
+    expect(modelSource).to.contain('ProfileSchemaTests');
+    expect(modelSource).to.contain('IdColumnTests');
+    expect(modelSource).to.contain('NameColumnTests');
 
     //The top-level entrypoint should only delegate to each model entrypoint.
-    expect(clientSource.match(/import ProfileTests/g) || []).to.have.length(1);
+    expect(clientSource.match(/import runAllProfileTests/g) || []).to.have.length(1);
     expect(clientSource).to.match(
-      /import ProfileTests from ['"]\.\/Profile\/tests\.js['"];/
+      /import runAllProfileTests from ['"]\.\/Profile\/tests\.js['"];/
     );
-    expect(clientSource).to.contain('ProfileTests(engine);');
+    expect(clientSource).to.contain('runAllProfileTests(engine);');
+    //Every blog model should expose and invoke its model runner.
+    for (const name of modelNames) {
+      expect(clientSource).to.contain(`runAll${name}Tests`);
+      expect(clientSource).to.contain(`runAll${name}Tests(engine);`);
+    }
+    expect(clientSource).to.contain(
+      'export default function runAllTests'
+    );
   });
 });
 
