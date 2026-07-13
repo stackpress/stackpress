@@ -131,10 +131,6 @@
       "require": "./cjs/config/definitions.js",
       "import": "./esm/config/definitions.js"
     },
-    "./config/typemaps": {
-      "require": "./cjs/config/typemaps.js",
-      "import": "./esm/config/typemaps.js"
-    },
     "./transform/helpers": {
       "require": "./cjs/transform/helpers.js",
       "import": "./esm/transform/helpers.js"
@@ -280,9 +276,6 @@
       ],
       "config/definitions": [
         "./cjs/config/definitions.d.ts"
-      ],
-      "config/typemaps": [
-        "./cjs/config/typemaps.d.ts"
       ],
       "transform/helpers": [
         "./cjs/transform/helpers.d.ts"

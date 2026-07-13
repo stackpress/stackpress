@@ -71,13 +71,16 @@ Entry package:
 
  - `packages/stackpress` aggregates Stackpress library imports and plugin entrypoints into one package
 
-Application packages:
+Application templates:
 
- - `packages/www` is the private Stackpress documentation and marketing website app, with route/view plugins for home, concepts, guides, API docs, and Stackpress-specific content
+ - `templates/website` is the Stackpress documentation and marketing website app, with route/view plugins and website-specific configuration
+
+Optional packages:
+
+ - `packages/stackpress-desktop` is the active Electron-based desktop target package; it is built separately, loaded explicitly by applications that need it, and is not part of the default aggregate plugin
 
 Planning-only package directories:
 
- - `packages/stackpress-desktop` currently contains plans for a future Electron-based desktop target package and is not an active workspace yet
  - `packages/stackpress-studio` currently contains plans for a future browser-based Stackpress schema/idea authoring GUI and is not an active workspace yet
 
 Related libraries published on NPM that are often relevant when tracing functionality:

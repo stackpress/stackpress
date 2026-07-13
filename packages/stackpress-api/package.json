@@ -81,7 +81,6 @@
   "files": [
     "cjs",
     "esm",
-    "bin.ts",
     "LICENSE",
     "README.md",
     "schema.idea",

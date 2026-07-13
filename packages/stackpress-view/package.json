@@ -205,7 +205,6 @@
   "files": [
     "cjs",
     "esm",
-    "bin.ts",
     "LICENSE",
     "README.md",
     "styles.css"

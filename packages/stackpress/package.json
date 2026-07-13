@@ -42,9 +42,6 @@
   "plugins": [
     "./cjs/plugin.js"
   ],
-  "bin": {
-    "stackpress": "./bin.ts"
-  },
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
   "types": "./cjs/index.d.ts",
@@ -157,12 +154,6 @@
   },
   "typesVersions": {
     "*": {
-      "admin/types": [
-        "./cjs/admin/types.d.ts"
-      ],
-      "admin": [
-        "./cjs/admin/index.d.ts"
-      ],
       "language/types": [
         "./cjs/language/types.d.ts"
       ],
@@ -243,7 +234,6 @@
   "files": [
     "cjs",
     "esm",
-    "bin.ts",
     "tsconfig",
     "LICENSE",
     "README.md",
