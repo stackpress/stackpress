@@ -1,6 +1,7 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress-schema
+import type Column from '../../Column.js';
 import type Fieldset from '../../Fieldset.js';
 import { loadProjectFile, renderCode } from '../helpers.js';
 import generateColumnTests from './column.js';
@@ -10,6 +11,24 @@ export const numbers = [ 'Number', 'Float', 'Integer' ];
 export const dates = [ 'Date', 'Time', 'Datetime' ];
 export const objects = [ 'Object', 'Json', 'Hash' ];
 
+function getSample(column: Column) {
+  const type = column.type.name;
+  const value = column.type.enum
+    ? JSON.stringify(Object.values(column.type.enum)[0])
+    : strings.includes(type)
+    ? JSON.stringify('foobar')
+    : numbers.includes(type)
+    ? '123'
+    : type === 'Boolean'
+    ? 'true'
+    : dates.includes(type)
+    ? "new Date('2024-01-01T00:00:00.000Z')"
+    : objects.includes(type)
+    ? "{ foo: 'bar' }"
+    : JSON.stringify('foobar');
+  return column.type.multiple ? `[${value}]` : value;
+};
+
 export default function generate(directory: Directory, model: Fieldset) {
   //dont include columns that are models 
   //(those are more of relational information)
@@ -17,23 +36,9 @@ export default function generate(directory: Directory, model: Fieldset) {
     column => !column.type.model && !column.type.fieldset
   );
 
-  const validSample = columns.map(
-    column => strings.includes(column.type.name)
-      ? `${column.name.toString()}: 'foobar'`
-      : column.type.enum
-      ? `${column.name.toString()}: '${Object.values(column.type.enum)[0]}'`
-      : numbers.includes(column.type.name)
-      ? `${column.name.toString()}: 123`
-      : column.type.name === 'Boolean'
-      ? `${column.name.toString()}: true`
-      : dates.includes(column.type.name)
-      ? `${column.name.toString()}: new Date()`
-      : column.type.multiple
-      ? `${column.name.toString()}: ['foo', 'bar']`
-      : objects.includes(column.type.name)
-      ? `${column.name.toString()}: { foo: 'bar' }`
-      : ''
-  ).toArray().filter(Boolean);
+  const validSample = columns.map(column => (
+    `${column.name.toString()}: ${getSample(column)}`
+  )).toArray();
 
   const filepath = model.name.toPathName('%s/tests/%sSchema.test.ts');
   //load Profile/index.ts if it exists, if not create it
@@ -102,7 +107,9 @@ export default function generate(directory: Directory, model: Fieldset) {
         const forCuid = String(defaults).match(/^cuid\(([0-9]+)\)$/);
         const forNano = String(defaults).match(/^nanoid\(([0-9]+)\)$/);
         return { 
-          expect: typeof defaults === 'undefined' 
+          expect: column.type.multiple
+            ? `expect(defaults.${column.name.toPropertyName()}).to.be.an('array');`
+            : typeof defaults === 'undefined'
             ? `expect(defaults.${column.name.toPropertyName()}).to.be.undefined;`
             : defaults === null 
             ? `expect(defaults.${column.name.toPropertyName()}).to.be.null;`
@@ -125,72 +132,18 @@ export default function generate(directory: Directory, model: Fieldset) {
           actual: `const actual = schema.assert(input);`,
           expect: `expect(actual).to.be.null;`,
           columns: []
-        },
-        ...(() => {
-          const permutations: Record<string, { value: any, valid: boolean }>[] = [
-            {}, {}, {}, {}, {}, {}
-          ];
-          for (const column of columns.values()) {
-            permutations[0][column.name.toPropertyName()] = { 
-              value: 'foobar',
-              valid: strings.includes(column.type.name) 
-            };
-            permutations[1][column.name.toPropertyName()] = { 
-              value: 123,
-              valid: numbers.includes(column.type.name)
-            };
-            permutations[2][column.name.toPropertyName()] = { 
-              value: true,
-              valid: column.type.name === 'Boolean'
-            };
-            permutations[3][column.name.toPropertyName()] = { 
-              value: new Date(),
-              valid: dates.includes(column.type.name)
-            };
-            permutations[4][column.name.toPropertyName()] = { 
-              value: ['foo', 'bar'],
-              valid: column.type.multiple
-            };
-            permutations[5][column.name.toPropertyName()] = { 
-              value: { foo: 'bar' },
-              valid: objects.includes(column.type.name)
-            };
-          }
-          return permutations
-            .map(permutation => {
-              const input = Object.fromEntries(
-                Object.entries(permutation).map(([ key, { value } ]) => [ key, value ])
-              );
-              const valid = Object.fromEntries(
-                Object.entries(permutation).map(([ key, { valid } ]) => [ key, valid ])
-              );
-              return { input, valid };
-            })
-            .map(({ input, valid }, i) => {
-              return {
-                input: `const input${i + 1} = ${JSON.stringify(input)};`,
-                actual: `const actual${i + 1} = schema.assert(input${i + 1});`,
-                expect: Object.values(valid).every(Boolean)
-                  ? `expect(actual${i + 1}).to.be.null;`
-                  : `expect(actual${i + 1}).to.be.an('object');`,
-                columns: Object.entries(valid).map(([ key, valid ]) => {
-                  return {
-                    column: valid 
-                      ? `expect(actual${i + 1}?.${key}).to.be.undefined;` 
-                      : `expect(typeof actual${i + 1}?.${key}).to.equal('string');`
-                  };
-                })
-              };
-            });
-        })()
+        }
       ],
       filter: `{ ${validSample.concat(['__FOO__: true' ]).join(', ')} }`,
+      sample: validSample.join(', '),
       populate: columns.map(column => {
         const defaults = column.value.default;
         const forCuid = String(defaults).match(/^cuid\(([0-9]+)\)$/);
         const forNano = String(defaults).match(/^nanoid\(([0-9]+)\)$/);
         return { 
-          expect: typeof defaults === 'undefined' 
+          expect: column.type.multiple
+            ? `expect(actual.${column.name.toPropertyName()}).to.be.an('array');`
+            : typeof defaults === 'undefined'
             ? `expect(actual.${column.name.toPropertyName()}).to.be.undefined;`
             : defaults === null 
             ? `expect(actual.${column.name.toPropertyName()}).to.be.null;`
@@ -264,8 +217,21 @@ DESCRIBE:
       <%expect%>
     <%/@:populate%>
   });
-  it('should serialize', async () => {});
-  it('should unserialize', async () => {});
+  it('should serialize', async () => {
+    const schema = new <%classname%>();
+    const actual = schema.serialize({ <%sample%> });
+    <%#@:columns%>
+      expect(actual).to.have.property('<%column%>');
+    <%/@:columns%>
+  });
+  it('should unserialize', async () => {
+    const schema = new <%classname%>();
+    const serialized = schema.serialize({ <%sample%> });
+    const actual = schema.unserialize(serialized);
+    <%#@:columns%>
+      expect(actual).to.have.property('<%column%>');
+    <%/@:columns%>
+  });
 });`,
 
 };

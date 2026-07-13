@@ -116,7 +116,11 @@ export function generateModelTests(
 export function generateTests(directory: Directory, schema: Schema) {
   //load tests.ts if it exists, if not create it
   const source = loadProjectFile(directory, 'tests.ts');
-  const models = Array.from(schema.models.values());
+  //this root entrypoint is schema-owned, so rebuild it deterministically
+  source.replaceWithText('');
+  const models = Array.from(schema.models.values()).sort((left, right) => (
+    left.name.toPathName().localeCompare(right.name.toPathName())
+  ));
 
   //------------------------------------------------------------------//
   // Import Client

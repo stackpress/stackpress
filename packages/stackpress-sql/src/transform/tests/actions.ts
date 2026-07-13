@@ -79,7 +79,13 @@ export default function generate(directory: Directory, model: Model) {
     name: model.name.toClassName('%sActionTests'),
     parameters: [{ name: 'engine', type: 'Engine' }],
     statements: renderCode(TEMPLATE.DESCRIBE, {
-      model: model.name.toClassName()
+      model: model.name.toClassName(),
+      methods: [
+        'batch', 'count', 'create', 'delete', 'find', 'findAll',
+        'install', 'purge', 'remove', 'uninstall', 'update',
+        'upgrade', 'upsert',
+        ...(model.store.restorable ? [ 'restore' ] : [])
+      ].map(method => ({ method }))
     })
   });
 };
@@ -88,13 +94,17 @@ export const TEMPLATE = {
 
 DESCRIBE:
 `describe('<%model%> Actions', async () => {
-  it('should create <%model%>', async () => {});
-  it('should batch <%model%>', async () => {});
-  it('should search <%model%>', async () => {});
-  it('should get <%model%>', async () => {});
-  it('should update <%model%>', async () => {});
-  it('should remove <%model%>', async () => {});
-  it('should restore <%model%>', async () => {});
+  it('should retain the engine and generated store', async () => {
+    const actions = new <%model%>Actions(engine);
+    expect(actions.engine).to.equal(engine);
+    expect(actions.store.constructor.name).to.equal('<%model%>Store');
+  });
+  it('should expose generated action methods', async () => {
+    const actions = new <%model%>Actions(engine);
+    <%#@:methods%>
+      expect(actions.<%method%>).to.be.a('function');
+    <%/@:methods%>
+  });
 });`,
 
 };

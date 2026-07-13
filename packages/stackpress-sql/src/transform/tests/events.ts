@@ -51,31 +51,35 @@ export default function generate(directory: Directory, model: Model) {
   //load Profile/index.ts if it exists, if not create it
   const source = loadProjectFile(directory, filepath);
 
-  //import type { HttpServer } from '@stackpress/ingest';
-  source.addImportDeclaration({
-    isTypeOnly: true,
-    moduleSpecifier: '@stackpress/ingest',
-    namedImports: [ 'HttpServer' ]
-  });
-  //import { describe, it, before } from 'mocha';
+  //import { describe, it } from 'mocha';
   source.addImportDeclaration({
     moduleSpecifier: 'mocha',
-    namedImports: [ 'describe', 'it', 'before' ]
+    namedImports: [ 'describe', 'it' ]
   });
   //import { expect } from 'chai';
   source.addImportDeclaration({
     moduleSpecifier: 'chai',
     namedImports: [ 'expect' ]
   });
+  //import listen from '../events/index.js';
+  source.addImportDeclaration({
+    moduleSpecifier: '../events/index.js',
+    defaultImport: 'listen'
+  });
 
-  //export default function ProfileEventsTests(server: HttpServer) {}
+  //export default function ProfileEventsTests() {}
   source.addFunction({
     isDefaultExport: true,
     name: model.name.toClassName('%sEventsTests'),
-    parameters: [{ name: 'server', type: 'HttpServer' }],
     statements: renderCode(TEMPLATE.DESCRIBE, {
       model: model.name.toClassName(),
-      event: model.name.toEventName()
+      actions: [
+        'batch', 'create', 'detail', 'get', 'purge', 'remove',
+        'search', 'update', 'upsert',
+        ...(model.store.restorable ? [ 'restore' ] : [])
+      ].map(action => ({
+        name: model.name.toEventName(`%s-${action}`)
+      }))
     })
   });
 };
@@ -84,16 +88,18 @@ export const TEMPLATE = {
 
 DESCRIBE:
 `describe('<%model%> Events', async () => {
-  before(async () => {
-    await server.resolve('<%event%>-purge');
+  it('should register every generated event listener', async () => {
+    const listeners = new Map<string, Function>();
+    const emitter = {
+      on(event: string, listener: Function) {
+        listeners.set(event, listener);
+      }
+    };
+    listen(emitter);
+    <%#@:actions%>
+      expect(listeners.get('<%name%>')).to.be.a('function');
+    <%/@:actions%>
   });
-  it('should create <%event%>', async () => {});
-  it('should batch <%event%>', async () => {});
-  it('should search <%event%>', async () => {});
-  it('should get <%event%>', async () => {});
-  it('should update <%event%>', async () => {});
-  it('should remove <%event%>', async () => {});
-  it('should restore <%event%>', async () => {});
 });`,
 
 };

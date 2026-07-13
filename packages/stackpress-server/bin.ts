@@ -1,5 +1,6 @@
 #!/usr/bin/env tsx
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { objectFromArgs, isObject } from '@stackpress/lib/Nest';
 import { server as http } from '@stackpress/ingest/http';
 import Terminal from 'stackpress-server/Terminal';
@@ -37,7 +38,7 @@ async function getBootstrap(args: string[]) {
   //determine bootstrap pathname
   const bootstrap = getPathname(args);
   //import bootstrap file
-  const imports = bootstrap ? await import(bootstrap) : {};
+  const imports = bootstrap ? await import(pathToFileURL(bootstrap).href) : {};
   //we just need the default export...
   return imports.default || {};
 }
