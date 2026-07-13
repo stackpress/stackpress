@@ -120,6 +120,28 @@ aggregate assets. Never centralize feature implementation there.
   new work.
 - Forward through the aggregate only when deliberately part of its facade.
 
+## Cross-Repository Change Checklist
+
+Before recommending a fix in `packages/*`, inspect the relevant complete sibling
+repository when the behavior may be owned by `stackpress/lib`, `stackpress/idea`,
+`stackpress/ingest`, `stackpress/inquire`, `stackpress/reactus`,
+`ossPhilippines/frui`, or `ossPhilippines/r22n`.
+
+1. Identify the semantic owner of the primitive or contract.
+2. Distinguish an upstream foundation defect from a Stackpress integration defect.
+3. Recommend tandem changes when the upstream contract and its Stackpress
+   consumer are both affected.
+4. Verify the sibling package with its native tests and prove the affected
+   Stackpress intersection.
+5. State dependency-version, publication, and consumption sequencing when the
+   Stackpress fix depends on a sibling release.
+
+For example, if a SQL helper in `packages/stackpress-sql` duplicates or violates
+behavior owned by Inquire, the repair recommendation should cover the reusable
+change in `stackpress/inquire` and the corresponding consumption change in
+`packages/stackpress-sql`. Do not preserve the duplicated helper merely because
+the reported symptom or earlier pull request was local to this monorepo.
+
 ## Verification Target
 
 Required for new work: every changed package has passing tests above 90%

@@ -101,13 +101,21 @@ runtime are distinct phases. Do not reduce them to one build-time/runtime pair.
 
 1. State intended behavior and affected callers.
 2. Identify semantic owner and whether output is generated.
-3. Map producer, generated artifact, runtime consumer, and access surfaces.
-4. Select the narrow package and lifecycle phase.
-5. Check current versions, exports, adapters, and order dependencies.
-6. Implement without making generated output the durable source.
-7. Run the smallest convincing proof for every affected contract.
-8. Expand verification according to shared behavior and blast radius.
-9. Update exports, examples, docs, scaffolds, or skills when their contract moved.
+3. Trace the behavior into sibling foundation repositories before recommending a
+   package-local fix. When the primitive or contract is owned by Stackpress Lib,
+   Idea, Ingest, Inquire, Reactus, Frui, or r22n, recommend the upstream and
+   consuming Stackpress changes together.
+4. Map producer, generated artifact, runtime consumer, and access surfaces.
+5. Select the narrow package and lifecycle phase.
+6. Check current versions, exports, adapters, and order dependencies.
+7. Implement without making generated output the durable source.
+8. Run the smallest convincing proof for every affected contract.
+9. Expand verification according to shared behavior and blast radius.
+10. Update exports, examples, docs, scaffolds, or skills when their contract moved.
+
+Do not compensate only in `packages/*` when reusable behavior belongs to a
+sibling foundation. Load the detailed contributor reference for cross-repository
+classification, release sequencing, and verification.
 
 ## Verification Matrix
 
