@@ -52,7 +52,7 @@ const asserts = {
     boolean: `expect(typeof column.assert(true)).to.equal('string');`,
     date: `expect(typeof column.assert(new Date())).to.equal('string');`,
     object: `expect(column.assert({ foo: 'bar' })).to.be.null;`,
-    array: `expect(column.assert(['foo', 'bar'])).to.be.null;`
+    array: `expect(typeof column.assert(['foo', 'bar'])).to.equal('string');`
   },
   array: {
     string: `expect(typeof column.assert('foobar')).to.equal('string');`,
@@ -60,7 +60,7 @@ const asserts = {
     boolean: `expect(typeof column.assert(true)).to.equal('string');`,
     date: `expect(typeof column.assert(new Date())).to.equal('string');`,
     object: `expect(typeof column.assert({ foo: 'bar' })).to.equal('string');`,
-    array: `expect(column.assert(['foo', 'bar'])).to.be.null;`
+    array: `expect(typeof column.assert(['foo', 'bar'])).to.equal('string');`
   },
 };
 
@@ -96,10 +96,6 @@ const serialized = {
     date: `expect(column.serialize(new Date(Date.UTC(2020, 11, 4, 13, 15)))).to.equal('2020-12-04 13:15:00');`,
     array: `expect(column.serialize(['foo', 'bar'])).to.equal('1970-01-01 00:00:00');`,
     object: `expect(column.serialize({ foo: 'bar' })).to.equal('1970-01-01 00:00:00');`
-  },
-  array: {
-    array: `expect(column.serialize(['foo', 'bar'])).to.equal('["foo","bar"]');`,
-    invalid: `expect(column.serialize('foobar')).to.equal('[]');`
   },
   object: {
     string: `expect(column.serialize('foobar')).to.equal('{}');`,
@@ -143,11 +139,6 @@ const unserialized = {
     date: `expect(column.unserialize(new Date(Date.UTC(2020, 11, 4, 13, 15))) instanceof Date).to.be.true;`,
     array: `expect(column.unserialize(['foo', 'bar']) instanceof Date).to.be.true;`,
     object: `expect(column.unserialize({ foo: 'bar' }) instanceof Date).to.be.true;`
-  },
-  array: {
-    string: `expect(column.unserialize('["foo","bar"]')).to.deep.equal(['foo', 'bar']);`,
-    array: `expect(column.unserialize(['foo', 'bar'])).to.deep.equal(['foo', 'bar']);`,
-    invalid: `expect(column.unserialize('foobar')).to.deep.equal([]);`
   },
   object: {
     string: `expect(typeof column.unserialize('foobar')).to.equal('object');`,
@@ -204,17 +195,16 @@ export default function generate(
   //------------------------------------------------------------------//
   // Exports
 
-  //export default function NameColumnTests() {}
+  //export default function NameColumnTests(engine: Engine) {}
   source.addFunction({
     isDefaultExport: true,
     name: column.name.toClassName('%sColumnTests'),
+    parameters: [{ name: 'engine', type: 'Engine' }],
     statements: renderCode(TEMPLATE.DESCRIBE, {
       classname: column.name.toClassName('%sColumn'),
       column: column.name.toClassName(),
       name: column.name.toString(),
-      defaults: column.type.multiple
-        ? "expect(column.defaults).to.be.an('array');"
-        : typeof defaults === 'undefined'
+      defaults: typeof defaults === 'undefined' 
         ? 'expect(column.defaults).to.be.undefined;'
         : defaults === null 
         ? 'expect(column.defaults).to.be.null;'
@@ -229,59 +219,47 @@ export default function generate(
         : typeof defaults === 'string'
         ? `expect(column.defaults).to.equal('${defaults}');`
         : `expect(column.defaults).to.equal(${defaults});`,
-      assert: column.type.multiple
-        ? [{ expect: asserts.array.array }]
+      assert: objects.includes(column.type.name)
+        ? Object.values(asserts.object).map(expect => ({ expect }))
+        : strings.includes(column.type.name)
+        ? Object.values(asserts.string).map(expect => ({ expect }))
+        : numbers.includes(column.type.name)
+        ? Object.values(asserts.number).map(expect => ({ expect }))
+        : dates.includes(column.type.name)
+        ? Object.values(asserts.date).map(expect => ({ expect }))
+        : column.type.name === 'Boolean'
+        ? Object.values(asserts.boolean).map(expect => ({ expect }))
+        : column.type.multiple
+        ? Object.values(asserts.array).map(expect => ({ expect }))
         : column.type.enum
         ? [
-          { expect: `expect(typeof column.assert('foobarzoo')).to.equal('string');` },
-          ...Object.values(column.type.enum).map(option => ({
+          `expect(typeof column.assert('foobarzoo')).to.equal('string');`,
+          ...Object.values(column.type.enum).map(option => ({ 
             expect: `expect(column.assert('${option}')).to.be.null;`
           }))
         ]
-        : objects.includes(column.type.name)
-        ? [{ expect: asserts.object.object }]
-        : strings.includes(column.type.name)
-        ? [{ expect: asserts.string.string }]
-        : numbers.includes(column.type.name)
-        ? [{ expect: asserts.number.number }]
-        : dates.includes(column.type.name)
-        ? [{ expect: asserts.date.date }]
-        : column.type.name === 'Boolean'
-        ? [{ expect: asserts.boolean.boolean }]
         : [],
-      serialize: column.type.multiple
-        ? [{ expect: serialized.array.array }]
-        : column.type.enum
-        ? Object.values(column.type.enum).map(option => ({
-          expect: `expect(column.serialize('${option}')).to.equal('${option}');`
-        }))
-        : objects.includes(column.type.name)
-        ? [{ expect: serialized.object.object }]
-        : strings.includes(column.type.name)
-        ? [{ expect: serialized.string.string }]
+      serialize: objects.includes(column.type.name)
+        ? Object.values(serialized.object).map(expect => ({ expect }))
+        : strings.includes(column.type.name) || column.type.enum
+        ? Object.values(serialized.string).map(expect => ({ expect }))
         : numbers.includes(column.type.name)
-        ? [{ expect: serialized.number.number }]
+        ? Object.values(serialized.number).map(expect => ({ expect }))
         : dates.includes(column.type.name)
-        ? [{ expect: `expect(column.serialize(new Date())).to.be.a('string');` }]
+        ? Object.values(serialized.date).map(expect => ({ expect }))
         : column.type.name === 'Boolean'
-        ? [{ expect: serialized.boolean.boolean }]
+        ? Object.values(serialized.boolean).map(expect => ({ expect }))
         : [],
-      unserialize: column.type.multiple
-        ? [{ expect: unserialized.array.string }]
-        : column.type.enum
-        ? Object.values(column.type.enum).map(option => ({
-          expect: `expect(column.unserialize('${option}')).to.equal('${option}');`
-        }))
-        : objects.includes(column.type.name)
-        ? [{ expect: unserialized.object.object }]
-        : strings.includes(column.type.name)
-        ? [{ expect: unserialized.string.string }]
+      unserialize: objects.includes(column.type.name)
+        ? Object.values(unserialized.object).map(expect => ({ expect }))
+        : strings.includes(column.type.name) || column.type.enum
+        ? Object.values(unserialized.string).map(expect => ({ expect }))
         : numbers.includes(column.type.name)
-        ? [{ expect: unserialized.number.number }]
+        ? Object.values(unserialized.number).map(expect => ({ expect }))
         : dates.includes(column.type.name)
-        ? [{ expect: unserialized.date.date }]
+        ? Object.values(unserialized.date).map(expect => ({ expect }))
         : column.type.name === 'Boolean'
-        ? [{ expect: unserialized.boolean.boolean }]
+        ? Object.values(unserialized.boolean).map(expect => ({ expect }))
         : [],
     })
   });
