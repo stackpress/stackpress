@@ -1018,24 +1018,29 @@
     "@stackpress/lib" "0.10.5"
     "@whatwg-node/server" "0.10.17"
 
-"@stackpress/inquire-pglite@0.10.5":
-  version "0.10.5"
-  resolved "https://registry.yarnpkg.com/@stackpress/inquire-pglite/-/inquire-pglite-0.10.5.tgz#566bf9fc2c227327d7f22014934b5d8a678ca0a6"
-  integrity sha512-D6heWZVo08XWMpf5VAwRFaasJOs9T5fxMQgZtSXslfUN3Fe2u1kZXqLkClbdWERSylf/2s/HHnGnGMyXCAqQTQ==
+"@stackpress/inquire-pglite@0.10.6":
+  version "0.10.6"
+  resolved "https://registry.yarnpkg.com/@stackpress/inquire-pglite/-/inquire-pglite-0.10.6.tgz#6b04f0ef30adca8895fc1076ad736046c61d612e"
+  integrity sha512-wzkSQZ1WG8YdCODUIDeoccOuAqyLO7tzfl8YY3o/0LP4fyJffvZgAeno6TzUc9IHy3HMvxOFGaW1yx+cM7KdcA==
   dependencies:
-    "@stackpress/inquire" "0.10.5"
+    "@stackpress/inquire" "0.10.6"
 
-"@stackpress/inquire@0.10.5":
-  version "0.10.5"
-  resolved "https://registry.yarnpkg.com/@stackpress/inquire/-/inquire-0.10.5.tgz#005a7300b19e02070400dde598004c7f2b8df88c"
-  integrity sha512-KexIEcQbH5ZYMOthXSHgb2HXmxN2BR/dlVy/GKZVh2GK3G6tBmXTQsk4sj4zNeymH3TI7uOoOU0U0W58tZFvjQ==
+"@stackpress/inquire@0.10.6":
+  version "0.10.6"
+  resolved "https://registry.yarnpkg.com/@stackpress/inquire/-/inquire-0.10.6.tgz#9b7a84442aa606f64ff6a87c5f76380ded18d330"
+  integrity sha512-aXlRdFKmOPG7RKxXmyPHZZ/9bs6cEojsfrnJLpCkDgygCY25VKeeAx379iCsfjW8WesgplRTNR1b+nP+R1OFOQ==
   dependencies:
-    "@stackpress/lib" "0.10.5"
+    "@stackpress/lib" "0.10.6"
 
 "@stackpress/lib@0.10.5":
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/@stackpress/lib/-/lib-0.10.5.tgz#ea6ef3cb5c4a6e474653f339462d1f626e5b1da7"
   integrity sha512-zVUwppiCmLnEfcDPhl/ehDUbsQ0s1kC9PmLx4LZA/8QZphj6zTY4qsKZUG7Tb9lzmtDJ0o7Hejj1y5zuK7PVNw==
+
+"@stackpress/lib@0.10.6":
+  version "0.10.6"
+  resolved "https://registry.yarnpkg.com/@stackpress/lib/-/lib-0.10.6.tgz#fba47a1186b95351d313e6202d7eef94e9f68449"
+  integrity sha512-FjCC6ZlAGPkRqQuD9C7zkGnnFV5eUrklD3K27F/LQrZuJrVYljUU3yvceWyXOvWF0jwa0qbHGs+WCg2453+Dvg==
 
 "@szmarczak/http-timer@^4.0.5":
   version "4.0.6"

@@ -152,7 +152,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "3.3.0",
-    "@stackpress/inquire": "0.10.5",
+    "@stackpress/inquire": "0.10.6",
     "nanoid": "5.1.6",
     "stackpress-schema": "0.10.5"
   },
