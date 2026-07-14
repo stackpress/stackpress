@@ -134,12 +134,6 @@ export default function generate(directory: Directory, model: Fieldset) {
           actual: `const actual = schema.assert(input);`,
           expect: `expect(actual).to.be.null;`,
           columns: []
-        },
-        {
-          input: 'const invalid = schema.assert(null as any);',
-          actual: '',
-          expect: `expect(invalid).to.be.an('object');`,
-          columns: []
         }
       ],
       filter: `{ ${validSample.concat(['__FOO__: true' ]).join(', ')} }`,

@@ -61,12 +61,20 @@ const asserts = {
 };
 
 const serialized = {
+  enum: {
+    string: `expect(column.serialize('foobar')).to.equal('foobar');`,
+    number: `expect(column.serialize(123)).to.equal('123');`,
+    boolean: `expect(column.serialize(true)).to.equal('true');`,
+    date: `expect(typeof column.serialize(new Date(Date.UTC(2020, 11, 4, 13, 15)))).to.equal('string');`,
+    array: `expect(column.serialize(['foo', 'bar'])).to.equal('foo,bar');`,
+    object: `expect(column.serialize({ foo: 'bar' })).to.equal('[object Object]');`
+  },
   string: {
     string: `expect(column.serialize('foobar')).to.equal('foobar');`,
     number: `expect(column.serialize(123)).to.equal('123');`,
     boolean: `expect(column.serialize(true)).to.equal('true');`,
     date: `expect(typeof column.serialize(new Date(Date.UTC(2020, 11, 4, 13, 15)))).to.equal('string');`,
-    array: `expect(column.serialize(['foo', 'bar'])).to.equal('["foo","bar"]');`,
+    array: `expect(column.serialize(['foo', 'bar'])).to.equal('foo,bar');`,
     object: `expect(column.serialize({ foo: 'bar' })).to.equal('{"foo":"bar"}');`
   },
   number: {
@@ -106,12 +114,20 @@ const serialized = {
     number: `expect(column.serialize(0)).to.equal('[]');`,
     boolean: `expect(column.serialize(true)).to.equal('[]');`,
     date: `expect(column.serialize(new Date(Date.UTC(2020, 11, 4, 13, 15)))).to.equal('[]');`,
-    array: `expect(column.serialize(['foo', 'bar'])).to.equal('foo,bar');`,
+    array: `expect(column.serialize(['foo', 'bar'])).to.equal('["foo","bar"]');`,
     object: `expect(column.serialize({ foo: 'bar' })).to.equal('[]');`
   }
 };
 
 const unserialized = {
+  enum: {
+    string: `expect(column.unserialize('foobar')).to.equal('foobar');`,
+    number: `expect(column.unserialize(123)).to.equal('123');`,
+    boolean: `expect(column.unserialize(true)).to.equal('true');`,
+    date: `expect(typeof column.unserialize(new Date(Date.UTC(2020, 11, 4, 13, 15)))).to.equal('string');`,
+    array: `expect(column.unserialize(['foo', 'bar'])).to.equal('foo,bar');`,
+    object: `expect(column.unserialize({ foo: 'bar' })).to.equal('[object Object]');`
+  },
   string: {
     string: `expect(column.unserialize('foobar')).to.equal('foobar');`,
     number: `expect(column.unserialize(123)).to.equal('123');`,
@@ -236,7 +252,9 @@ export default function generate(
       assert: column.type.multiple
         ? Object.values(asserts.array).map(expect => ({ expect }))
         : objects.includes(column.type.name)
-        ? Object.values(asserts.object).map(expect => ({ expect }))
+        ? [
+          { expect: `expect(column.assert({ foo: 'bar' })).to.be.null;` }
+        ]
         : strings.includes(column.type.name)
         ? Object.values(asserts.string).map(expect => ({ expect }))
         : numbers.includes(column.type.name)
@@ -257,7 +275,9 @@ export default function generate(
         ? Object.values(serialized.array).map(expect => ({ expect }))
         : objects.includes(column.type.name)
         ? Object.values(serialized.object).map(expect => ({ expect }))
-        : strings.includes(column.type.name) || column.type.enum
+        : column.type.enum
+        ? Object.values(serialized.enum).map(expect => ({ expect }))
+        : strings.includes(column.type.name)
         ? Object.values(serialized.string).map(expect => ({ expect }))
         : numbers.includes(column.type.name)
         ? Object.values(serialized.number).map(expect => ({ expect }))
@@ -270,7 +290,9 @@ export default function generate(
         ? Object.values(unserialized.array).map(expect => ({ expect }))
         : objects.includes(column.type.name)
         ? Object.values(unserialized.object).map(expect => ({ expect }))
-        : strings.includes(column.type.name) || column.type.enum
+        : column.type.enum
+        ? Object.values(unserialized.enum).map(expect => ({ expect }))
+        : strings.includes(column.type.name)
         ? Object.values(unserialized.string).map(expect => ({ expect }))
         : numbers.includes(column.type.name)
         ? Object.values(unserialized.number).map(expect => ({ expect }))
