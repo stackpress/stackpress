@@ -139,6 +139,10 @@
       "require": "./cjs/transform/helpers.js",
       "import": "./esm/transform/helpers.js"
     },
+    "./transform/tests": {
+      "require": "./cjs/transform/tests.js",
+      "import": "./esm/transform/tests.js"
+    },
     "./transform": {
       "require": "./cjs/transform/index.js",
       "import": "./esm/transform/index.js"
@@ -286,6 +290,9 @@
       ],
       "transform/helpers": [
         "./cjs/transform/helpers.d.ts"
+      ],
+      "transform/tests": [
+        "./cjs/transform/tests.d.ts"
       ],
       "transform": [
         "./cjs/transform/index.d.ts"

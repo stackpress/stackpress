@@ -11,6 +11,7 @@ import { expect } from 'chai';
 import Schema from '../src/Schema.js';
 import { pruneGeneratedSchemaFiles } from '../src/transform/helpers.js';
 import generateSchemaTests from '../src/transform/tests/schema.js';
+import generateTestAggregate from '../src/transform/tests.js';
 
 describe('schema/transform/helpers', () => {
   it('should remove stale generated files left behind by renamed fields', async () => {
@@ -107,6 +108,48 @@ describe('schema/transform/helpers', () => {
     expect(source).to.contain('schema.unserialize');
     expect(source).to.contain("expect(actual).to.have.property('id')");
     expect(source).to.contain("expect(actual).to.have.property('tags')");
+  });
+
+  it('should generate schema-owned model test aggregators', () => {
+    const project = new Project({
+      useInMemoryFileSystem: true,
+      manipulationSettings: {
+        indentationText: IndentationText.TwoSpaces
+      }
+    });
+    const directory = project.createDirectory('/client');
+    const schema = Schema.make({
+      model: {
+        Profile: {
+          name: 'Profile',
+          mutable: true,
+          attributes: {},
+          columns: [{
+            name: 'id',
+            type: 'String',
+            required: true,
+            multiple: false,
+            attributes: { id: true }
+          }]
+        }
+      }
+    });
+    const model = Array.from(schema.models.values())[0];
+
+    generateTestAggregate(directory, model);
+    const first = project
+      .getSourceFileOrThrow('/client/Profile/tests.ts')
+      .getFullText();
+    generateTestAggregate(directory, model);
+    const second = project
+      .getSourceFileOrThrow('/client/Profile/tests.ts')
+      .getFullText();
+
+    expect(second).to.equal(first);
+    expect(second).to.contain('./tests/ProfileSchema.test.js');
+    expect(second).to.contain('./tests/columns/IdColumn.test.js');
+    expect(second).to.contain('export function runAllProfileTests');
+    expect(second).to.contain('export default runAllProfileTests');
   });
 });
 
