@@ -29,7 +29,9 @@
     "query": "dotenv -e .env -- stackpress query --b config/develop -v",
     "test": "yarn test:app && yarn test:client",
     "test:app": "node --import tsx --test tests/helpers.ts",
-    "test:client": "mocha --require tsx tests/blog.test.ts"
+    "test:client": "mocha --require tsx tests/blog.test.ts",
+    "test:client:coverage": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\" nyc --all --exclude-node-modules=false --include 'node_modules/blog-client/*/*Actions.js' --include 'node_modules/blog-client/*/*Store.js' --include 'node_modules/blog-client/*/events/*.js' --exclude 'node_modules/blog-client/**/*.test.js' --check-coverage --statements 90 --branches 90 --functions 90 --lines 90 mocha --require tsx tests/blog.test.ts",
+    "report:client": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\" nyc --all --exclude-node-modules=false --include 'node_modules/blog-client/**/*.js' --exclude 'node_modules/blog-client/**/*.test.js' --reporter=text-summary mocha --require tsx tests/blog.test.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.15",
