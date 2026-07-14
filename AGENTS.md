@@ -26,6 +26,7 @@ they are ready to become workspaces.
  - `templates/*` for example application templates
  - `bin/` for dependency-free root CLI scripts used by GitHub `npx`
  - `skills/` for portable Stackpress agent skills and embedded scaffold assets
+ - `.agents/` for accepted Stackpress knowledge, contributor guidance, and agent workflows
 
 The root `package.json` coordinates workspace-level build commands and exposes
 the packable `stackpress` bin for commands such as
@@ -90,6 +91,13 @@ Related libraries published on NPM that are often relevant when tracing function
 
 Notable third-party dependencies used across the repo include Vite, UnoCSS,
 NodeMailer, Prettier, and ts-morph.
+
+## Project Knowledge
+
+Use `.agents/context/index.md` as the read-first guide when you need to
+understand Stackpress concepts and nuances, locate source code and package
+ownership, or get contribution and extension guidance. The index routes to the
+smallest relevant accepted context file for the task.
 
 ## Common Commands
 
