@@ -63,8 +63,6 @@ These checks do not form a universal compatibility handshake.
 
 - Per-generator rename/removal cleanup is not universally enforced outside
   stackpress-schema; purge and clean regeneration are allowed recovery paths.
-- `packages/stackpress-sql/src/helpers.ts` is a maintainer-declared current
-  violation pending separate repair and must not be copied as canonical design.
 - Every changed package should pass tests above 90% coverage for new work, but
   current package coverage and root orchestration do not yet enforce that target.
 - Root `yarn test` currently exercises server, schema, and SQL only.

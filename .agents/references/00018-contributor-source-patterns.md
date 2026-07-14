@@ -100,10 +100,9 @@ may purge the generated client and regenerate cleanly when needed.
 
 ## Aggregate Decision
 
-Default composition contains commonly used capabilities applicable across most
-web, mobile, and desktop cases. Explicit web-only, mobile-only, desktop-only, and
-AI cases stay optional. Plugin membership, direct dependency, public facade
-export, and root-build participation are separate decisions.
+Use [Architecture And Composition](../context/architecture-and-composition.md)
+to decide default aggregate eligibility. Plugin membership, direct dependency,
+public facade export, and root-build participation remain separate decisions.
 
 Update the aggregate only for an intentional change to default plugin
 composition/order, selected facade exposure, required dependency, or shared
@@ -113,12 +112,15 @@ aggregate assets. Never centralize feature implementation there.
 
 - Edit `src/`, never `cjs/` or `esm/`, as durable implementation.
 - Preserve `.js` import suffixes needed by emitted ESM.
+- Export public shared types from both the owning `src/types.ts` and
+  `src/index.ts`; keep subpath-specific types with their subpath.
 - Build both module formats and declarations.
 - Align source exports, manifest `exports`, and `typesVersions`.
 - Test the actual consumer import, not only source presence.
 - Run the exporting and affected consuming package tests above 90% coverage for
   new work.
-- Forward through the aggregate only when deliberately part of its facade.
+- Forward each symbol through the aggregate only when deliberately part of its
+  facade, resolving root-name collisions explicitly.
 
 ## Cross-Repository Change Checklist
 
@@ -155,8 +157,6 @@ require auth, validation, event invocation, and status/error mapping.
 
 ## Known Exceptions And Defects
 
-- Do not copy `packages/stackpress-sql/src/helpers.ts`; the maintainer identifies
-  it as a current violation pending repair.
 - Current missing tests/coverage do not weaken the new-work target.
 
 ## Current Source Anchors

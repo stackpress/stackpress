@@ -143,6 +143,11 @@ covers only server, schema, and SQL, so run other owning package suites directly
 
 - Preserve package responsibilities instead of centralizing feature code in the
   aggregate package.
+- Keep build-time-only code, especially transforms and artifact-building scripts,
+  out of runtime import paths. Runtime-safe helpers may be reused by build-time
+  code.
+- Keep server-only code out of browser-safe entrypoints. Shared or browser-safe
+  code may be reused by server code.
 - Treat lifecycle priority and transform order as compatibility-sensitive.
 - Prefer config-driven static seeds over custom population code when no logic is
   required.
@@ -150,13 +155,10 @@ covers only server, schema, and SQL, so run other owning package suites directly
   accessibility is affected.
 - Distinguish illustrative skill/scaffold examples from required package names or
   application domains.
-- Add a package to default aggregate composition only when it is commonly used
-  and applies across most web, mobile, and desktop cases. Explicit web-only,
-  mobile-only, desktop-only, and AI packages remain optional.
-- Treat aggregate plugin composition, direct dependencies, facade exports, and
-  build participation as separate decisions.
-- Do not copy `packages/stackpress-sql/src/helpers.ts` as canonical placement or
-  design guidance; it is a maintainer-declared current violation pending repair.
+- A root-level helper module such as `packages/stackpress-sql/src/helpers.ts` is
+  valid when its helpers are generally reusable across the package. Keep niche
+  helpers local to the files that need them, even when that means small
+  duplication.
 
 No project-wide maintainer map, CODEOWNERS policy, or mandatory public-contract
 review gate is an accepted current guarantee.
