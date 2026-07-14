@@ -147,5 +147,4 @@ export default async function generate(props: ClientPluginProps) {
   // 5. package.json
 
   generatePackage(directory, schema, packageName);
-
 };
