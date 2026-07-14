@@ -2,7 +2,7 @@
 
 Load this reference for document-level details about `Request`, `Response`,
 `Router`, and `Server`. Authority: current sibling Ingest/lib design intent;
-Stackpress consumes the corresponding `0.10.5` packages in this checkout.
+Stackpress consumes the corresponding `0.10.7` packages in this checkout.
 
 ## Request
 

@@ -27,6 +27,32 @@ ordering assumptions from several owners.
 Some sibling libraries may be newer than versions consumed by this checkout.
 Do not merge those authorities into one version claim.
 
+## Coordinated Release Set
+
+The following GitHub repositories form one Stackpress release set and are
+released together at the exact same version:
+
+- `stackpress/lib`;
+- `stackpress/idea`;
+- `stackpress/ingest`;
+- `stackpress/inquire`;
+- `stackpress/reactus`;
+- `stackpress/stackpress`.
+
+Use the version string itself as the canonical stable Git tag, without a `v`
+prefix. Each repository needs release notes derived from its own previous
+published stable release, even though the target version is shared. A release
+catch-up does not itself authorize package publication, version changes, or
+rewriting existing tags.
+
+The coordinated version applies to publishable framework packages, not examples,
+templates, documentation helpers, or the Idea language extension. Validate the
+release manifests named in the
+[Stackpress GitHub Release Workflow](../workflows/stackpress-github-release.md)
+before drafting or publishing releases.
+
+Source provenance: [project-owner release policy](../resources/2026-07-14-coordinated-github-release-policy.md).
+
 ## Drift Surfaces
 
 | Surface | Typical failure |

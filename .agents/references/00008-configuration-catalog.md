@@ -154,7 +154,7 @@ The AI package activates only when an `mcp` section exists.
 | Key | Default/effect |
 | --- | --- |
 | `name`, `title` | `'Stackpress AI Server'` |
-| `version` | current package default `'0.10.3'` |
+| `version` | current package default `'0.10.7'` |
 | `description` | optional MCP server description |
 | `host`, `port` | inherit `server.host`/`server.port` |
 | `route` | `'/mcp'` |

@@ -189,7 +189,7 @@ Generated dynamic class strings may require explicit scanning/safelist evidence.
 
 ## Version And Compatibility Boundaries
 
-- Current aggregate package version is `0.10.5`; sibling dependency versions
+- Current aggregate package version is `0.10.7`; sibling dependency versions
   and peer ranges remain separate contracts.
 - An export proves availability, not a formal support promise.
 - CJS/ESM and browser/server entrypoints need independent import tests.

@@ -71,5 +71,6 @@ When several next steps are realistic, include up to two useful alternatives. Us
 
 ## Project Workflow
 
+- [Stackpress GitHub Release Workflow](workflows/stackpress-github-release.md): use when drafting, reviewing, or publishing synchronized GitHub releases across the six-repository Stackpress release set.
 - [Stackpress Package Public Surface Workflow](workflows/stackpress-package-public-surface.md): use when adding or moving public package types, runtime values, helpers, files, subpaths, or aggregate facade exports.
 - [Stackpress KB Maintenance Workflow](workflows/stackpress-kb-maintenance.md): use when source, dependencies, generated contracts, product language, governance, or contributor workflows may change accepted Stackpress context.
