@@ -18,7 +18,10 @@ describe('serve event', () => {
       }
     };
     const service = {
-      listen: (port: number, host: string) => listens.push([ port, host ]),
+      listen: (port: number, host: string, ready: () => void) => {
+        listens.push([ port, host ]);
+        ready();
+      },
       on: (event: string, handler: () => void) => {
         handlers[event] = handler;
         return service;
@@ -62,7 +65,10 @@ describe('serve event', () => {
       }
     };
     const service = {
-      listen: (port: number, host: string) => listens.push([ port, host ]),
+      listen: (port: number, host: string, ready: () => void) => {
+        listens.push([ port, host ]);
+        ready();
+      },
       on: (_event: string, _handler: () => void) => service
     };
     const ctx = {

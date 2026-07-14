@@ -1,35 +1,80 @@
 //node
-import type { FSWatcher } from 'chokidar';
-import { ChildProcess, spawn } from 'node:child_process';
+import type { ChildProcess, ForkOptions } from 'node:child_process';
+import type { ChokidarOptions, FSWatcher } from 'chokidar';
+import { fork } from 'node:child_process';
+import path from 'node:path';
+//modules
+import { watch as watchFiles } from 'chokidar';
 //stackpress
 import type Terminal from '../Terminal.js';
+import type { DevelopmentConfig } from '../types.js';
+import {
+  DEVELOPMENT_ERROR,
+  DEVELOPMENT_READY,
+  DEVELOPMENT_SHUTDOWN
+} from './development-messages.js';
 
 export type Promiser<T = void> = {
   resolve: (value: T | PromiseLike<T>) => void,
-  reject: (reason?: any) => void
+  reject: (reason?: unknown) => void
 };
 
+//child-process factory used by the supervisor and its unit tests
+export type DevelopmentSpawner = (
+  modulePath: string,
+  args: string[],
+  options: ForkOptions
+) => ChildProcess;
+
+//watcher factory used by the supervisor and its unit tests
+export type DevelopmentWatcher = (
+  paths: string|string[],
+  options: ChokidarOptions
+) => FSWatcher;
+
+//replaceable boundaries and timing used by the development supervisor
+export type DevelopmentOptions = {
+  spawn: DevelopmentSpawner,
+  watch: DevelopmentWatcher
+};
+
+//backend paths that should never trigger application restarts
+const DEFAULT_IGNORES = [
+  /(^|[/\\])\.build([/\\]|$)/,
+  /(^|[/\\])\.git([/\\]|$)/,
+  /(^|[/\\])\.reactus([/\\]|$)/,
+  /(^|[/\\])client_source([/\\]|$)/,
+  /(^|[/\\])coverage([/\\]|$)/,
+  /(^|[/\\])node_modules([/\\]|$)/
+];
+
 /**
- * DevelopmentServer class manages a child process that runs the 
- * development server and a file watcher that restarts the server on 
- * changes. 
+ * Manages the replaceable backend process and its filesystem watcher.
  */
 export class DevelopmentServer {
-  //server terminal (gives access to the cli)
+  //server terminal that provides CLI arguments, config, and output
   public readonly terminal: Terminal;
-  //handler for shutdown signals
+  //handler shared by terminal shutdown signals
   public readonly shutdown: () => Promise<void>;
-  //resolvers passed from the main script
+  //child process factory
+  protected _spawn: DevelopmentSpawner;
+  //watcher factory
+  protected _watch: DevelopmentWatcher;
+  //resolvers passed from the main development command
   protected _promiser: Promiser<void>;
-  //child process for the server
+  //active backend child process
   protected _child: ChildProcess|null = null;
-  //file watcher for restarting on changes
+  //active application file watcher
   protected _watcher: FSWatcher|null = null;
-  //flags to prevent multiple simultaneous restarts or shutdowns
-  protected _restarting = false;
-  //flag to indicate if the server is exiting
+  //timer that coalesces related filesystem events
+  protected _restartTimer: ReturnType<typeof setTimeout>|null = null;
+  //current restart operation shared by concurrent callers
+  protected _restartPromise: Promise<ChildProcess>|null = null;
+  //records a change that arrived while a restart was running
+  protected _restartQueued = false;
+  //prevents duplicate shutdown work
   protected _exiting = false;
-  //logging utility to conditionally log based on terminal verbosity
+  //logging utility controlled by terminal verbosity
   protected _log: {
     system: (message: string) => void,
     warning: (message: string) => void,
@@ -38,23 +83,28 @@ export class DevelopmentServer {
   };
 
   /**
-   * Initializes the development server with the given terminal 
-   * and promiser.
+   * Initializes the development supervisor and its replaceable boundaries.
    */
-  public constructor(terminal: Terminal, promiser: Promiser<void>) {
+  public constructor(
+    terminal: Terminal,
+    promiser: Promiser<void>,
+    options: Partial<DevelopmentOptions> = {}
+  ) {
     this.terminal = terminal;
     this._promiser = promiser;
+    this._spawn = options.spawn || fork;
+    this._watch = options.watch || watchFiles;
     this._log = {
-      system(message: string) {
+      system: message => {
         terminal.verbose && terminal.control.system(message);
       },
-      warning(message: string) {
+      warning: message => {
         terminal.verbose && terminal.control.warning(message);
       },
-      error(message: string) {
+      error: message => {
         terminal.verbose && terminal.control.error(message);
       },
-      success(message: string) {
+      success: message => {
         terminal.verbose && terminal.control.success(message);
       }
     };
@@ -62,172 +112,255 @@ export class DevelopmentServer {
       if (this._exiting) return;
       this._exiting = true;
       this._log.system('Shutting down...');
-      //if the watcher is active
+      //stop a pending restart before it launches another child
+      if (this._restartTimer) {
+        clearTimeout(this._restartTimer);
+        this._restartTimer = null;
+      }
+      //stop receiving new filesystem events
       if (this._watcher) {
-        //close it first
         await this._watcher.close();
         this._watcher = null;
       }
-      //next shutdown the child process
+      //ask the active child to release HTTP and Vite resources
       if (this._child) {
         try {
           await this.close();
-        } catch (e) {
-          this._log.warning(`⚠️ Failed to shutdown child: ${String(e)}`);
+        } catch (error) {
+          this._log.warning(
+            `⚠️ Failed to shutdown child: ${String(error)}`
+          );
         }
       }
       this._log.success('✅ Server shutdown complete.');
-      process.exit(0);
-    }
+      this._promiser.resolve();
+    };
   }
 
   /**
-   * Starts the development server by spawning a child process that 
-   * runs the serve command. Listens for errors and exit events to 
-   * handle shutdowns gracefully.
+   * Gracefully closes the active backend child with a forced fallback.
    */
-  public start() {
-    const args = [ 'stackpress', 'serve', ...this.terminal.args ];
-    this._child = spawn('npx', args, {
-      cwd: this.terminal.cwd,
-      stdio: 'inherit',
-      shell: true,
-      env: { ...process.env }
-    });
-    this._child.once('error', error => {
-      this._log.error(`Failed to start server: ${String(error)}`);
-      this._promiser.reject(error);
-    });
-    this._child.once('exit', () => {
-      if (!this._restarting && !this._exiting) {
-        this.shutdown().then(() => this._promiser.resolve());
+  public close() {
+    const child = this._child;
+    if (!child) return Promise.resolve();
+    return new Promise<void>((resolve, reject) => {
+      //force the exact child process down if graceful cleanup stalls
+      const force = () => {
+        this._log.warning(
+          `⚠️ Process didn't exit gracefully, force killing...`
+        );
+        child.kill('SIGKILL');
+      };
+      const timeout = setTimeout(force, 5000);
+      child.once('exit', () => {
+        clearTimeout(timeout);
+        if (this._child === child) this._child = null;
+        resolve();
+      });
+      child.once('error', error => {
+        clearTimeout(timeout);
+        force();
+        reject(error);
+      });
+      //use IPC first so the child can close Vite and HTTP deliberately
+      if (child.connected) {
+        child.send({ type: DEVELOPMENT_SHUTDOWN }, error => {
+          if (error) child.kill('SIGTERM');
+        });
+      } else {
+        child.kill('SIGTERM');
       }
     });
-
-    return this._child;
   }
 
   /**
-   * Watches the current directory for changes to .ts files and restarts 
-   * the server when changes are detected. Uses chokidar for efficient 
-   * file watching and handles added, changed, and removed files.
+   * Restarts the backend and preserves changes received during replacement.
+   */
+  public restart(): Promise<ChildProcess> {
+    //queue one more pass when a restart is already underway
+    if (this._restartPromise) {
+      this._restartQueued = true;
+      return this._restartPromise;
+    }
+    this._restartPromise = this._restart().finally(() => {
+      this._restartPromise = null;
+    });
+    return this._restartPromise;
+  }
+
+  /**
+   * Starts the backend directly and waits for its listening notification.
+   */
+  public start() {
+    const entrypoint = process.argv[1];
+    if (!entrypoint) {
+      return Promise.reject(new Error('Stackpress CLI entrypoint is missing.'));
+    }
+    const config = this._config();
+    const child = this._spawn(
+      entrypoint,
+      [ 'serve', ...this.terminal.args ],
+      {
+        cwd: this.terminal.cwd,
+        env: { ...process.env },
+        execArgv: process.execArgv,
+        execPath: process.execPath,
+        stdio: [ 'inherit', 'inherit', 'inherit', 'ipc' ]
+      }
+    );
+    this._child = child;
+    return new Promise<ChildProcess>((resolve, reject) => {
+      let ready = false;
+      //clear startup listeners without removing the lifecycle exit listener
+      const cleanup = () => {
+        clearTimeout(timeout);
+        child.off('message', onMessage);
+      };
+      const onError = (error: Error) => {
+        if (!ready) {
+          cleanup();
+          reject(error);
+        } else if (!this._restartPromise && !this._exiting) {
+          this._abort(error);
+        }
+      };
+      const onMessage = (message: unknown) => {
+        if (!message
+          || typeof message !== 'object'
+          || !('type' in message)
+        ) return;
+        if (message.type === DEVELOPMENT_ERROR) {
+          cleanup();
+          child.kill('SIGTERM');
+          const detail = 'message' in message
+            ? String(message.message)
+            : 'Stackpress server failed to start.';
+          reject(new Error(detail));
+          return;
+        }
+        if (message.type !== DEVELOPMENT_READY) return;
+        ready = true;
+        cleanup();
+        resolve(child);
+      };
+      const timeout = setTimeout(() => {
+        cleanup();
+        child.kill('SIGTERM');
+        reject(new Error(
+          `Stackpress server was not ready within ${config.timeout}ms.`
+        ));
+      }, config.timeout);
+      child.once('error', onError);
+      child.on('message', onMessage);
+      child.once('exit', code => {
+        if (this._child === child) this._child = null;
+        if (!ready) {
+          cleanup();
+          reject(new Error(
+            `Stackpress server exited before ready with code ${code}.`
+          ));
+        } else if (!this._restartPromise && !this._exiting) {
+          this._abort(new Error(
+            `Stackpress server exited unexpectedly with code ${code}.`
+          ));
+        }
+      });
+    });
+  }
+
+  /**
+   * Watches configured backend files and schedules coalesced restarts.
    */
   public async watch() {
-    //lazy load chokidar to avoid unnecessary dependencies in production
-    const chokidar = await import('chokidar').then(m => m.default || m);
-    //watch the current directory for changes
-    this._watcher = chokidar.watch('.', {
-      ignored: [ /node_modules/, /\.build/ ],
+    const config = this._config();
+    this._watcher = this._watch(config.watch, {
       cwd: this.terminal.cwd,
-      ignoreInitial: true,
-      followSymlinks: true
+      followSymlinks: true,
+      ignored: [ ...DEFAULT_IGNORES, ...config.ignore ],
+      ignoreInitial: true
     });
-    this._watcher.on('change', async filepath => {
-      if (!filepath.endsWith('.ts')) return;
-      this._log.system(`📁 changed: ${filepath}`);
-      await this.restart();
-      this._log.success('✅ Server restarted...');
+    this._watcher.on('all', (event, filepath) => {
+      if (![ 'add', 'change', 'unlink' ].includes(event)) return;
+      if (!config.extensions.includes(path.extname(filepath))) return;
+      this._log.system(`📁 ${event}: ${filepath}`);
+      this._scheduleRestart(config.debounce);
     });
-
-    this._watcher.on('add', async filepath => {
-      if (!filepath.endsWith('.ts')) return;
-      this._log.system(`📁 added: ${filepath}`);
-      await this.restart();
-      this._log.success('✅ Server restarted...');
-    });
-
-    this._watcher.on('unlink', async filepath => {
-      if (!filepath.endsWith('.ts')) return;
-      this._log.system(`📁 removed: ${filepath}`);
-      await this.restart();
-      this._log.success('✅ Server restarted...');
-    });
-
     return this._watcher;
   }
 
   /**
-   * Restarts the development server by first shutting down the existing
-   * child process (if it exists) and then starting a new one. Uses flags 
-   * to prevent multiple simultaneous restarts and ensures that the 
-   * server is restarted cleanly on file changes.
+   * Resolves development defaults against application configuration.
    */
-  public restart() {
-    return new Promise<ChildProcess>((resolve, reject) => {
-      if (this._restarting) {
-        resolve(this._child as ChildProcess);
-        return;
-      }
-
-      this._restarting = true;
-
-      const done = () => {
-        this._child = this.start();
-        this._restarting = false;
-        resolve(this._child);
-      };
-
-      if (this._child) {
-        this.close()
-          .then(done)
-          .catch(error => {
-            this._restarting = false;
-            reject(error);
-          });
-      } else {
-        done();
-      }
-    });
+  protected _config(): Required<DevelopmentConfig> {
+    const configured = this.terminal.server.config
+      .path<DevelopmentConfig>('server.develop', {});
+    return {
+      debounce: configured.debounce ?? 100,
+      extensions: configured.extensions ?? [ '.ts' ],
+      ignore: configured.ignore ?? [],
+      timeout: configured.timeout ?? 10000,
+      watch: configured.watch ?? [ '.' ]
+    };
   }
 
   /**
-   * Closes the child process running the development server. Attempts 
-   * to gracefully shut down the process by sending a SIGTERM signal and 
-   * waiting for it to exit. If the process does not exit within a 
-   * reasonable time, it forcefully kills the process with SIGKILL. 
-   * Returns a promise that resolves when the process has exited or 
-   * rejects if there is an error during shutdown.
+   * Stops supervision after an unrecoverable child or replacement failure.
    */
-  public close() {
-    const kill = () => {
-      if (!this._child) return;
-      this.terminal.verbose && this.terminal.control.warning(
-        `⚠️  Process didn't exit gracefully, force killing...`
-      );
-      this._child.kill('SIGKILL');
-    };
-    return new Promise<void>((resolve, reject) => {
-      if (!this._child) return resolve();
-      const timeout = setTimeout(kill, 5000);
-      this._child.once('exit', () => {
-        clearTimeout(timeout);
-        resolve();
+  protected async _abort(error: unknown) {
+    if (this._exiting) return;
+    this._exiting = true;
+    if (this._restartTimer) {
+      clearTimeout(this._restartTimer);
+      this._restartTimer = null;
+    }
+    if (this._watcher) {
+      await this._watcher.close();
+      this._watcher = null;
+    }
+    this._promiser.reject(error);
+  }
+
+  /**
+   * Performs one or more backend replacements until queued changes settle.
+   */
+  protected async _restart() {
+    let child: ChildProcess|null = this._child;
+    do {
+      this._restartQueued = false;
+      if (child) await this.close();
+      child = await this.start();
+      this._log.success('✅ Server restarted.');
+    } while (this._restartQueued && !this._exiting);
+    return child;
+  }
+
+  /**
+   * Debounces related filesystem events into one backend replacement.
+   */
+  protected _scheduleRestart(debounce: number) {
+    if (this._restartTimer) clearTimeout(this._restartTimer);
+    this._restartTimer = setTimeout(() => {
+      this._restartTimer = null;
+      this.restart().catch(error => {
+        this._log.error(`Failed to restart server: ${String(error)}`);
+        this._abort(error);
       });
-      this._child.once('error', error => {
-        clearTimeout(timeout);
-        kill();
-        reject(error);
-      });
-      this._child.kill('SIGTERM');
-    });
+    }, debounce);
   }
 };
 
 /**
- * Main function that initializes the development server 
- * and file watcher.
+ * Starts the development supervisor and keeps the command active.
  */
-export default async function develop(terminal: Terminal) {
-  //return a new promise, so it can purposely hang...
-  return new Promise<void>(async (resolve, reject) => {
-    //make a new development server
+export default function develop(terminal: Terminal) {
+  return new Promise<void>((resolve, reject) => {
     const server = new DevelopmentServer(terminal, { resolve, reject });
-    // Handle graceful shutdown
     process.once('SIGINT', server.shutdown);
     process.once('SIGTERM', server.shutdown);
-    //start the server
-    server.start();
-    //start the watcher
-    await server.watch();
+    server.start()
+      .then(() => server.watch())
+      .catch(error => {
+        server.close().finally(() => reject(error));
+      });
   });
 }

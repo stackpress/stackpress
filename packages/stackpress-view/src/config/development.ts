@@ -5,10 +5,44 @@ import type { ResponseStatus } from '@stackpress/lib/types';
 import type { IM, SR } from '@stackpress/ingest/types';
 import type Server from '@stackpress/ingest/Server';
 import type { ServerConfig } from 'reactus';
+import type { PluginOption } from 'vite';
 import Status from '@stackpress/lib/Status';
 import reactus, { Server as ReactusServer } from 'reactus';
 //stackpress-view
 import type { ViewPlugin } from '../types.js';
+
+//browser recovery appended to each Reactus development client entry
+const RECONNECT_CLIENT = `
+if (import.meta.hot) {
+  import.meta.hot.on('vite:ws:disconnect', async () => {
+    while (true) {
+      try {
+        await fetch(window.location.href, {
+          cache: 'no-store',
+          method: 'HEAD'
+        });
+        break;
+      } catch {}
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+    window.location.reload();
+  });
+}
+`;
+
+/**
+ * Injects HTTP-based recovery when a backend restart replaces Vite.
+ */
+export function reconnect(): PluginOption {
+  return {
+    name: 'stackpress-backend-reconnect',
+    enforce: 'post',
+    transform(code, id) {
+      if (!id.includes('.hmr.tsx')) return;
+      return `${code}\n${RECONNECT_CLIENT}`;
+    }
+  };
+}
 
 export function config(server: Server) {
   //get current working directory
@@ -17,8 +51,9 @@ export function config(server: Server) {
   const options = server.config.path<Partial<ServerConfig>>('view.engine', {});
   //create reactus engine
   const engine = reactus(ReactusServer.configure({ 
-    ...options, 
+    ...options,
     cwd, 
+    plugins: [ reconnect(), ...(options.plugins || []) ],
     production: false 
   }));
   //register the reactus engine

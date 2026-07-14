@@ -19,6 +19,20 @@ export type TerminalConfig = {
 //ie. ctx.plugin<TerminalPlugin>('terminal');
 export type TerminalPlugin = Terminal;
 
+//development-server watcher and restart policy
+export type DevelopmentConfig = {
+  //milliseconds to wait for related file changes before restarting
+  debounce?: number,
+  //file extensions that require a backend restart
+  extensions?: string[],
+  //additional paths or patterns that the watcher should ignore
+  ignore?: (string|RegExp)[],
+  //milliseconds to wait for the replacement server to become ready
+  timeout?: number,
+  //application paths to watch relative to server.cwd
+  watch?: string[]
+};
+
 //ie. ctx.config<ServerConfig>('server');
 export type ServerConfig = {
   //general location to put build files
@@ -33,6 +47,8 @@ export type ServerConfig = {
   //used by `stackpress/view`
   //defaults to `production`
   mode?: string,
+  //development-server watcher and restart policy
+  develop?: DevelopmentConfig,
   //server host
   //not used by stackpress
   //defaults to `127.0.0.1`
