@@ -4,6 +4,7 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 //stackpress-schema
 import Schema from 'stackpress-schema/Schema';
+import generateSchemaModelTests from 'stackpress-schema/transform/tests';
 //stackpress-sql
 import generateModelTests from '../src/transform/tests/aggregate.js';
 import generateRootTests from '../src/transform/tests/root.js';
@@ -40,44 +41,13 @@ function createSchema(names = [ 'Profile' ]) {
   });
 }
 
-function createTest(
-  project: Project,
-  filepath: string,
-  name: string
-) {
-  project.createSourceFile(
-    filepath,
-    `export default function ${name}() {}`
-  );
-}
-
 describe('sql/transform/tests', () => {
-  it('should discover and aggregate every model runtime test', () => {
+  it('should extend schema-owned model runtime test aggregators', () => {
     const project = createProject();
     const directory = project.createDirectory('/client');
     const model = Array.from(createSchema().models.values())[0];
 
-    createTest(
-      project,
-      '/client/Profile/tests/ProfileSchema.test.ts',
-      'ProfileSchemaTests'
-    );
-    createTest(
-      project,
-      '/client/Profile/tests/ProfileStore.test.ts',
-      'ProfileStoreTests'
-    );
-    createTest(
-      project,
-      '/client/Profile/tests/columns/IdColumn.test.ts',
-      'IdColumnTests'
-    );
-    createTest(
-      project,
-      '/client/Profile/tests/future/Plugin.test.ts',
-      'PluginTests'
-    );
-
+    generateSchemaModelTests(directory, model);
     generateModelTests(directory, model);
     const first = project
       .getSourceFileOrThrow('/client/Profile/tests.ts')
@@ -88,15 +58,16 @@ describe('sql/transform/tests', () => {
       .getFullText();
 
     expect(second).to.equal(first);
-    expect(second.match(/^import /gm)).to.have.length(4);
+    expect(second.match(/^import /gm)).to.have.length(5);
     expect(second).to.contain('./tests/ProfileSchema.test.js');
     expect(second).to.contain('./tests/ProfileStore.test.js');
     expect(second).to.contain('./tests/columns/IdColumn.test.js');
-    expect(second).to.contain('./tests/future/Plugin.test.js');
+    expect(second).to.contain('./tests/ProfileActions.test.js');
+    expect(second).to.contain('./tests/events.test.js');
     expect(second.indexOf('ProfileSchema.test.js')).to.be.lessThan(
       second.indexOf('ProfileStore.test.js')
     );
-    expect(second.match(/runTestRunner\(/g)).to.have.length(5);
+    expect(second.match(/runTestRunner\(/g)).to.have.length(6);
   });
 
   it('should generate a deterministic root runner for every model', () => {
@@ -121,7 +92,7 @@ describe('sql/transform/tests', () => {
     }
   });
 
-  it('should generate an empty runner when a model has no tests', () => {
+  it('should generate a SQL-only runner when schema has not contributed yet', () => {
     const project = createProject();
     const directory = project.createDirectory('/client');
     const model = Array.from(createSchema().models.values())[0];
@@ -132,7 +103,10 @@ describe('sql/transform/tests', () => {
       .getFullText();
 
     expect(source).to.contain('function runAllProfileTests(engine?: any)');
-    expect(source).to.not.match(/^import /m);
+    expect(source.match(/^import /gm)).to.have.length(3);
+    expect(source).to.contain('./tests/ProfileStore.test.js');
+    expect(source).to.contain('./tests/ProfileActions.test.js');
+    expect(source).to.contain('./tests/events.test.js');
   });
 
   it('should generate observable runtime tests without empty cases', () => {
