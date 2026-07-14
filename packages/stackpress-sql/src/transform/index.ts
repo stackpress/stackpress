@@ -18,9 +18,10 @@ import {
 import generateModelIndex from './model.js';
 import generatePackage from './package.js';
 import generateActionsTests from './tests/actions.js';
+import generateModelTests from './tests/aggregate.js';
 import generateEventsTests from './tests/events.js';
+import generateRootTests from './tests/root.js';
 import generateStoreTests from './tests/store.js';
-import { generateModelTests } from './tests.js';
 
 export default async function generate(props: ClientPluginProps) {
   //------------------------------------------------------------------//
@@ -34,8 +35,11 @@ export default async function generate(props: ClientPluginProps) {
 
   for (const model of schema.models.values()) {
     generateModel(directory, model);
+  }
+  for (const model of schema.models.values()) {
     generateModelTests(directory, model);
   }
+  generateRootTests(directory, schema);
 
   //------------------------------------------------------------------//
   // 3. scripts.ts

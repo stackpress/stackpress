@@ -16,10 +16,6 @@ import generateEnums from './enums.js';
 import generatePackage from './package.js';
 import generateSchemaTests from './tests/schema.js';
 import {
-  generateModelTests,
-  generateTests
-} from './tests.js';
-import {
   loadProjectFile,
   pruneGeneratedSchemaFiles
 } from './helpers.js';
@@ -50,8 +46,6 @@ export default async function generate(props: ClientPluginProps) {
     generateSchema(directory, fieldset);
     //Address/tests
     generateSchemaTests(directory, fieldset);
-    //Address/tests.ts
-    generateModelTests(directory, fieldset);
     //Address/types.ts
     generateFieldsetTypes(directory, fieldset);
     //Address/index.ts
@@ -65,8 +59,6 @@ export default async function generate(props: ClientPluginProps) {
     generateSchema(directory, model);
     //Profile/tests
     generateSchemaTests(directory, model);
-    //Profile/tests.ts
-    generateModelTests(directory, model);
     //Profile/types.ts
     generateModelTypes(directory, model);
     //Profile/index.ts
@@ -156,8 +148,4 @@ export default async function generate(props: ClientPluginProps) {
 
   generatePackage(directory, schema, packageName);
 
-  //------------------------------------------------------------------//
-  // 6. tests.ts
-
-  generateTests(directory, schema);
 };
