@@ -10,6 +10,7 @@ import { expect } from 'chai';
 //stackpress-schema
 import Schema from '../src/Schema.js';
 import { pruneGeneratedSchemaFiles } from '../src/transform/helpers.js';
+import generatePackage from '../src/transform/package.js';
 import generateSchemaTests from '../src/transform/tests/schema.js';
 import generateTestAggregate from '../src/transform/tests.js';
 
@@ -150,6 +151,66 @@ describe('schema/transform/helpers', () => {
     expect(second).to.contain('./tests/columns/IdColumn.test.js');
     expect(second).to.contain('export function runAllProfileTests');
     expect(second).to.contain('export default runAllProfileTests');
+  });
+
+  it('should expose generated test aggregators in package metadata', async () => {
+    const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'stackpress-package-'));
+
+    try {
+      const project = new Project({
+        manipulationSettings: {
+          indentationText: IndentationText.TwoSpaces
+        }
+      });
+      const directory = project.createDirectory(root);
+      const schema = Schema.make({
+        type: {
+          Address: {
+            name: 'Address',
+            attributes: {},
+            columns: [{
+              name: 'street',
+              type: 'String',
+              required: true,
+              multiple: false,
+              attributes: {}
+            }]
+          }
+        },
+        model: {
+          Profile: {
+            name: 'Profile',
+            mutable: true,
+            attributes: {},
+            columns: [{
+              name: 'id',
+              type: 'String',
+              required: true,
+              multiple: false,
+              attributes: { id: true }
+            }]
+          }
+        }
+      });
+
+      generatePackage(directory, schema, 'blog-client');
+
+      const metadata = JSON.parse(
+        await fsp.readFile(path.join(root, 'package.json'), 'utf-8')
+      );
+      expect(metadata.exports['./Profile/tests']).to.equal('./Profile/tests.js');
+      expect(metadata.exports['./Address/tests']).to.equal('./Address/tests.js');
+      expect(metadata.exports['./Profile/tests/*'])
+        .to.equal('./Profile/tests/*.js');
+      expect(metadata.typesVersions['*']['./Profile/tests'])
+        .to.deep.equal([ './Profile/tests.d.ts' ]);
+      expect(metadata.typesVersions['*']['./Address/tests'])
+        .to.deep.equal([ './Address/tests.d.ts' ]);
+      expect(metadata.typesVersions['*']['./Profile/tests/*'])
+        .to.deep.equal([ './Profile/tests/*.d.ts' ]);
+    } finally {
+      await fsp.rm(root, { recursive: true, force: true });
+    }
   });
 });
 
