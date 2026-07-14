@@ -45,10 +45,18 @@ stackpress push --b config -v
 
 Creates or updates database structure from the current schema and database config.
 
+- Preserves clear one-to-one, same-semantics field renames through Inquire's
+  column-rename builder instead of dropping and recreating populated columns.
+- Refuses ambiguous same-shape rename candidates rather than guessing which
+  fields correspond.
 - Blocks destructive schema changes by default when the diff would remove fields,
   keys, constraints, or whole tables.
 - Use `--force` only when you intentionally want to accept the data-loss risk
-  and apply the destructive diff anyway.
+  from ambiguous or destructive changes. Clear rename plans remain preserved.
+
+`stackpress migrate` uses the same migration plans but only writes SQL files. It
+does not print warnings or refuse ambiguous/destructive plans; review the raw
+drop/add SQL it writes before applying those files.
 
 ## `populate`
 

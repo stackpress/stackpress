@@ -164,9 +164,10 @@ config. Development HMR uses Node HTTP native resources.
 6. Run `push`/`upgrade` against the expected adjacent state.
 7. Verify schema, data, routes/events, and affected UI/API/MCP paths.
 
-Ambiguous rename candidates fail safe. `--force` accepts generic destructive
-diff behavior; it is not a rename hint. Revision history does not prove live
-applied state.
+Ambiguous rename candidates fail safe during live upgrade. `--force` accepts
+the generic destructive diff; it is not a rename hint. `migrate` instead writes
+that raw drop/add SQL without warning so it can be reviewed before execution.
+Revision history does not prove live applied state.
 
 ## Source Anchors And Authority
 

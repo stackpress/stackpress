@@ -55,7 +55,9 @@ values. `transaction` delegates to the connection's transaction contract.
 
 `diff()` compares two built `Create` definitions for the same logical table and
 plans field, primary, unique, index, and foreign-key additions/removals/changes.
-It does not compare table names or infer semantic renames.
+It does not compare table names or infer semantic renames. Callers with rename
+intent can reconcile a matching remove/add pair through
+`engine.diff(from, to).renameField(fromField, toField)`.
 
 ## Builder Contract
 
@@ -66,7 +68,7 @@ without a supplied/engine dialect throws; awaiting without an engine throws.
 | Builder | Construction and chain methods |
 | --- | --- |
 | `Create` | `(table, engine?)`; `addField`, `addForeignKey`, `addKey`, `addPrimaryKey`, `addUniqueKey` |
-| `Alter` | same add methods plus `changeField`, `removeField`, `removeForeignKey`, `removeKey`, `removePrimaryKey`, `removeUniqueKey` |
+| `Alter` | same add methods plus `changeField`, `renameField`, `removeField`, `removeForeignKey`, `removeKey`, `removePrimaryKey`, `removeUniqueKey` |
 | `Insert` | `(table, engine?)`; `values(record|records)`, `returning(columns='*')` |
 | `Select` | `(columns?, engine?)`; `select`, `from`, `join`, `where`, `whereJson`, `whereJsonContains`, `order`, `limit`, `offset` |
 | `Update` | `(table, engine?)`; `set`, `where`, `whereJson`, `whereJsonContains` |
@@ -177,22 +179,30 @@ mode. Invalid dates become epoch; invalid numbers become zero. Object strings
 are JSON encoded.
 
 `getAlias`, `storePathToAlias`, and `storeSelectorToSqlSelector` normalize model
-paths to snake-case SQL selectors and stable nested aliases. Rename planning
-compares adjacent models' built SQL signatures. Only unambiguous one-to-one,
-same-semantics candidates become rename plans; ambiguous graphs fail before SQL.
+paths to snake-case SQL selectors and stable nested aliases. The `Migrations`
+class composes schema revision history with an Inquire engine. It compares
+adjacent models' built SQL signatures, applies unambiguous one-to-one,
+same-semantics plans to `engine.diff(from, to)` through
+`renameField(fromField, toField)`, and returns queries with ambiguity and
+destructive-warning metadata. Inquire owns the resulting dialect SQL and builder
+reconciliation; Stackpress does not emit raw rename statements or rewrite
+create-table builders. The former `scripts/helpers` planning surface has been
+removed; migration behavior is owned by this class.
 
 ## Operational Boundaries
 
 - Install, upgrade, and purge use transactions around their generated sequences.
-- Migration writes artifacts without applying them.
+- Migration writes raw artifacts without applying warning/refusal policy.
 - Revisions record generated schema snapshots, not live applied state.
 - Population emits configured events sequentially without one outer transaction.
-- `--force` on ambiguous/destructive upgrade accepts generic diff behavior.
+- `--force` on ambiguous/destructive upgrade accepts the planned raw queries;
+  clear rename plans remain preserved.
 - Native adapter result/error/transaction semantics remain relevant.
 
 ## Source Anchors And Authority
 
 Checkout anchors: Inquire `Engine.ts`, builders, dialects, helpers, types;
-Stackpress SQL interfaces, helpers, types, transforms, generated actions/stores,
-events, scripts, and plugin. Generated template output is runtime evidence.
-Source and generated contracts are authority; existing docs are benchmarks.
+Stackpress SQL interfaces, `Migrations`, helpers, types, transforms, generated
+actions/stores, events, scripts, and plugin. Generated template output is
+runtime evidence. Source and generated contracts are authority; existing docs
+are benchmarks.

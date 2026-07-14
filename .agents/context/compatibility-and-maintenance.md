@@ -52,8 +52,8 @@ Do not merge those authorities into one version claim.
 - generated packages declare granular exports and generated tests;
 - revisions preserve changed schema snapshots;
 - clear field renames can preserve database columns;
-- ambiguous rename candidates fail before destructive SQL unless explicitly
-  forced in the live-upgrade path;
+- ambiguous rename candidates block the live-upgrade path unless explicitly
+  forced, while migration generation writes reviewable raw SQL;
 - package tests, template workflows, and skill installer tests cover selected
   contracts.
 

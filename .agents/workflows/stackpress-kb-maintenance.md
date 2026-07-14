@@ -37,7 +37,7 @@ contract. Record the review result only when a durable audit trail is needed.
 | `packages/*/src/plugin.ts` | architecture, runtime, interfaces, contribution | lifecycle registration and aggregate behavior |
 | schema/Idea helpers or `.idea` files | modeling, runtime, compatibility | parse, generate, normalized schema |
 | `*/src/transform/` | modeling, interfaces, compatibility | clean/repeat generation and generated import |
-| SQL scripts/helpers/adapters | runtime, ecosystem, compatibility | dialect queries and operational workflow |
+| SQL migrations/scripts/adapters | runtime, ecosystem, compatibility | dialect queries and operational workflow |
 | view/admin/session/API/AI/desktop | interfaces plus owning domain | surface auth/render/transport proof |
 | package manifests/exports/versions | ecosystem, compatibility | build, pack, export/import checks |
 | template config/plugins | runtime, interfaces, contribution | active template workflow |

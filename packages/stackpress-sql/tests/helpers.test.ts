@@ -4,7 +4,10 @@ import { expect } from 'chai';
 //modules
 import { Create, Engine, Mysql, Pgsql, Sqlite } from '@stackpress/inquire';
 import PGLiteConnection from '@stackpress/inquire-pglite/Connection';
+//stackpress-schema
+import Schema from 'stackpress-schema/Schema';
 //src
+import Migrations from '../src/Migrations.js';
 import {
   toSqlString,
   toSqlBoolean,
@@ -17,14 +20,6 @@ import {
   storeSelectorToSqlSelector
 } from '../src/helpers.js';
 import type { StorePath, StoreSelector } from '../src/types.js';
-import {
-  formatDestructiveSchemaMessage,
-  getDestructiveAlterChanges,
-  hasDestructiveAlterChanges,
-  hasDestructiveSchemaChanges,
-  inspectSchemaChanges
-} from '../src/scripts/helpers.js';
-
 
 describe('sql/helpers', () => {
   it('should coerce values into SQL-safe primitives', () => {
@@ -183,7 +178,7 @@ describe('sql/destructive-guard', () => {
       foreign: { remove: [ 'article_author_id_foreign' ] }
     } as any;
 
-    const changes = getDestructiveAlterChanges(build);
+    const changes = Migrations.getDestructiveAlterChanges(build);
 
     expect(changes).to.deep.equal({
       fields: [ 'summary' ],
@@ -192,7 +187,7 @@ describe('sql/destructive-guard', () => {
       keys: [ 'article_summary_search' ],
       foreign: [ 'article_author_id_foreign' ]
     });
-    expect(hasDestructiveAlterChanges(changes)).to.equal(true);
+    expect(Migrations.hasDestructiveAlterChanges(changes)).to.equal(true);
   });
 
   it('should format an aggregate destructive warning message', () => {
@@ -211,26 +206,26 @@ describe('sql/destructive-guard', () => {
       ],
       drops: [ 'comment' ]
     };
-    const message = formatDestructiveSchemaMessage(changes);
+    const message = Migrations.formatWarning([], changes) || '';
 
-    expect(hasDestructiveSchemaChanges(changes)).to.equal(true);
+    expect(Migrations.hasDestructiveChanges(changes)).to.equal(true);
     expect(message).to.include('Destructive schema changes detected.');
     expect(message).to.include('Table "article":');
     expect(message).to.include('Removed fields: summary, published');
     expect(message).to.include('Removed foreign keys: article_author_id_foreign');
     expect(message).to.include('Dropped tables: comment');
-    expect(message).to.include('these destructive changes');
+    expect(message).to.include('Re-run with `--force`');
   });
 
   it('should treat empty removals as safe', () => {
-    expect(hasDestructiveAlterChanges({
+    expect(Migrations.hasDestructiveAlterChanges({
       fields: [],
       primary: [],
       unique: [],
       keys: [],
       foreign: []
     })).to.equal(false);
-    expect(hasDestructiveSchemaChanges({
+    expect(Migrations.hasDestructiveChanges({
       alters: [],
       drops: []
     })).to.equal(false);
@@ -246,7 +241,11 @@ describe('sql/destructive-guard', () => {
         removeSummary: true
       });
 
-      const inspected = inspectSchemaChanges(engine, [ before ], [ after ]);
+      const inspected = Migrations.inspectSchemaChanges(
+        engine,
+        [ before ],
+        [ after ]
+      );
 
       expect(
         inspected.destructive,
@@ -268,12 +267,12 @@ describe('sql/destructive-guard', () => {
       });
       expect(
         inspected.queries,
-        `Expected ${name} destructive diff to block generated queries until forced.`
-      ).to.deep.equal([]);
+        `Expected ${name} destructive diff to retain reviewable SQL.`
+      ).to.not.deep.equal([]);
     }
   });
 
-  it('should emit real alter SQL from builder diffs when force is enabled', () => {
+  it('should return destructive SQL and warning metadata together', () => {
     for (const [ name, engine ] of makeIntegrationCases()) {
       const before = makeArticleSchema(engine);
       const after = makeArticleSchema(engine, {
@@ -283,20 +282,24 @@ describe('sql/destructive-guard', () => {
         removeSummary: true
       });
 
-      const inspected = inspectSchemaChanges(engine, [ before ], [ after ], true);
+      const inspected = Migrations.inspectSchemaChanges(
+        engine,
+        [ before ],
+        [ after ]
+      );
       const queries = inspected.queries.map(query => query.query);
 
       expect(
         inspected.destructive,
-        `Expected ${name} forced diff to skip destructive warnings.`
-      ).to.deep.equal({ alters: [], drops: [] });
+        `Expected ${name} destructive diff to retain warning metadata.`
+      ).to.not.deep.equal({ alters: [], drops: [] });
       expect(
         queries.length,
-        `Expected ${name} forced diff to emit at least one alter query.`
+        `Expected ${name} destructive diff to emit at least one alter query.`
       ).to.be.greaterThan(0);
       expect(
         queries.some(query => query.includes('summary')),
-        `Expected ${name} forced diff to include the removed field in emitted SQL.`
+        `Expected ${name} destructive diff to include the removed field in emitted SQL.`
       ).to.equal(true);
     }
   });
@@ -312,7 +315,11 @@ describe('sql/destructive-guard', () => {
         includeIndexes: false
       });
 
-      const inspected = inspectSchemaChanges(engine, [ before ], [ after ]);
+      const inspected = Migrations.inspectSchemaChanges(
+        engine,
+        [ before ],
+        [ after ]
+      );
 
       expect(
         inspected,
@@ -325,6 +332,134 @@ describe('sql/destructive-guard', () => {
         }
       });
     }
+  });
+});
+
+describe('sql/rename-plan', () => {
+  it('should plan a clear one-to-one same-semantics field rename', () => {
+    const from = Schema.make(makeRenameSchemaConfig([ 'profileName' ]));
+    const to = Schema.make(makeRenameSchemaConfig([ 'name' ]));
+
+    //Match the Idea columns through the SQL field names Inquire will receive.
+    expect(Migrations.planRenames(from, to)).to.deep.equal({
+      renames: [{
+        model: 'Profile',
+        table: 'profile',
+        from: 'profileName',
+        fromField: 'profile_name',
+        to: 'name',
+        toField: 'name'
+      }],
+      ambiguous: []
+    });
+  });
+
+  it('should refuse to guess across multiple same-shape candidates', () => {
+    const from = Schema.make(makeRenameSchemaConfig([
+      'profileName',
+      'displayName'
+    ]));
+    const to = Schema.make(makeRenameSchemaConfig([
+      'name',
+      'title'
+    ]));
+    const plan = Migrations.planRenames(from, to);
+
+    //Keep the candidate group unresolved so no arbitrary rename reaches SQL.
+    expect(plan.renames).to.deep.equal([]);
+    expect(plan.ambiguous).to.deep.equal([{
+      model: 'Profile',
+      table: 'profile',
+      fromFields: [ 'display_name', 'profile_name' ],
+      toFields: [ 'name', 'title' ]
+    }]);
+    expect(Migrations.formatAmbiguousWarning(plan.ambiguous)).to.include(
+      'Stackpress found multiple same-shape rename candidates'
+    );
+  });
+
+  it('should delegate rename SQL to every supported Inquire dialect', () => {
+    const from = Schema.make(makeRenameSchemaConfig([ 'profileName' ]));
+    const to = Schema.make(makeRenameSchemaConfig([ 'name' ]));
+    const plan = Migrations.planRenames(from, to);
+
+    for (const [ dialect, engine ] of makeIntegrationCases()) {
+      //Build the same remove/add pair that renameField must reconcile.
+      const before = new Create('profile', engine)
+        .addField('profile_name', {
+          type: 'VARCHAR',
+          length: 255,
+          nullable: true
+        });
+      const after = new Create('profile', engine)
+        .addField('name', {
+          type: 'VARCHAR',
+          length: 255,
+          nullable: true
+        });
+
+      //Apply the Stackpress plan before destructive inspection and SQL output.
+      const inspected = Migrations.inspectSchemaChanges(
+        engine,
+        [ before ],
+        [ after ],
+        plan.renames
+      );
+      const sql = inspected.queries.map(query => query.query).join('\n');
+
+      //The emitted statement belongs to Inquire and must preserve the column.
+      expect(inspected.destructive, dialect).to.deep.equal({
+        alters: [],
+        drops: []
+      });
+      expect(sql, dialect).to.include('RENAME COLUMN');
+      expect(sql, dialect).to.include('profile_name');
+      expect(sql, dialect).to.include('name');
+      expect(sql, dialect).to.not.include('DROP COLUMN');
+      expect(sql, dialect).to.not.include('ADD COLUMN');
+    }
+  });
+
+  it('should allow equivalent renamed keys and constraints', () => {
+    const engine = makeEngine(Pgsql);
+    const from = Schema.make(makeRenameSchemaConfig([ 'profileName' ]));
+    const to = Schema.make(makeRenameSchemaConfig([ 'name' ]));
+    const plan = Migrations.planRenames(from, to);
+
+    //Model constraint names that change because the generated field name changed.
+    const before = new Create('profile', engine)
+      .addField('profile_name', { type: 'VARCHAR', length: 255 })
+      .addPrimaryKey('profile_name')
+      .addUniqueKey('profile_profile_name_unique', 'profile_name')
+      .addKey('profile_profile_name_index', 'profile_name')
+      .addForeignKey('profile_profile_name_foreign', {
+        local: 'profile_name',
+        foreign: 'id',
+        table: 'account'
+      });
+    const after = new Create('profile', engine)
+      .addField('name', { type: 'VARCHAR', length: 255 })
+      .addPrimaryKey('name')
+      .addUniqueKey('profile_name_unique', 'name')
+      .addKey('profile_name_index', 'name')
+      .addForeignKey('profile_name_foreign', {
+        local: 'name',
+        foreign: 'id',
+        table: 'account'
+      });
+
+    //Equivalent replacement constraints should not turn a safe rename destructive.
+    const inspected = Migrations.inspectSchemaChanges(
+      engine,
+      [ before ],
+      [ after ],
+      plan.renames
+    );
+
+    expect(inspected.destructive).to.deep.equal({ alters: [], drops: [] });
+    expect(inspected.queries.map(query => query.query).join('\n')).to.include(
+      'RENAME COLUMN'
+    );
   });
 });
 
@@ -401,4 +536,28 @@ function makeArticleSchema(
   }
 
   return schema;
+}
+
+/**
+ * Build one minimal schema revision around rename candidate fields.
+ */
+function makeRenameSchemaConfig(columnNames: string[]) {
+  return {
+    model: {
+      Profile: {
+        name: 'Profile',
+        mutable: true,
+        attributes: {},
+        columns: columnNames.map(name => ({
+          name,
+          type: 'String',
+          required: false,
+          multiple: false,
+          attributes: {
+            label: [ 'Profile name' ]
+          }
+        }))
+      }
+    }
+  };
 }

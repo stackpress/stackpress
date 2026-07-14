@@ -58,8 +58,8 @@ Other arguments remain in terminal request data. Handler aliases such as
 | `query <sql>` | database | executes raw SQL and prints native results |
 | `install` | database + generated client | drops/recreates generated tables; initializes history |
 | `push` | database + generated client | installs without sufficient history, otherwise upgrades newest pair |
-| `upgrade` | database + adjacent revisions | transactional live diff; `--force` allows generic destructive fallback |
-| `migrate` | database, revisions, migration path | writes history SQL without updating database |
+| `upgrade` | database + adjacent revisions | transactional live diff; warning metadata blocks ambiguous/destructive plans unless forced |
+| `migrate` | database, revisions, migration path | writes raw history SQL without warning or updating database |
 | `populate` | `database.populate` | resolves seed events sequentially |
 | `purge` | database + generated models | transactionally truncates generated stores |
 | `uninstall` | database + generated client | drops generated stores |

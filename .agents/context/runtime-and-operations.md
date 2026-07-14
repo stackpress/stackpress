@@ -69,7 +69,7 @@ Revision history is not a database applied-migration ledger.
 | `install` | drops generated tables, recreates them, and initializes history when absent |
 | `push` | installs without enough history; otherwise upgrades the newest adjacent pair |
 | `upgrade` | executes an adjacent schema diff in a database transaction |
-| `migrate` | writes SQL across revision history without updating a database |
+| `migrate` | writes raw SQL across revision history without warning or updating a database |
 | `populate` | resolves configured seed events sequentially |
 | `purge` | truncates generated stores in a transaction |
 | `uninstall` | drops generated stores |
@@ -79,10 +79,15 @@ database corresponds to expected history; revisions alone do not prove this.
 
 ## Rename Safety
 
-Clear one-to-one same-semantics field renames are planned as column renames.
-Ambiguous same-shape candidates fail before live SQL or migration output. On live
-upgrade, `--force` accepts generic destructive diff behavior instead of rename
-preservation.
+Stackpress SQL's `Migrations` class plans adjacent revisions, applies clear
+one-to-one same-semantics field rename intent through Inquire's
+`Alter.renameField()` builder, and returns raw queries with warning metadata.
+Inquire owns the dialect-specific rename SQL and reconciliation of the original
+remove/add pair. Live upgrade refuses ambiguous or destructive plans unless
+`--force` is provided. Migration generation does not enforce that warning
+policy: it writes the raw SQL, including generic drop/add SQL for ambiguity, for
+review without updating a database. Clear rename plans remain preserved with or
+without `--force`.
 
 ## Transaction Boundaries
 

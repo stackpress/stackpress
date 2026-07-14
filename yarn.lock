@@ -1018,29 +1018,29 @@
     "@stackpress/lib" "0.10.5"
     "@whatwg-node/server" "0.10.17"
 
-"@stackpress/inquire-pglite@0.10.6":
-  version "0.10.6"
-  resolved "https://registry.yarnpkg.com/@stackpress/inquire-pglite/-/inquire-pglite-0.10.6.tgz#6b04f0ef30adca8895fc1076ad736046c61d612e"
-  integrity sha512-wzkSQZ1WG8YdCODUIDeoccOuAqyLO7tzfl8YY3o/0LP4fyJffvZgAeno6TzUc9IHy3HMvxOFGaW1yx+cM7KdcA==
+"@stackpress/inquire-pglite@0.10.7":
+  version "0.10.7"
+  resolved "https://registry.yarnpkg.com/@stackpress/inquire-pglite/-/inquire-pglite-0.10.7.tgz#8ed8b74e5840c2e1cd93a0854156960c24eb9290"
+  integrity sha512-wu5Z3DXVFC2prM+d/W4a6IsCLstCG2f2Nu+Uc9YbGEDQ4gr/KPdYaCSEdOye0RK08SFeOFYlx1DMDUxDqU79bg==
   dependencies:
-    "@stackpress/inquire" "0.10.6"
+    "@stackpress/inquire" "0.10.7"
 
-"@stackpress/inquire@0.10.6":
-  version "0.10.6"
-  resolved "https://registry.yarnpkg.com/@stackpress/inquire/-/inquire-0.10.6.tgz#9b7a84442aa606f64ff6a87c5f76380ded18d330"
-  integrity sha512-aXlRdFKmOPG7RKxXmyPHZZ/9bs6cEojsfrnJLpCkDgygCY25VKeeAx379iCsfjW8WesgplRTNR1b+nP+R1OFOQ==
+"@stackpress/inquire@0.10.7":
+  version "0.10.7"
+  resolved "https://registry.yarnpkg.com/@stackpress/inquire/-/inquire-0.10.7.tgz#5387a85a413f9e3c4a72faa3afc2e2f4b82d4120"
+  integrity sha512-lORKtUKIzwz75RxKY+OU5C9H+DD1UInpMp5H5FqyXzIIk/hRwCIyzzggzQDYGt+DKnGOVDssdYY9NFMas4i8bQ==
   dependencies:
-    "@stackpress/lib" "0.10.6"
+    "@stackpress/lib" "0.10.7"
 
 "@stackpress/lib@0.10.5":
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/@stackpress/lib/-/lib-0.10.5.tgz#ea6ef3cb5c4a6e474653f339462d1f626e5b1da7"
   integrity sha512-zVUwppiCmLnEfcDPhl/ehDUbsQ0s1kC9PmLx4LZA/8QZphj6zTY4qsKZUG7Tb9lzmtDJ0o7Hejj1y5zuK7PVNw==
 
-"@stackpress/lib@0.10.6":
-  version "0.10.6"
-  resolved "https://registry.yarnpkg.com/@stackpress/lib/-/lib-0.10.6.tgz#fba47a1186b95351d313e6202d7eef94e9f68449"
-  integrity sha512-FjCC6ZlAGPkRqQuD9C7zkGnnFV5eUrklD3K27F/LQrZuJrVYljUU3yvceWyXOvWF0jwa0qbHGs+WCg2453+Dvg==
+"@stackpress/lib@0.10.7":
+  version "0.10.7"
+  resolved "https://registry.yarnpkg.com/@stackpress/lib/-/lib-0.10.7.tgz#38af9964092c1c085fcf5bbcaf28679c7fd58231"
+  integrity sha512-5Xw1wfmNn8P6htjpDpBvRPFNRiD4NQ4MNH96s5SaPQpbaUjMAj/Z0Bf9dBt6b1IjwpMB7UI2PdGRU6ayhCU1Og==
 
 "@szmarczak/http-timer@^4.0.5":
   version "4.0.6"

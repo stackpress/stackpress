@@ -55,13 +55,18 @@ metadata, not accepted Stackpress identity or marketing language.
 | schema | dictionaries, naming/crypto helpers, `Attribute`, `Column`, `Fieldset`, `Model`, `Schema`, interfaces |
 | runtime | `server`, `router`, `action`, `gateway`, `handler`, `Request`, `Response`, `Router`, `Server`, terminal/loaders/plugin routers |
 | session/language | permission matchers, `actions`, `Session`, `Language` |
-| SQL | builders, dialects, `Engine`, SQL/alias helpers, store/action interfaces |
+| SQL | builders, dialects, `Engine`, `Migrations`, SQL/alias helpers, store/action interfaces |
 | view | Reactus templates/helpers/classes under collision-safe aliases, providers/hooks/layouts, r22n, notifications, `setViewProps` |
 | tasks | `events` and `scripts` namespaces |
 
 At the root, Reactus collisions are renamed `ReactusBuilder`,
 `ReactusDocument`, and `ReactusServer`; the Stackpress/Ingest `Server` remains
 the unprefixed runtime server.
+
+`Migrations` is public from the focused `stackpress-sql` package and the
+`stackpress/sql` domain facade. Its result types are public from the matching
+`types` entrypoints. It is intentionally not promoted to the broad `stackpress`
+root.
 
 `events` groups event handlers for develop/emit/serve, generate, and SQL
 operations. `scripts` groups lower-level callable implementations. Most

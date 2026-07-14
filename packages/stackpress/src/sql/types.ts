@@ -54,5 +54,11 @@ export type {
   ClientModel,
   ClientScripts,
   ClientPlugin,
-  Client
+  Client,
+  Migration,
+  MigrationRename,
+  MigrationRenameAmbiguity,
+  MigrationRenamePlan,
+  MigrationRevision,
+  InspectedSchemaChanges
 } from 'stackpress-sql/types';

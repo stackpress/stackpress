@@ -338,3 +338,12 @@ export type DestructiveSchemaChanges = {
   alters: DestructiveAlterChangeSet[],
   drops: string[]
 };
+
+export type {
+  Migration,
+  MigrationRename,
+  MigrationRenameAmbiguity,
+  MigrationRenamePlan,
+  MigrationRevision,
+  InspectedSchemaChanges
+} from './Migrations.js';

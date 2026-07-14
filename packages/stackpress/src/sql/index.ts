@@ -88,5 +88,6 @@ export {
   storePathToAlias,
   storeSelectorToSqlSelector,
   ActionsInterface, 
-  StoreInterface
+  StoreInterface,
+  Migrations
 } from 'stackpress-sql';
