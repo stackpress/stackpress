@@ -2,12 +2,15 @@
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+//modules
+import { IndentationText, Project } from 'ts-morph';
 //tests
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 //stackpress-schema
 import Schema from '../src/Schema.js';
 import { pruneGeneratedSchemaFiles } from '../src/transform/helpers.js';
+import generateSchemaTests from '../src/transform/tests/schema.js';
 
 describe('schema/transform/helpers', () => {
   it('should remove stale generated files left behind by renamed fields', async () => {
@@ -57,6 +60,53 @@ describe('schema/transform/helpers', () => {
     } finally {
       await fsp.rm(root, { recursive: true, force: true });
     }
+  });
+
+  it('should generate observable schema runtime tests without empty cases', () => {
+    const project = new Project({
+      useInMemoryFileSystem: true,
+      manipulationSettings: {
+        indentationText: IndentationText.TwoSpaces
+      }
+    });
+    const directory = project.createDirectory('/client');
+    const schema = Schema.make({
+      model: {
+        Profile: {
+          name: 'Profile',
+          mutable: true,
+          attributes: {},
+          columns: [
+            {
+              name: 'id',
+              type: 'String',
+              required: true,
+              multiple: false,
+              attributes: { id: true }
+            },
+            {
+              name: 'tags',
+              type: 'String',
+              required: false,
+              multiple: true,
+              attributes: {}
+            }
+          ]
+        }
+      }
+    });
+    const model = Array.from(schema.models.values())[0];
+
+    generateSchemaTests(directory, model);
+
+    const source = project
+      .getSourceFileOrThrow('/client/Profile/tests/ProfileSchema.test.ts')
+      .getFullText();
+    expect(source).to.not.contain('async () => {}');
+    expect(source).to.contain('schema.serialize');
+    expect(source).to.contain('schema.unserialize');
+    expect(source).to.contain("expect(actual).to.have.property('id')");
+    expect(source).to.contain("expect(actual).to.have.property('tags')");
   });
 });
 
