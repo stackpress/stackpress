@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-ai",
-  "version": "0.10.5",
+  "version": "0.10.7",
   "license": "MIT",
   "description": "MCP server package for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -103,9 +103,9 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
-    "@stackpress/ingest": "0.10.5",
-    "stackpress-api": "0.10.5",
-    "stackpress-schema": "0.10.5",
+    "@stackpress/ingest": "0.10.7",
+    "stackpress-api": "0.10.7",
+    "stackpress-schema": "0.10.7",
     "zod": "4.3.6"
   },
   "devDependencies": {

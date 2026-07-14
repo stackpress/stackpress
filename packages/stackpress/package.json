@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress",
-  "version": "0.10.5",
+  "version": "0.10.7",
   "license": "MIT",
   "description": "Incept is a content management framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -255,9 +255,9 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "stackpress-admin": "0.10.5",
-    "stackpress-api": "0.10.5",
-    "stackpress-email": "0.10.5"
+    "stackpress-admin": "0.10.7",
+    "stackpress-api": "0.10.7",
+    "stackpress-email": "0.10.7"
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "0.3.0",

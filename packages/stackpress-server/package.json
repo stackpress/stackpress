@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-server",
-  "version": "0.10.5",
+  "version": "0.10.7",
   "license": "MIT",
   "description": "Server library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -120,7 +120,7 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/ingest": "0.10.5",
+    "@stackpress/ingest": "0.10.7",
     "chokidar": "^5.0.0"
   },
   "devDependencies": {

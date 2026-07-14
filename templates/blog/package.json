@@ -34,9 +34,9 @@
     "@stackpress/inquire-pglite": "0.10.7",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "stackpress": "0.10.5",
-    "stackpress-ai": "0.10.5",
-    "stackpress-desktop": "0.10.5"    
+    "stackpress": "0.10.7",
+    "stackpress-ai": "0.10.7",
+    "stackpress-desktop": "0.10.7"
   },
   "devDependencies": {
     "@types/node": "25.3.5",
