@@ -36,14 +36,14 @@ export default function generate(
     
     packageJson.set('exports', `./${columns}`, `./${columns}/index.js`);
     packageJson.set('exports', `./${columns}/*`, `./${columns}/*.js`);
-    packageJson.set('exports', `./${tests}`, `./${tests}/index.js`);
+    packageJson.set('exports', `./${tests}`, `./${tests}.js`);
     packageJson.set('exports', `./${tests}/*`, `./${tests}/*.js`);
     packageJson.set('exports', `./${name}`, `./${name}/index.js`);
     packageJson.set('exports', `./${name}/*`, `./${name}/*.js`);
     
     packageJson.set('typesVersions', `*`, `./${columns}`, [ `./${columns}/index.d.ts` ]);
     packageJson.set('typesVersions', `*`, `./${columns}/*`, [ `./${columns}/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${tests}`, [ `./${tests}/index.d.ts` ]);
+    packageJson.set('typesVersions', `*`, `./${tests}`, [ `./${tests}.d.ts` ]);
     packageJson.set('typesVersions', `*`, `./${tests}/*`, [ `./${tests}/*.d.ts` ]);
     packageJson.set('typesVersions', `*`, `./${name}`, [ `./${name}/index.d.ts` ]);
     packageJson.set('typesVersions', `*`, `./${name}/*`, [ `./${name}/*.d.ts` ]);
@@ -56,14 +56,14 @@ export default function generate(
     
     packageJson.set('exports', `./${columns}`, `./${columns}/index.js`);
     packageJson.set('exports', `./${columns}/*`, `./${columns}/*.js`);
-    packageJson.set('exports', `./${tests}`, `./${tests}/index.js`);
+    packageJson.set('exports', `./${tests}`, `./${tests}.js`);
     packageJson.set('exports', `./${tests}/*`, `./${tests}/*.js`);
     packageJson.set('exports', `./${name}`, `./${name}/index.js`);
     packageJson.set('exports', `./${name}/*`, `./${name}/*.js`);
     
     packageJson.set('typesVersions', `*`, `./${columns}`, [ `./${columns}/index.d.ts` ]);
     packageJson.set('typesVersions', `*`, `./${columns}/*`, [ `./${columns}/*.d.ts` ]);
-    packageJson.set('typesVersions', `*`, `./${tests}`, [ `./${tests}/index.d.ts` ]);
+    packageJson.set('typesVersions', `*`, `./${tests}`, [ `./${tests}.d.ts` ]);
     packageJson.set('typesVersions', `*`, `./${tests}/*`, [ `./${tests}/*.d.ts` ]);
     packageJson.set('typesVersions', `*`, `./${name}`, [ `./${name}/index.d.ts` ]);
     packageJson.set('typesVersions', `*`, `./${name}/*`, [ `./${name}/*.d.ts` ]);

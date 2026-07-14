@@ -29,11 +29,15 @@ export default function generate(directory: Directory, schema: Schema) {
   // Exports
 
   source.addFunction({
-    isDefaultExport: true,
+    isExported: true,
     name: 'runAllTests',
     parameters: [{ name: 'engine', type: 'any', hasQuestionToken: true }],
     statements: models.map(model => (
       `${model.name.toClassName('runAll%sTests')}(engine);`
     ))
+  });
+  source.addExportAssignment({
+    expression: 'runAllTests',
+    isExportEquals: false
   });
 };

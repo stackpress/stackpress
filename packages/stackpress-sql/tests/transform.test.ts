@@ -90,6 +90,8 @@ describe('sql/transform/tests', () => {
     for (const name of [ 'Article', 'Profile', 'Session' ]) {
       expect(second).to.contain(`runAll${name}Tests(engine);`);
     }
+    expect(second).to.contain('export function runAllTests');
+    expect(second).to.contain('export default runAllTests');
   });
 
   it('should generate a SQL-only runner when schema has not contributed yet', () => {
