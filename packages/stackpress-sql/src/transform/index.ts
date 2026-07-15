@@ -20,6 +20,8 @@ import generatePackage from './package.js';
 import generateActionsTests from './tests/actions.js';
 import generateEventsTests from './tests/events.js';
 import generateStoreTests from './tests/store.js';
+import generateAggregateTests from './tests/aggregate.js';
+import generateRootTests from './tests/root.js';
 
 export default async function generate(props: ClientPluginProps) {
   //------------------------------------------------------------------//
@@ -123,6 +125,11 @@ export default async function generate(props: ClientPluginProps) {
   // 6. package.json
 
   generatePackage(directory, schema);
+
+  //------------------------------------------------------------------//
+  // 7. tests.ts (root aggregator)
+
+  generateRootTests(directory, schema);
 };
 
 export function generateModel(directory: Directory, model: Model) {
@@ -165,4 +172,9 @@ export function generateModel(directory: Directory, model: Model) {
   // 8. Profile/tests/events.test.ts
 
   generateEventsTests(directory, model);
+
+  //------------------------------------------------------------------//
+  // 9. Profile/tests.ts
+
+  generateAggregateTests(directory, model);
 }
