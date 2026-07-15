@@ -8,6 +8,9 @@ import generateSchemaModelTests from 'stackpress-schema/transform/tests';
 //stackpress-sql
 import generateModelTests from '../src/transform/tests/aggregate.js';
 import generateRootTests from '../src/transform/tests/root.js';
+import generateActionsTests from '../src/transform/tests/actions.js';
+import generateEventsTests from '../src/transform/tests/events.js';
+import generateStoreTests from '../src/transform/tests/store.js';
 
 function createProject() {
   return new Project({
@@ -108,4 +111,26 @@ describe('sql/transform/tests', () => {
     expect(source).to.contain('./tests/events.test.js');
   });
 
+  it('should generate observable runtime tests without empty cases', () => {
+    const project = createProject();
+    const directory = project.createDirectory('/client');
+    const model = Array.from(createSchema().models.values())[0];
+
+    generateStoreTests(directory, model);
+    generateActionsTests(directory, model);
+    generateEventsTests(directory, model);
+
+    const sources = [
+      '/client/Profile/tests/ProfileStore.test.ts',
+      '/client/Profile/tests/ProfileActions.test.ts',
+      '/client/Profile/tests/events.test.ts'
+    ].map(filepath => project.getSourceFileOrThrow(filepath).getFullText());
+    for (const source of sources) {
+      expect(source).to.not.contain('async () => {}');
+      expect(source).to.contain('expect(');
+    }
+    expect(sources[0]).to.contain("expect(store.table).to.equal('profile')");
+    expect(sources[1]).to.contain('expect(actions.engine).to.equal(database)');
+    expect(sources[2]).to.contain('listen(emitter)');
+  });
 });
