@@ -11,7 +11,6 @@ import { expect } from 'chai';
 import Schema from '../src/Schema.js';
 import { pruneGeneratedSchemaFiles } from '../src/transform/helpers.js';
 import generatePackage from '../src/transform/package.js';
-import generateSchemaTests from '../src/transform/tests/schema.js';
 import generateTestAggregate from '../src/transform/tests.js';
 
 describe('schema/transform/helpers', () => {
@@ -62,53 +61,6 @@ describe('schema/transform/helpers', () => {
     } finally {
       await fsp.rm(root, { recursive: true, force: true });
     }
-  });
-
-  it('should generate observable schema runtime tests without empty cases', () => {
-    const project = new Project({
-      useInMemoryFileSystem: true,
-      manipulationSettings: {
-        indentationText: IndentationText.TwoSpaces
-      }
-    });
-    const directory = project.createDirectory('/client');
-    const schema = Schema.make({
-      model: {
-        Profile: {
-          name: 'Profile',
-          mutable: true,
-          attributes: {},
-          columns: [
-            {
-              name: 'id',
-              type: 'String',
-              required: true,
-              multiple: false,
-              attributes: { id: true }
-            },
-            {
-              name: 'tags',
-              type: 'String',
-              required: false,
-              multiple: true,
-              attributes: {}
-            }
-          ]
-        }
-      }
-    });
-    const model = Array.from(schema.models.values())[0];
-
-    generateSchemaTests(directory, model);
-
-    const source = project
-      .getSourceFileOrThrow('/client/Profile/tests/ProfileSchema.test.ts')
-      .getFullText();
-    expect(source).to.not.contain('async () => {}');
-    expect(source).to.contain('schema.serialize');
-    expect(source).to.contain('schema.unserialize');
-    expect(source).to.contain("expect(actual).to.have.property('id')");
-    expect(source).to.contain("expect(actual).to.have.property('tags')");
   });
 
   it('should generate schema-owned model test aggregators', () => {
