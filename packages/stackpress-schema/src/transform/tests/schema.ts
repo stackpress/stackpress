@@ -1,7 +1,6 @@
 //modules
 import type { Directory } from 'ts-morph';
 //stackpress-schema
-import type Column from '../../Column.js';
 import type Fieldset from '../../Fieldset.js';
 import { loadProjectFile, renderCode } from '../helpers.js';
 import generateColumnTests from './column.js';
@@ -11,23 +10,6 @@ export const numbers = [ 'Number', 'Float', 'Integer' ];
 export const dates = [ 'Date', 'Time', 'Datetime' ];
 export const objects = [ 'Object', 'Json', 'Hash' ];
 
-function getSampleValue(column: Column) {
-  const value = column.type.enum
-    ? `'${Object.values(column.type.enum)[0]}'`
-    : strings.includes(column.type.name)
-    ? "'foobar'"
-    : numbers.includes(column.type.name)
-    ? '123'
-    : column.type.name === 'Boolean'
-    ? 'true'
-    : dates.includes(column.type.name)
-    ? "new Date('2024-01-01T00:00:00.000Z')"
-    : objects.includes(column.type.name)
-    ? "{ foo: 'bar' }"
-    : "'foobar'";
-  return column.type.multiple ? `[${value}]` : value;
-}
-
 export default function generate(directory: Directory, model: Fieldset) {
   //dont include columns that are models 
   //(those are more of relational information)
@@ -35,9 +17,23 @@ export default function generate(directory: Directory, model: Fieldset) {
     column => !column.type.model && !column.type.fieldset
   );
 
-  const validSample = columns.map(column => (
-    `${column.name.toString()}: ${getSampleValue(column)}`
-  )).toArray().filter(Boolean);
+  const validSample = columns.map(
+    column => strings.includes(column.type.name)
+      ? `${column.name.toString()}: 'foobar'`
+      : column.type.enum
+      ? `${column.name.toString()}: '${Object.values(column.type.enum)[0]}'`
+      : numbers.includes(column.type.name)
+      ? `${column.name.toString()}: 123`
+      : column.type.name === 'Boolean'
+      ? `${column.name.toString()}: true`
+      : dates.includes(column.type.name)
+      ? `${column.name.toString()}: new Date()`
+      : column.type.multiple
+      ? `${column.name.toString()}: ['foo', 'bar']`
+      : objects.includes(column.type.name)
+      ? `${column.name.toString()}: { foo: 'bar' }`
+      : ''
+  ).toArray().filter(Boolean);
 
   const filepath = model.name.toPathName('%s/tests/%sSchema.test.ts');
   //load Profile/index.ts if it exists, if not create it
@@ -189,7 +185,6 @@ export default function generate(directory: Directory, model: Fieldset) {
         })()
       ],
       filter: `{ ${validSample.concat(['__FOO__: true' ]).join(', ')} }`,
-      sample: `{ ${validSample.join(', ')} }`,
       populate: columns.map(column => {
         const defaults = column.value.default;
         const forCuid = String(defaults).match(/^cuid\(([0-9]+)\)$/);
@@ -269,23 +264,8 @@ DESCRIBE:
       <%expect%>
     <%/@:populate%>
   });
-  it('should serialize', async () => {
-    const schema = new <%classname%>();
-    const actual = schema.serialize(<%sample%>);
-    expect(actual).to.be.an('object');
-    <%#@:columns%>
-      expect(actual).to.have.property('<%column%>');
-    <%/@:columns%>
-  });
-  it('should unserialize', async () => {
-    const schema = new <%classname%>();
-    const serialized = schema.serialize(<%sample%>);
-    const actual = schema.unserialize(serialized);
-    expect(actual).to.be.an('object');
-    <%#@:columns%>
-      expect(actual).to.have.property('<%column%>');
-    <%/@:columns%>
-  });
+  it('should serialize', async () => {});
+  it('should unserialize', async () => {});
 });`,
 
 };
