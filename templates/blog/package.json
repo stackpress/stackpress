@@ -27,6 +27,7 @@
     "purge": "dotenv -e .env -- stackpress purge --b config/develop -v",
     "push": "dotenv -e .env -- stackpress push --b config/develop -v",
     "query": "dotenv -e .env -- stackpress query --b config/develop -v",
+    "serve": "stackpress serve --b config/production -v",
     "test": "node --import tsx --test tests/**/*.test.ts"
   },
   "dependencies": {

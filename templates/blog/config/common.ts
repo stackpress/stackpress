@@ -599,7 +599,7 @@ export const view = {
   base: '/',
   //frontend notification display settings
   notify: {
-    position: 'bottom-center' as ToastPosition,
+    position: 'bottom-right' as ToastPosition,
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
