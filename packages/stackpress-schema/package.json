@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-schema",
-  "version": "0.10.7",
+  "version": "0.10.8",
   "license": "MIT",
   "description": "Server library for the Stackpress framework.",
   "author": "Chris <chris@stackpress.io>",
@@ -340,8 +340,8 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/idea-transformer": "0.10.7",
-    "stackpress-server": "0.10.7",
+    "@stackpress/idea-transformer": "0.10.8",
+    "stackpress-server": "0.10.8",
     "zod": "4.3.6"
   },
   "devDependencies": {

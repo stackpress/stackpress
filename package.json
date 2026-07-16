@@ -1,6 +1,6 @@
 {
   "name": "@stackpress/repository",
-  "version": "0.10.7",
+  "version": "0.10.8",
   "private": true,
   "bin": {
     "stackpress": "./bin/stackpress.mjs"

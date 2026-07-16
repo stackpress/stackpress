@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "stackpress-desktop",
-  "version": "0.10.7",
+  "version": "0.10.8",
   "license": "MIT",
   "description": "Desktop application target for Stackpress apps.",
   "stackpressDesktopRationale": {
@@ -103,7 +103,7 @@
     "test:env": "NODE_OPTIONS=\"--disable-warning=ExperimentalWarning --experimental-loader @istanbuljs/esm-loader-hook\""
   },
   "dependencies": {
-    "@stackpress/ingest": "0.10.7",
+    "@stackpress/ingest": "0.10.8",
     "electron": "^42.4.0"
   },
   "devDependencies": {

@@ -32,12 +32,12 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.3.15",
-    "@stackpress/inquire-pglite": "0.10.7",
+    "@stackpress/inquire-pglite": "0.10.8",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "stackpress": "0.10.7",
-    "stackpress-ai": "0.10.7",
-    "stackpress-desktop": "0.10.7"
+    "stackpress": "0.10.8",
+    "stackpress-ai": "0.10.8",
+    "stackpress-desktop": "0.10.8"
   },
   "devDependencies": {
     "@types/node": "25.3.5",

@@ -53,7 +53,7 @@ export async function createMcpServer(
   //now create the MCP server shell that transports will attach to later
   const server = new McpServer({
     name: ctx.config.path('mcp.name', 'Stackpress AI Server'),
-    version: ctx.config.path('mcp.version', '0.10.7'),
+    version: ctx.config.path('mcp.version', '0.10.8'),
     title: ctx.config.path('mcp.title', 'Stackpress AI Server'),
     description: ctx.config.path<string | undefined>('mcp.description')
   });
