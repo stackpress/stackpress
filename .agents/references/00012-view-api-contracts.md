@@ -113,7 +113,8 @@ setViewProps(req: Request, res: Response, ctx: Server): void
 It returns immediately when the no-view flag exists. Otherwise it copies
 sanitized config subsets into `res.data`:
 
-- `view`: `base` default `/`, `props` default `{}`;
+- `view`: `base` default `/`, `props` default `{}`, notifier options from
+  `notify` default `{}`;
 - `brand`: name `Stackpress`, logo `/logo.png`, icon `/icon.png`, favicon
   `/favicon.ico`;
 - `language`: key `locale`, locale `en_US`, languages `{}`.

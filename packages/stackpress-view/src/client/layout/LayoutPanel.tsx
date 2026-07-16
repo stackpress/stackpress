@@ -1,6 +1,5 @@
 //modules
-import { useEffect, useState } from 'react';
-import { notify, unload } from 'frui/Notifier';
+import { useState } from 'react';
 //stackpress-view
 import type { 
   LayoutPanelProps,
@@ -86,18 +85,10 @@ export default function LayoutPanel(props: LayoutPanelProps) {
     response,
     children 
   } = props;
-  //effects
-  // unload any flash messages from the server
-  useEffect(() => {
-    unload(cookie);
-  }, []);
-  // if there is an error in the response, show a notification
-  useEffect(() => {
-    response?.error && notify('error', response.error);
-  }, [ response?.error ]);
   //render
   return (
     <LayoutProvider 
+      cookie={cookie}
       data={data}
       session={session}
       request={request}

@@ -1,6 +1,3 @@
-//modules
-import { useEffect } from 'react';
-import { notify, unload } from 'frui/Notifier';
 //stackpress-view
 import type { 
   LayoutBlankProps,
@@ -49,18 +46,10 @@ export default function LayoutBlank(props: LayoutBlankProps) {
     response,
     children 
   } = props;
-  //effects
-  // unload any flash messages from the server
-  useEffect(() => {
-    unload(cookie);
-  }, []);
-  // if there is an error in the response, show a notification
-  useEffect(() => {
-    response?.error && notify('error', response.error);
-  }, [ response?.error ]);
   //render
   return (
     <LayoutProvider 
+      cookie={cookie}
       data={data}
       session={session}
       request={request}

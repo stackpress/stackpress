@@ -120,7 +120,8 @@ const admin = ctx.config.path<AdminConfig>('admin', {});
 //set data for template layer
 res.data.set('view', { 
   base: view.base || '/',
-  props: view.props || {}
+  props: view.props || {},
+  notify: view.notify || {}
 });
 res.data.set('brand', { 
   name: brand.name || 'Stackpress',

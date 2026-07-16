@@ -24,7 +24,8 @@ export default action(async function OAuth({ req, res, ctx }) {
   res.data.set('api', { scopes, endpoints });
   res.data.set('view', { 
     base: view.base || '/',
-    props: view.props || {}
+    props: view.props || {},
+    notify: view.notify || {}
   });
   res.data.set('brand', { 
     name: brand.name || 'Stackpress',
